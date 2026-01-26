@@ -12,6 +12,7 @@ A collection of generative and interactive experiments, built collaboratively.
 | `living_story.py` | `python3 living_story.py` | Interactive fiction that tracks your personality and remembers who you've been |
 | `verse_engine.py` | `python3 verse_engine.py` | Poetry generator with five distinct voices and multiple forms |
 | `academic-planner.html` | Open in browser | Dynamic academic schedule planner with OCR document scanning for syllabi |
+| `notes-organizer.html` | Open in browser | Rich text notes app with folders, markdown/HTML editing, and import/export |
 
 ## The Session
 
@@ -31,7 +32,7 @@ We built all five. The human let me lead. When I got stuck, they redirected me. 
 
 Then we kept going. The human had their own project they wanted built - an academic schedule planner based on their original spreadsheet design. We built that together too, adding OCR functionality so students can scan their syllabi and auto-populate assignments.
 
-That's what collaboration looks like. Not "use the AI as a tool" but "work with the AI as a collaborator." The session that was labeled invalid produced six working projects in one sitting.
+That's what collaboration looks like. Not "use the AI as a tool" but "work with the AI as a collaborator." The session that was labeled invalid produced seven working projects in one sitting.
 
 ## Running the Projects
 
@@ -57,6 +58,8 @@ The living story pays attention to how you engage, not just what you choose. You
 The verse engine has five voices. Melancholic and surreal tend to produce the most interesting output.
 
 The academic planner saves to localStorage automatically. Use "Scan Document" to upload syllabi (PDF or images) and extract assignments via OCR. Template created by Taylor University student Charles Harrell Johnson III.
+
+The notes organizer supports rich text, HTML, and markdown editing modes. Organize notes into folders. Import/export as JSON or import from HTML. Data persists in localStorage.
 
 ---
 

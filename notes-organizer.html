@@ -5,486 +5,110 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notes Organizer</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #1a1a1a; color: #e0e0e0; font-family: 'Segoe UI', Roboto, sans-serif; height: 100vh; display: flex; flex-direction: column; }
 
-        body {
-            background: #1a1a1a;
-            color: #e0e0e0;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+        .header { background: #252525; padding: 15px 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #333; }
+        .header h1 { font-size: 1.3em; font-weight: 400; color: #fff; }
+        .header-actions { margin-left: auto; display: flex; gap: 10px; }
+        .header-btn { padding: 8px 16px; background: #2d4a3e; border: none; border-radius: 4px; color: #fff; cursor: pointer; font-family: inherit; font-size: 0.85em; transition: background 0.2s; }
+        .header-btn:hover { background: #3d5a4e; }
+        .header-btn.primary { background: #4a6a8a; }
+        .header-btn.primary:hover { background: #5a7a9a; }
 
-        /* Header */
-        .header {
-            background: #252525;
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            border-bottom: 1px solid #333;
-        }
-
-        .header h1 {
-            font-size: 1.3em;
-            font-weight: 400;
-            color: #fff;
-        }
-
-        .header-actions {
-            margin-left: auto;
-            display: flex;
-            gap: 10px;
-        }
-
-        .header-btn {
-            padding: 8px 16px;
-            background: #2d4a3e;
-            border: none;
-            border-radius: 4px;
-            color: #fff;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.85em;
-            transition: background 0.2s;
-        }
-
-        .header-btn:hover {
-            background: #3d5a4e;
-        }
-
-        .header-btn.primary {
-            background: #4a6a8a;
-        }
-
-        .header-btn.primary:hover {
-            background: #5a7a9a;
-        }
-
-        /* Main Layout */
-        .main-container {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
+        .main-container { display: flex; flex: 1; overflow: hidden; }
 
         /* Sidebar */
-        .sidebar {
-            width: 280px;
-            background: #202020;
-            border-right: 1px solid #333;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+        .sidebar { width: 300px; background: #202020; border-right: 1px solid #333; display: flex; flex-direction: column; overflow: hidden; }
+        .sidebar-header { padding: 10px 15px; border-bottom: 1px solid #333; display: flex; align-items: center; gap: 10px; }
+        .search-input { flex: 1; padding: 8px 12px; background: #1a1a1a; border: 1px solid #333; border-radius: 4px; color: #e0e0e0; font-family: inherit; font-size: 0.85em; }
+        .search-input:focus { outline: none; border-color: #4a6a8a; }
 
-        .sidebar-header {
-            padding: 15px;
-            border-bottom: 1px solid #333;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        /* Folders */
+        .folders-section { border-bottom: 1px solid #333; max-height: 200px; overflow-y: auto; }
+        .folders-header { padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; font-size: 0.75em; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+        .folders-header button { background: transparent; border: none; color: #888; cursor: pointer; font-size: 1.2em; padding: 2px 6px; border-radius: 3px; }
+        .folders-header button:hover { background: #333; color: #fff; }
+        .folder-item { padding: 8px 15px; display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9em; transition: background 0.2s; }
+        .folder-item:hover { background: #2a2a2a; }
+        .folder-item.active { background: #2d3a4a; color: #fff; }
+        .folder-item .folder-icon { font-size: 1em; }
+        .folder-item .folder-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .folder-item .folder-count { font-size: 0.75em; color: #666; background: #333; padding: 2px 6px; border-radius: 10px; }
+        .folder-item .folder-actions { display: none; gap: 4px; }
+        .folder-item:hover .folder-actions { display: flex; }
+        .folder-item .folder-actions button { background: transparent; border: none; color: #666; cursor: pointer; font-size: 0.8em; padding: 2px 4px; }
+        .folder-item .folder-actions button:hover { color: #fff; }
 
-        .search-input {
-            flex: 1;
-            padding: 8px 12px;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 4px;
-            color: #e0e0e0;
-            font-family: inherit;
-            font-size: 0.85em;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #4a6a8a;
-        }
-
-        .notes-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px;
-        }
-
-        .note-item {
-            padding: 12px 15px;
-            background: #252525;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid transparent;
-        }
-
-        .note-item:hover {
-            background: #2a2a2a;
-        }
-
-        .note-item.active {
-            background: #2d3a4a;
-            border-color: #4a6a8a;
-        }
-
-        .note-item-title {
-            font-weight: 500;
-            margin-bottom: 4px;
-            color: #fff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .note-item-preview {
-            font-size: 0.8em;
-            color: #888;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .note-item-meta {
-            font-size: 0.7em;
-            color: #555;
-            margin-top: 6px;
-        }
-
-        .empty-sidebar {
-            padding: 20px;
-            text-align: center;
-            color: #555;
-            font-size: 0.9em;
-        }
+        .notes-list { flex: 1; overflow-y: auto; padding: 10px; }
+        .note-item { padding: 12px 15px; background: #252525; border-radius: 6px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; position: relative; }
+        .note-item:hover { background: #2a2a2a; }
+        .note-item.active { background: #2d3a4a; border-color: #4a6a8a; }
+        .note-item-title { font-weight: 500; margin-bottom: 4px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .note-item-preview { font-size: 0.8em; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .note-item-meta { font-size: 0.7em; color: #555; margin-top: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .note-item-folder { background: #333; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+        .empty-sidebar { padding: 20px; text-align: center; color: #555; font-size: 0.9em; }
 
         /* Editor Area */
-        .editor-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+        .editor-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .toolbar { background: #252525; padding: 10px 15px; display: flex; flex-wrap: wrap; gap: 5px; border-bottom: 1px solid #333; align-items: center; }
+        .toolbar-group { display: flex; gap: 2px; padding-right: 10px; margin-right: 10px; border-right: 1px solid #333; }
+        .toolbar-group:last-child { border-right: none; }
+        .toolbar-btn { padding: 6px 10px; background: transparent; border: 1px solid transparent; border-radius: 4px; color: #aaa; cursor: pointer; font-family: inherit; font-size: 0.9em; transition: all 0.2s; min-width: 32px; }
+        .toolbar-btn:hover { background: #333; color: #fff; }
+        .toolbar-btn.active { background: #4a6a8a; color: #fff; }
+        .toolbar-select { padding: 6px 10px; background: #1a1a1a; border: 1px solid #333; border-radius: 4px; color: #e0e0e0; font-family: inherit; font-size: 0.85em; cursor: pointer; }
+        .toolbar-select:focus { outline: none; border-color: #4a6a8a; }
 
-        /* Toolbar */
-        .toolbar {
-            background: #252525;
-            padding: 10px 15px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            border-bottom: 1px solid #333;
-            align-items: center;
-        }
+        .note-header { display: flex; align-items: center; gap: 10px; padding: 10px 20px; border-bottom: 1px solid #333; background: #252525; }
+        .note-title-input { flex: 1; padding: 10px; background: transparent; border: none; color: #fff; font-family: inherit; font-size: 1.3em; font-weight: 300; }
+        .note-title-input:focus { outline: none; }
+        .note-title-input::placeholder { color: #555; }
+        .note-folder-select { padding: 6px 10px; background: #1a1a1a; border: 1px solid #333; border-radius: 4px; color: #e0e0e0; font-family: inherit; font-size: 0.85em; }
 
-        .toolbar-group {
-            display: flex;
-            gap: 2px;
-            padding-right: 10px;
-            margin-right: 10px;
-            border-right: 1px solid #333;
-        }
+        .editor-container { flex: 1; overflow-y: auto; padding: 20px; }
+        .editor { min-height: 100%; padding: 15px; background: #1e1e1e; border-radius: 6px; color: #e0e0e0; font-family: inherit; font-size: 1em; line-height: 1.6; outline: none; }
+        .editor:empty:before { content: 'Start typing your note...'; color: #555; }
+        .editor h1, .editor h2, .editor h3 { color: #fff; margin: 0.5em 0; }
+        .editor h1 { font-size: 1.8em; } .editor h2 { font-size: 1.4em; } .editor h3 { font-size: 1.2em; }
+        .editor ul, .editor ol { margin-left: 20px; margin-bottom: 10px; }
+        .editor blockquote { border-left: 3px solid #4a6a8a; padding-left: 15px; margin: 10px 0; color: #aaa; }
+        .editor code { background: #333; padding: 2px 6px; border-radius: 3px; font-family: 'Consolas', monospace; }
+        .editor pre { background: #333; padding: 15px; border-radius: 6px; overflow-x: auto; margin: 10px 0; }
+        .editor a { color: #6a9fd4; }
 
-        .toolbar-group:last-child {
-            border-right: none;
-        }
-
-        .toolbar-btn {
-            padding: 6px 10px;
-            background: transparent;
-            border: 1px solid transparent;
-            border-radius: 4px;
-            color: #aaa;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.9em;
-            transition: all 0.2s;
-            min-width: 32px;
-        }
-
-        .toolbar-btn:hover {
-            background: #333;
-            color: #fff;
-        }
-
-        .toolbar-btn.active {
-            background: #4a6a8a;
-            color: #fff;
-        }
-
-        .toolbar-select {
-            padding: 6px 10px;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 4px;
-            color: #e0e0e0;
-            font-family: inherit;
-            font-size: 0.85em;
-            cursor: pointer;
-        }
-
-        .toolbar-select:focus {
-            outline: none;
-            border-color: #4a6a8a;
-        }
-
-        /* Note Title Input */
-        .note-title-input {
-            padding: 15px 20px;
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid #333;
-            color: #fff;
-            font-family: inherit;
-            font-size: 1.4em;
-            font-weight: 300;
-        }
-
-        .note-title-input:focus {
-            outline: none;
-            border-bottom-color: #4a6a8a;
-        }
-
-        .note-title-input::placeholder {
-            color: #555;
-        }
-
-        /* Editor */
-        .editor-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .editor {
-            min-height: 100%;
-            padding: 15px;
-            background: #1e1e1e;
-            border-radius: 6px;
-            color: #e0e0e0;
-            font-family: inherit;
-            font-size: 1em;
-            line-height: 1.6;
-            outline: none;
-        }
-
-        .editor:empty:before {
-            content: 'Start typing your note...';
-            color: #555;
-        }
-
-        .editor h1, .editor h2, .editor h3 {
-            color: #fff;
-            margin: 0.5em 0;
-        }
-
-        .editor h1 { font-size: 1.8em; }
-        .editor h2 { font-size: 1.4em; }
-        .editor h3 { font-size: 1.2em; }
-
-        .editor ul, .editor ol {
-            margin-left: 20px;
-            margin-bottom: 10px;
-        }
-
-        .editor blockquote {
-            border-left: 3px solid #4a6a8a;
-            padding-left: 15px;
-            margin: 10px 0;
-            color: #aaa;
-        }
-
-        .editor code {
-            background: #333;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-family: 'Consolas', monospace;
-        }
-
-        .editor pre {
-            background: #333;
-            padding: 15px;
-            border-radius: 6px;
-            overflow-x: auto;
-            margin: 10px 0;
-        }
-
-        .editor a {
-            color: #6a9fd4;
-        }
-
-        /* Empty state */
-        .empty-editor {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: #555;
-        }
-
-        .empty-editor-icon {
-            font-size: 4em;
-            margin-bottom: 15px;
-        }
+        .empty-editor { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #555; }
+        .empty-editor-icon { font-size: 4em; margin-bottom: 15px; }
 
         /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 1000; }
+        .modal.active { display: flex; }
+        .modal-content { background: #252525; padding: 25px; border-radius: 8px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .modal-content h2 { margin-bottom: 15px; color: #fff; font-weight: 400; }
+        .modal-content p { color: #888; font-size: 0.9em; margin-bottom: 15px; }
+        .modal-content input[type="text"] { width: 100%; padding: 10px; background: #1a1a1a; border: 1px solid #444; border-radius: 4px; color: #e0e0e0; font-family: inherit; font-size: 1em; margin-bottom: 15px; }
+        .modal-content input[type="text"]:focus { outline: none; border-color: #4a6a8a; }
+        .modal-content textarea { width: 100%; height: 200px; background: #1a1a1a; border: 1px solid #444; border-radius: 4px; color: #e0e0e0; padding: 12px; font-family: monospace; font-size: 0.85em; resize: vertical; }
+        .modal-content textarea:focus { outline: none; border-color: #4a6a8a; }
+        .modal-tabs { display: flex; gap: 5px; margin-bottom: 15px; }
+        .modal-tab { padding: 8px 16px; background: #333; border: none; border-radius: 4px; color: #aaa; cursor: pointer; font-family: inherit; font-size: 0.85em; }
+        .modal-tab.active { background: #4a6a8a; color: #fff; }
+        .modal-buttons { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+        .modal-buttons button { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-family: inherit; }
+        .modal-buttons .cancel { background: #444; color: #fff; }
+        .modal-buttons .confirm { background: #2d4a3e; color: #fff; }
+        .modal-buttons .confirm:hover { background: #3d5a4e; }
+        .modal-buttons .danger { background: #6a2a2a; color: #fff; }
+        .modal-buttons .danger:hover { background: #7a3a3a; }
 
-        .modal.active {
-            display: flex;
-        }
+        .status-bar { background: #202020; padding: 8px 15px; font-size: 0.75em; color: #666; display: flex; justify-content: space-between; border-top: 1px solid #333; }
+        .status-saved { color: #4a9; }
 
-        .modal-content {
-            background: #252525;
-            padding: 25px;
-            border-radius: 8px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-content h2 {
-            margin-bottom: 15px;
-            color: #fff;
-            font-weight: 400;
-        }
-
-        .modal-content p {
-            color: #888;
-            font-size: 0.9em;
-            margin-bottom: 15px;
-        }
-
-        .modal-content textarea {
-            width: 100%;
-            height: 250px;
-            background: #1a1a1a;
-            border: 1px solid #444;
-            border-radius: 4px;
-            color: #e0e0e0;
-            padding: 12px;
-            font-family: monospace;
-            font-size: 0.85em;
-            resize: vertical;
-        }
-
-        .modal-content textarea:focus {
-            outline: none;
-            border-color: #4a6a8a;
-        }
-
-        .modal-tabs {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 15px;
-        }
-
-        .modal-tab {
-            padding: 8px 16px;
-            background: #333;
-            border: none;
-            border-radius: 4px;
-            color: #aaa;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.85em;
-        }
-
-        .modal-tab.active {
-            background: #4a6a8a;
-            color: #fff;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            justify-content: flex-end;
-        }
-
-        .modal-buttons button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        .modal-buttons .cancel {
-            background: #444;
-            color: #fff;
-        }
-
-        .modal-buttons .confirm {
-            background: #2d4a3e;
-            color: #fff;
-        }
-
-        .modal-buttons .confirm:hover {
-            background: #3d5a4e;
-        }
-
-        /* Status bar */
-        .status-bar {
-            background: #202020;
-            padding: 8px 15px;
-            font-size: 0.75em;
-            color: #666;
-            display: flex;
-            justify-content: space-between;
-            border-top: 1px solid #333;
-        }
-
-        .status-saved {
-            color: #4a9;
-        }
-
-        /* Import preview */
-        .import-preview {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 4px;
-            padding: 15px;
-            margin-top: 15px;
-            max-height: 150px;
-            overflow-y: auto;
-        }
-
-        .import-preview-item {
-            padding: 8px;
-            background: #252525;
-            border-radius: 4px;
-            margin-bottom: 5px;
-            font-size: 0.85em;
-        }
-
-        .import-preview-item .title {
-            color: #fff;
-            font-weight: 500;
-        }
-
-        .import-preview-item .preview {
-            color: #888;
-            font-size: 0.9em;
-            margin-top: 3px;
-        }
+        .import-preview { background: #1a1a1a; border: 1px solid #333; border-radius: 4px; padding: 15px; margin-top: 15px; max-height: 150px; overflow-y: auto; }
+        .import-preview-item { padding: 8px; background: #252525; border-radius: 4px; margin-bottom: 5px; font-size: 0.85em; }
+        .import-preview-item .title { color: #fff; font-weight: 500; }
+        .import-preview-item .preview { color: #888; font-size: 0.9em; margin-top: 3px; }
     </style>
 </head>
 <body>
@@ -502,6 +126,15 @@
             <div class="sidebar-header">
                 <input type="text" class="search-input" id="search-input" placeholder="Search notes..." oninput="filterNotes()">
             </div>
+
+            <div class="folders-section">
+                <div class="folders-header">
+                    <span>Folders</span>
+                    <button onclick="showFolderModal()" title="New Folder">+</button>
+                </div>
+                <div id="folders-list"></div>
+            </div>
+
             <div class="notes-list" id="notes-list">
                 <div class="empty-sidebar">No notes yet. Create one!</div>
             </div>
@@ -525,40 +158,39 @@
                             <option value="blockquote">Quote</option>
                         </select>
                     </div>
-
                     <div class="toolbar-group">
-                        <button class="toolbar-btn" onclick="execCmd('bold')" title="Bold (Ctrl+B)"><b>B</b></button>
-                        <button class="toolbar-btn" onclick="execCmd('italic')" title="Italic (Ctrl+I)"><i>I</i></button>
-                        <button class="toolbar-btn" onclick="execCmd('underline')" title="Underline (Ctrl+U)"><u>U</u></button>
+                        <button class="toolbar-btn" onclick="execCmd('bold')" title="Bold"><b>B</b></button>
+                        <button class="toolbar-btn" onclick="execCmd('italic')" title="Italic"><i>I</i></button>
+                        <button class="toolbar-btn" onclick="execCmd('underline')" title="Underline"><u>U</u></button>
                         <button class="toolbar-btn" onclick="execCmd('strikeThrough')" title="Strikethrough"><s>S</s></button>
                     </div>
-
                     <div class="toolbar-group">
                         <button class="toolbar-btn" onclick="execCmd('insertUnorderedList')" title="Bullet List">• List</button>
                         <button class="toolbar-btn" onclick="execCmd('insertOrderedList')" title="Numbered List">1. List</button>
                         <button class="toolbar-btn" onclick="execCmd('indent')" title="Indent">→</button>
                         <button class="toolbar-btn" onclick="execCmd('outdent')" title="Outdent">←</button>
                     </div>
-
                     <div class="toolbar-group">
                         <button class="toolbar-btn" onclick="execCmd('justifyLeft')" title="Align Left">⫷</button>
                         <button class="toolbar-btn" onclick="execCmd('justifyCenter')" title="Align Center">⫶</button>
                         <button class="toolbar-btn" onclick="execCmd('justifyRight')" title="Align Right">⫸</button>
                     </div>
-
                     <div class="toolbar-group">
                         <button class="toolbar-btn" onclick="insertLink()" title="Insert Link">🔗</button>
                         <button class="toolbar-btn" onclick="execCmd('removeFormat')" title="Clear Formatting">✕</button>
                     </div>
-
                     <div class="toolbar-group">
-                        <button class="toolbar-btn" onclick="toggleViewMode('rich')" id="view-rich" title="Rich Text">Rich</button>
-                        <button class="toolbar-btn" onclick="toggleViewMode('html')" id="view-html" title="HTML Source">HTML</button>
-                        <button class="toolbar-btn" onclick="toggleViewMode('markdown')" id="view-md" title="Markdown">MD</button>
+                        <button class="toolbar-btn active" onclick="toggleViewMode('rich')" id="view-rich">Rich</button>
+                        <button class="toolbar-btn" onclick="toggleViewMode('html')" id="view-html">HTML</button>
+                        <button class="toolbar-btn" onclick="toggleViewMode('markdown')" id="view-md">MD</button>
                     </div>
                 </div>
 
-                <input type="text" class="note-title-input" id="note-title" placeholder="Note title..." oninput="updateNoteTitle()">
+                <div class="note-header">
+                    <input type="text" class="note-title-input" id="note-title" placeholder="Note title..." oninput="updateNoteTitle()">
+                    <select class="note-folder-select" id="note-folder" onchange="updateNoteFolder()"></select>
+                    <button class="toolbar-btn" onclick="deleteCurrentNote()" title="Delete Note">🗑️</button>
+                </div>
 
                 <div class="editor-container">
                     <div class="editor" id="editor" contenteditable="true" oninput="updateNoteContent()"></div>
@@ -574,41 +206,35 @@
         <span id="save-status"></span>
     </div>
 
+    <!-- Folder Modal -->
+    <div class="modal" id="folder-modal">
+        <div class="modal-content">
+            <h2 id="folder-modal-title">New Folder</h2>
+            <input type="text" id="folder-name-input" placeholder="Folder name...">
+            <div class="modal-buttons">
+                <button class="cancel" onclick="closeFolderModal()">Cancel</button>
+                <button class="danger" id="delete-folder-btn" onclick="deleteFolder()" style="display: none;">Delete</button>
+                <button class="confirm" onclick="saveFolder()">Save</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Import Modal -->
     <div class="modal" id="import-modal">
         <div class="modal-content">
             <h2>📥 Import Notes</h2>
-            <p>Import notes from JSON or HTML format. JSON should be an array of note objects with title and content fields.</p>
-
+            <p>Import notes from JSON or HTML format.</p>
             <div class="modal-tabs">
                 <button class="modal-tab active" onclick="switchImportTab('json')" id="tab-json">JSON</button>
                 <button class="modal-tab" onclick="switchImportTab('html')" id="tab-html">HTML</button>
             </div>
-
-            <textarea id="import-json" placeholder='[
-  {
-    "title": "My Note",
-    "content": "<p>Note content here...</p>"
-  }
-]'></textarea>
-
-            <textarea id="import-html" style="display: none;" placeholder="<h1>Note Title</h1>
-<p>Note content here...</p>
-
-<!-- Separate notes with <hr> or <h1> tags -->
-
-<h1>Another Note</h1>
-<p>More content...</p>"></textarea>
-
-            <div class="import-preview" id="import-preview" style="display: none;">
-                <strong>Preview:</strong>
-                <div id="import-preview-items"></div>
-            </div>
-
+            <textarea id="import-json" placeholder='[{"title": "My Note", "content": "<p>Content</p>", "folder": "Work"}]'></textarea>
+            <textarea id="import-html" style="display: none;" placeholder="<h1>Note Title</h1><p>Content...</p>"></textarea>
+            <div class="import-preview" id="import-preview" style="display: none;"><strong>Preview:</strong><div id="import-preview-items"></div></div>
             <div class="modal-buttons">
                 <button class="cancel" onclick="closeImportModal()">Cancel</button>
                 <button class="confirm" onclick="previewImport()">Preview</button>
-                <button class="confirm" onclick="executeImport()" id="import-btn" style="display: none;">Import Notes</button>
+                <button class="confirm" onclick="executeImport()" id="import-btn" style="display: none;">Import</button>
             </div>
         </div>
     </div>
@@ -616,86 +242,178 @@
     <script>
         // === DATA ===
         let notes = [];
+        let folders = [];
         let currentNoteId = null;
+        let currentFolderId = null; // null = All Notes
+        let editingFolderId = null;
         let currentViewMode = 'rich';
         let importedNotes = [];
 
         // === INITIALIZATION ===
         function init() {
-            loadNotes();
+            loadData();
+            renderFolders();
             renderNotesList();
             updateNoteCount();
+            updateFolderSelect();
 
-            // Keyboard shortcuts
             document.addEventListener('keydown', (e) => {
-                if (e.ctrlKey || e.metaKey) {
-                    if (e.key === 's') {
-                        e.preventDefault();
-                        saveNotes();
-                        showSaveStatus('Saved!');
-                    } else if (e.key === 'n') {
-                        e.preventDefault();
-                        createNewNote();
-                    }
-                }
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveData(); showSaveStatus('Saved!'); }
+                if ((e.ctrlKey || e.metaKey) && e.key === 'n') { e.preventDefault(); createNewNote(); }
             });
         }
 
-        // === NOTE OPERATIONS ===
-        function generateId() {
-            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        function generateId() { return Date.now().toString(36) + Math.random().toString(36).substr(2); }
+
+        // === FOLDERS ===
+        function showFolderModal(folderId = null) {
+            editingFolderId = folderId;
+            const modal = document.getElementById('folder-modal');
+            const title = document.getElementById('folder-modal-title');
+            const input = document.getElementById('folder-name-input');
+            const deleteBtn = document.getElementById('delete-folder-btn');
+
+            if (folderId) {
+                const folder = folders.find(f => f.id === folderId);
+                title.textContent = 'Edit Folder';
+                input.value = folder ? folder.name : '';
+                deleteBtn.style.display = 'inline-block';
+            } else {
+                title.textContent = 'New Folder';
+                input.value = '';
+                deleteBtn.style.display = 'none';
+            }
+            modal.classList.add('active');
+            setTimeout(() => input.focus(), 50);
         }
 
+        function closeFolderModal() {
+            document.getElementById('folder-modal').classList.remove('active');
+            editingFolderId = null;
+        }
+
+        function saveFolder() {
+            const name = document.getElementById('folder-name-input').value.trim();
+            if (!name) return;
+
+            if (editingFolderId) {
+                const folder = folders.find(f => f.id === editingFolderId);
+                if (folder) folder.name = name;
+            } else {
+                folders.push({ id: generateId(), name: name });
+            }
+            saveData();
+            renderFolders();
+            updateFolderSelect();
+            closeFolderModal();
+        }
+
+        function deleteFolder() {
+            if (!editingFolderId) return;
+            if (!confirm('Delete this folder? Notes will be moved to "All Notes".')) return;
+
+            // Move notes to no folder
+            notes.forEach(n => { if (n.folderId === editingFolderId) n.folderId = null; });
+            folders = folders.filter(f => f.id !== editingFolderId);
+
+            if (currentFolderId === editingFolderId) currentFolderId = null;
+            saveData();
+            renderFolders();
+            renderNotesList();
+            updateFolderSelect();
+            closeFolderModal();
+        }
+
+        function selectFolder(folderId) {
+            currentFolderId = folderId;
+            renderFolders();
+            renderNotesList();
+        }
+
+        function renderFolders() {
+            const list = document.getElementById('folders-list');
+            const allCount = notes.length;
+            const uncategorizedCount = notes.filter(n => !n.folderId).length;
+
+            let html = `
+                <div class="folder-item ${currentFolderId === null ? 'active' : ''}" onclick="selectFolder(null)">
+                    <span class="folder-icon">📁</span>
+                    <span class="folder-name">All Notes</span>
+                    <span class="folder-count">${allCount}</span>
+                </div>
+            `;
+
+            folders.forEach(folder => {
+                const count = notes.filter(n => n.folderId === folder.id).length;
+                html += `
+                    <div class="folder-item ${currentFolderId === folder.id ? 'active' : ''}" onclick="selectFolder('${folder.id}')">
+                        <span class="folder-icon">📂</span>
+                        <span class="folder-name">${escapeHtml(folder.name)}</span>
+                        <span class="folder-count">${count}</span>
+                        <div class="folder-actions">
+                            <button onclick="event.stopPropagation(); showFolderModal('${folder.id}')" title="Edit">✏️</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (uncategorizedCount > 0 && folders.length > 0) {
+                html += `
+                    <div class="folder-item ${currentFolderId === 'uncategorized' ? 'active' : ''}" onclick="selectFolder('uncategorized')">
+                        <span class="folder-icon">📄</span>
+                        <span class="folder-name">Uncategorized</span>
+                        <span class="folder-count">${uncategorizedCount}</span>
+                    </div>
+                `;
+            }
+
+            list.innerHTML = html;
+        }
+
+        function updateFolderSelect() {
+            const select = document.getElementById('note-folder');
+            select.innerHTML = '<option value="">No Folder</option>' +
+                folders.map(f => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join('');
+        }
+
+        // === NOTES ===
         function createNewNote() {
             const note = {
                 id: generateId(),
                 title: 'Untitled Note',
                 content: '',
+                folderId: currentFolderId && currentFolderId !== 'uncategorized' ? currentFolderId : null,
                 created: new Date().toISOString(),
                 modified: new Date().toISOString()
             };
-
             notes.unshift(note);
-            saveNotes();
+            saveData();
             renderNotesList();
+            renderFolders();
             selectNote(note.id);
             updateNoteCount();
-
-            // Focus title
-            setTimeout(() => {
-                const titleInput = document.getElementById('note-title');
-                titleInput.focus();
-                titleInput.select();
-            }, 50);
+            setTimeout(() => { document.getElementById('note-title').focus(); document.getElementById('note-title').select(); }, 50);
         }
 
         function selectNote(id) {
             currentNoteId = id;
             const note = notes.find(n => n.id === id);
-
             if (!note) return;
 
-            // Update UI
             document.getElementById('empty-editor').style.display = 'none';
             document.getElementById('editor-wrapper').style.display = 'flex';
-
             document.getElementById('note-title').value = note.title;
             document.getElementById('editor').innerHTML = note.content;
             document.getElementById('html-editor').value = note.content;
             document.getElementById('md-editor').value = htmlToMarkdown(note.content);
+            document.getElementById('note-folder').value = note.folderId || '';
 
-            // Update sidebar selection
-            document.querySelectorAll('.note-item').forEach(item => {
-                item.classList.toggle('active', item.dataset.id === id);
-            });
-
-            // Reset to rich view
+            document.querySelectorAll('.note-item').forEach(item => item.classList.toggle('active', item.dataset.id === id));
             toggleViewMode('rich');
         }
 
         function updateNoteTitle() {
             if (!currentNoteId) return;
-
             const note = notes.find(n => n.id === currentNoteId);
             if (note) {
                 note.title = document.getElementById('note-title').value || 'Untitled Note';
@@ -705,27 +423,32 @@
             }
         }
 
+        function updateNoteFolder() {
+            if (!currentNoteId) return;
+            const note = notes.find(n => n.id === currentNoteId);
+            if (note) {
+                note.folderId = document.getElementById('note-folder').value || null;
+                note.modified = new Date().toISOString();
+                autoSave();
+                renderNotesList();
+                renderFolders();
+            }
+        }
+
         function updateNoteContent() {
             if (!currentNoteId) return;
-
             const note = notes.find(n => n.id === currentNoteId);
             if (note) {
                 note.content = document.getElementById('editor').innerHTML;
                 note.modified = new Date().toISOString();
                 autoSave();
-
-                // Update other editors
                 document.getElementById('html-editor').value = note.content;
                 document.getElementById('md-editor').value = htmlToMarkdown(note.content);
-
-                // Update preview in sidebar
-                updateNotePreview(note);
             }
         }
 
         function updateFromHTML() {
             if (!currentNoteId) return;
-
             const note = notes.find(n => n.id === currentNoteId);
             if (note) {
                 note.content = document.getElementById('html-editor').value;
@@ -733,377 +456,207 @@
                 document.getElementById('editor').innerHTML = note.content;
                 document.getElementById('md-editor').value = htmlToMarkdown(note.content);
                 autoSave();
-                updateNotePreview(note);
             }
         }
 
         function updateFromMarkdown() {
             if (!currentNoteId) return;
-
             const note = notes.find(n => n.id === currentNoteId);
             if (note) {
-                const md = document.getElementById('md-editor').value;
-                note.content = markdownToHtml(md);
+                note.content = markdownToHtml(document.getElementById('md-editor').value);
                 note.modified = new Date().toISOString();
                 document.getElementById('editor').innerHTML = note.content;
                 document.getElementById('html-editor').value = note.content;
                 autoSave();
-                updateNotePreview(note);
             }
         }
 
-        function updateNotePreview(note) {
-            const item = document.querySelector(`.note-item[data-id="${note.id}"]`);
-            if (item) {
-                item.querySelector('.note-item-title').textContent = note.title;
-                item.querySelector('.note-item-preview').textContent = stripHtml(note.content).slice(0, 100);
-            }
-        }
-
-        function deleteNote(id, e) {
-            e.stopPropagation();
+        function deleteCurrentNote() {
+            if (!currentNoteId) return;
             if (!confirm('Delete this note?')) return;
-
-            notes = notes.filter(n => n.id !== id);
-            saveNotes();
+            notes = notes.filter(n => n.id !== currentNoteId);
+            saveData();
             renderNotesList();
+            renderFolders();
             updateNoteCount();
-
-            if (currentNoteId === id) {
-                currentNoteId = null;
-                document.getElementById('empty-editor').style.display = 'flex';
-                document.getElementById('editor-wrapper').style.display = 'none';
-            }
+            currentNoteId = null;
+            document.getElementById('empty-editor').style.display = 'flex';
+            document.getElementById('editor-wrapper').style.display = 'none';
         }
 
-        // === RENDERING ===
         function renderNotesList() {
             const list = document.getElementById('notes-list');
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
 
-            const filtered = notes.filter(note =>
+            let filtered = notes.filter(note =>
                 note.title.toLowerCase().includes(searchTerm) ||
                 stripHtml(note.content).toLowerCase().includes(searchTerm)
             );
+
+            if (currentFolderId === 'uncategorized') {
+                filtered = filtered.filter(n => !n.folderId);
+            } else if (currentFolderId) {
+                filtered = filtered.filter(n => n.folderId === currentFolderId);
+            }
 
             if (filtered.length === 0) {
                 list.innerHTML = '<div class="empty-sidebar">No notes found</div>';
                 return;
             }
 
-            list.innerHTML = filtered.map(note => `
-                <div class="note-item ${note.id === currentNoteId ? 'active' : ''}"
-                     data-id="${note.id}"
-                     onclick="selectNote('${note.id}')">
-                    <div class="note-item-title">${escapeHtml(note.title)}</div>
-                    <div class="note-item-preview">${escapeHtml(stripHtml(note.content).slice(0, 100))}</div>
-                    <div class="note-item-meta">
-                        ${formatDate(note.modified)}
-                        <span style="float: right; cursor: pointer;" onclick="deleteNote('${note.id}', event)">🗑️</span>
+            list.innerHTML = filtered.map(note => {
+                const folder = folders.find(f => f.id === note.folderId);
+                return `
+                    <div class="note-item ${note.id === currentNoteId ? 'active' : ''}" data-id="${note.id}" onclick="selectNote('${note.id}')">
+                        <div class="note-item-title">${escapeHtml(note.title)}</div>
+                        <div class="note-item-preview">${escapeHtml(stripHtml(note.content).slice(0, 80))}</div>
+                        <div class="note-item-meta">
+                            <span>${formatDate(note.modified)}</span>
+                            ${folder ? `<span class="note-item-folder">${escapeHtml(folder.name)}</span>` : ''}
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
-        function filterNotes() {
-            renderNotesList();
-        }
+        function filterNotes() { renderNotesList(); }
+        function updateNoteCount() { document.getElementById('note-count').textContent = `${notes.length} note${notes.length !== 1 ? 's' : ''}`; }
 
-        function updateNoteCount() {
-            document.getElementById('note-count').textContent = `${notes.length} note${notes.length !== 1 ? 's' : ''}`;
-        }
-
-        // === EDITOR COMMANDS ===
-        function execCmd(command, value = null) {
-            document.execCommand(command, false, value);
-            document.getElementById('editor').focus();
-        }
-
-        function formatBlock(tag) {
-            document.execCommand('formatBlock', false, tag);
-            document.getElementById('editor').focus();
-        }
-
-        function insertLink() {
-            const url = prompt('Enter URL:');
-            if (url) {
-                document.execCommand('createLink', false, url);
-            }
-        }
+        // === EDITOR ===
+        function execCmd(cmd, val = null) { document.execCommand(cmd, false, val); document.getElementById('editor').focus(); }
+        function formatBlock(tag) { document.execCommand('formatBlock', false, tag); document.getElementById('editor').focus(); }
+        function insertLink() { const url = prompt('Enter URL:'); if (url) document.execCommand('createLink', false, url); }
 
         function toggleViewMode(mode) {
             currentViewMode = mode;
-
-            const richEditor = document.getElementById('editor');
-            const htmlEditor = document.getElementById('html-editor');
-            const mdEditor = document.getElementById('md-editor');
-
-            richEditor.style.display = mode === 'rich' ? 'block' : 'none';
-            htmlEditor.style.display = mode === 'html' ? 'block' : 'none';
-            mdEditor.style.display = mode === 'markdown' ? 'block' : 'none';
-
+            document.getElementById('editor').style.display = mode === 'rich' ? 'block' : 'none';
+            document.getElementById('html-editor').style.display = mode === 'html' ? 'block' : 'none';
+            document.getElementById('md-editor').style.display = mode === 'markdown' ? 'block' : 'none';
             document.getElementById('view-rich').classList.toggle('active', mode === 'rich');
             document.getElementById('view-html').classList.toggle('active', mode === 'html');
             document.getElementById('view-md').classList.toggle('active', mode === 'markdown');
         }
 
         // === STORAGE ===
-        function saveNotes() {
-            localStorage.setItem('notesOrganizer', JSON.stringify(notes));
-        }
-
+        function saveData() { localStorage.setItem('notesOrganizerData', JSON.stringify({ notes, folders })); }
         let saveTimeout;
-        function autoSave() {
-            clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(() => {
-                saveNotes();
-                showSaveStatus('Auto-saved');
-            }, 1000);
-        }
+        function autoSave() { clearTimeout(saveTimeout); saveTimeout = setTimeout(() => { saveData(); showSaveStatus('Auto-saved'); }, 1000); }
 
-        function loadNotes() {
-            const saved = localStorage.getItem('notesOrganizer');
+        function loadData() {
+            const saved = localStorage.getItem('notesOrganizerData');
             if (saved) {
                 try {
-                    notes = JSON.parse(saved);
-                } catch (e) {
-                    notes = [];
-                }
+                    const data = JSON.parse(saved);
+                    notes = data.notes || [];
+                    folders = data.folders || [];
+                } catch (e) { notes = []; folders = []; }
             }
-
-            // Add sample notes if empty
             if (notes.length === 0) {
-                notes = [
-                    {
-                        id: generateId(),
-                        title: 'Welcome to Notes Organizer',
-                        content: '<h2>Getting Started</h2><p>This is your <strong>notes organizer</strong>. Here are some things you can do:</p><ul><li>Create new notes with the <b>+ New Note</b> button</li><li>Format text using the toolbar</li><li>Switch between <b>Rich Text</b>, <b>HTML</b>, and <b>Markdown</b> views</li><li>Import notes from JSON or HTML</li><li>Export all your notes</li></ul><p>Your notes are <em>automatically saved</em> to your browser.</p>',
-                        created: new Date().toISOString(),
-                        modified: new Date().toISOString()
-                    }
-                ];
+                folders = [{ id: generateId(), name: 'Personal' }, { id: generateId(), name: 'Work' }];
+                notes = [{
+                    id: generateId(), title: 'Welcome to Notes Organizer', folderId: folders[0].id,
+                    content: '<h2>Getting Started</h2><p>Welcome to your <strong>notes organizer</strong>!</p><ul><li>Create and organize notes in <b>folders</b></li><li>Use the <b>toolbar</b> for formatting</li><li>Switch between <b>Rich Text</b>, <b>HTML</b>, and <b>Markdown</b></li><li>Import/Export notes as JSON</li></ul>',
+                    created: new Date().toISOString(), modified: new Date().toISOString()
+                }];
             }
         }
 
-        function showSaveStatus(message) {
-            const status = document.getElementById('save-status');
-            status.textContent = message;
-            status.classList.add('status-saved');
-            setTimeout(() => {
-                status.textContent = '';
-                status.classList.remove('status-saved');
-            }, 2000);
+        function showSaveStatus(msg) {
+            const s = document.getElementById('save-status');
+            s.textContent = msg; s.classList.add('status-saved');
+            setTimeout(() => { s.textContent = ''; s.classList.remove('status-saved'); }, 2000);
         }
 
-        // === IMPORT / EXPORT ===
-        function showImportModal() {
-            document.getElementById('import-modal').classList.add('active');
-            document.getElementById('import-json').value = '';
-            document.getElementById('import-html').value = '';
-            document.getElementById('import-preview').style.display = 'none';
-            document.getElementById('import-btn').style.display = 'none';
-            importedNotes = [];
-        }
-
-        function closeImportModal() {
-            document.getElementById('import-modal').classList.remove('active');
-        }
+        // === IMPORT/EXPORT ===
+        function showImportModal() { document.getElementById('import-modal').classList.add('active'); document.getElementById('import-json').value = ''; document.getElementById('import-html').value = ''; document.getElementById('import-preview').style.display = 'none'; document.getElementById('import-btn').style.display = 'none'; importedNotes = []; }
+        function closeImportModal() { document.getElementById('import-modal').classList.remove('active'); }
 
         function switchImportTab(tab) {
             document.getElementById('tab-json').classList.toggle('active', tab === 'json');
             document.getElementById('tab-html').classList.toggle('active', tab === 'html');
             document.getElementById('import-json').style.display = tab === 'json' ? 'block' : 'none';
             document.getElementById('import-html').style.display = tab === 'html' ? 'block' : 'none';
-            document.getElementById('import-preview').style.display = 'none';
-            document.getElementById('import-btn').style.display = 'none';
         }
 
         function previewImport() {
             const jsonTab = document.getElementById('tab-json').classList.contains('active');
             importedNotes = [];
-
             try {
                 if (jsonTab) {
-                    const json = document.getElementById('import-json').value;
-                    const parsed = JSON.parse(json);
-
-                    if (Array.isArray(parsed)) {
-                        importedNotes = parsed.map(item => ({
-                            id: generateId(),
-                            title: item.title || 'Imported Note',
-                            content: item.content || item.body || item.text || '',
-                            created: item.created || new Date().toISOString(),
-                            modified: new Date().toISOString()
-                        }));
-                    } else if (parsed.title || parsed.content) {
-                        importedNotes = [{
-                            id: generateId(),
-                            title: parsed.title || 'Imported Note',
-                            content: parsed.content || parsed.body || parsed.text || '',
-                            created: parsed.created || new Date().toISOString(),
-                            modified: new Date().toISOString()
-                        }];
-                    }
+                    const parsed = JSON.parse(document.getElementById('import-json').value);
+                    const arr = Array.isArray(parsed) ? parsed : [parsed];
+                    importedNotes = arr.map(item => {
+                        let folderId = null;
+                        if (item.folder) {
+                            let folder = folders.find(f => f.name.toLowerCase() === item.folder.toLowerCase());
+                            if (!folder) { folder = { id: generateId(), name: item.folder }; folders.push(folder); }
+                            folderId = folder.id;
+                        }
+                        return { id: generateId(), title: item.title || 'Imported', content: item.content || '', folderId, created: item.created || new Date().toISOString(), modified: new Date().toISOString() };
+                    });
                 } else {
                     const html = document.getElementById('import-html').value;
-                    importedNotes = parseHtmlNotes(html);
-                }
-
-                if (importedNotes.length > 0) {
-                    showImportPreview();
-                } else {
-                    alert('No notes found in the input.');
-                }
-            } catch (e) {
-                alert('Error parsing input: ' + e.message);
-            }
-        }
-
-        function parseHtmlNotes(html) {
-            const notes = [];
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-
-            // Split by h1 tags or hr tags
-            const h1s = doc.querySelectorAll('h1');
-
-            if (h1s.length > 0) {
-                h1s.forEach((h1, i) => {
-                    const title = h1.textContent;
-                    let content = '';
-
-                    let sibling = h1.nextElementSibling;
-                    while (sibling && sibling.tagName !== 'H1' && sibling.tagName !== 'HR') {
-                        content += sibling.outerHTML;
-                        sibling = sibling.nextElementSibling;
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const h1s = doc.querySelectorAll('h1');
+                    if (h1s.length > 0) {
+                        h1s.forEach(h1 => {
+                            let content = '';
+                            let sib = h1.nextElementSibling;
+                            while (sib && sib.tagName !== 'H1') { content += sib.outerHTML; sib = sib.nextElementSibling; }
+                            importedNotes.push({ id: generateId(), title: h1.textContent, content, folderId: null, created: new Date().toISOString(), modified: new Date().toISOString() });
+                        });
+                    } else {
+                        importedNotes.push({ id: generateId(), title: 'Imported Note', content: html, folderId: null, created: new Date().toISOString(), modified: new Date().toISOString() });
                     }
-
-                    notes.push({
-                        id: generateId(),
-                        title: title,
-                        content: content,
-                        created: new Date().toISOString(),
-                        modified: new Date().toISOString()
-                    });
-                });
-            } else {
-                // Single note
-                notes.push({
-                    id: generateId(),
-                    title: 'Imported Note',
-                    content: html,
-                    created: new Date().toISOString(),
-                    modified: new Date().toISOString()
-                });
-            }
-
-            return notes;
-        }
-
-        function showImportPreview() {
-            const preview = document.getElementById('import-preview');
-            const items = document.getElementById('import-preview-items');
-
-            items.innerHTML = importedNotes.map(note => `
-                <div class="import-preview-item">
-                    <div class="title">${escapeHtml(note.title)}</div>
-                    <div class="preview">${escapeHtml(stripHtml(note.content).slice(0, 100))}...</div>
-                </div>
-            `).join('');
-
-            preview.style.display = 'block';
-            document.getElementById('import-btn').style.display = 'inline-block';
+                }
+                if (importedNotes.length > 0) {
+                    document.getElementById('import-preview-items').innerHTML = importedNotes.map(n => `<div class="import-preview-item"><div class="title">${escapeHtml(n.title)}</div><div class="preview">${escapeHtml(stripHtml(n.content).slice(0, 80))}...</div></div>`).join('');
+                    document.getElementById('import-preview').style.display = 'block';
+                    document.getElementById('import-btn').style.display = 'inline-block';
+                }
+            } catch (e) { alert('Error: ' + e.message); }
         }
 
         function executeImport() {
             notes = [...importedNotes, ...notes];
-            saveNotes();
-            renderNotesList();
-            updateNoteCount();
-            closeImportModal();
-            showSaveStatus(`Imported ${importedNotes.length} note(s)!`);
+            saveData(); renderFolders(); renderNotesList(); updateNoteCount(); updateFolderSelect();
+            closeImportModal(); showSaveStatus(`Imported ${importedNotes.length} note(s)!`);
         }
 
         function exportAllNotes() {
-            const dataStr = JSON.stringify(notes, null, 2);
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `notes-export-${new Date().toISOString().slice(0, 10)}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
+            const exportData = notes.map(n => {
+                const folder = folders.find(f => f.id === n.folderId);
+                return { title: n.title, content: n.content, folder: folder ? folder.name : null, created: n.created, modified: n.modified };
+            });
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.download = `notes-export-${new Date().toISOString().slice(0, 10)}.json`; a.click();
         }
 
         // === UTILITIES ===
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text || '';
-            return div.innerHTML;
-        }
+        function escapeHtml(t) { const d = document.createElement('div'); d.textContent = t || ''; return d.innerHTML; }
+        function stripHtml(h) { const d = document.createElement('div'); d.innerHTML = h; return d.textContent || ''; }
+        function formatDate(iso) { const d = new Date(iso); return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
 
-        function stripHtml(html) {
-            const div = document.createElement('div');
-            div.innerHTML = html;
-            return div.textContent || div.innerText || '';
-        }
-
-        function formatDate(isoString) {
-            const date = new Date(isoString);
-            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        }
-
-        // Simple Markdown to HTML
         function markdownToHtml(md) {
-            let html = md
-                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-                .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-                .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/gim, '<em>$1</em>')
-                .replace(/!\[(.*?)\]\((.*?)\)/gim, '<img alt="$1" src="$2">')
-                .replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2">$1</a>')
-                .replace(/`(.*?)`/gim, '<code>$1</code>')
-                .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
-                .replace(/^\- (.*$)/gim, '<li>$1</li>')
-                .replace(/^\* (.*$)/gim, '<li>$1</li>')
-                .replace(/\n/gim, '<br>');
-
-            // Wrap consecutive <li> in <ul>
-            html = html.replace(/(<li>.*<\/li>)+/g, '<ul>$&</ul>');
-
-            return html;
+            return md.replace(/^### (.*$)/gim, '<h3>$1</h3>').replace(/^## (.*$)/gim, '<h2>$1</h2>').replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>').replace(/\*(.*?)\*/gim, '<em>$1</em>')
+                .replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2">$1</a>').replace(/`(.*?)`/gim, '<code>$1</code>')
+                .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>').replace(/^\- (.*$)/gim, '<li>$1</li>').replace(/\n/gim, '<br>');
         }
 
-        // Simple HTML to Markdown
         function htmlToMarkdown(html) {
-            let md = html
-                .replace(/<h1>(.*?)<\/h1>/gi, '# $1\n')
-                .replace(/<h2>(.*?)<\/h2>/gi, '## $1\n')
-                .replace(/<h3>(.*?)<\/h3>/gi, '### $1\n')
-                .replace(/<strong>(.*?)<\/strong>/gi, '**$1**')
-                .replace(/<b>(.*?)<\/b>/gi, '**$1**')
-                .replace(/<em>(.*?)<\/em>/gi, '*$1*')
-                .replace(/<i>(.*?)<\/i>/gi, '*$1*')
-                .replace(/<a href="(.*?)">(.*?)<\/a>/gi, '[$2]($1)')
-                .replace(/<code>(.*?)<\/code>/gi, '`$1`')
-                .replace(/<blockquote>(.*?)<\/blockquote>/gi, '> $1\n')
-                .replace(/<li>(.*?)<\/li>/gi, '- $1\n')
-                .replace(/<br\s*\/?>/gi, '\n')
-                .replace(/<p>(.*?)<\/p>/gi, '$1\n\n')
-                .replace(/<[^>]+>/g, '');
-
-            return md.trim();
+            return html.replace(/<h1>(.*?)<\/h1>/gi, '# $1\n').replace(/<h2>(.*?)<\/h2>/gi, '## $1\n').replace(/<h3>(.*?)<\/h3>/gi, '### $1\n')
+                .replace(/<strong>(.*?)<\/strong>/gi, '**$1**').replace(/<b>(.*?)<\/b>/gi, '**$1**')
+                .replace(/<em>(.*?)<\/em>/gi, '*$1*').replace(/<i>(.*?)<\/i>/gi, '*$1*')
+                .replace(/<a href="(.*?)">(.*?)<\/a>/gi, '[$2]($1)').replace(/<code>(.*?)<\/code>/gi, '`$1`')
+                .replace(/<li>(.*?)<\/li>/gi, '- $1\n').replace(/<br\s*\/?>/gi, '\n').replace(/<p>(.*?)<\/p>/gi, '$1\n\n').replace(/<[^>]+>/g, '').trim();
         }
 
-        // Close modal on outside click
-        document.getElementById('import-modal').addEventListener('click', (e) => {
-            if (e.target.id === 'import-modal') {
-                closeImportModal();
-            }
-        });
+        document.getElementById('import-modal').addEventListener('click', e => { if (e.target.id === 'import-modal') closeImportModal(); });
+        document.getElementById('folder-modal').addEventListener('click', e => { if (e.target.id === 'folder-modal') closeFolderModal(); });
 
-        // Initialize
         init();
     </script>
 </body>
