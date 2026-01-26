@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Academic Schedule Planner</title>
+    <!-- Tesseract.js for OCR -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <!-- PDF.js for PDF rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -60,6 +64,14 @@
 
         .toolbar button.danger:hover {
             background: #5a3d3d;
+        }
+
+        .toolbar button.ocr-btn {
+            background: #4a3d6e;
+        }
+
+        .toolbar button.ocr-btn:hover {
+            background: #5a4d7e;
         }
 
         .save-status {
@@ -208,7 +220,7 @@
             user-select: none;
         }
 
-        /* Modal for export/import */
+        /* Modal styles */
         .modal {
             display: none;
             position: fixed;
@@ -230,8 +242,10 @@
             background: #252525;
             padding: 25px;
             border-radius: 8px;
-            max-width: 500px;
+            max-width: 600px;
             width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .modal-content h2 {
@@ -276,6 +290,146 @@
             background: #2d4a3e;
             color: #fff;
         }
+
+        /* OCR Upload styles */
+        .upload-area {
+            border: 2px dashed #444;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 15px;
+        }
+
+        .upload-area:hover {
+            border-color: #6a5d8e;
+            background: rgba(106, 93, 142, 0.1);
+        }
+
+        .upload-area.dragover {
+            border-color: #8a7dae;
+            background: rgba(106, 93, 142, 0.2);
+        }
+
+        .upload-area input {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .upload-hint {
+            color: #555;
+            font-size: 0.85em;
+        }
+
+        .ocr-note {
+            background: #2a3a4a;
+            border-left: 3px solid #4a6a8a;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            font-size: 0.85em;
+            color: #aaa;
+        }
+
+        .ocr-note strong {
+            color: #8ab;
+        }
+
+        .progress-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4a3d6e, #6a5d8e);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            color: #888;
+            font-size: 0.85em;
+            text-align: center;
+        }
+
+        .ocr-preview {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .ocr-preview.active {
+            display: block;
+        }
+
+        .ocr-preview h3 {
+            color: #fff;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+
+        .ocr-preview-content {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.8em;
+            white-space: pre-wrap;
+            color: #aaa;
+        }
+
+        .extracted-items {
+            margin-top: 15px;
+        }
+
+        .extracted-item {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .extracted-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+
+        .extracted-item-text {
+            flex: 1;
+            font-size: 0.85em;
+        }
+
+        .extracted-item-field {
+            color: #888;
+        }
     </style>
 </head>
 <body>
@@ -285,6 +439,7 @@
         <div class="toolbar">
             <button onclick="addRow()">+ Add Assignment</button>
             <button onclick="addMultipleRows()">+ Add 5 Rows</button>
+            <button class="ocr-btn" onclick="showOCRModal()">📷 Scan Document</button>
             <button onclick="saveData()">💾 Save</button>
             <button onclick="exportData()">📤 Export</button>
             <button onclick="showImportModal()">📥 Import</button>
@@ -311,7 +466,7 @@
         </div>
 
         <p class="credit">
-            Template created by Taylor U freshman Charles Harrell Johnson, III
+            Template created by Taylor University student Charles Harrell Johnson III
         </p>
     </div>
 
@@ -327,9 +482,52 @@
         </div>
     </div>
 
+    <!-- OCR Modal -->
+    <div class="modal" id="ocr-modal">
+        <div class="modal-content">
+            <h2>📷 Scan Document (OCR)</h2>
+
+            <div class="ocr-note">
+                <strong>💡 Tip:</strong> This feature works best for uploading class syllabi or assignment schedules.
+                Upload a PDF or image file and the system will attempt to extract assignment information.
+                You can review and select which items to add.
+            </div>
+
+            <div class="upload-area" id="upload-area">
+                <input type="file" id="file-input" accept="image/*,.pdf" onchange="handleFileSelect(event)">
+                <div class="upload-icon">📄</div>
+                <div class="upload-text">Click to upload or drag & drop</div>
+                <div class="upload-hint">Supports: PDF, PNG, JPG, JPEG</div>
+            </div>
+
+            <div class="progress-container" id="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="progress-text" id="progress-text">Initializing OCR...</div>
+            </div>
+
+            <div class="ocr-preview" id="ocr-preview">
+                <h3>Extracted Text:</h3>
+                <div class="ocr-preview-content" id="ocr-text"></div>
+
+                <div class="extracted-items" id="extracted-items"></div>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="cancel" onclick="closeOCRModal()">Cancel</button>
+                <button class="confirm" id="add-extracted-btn" onclick="addExtractedItems()" style="display: none;">Add Selected</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Set PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+
         // Data storage
         let assignments = [];
+        let extractedItems = [];
 
         // Generate unique ID
         function generateId() {
@@ -461,7 +659,6 @@
 
             if (event.key === 'Enter') {
                 event.preventDefault();
-                // Move to next row, same column (or create new row)
                 if (rowIndex === assignments.length - 1) {
                     addRow();
                 }
@@ -473,7 +670,6 @@
                     }
                 }, 10);
             } else if (event.key === 'Tab' && !event.shiftKey && colIndex === totalCols - 1) {
-                // Tab from last column - go to next row first column
                 if (rowIndex === assignments.length - 1) {
                     event.preventDefault();
                     addRow();
@@ -625,10 +821,252 @@
             }
         }
 
-        // Close modal on outside click
+        // === OCR FUNCTIONALITY ===
+
+        // Show OCR modal
+        function showOCRModal() {
+            document.getElementById('ocr-modal').classList.add('active');
+            resetOCRModal();
+        }
+
+        // Close OCR modal
+        function closeOCRModal() {
+            document.getElementById('ocr-modal').classList.remove('active');
+            resetOCRModal();
+        }
+
+        // Reset OCR modal
+        function resetOCRModal() {
+            document.getElementById('progress-container').classList.remove('active');
+            document.getElementById('ocr-preview').classList.remove('active');
+            document.getElementById('add-extracted-btn').style.display = 'none';
+            document.getElementById('file-input').value = '';
+            document.getElementById('ocr-text').textContent = '';
+            document.getElementById('extracted-items').innerHTML = '';
+            extractedItems = [];
+        }
+
+        // Handle file selection
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                processFile(file);
+            }
+        }
+
+        // Setup drag and drop
+        const uploadArea = document.getElementById('upload-area');
+
+        uploadArea.addEventListener('click', () => {
+            document.getElementById('file-input').click();
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                processFile(file);
+            }
+        });
+
+        // Process uploaded file
+        async function processFile(file) {
+            const progressContainer = document.getElementById('progress-container');
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+
+            progressContainer.classList.add('active');
+            progressFill.style.width = '0%';
+            progressText.textContent = 'Loading file...';
+
+            try {
+                let imageData;
+
+                if (file.type === 'application/pdf') {
+                    // Handle PDF
+                    progressText.textContent = 'Converting PDF to image...';
+                    imageData = await pdfToImage(file);
+                    progressFill.style.width = '30%';
+                } else if (file.type.startsWith('image/')) {
+                    // Handle image
+                    imageData = await fileToDataURL(file);
+                    progressFill.style.width = '30%';
+                } else {
+                    throw new Error('Unsupported file type');
+                }
+
+                // Run OCR
+                progressText.textContent = 'Running OCR (this may take a moment)...';
+
+                const result = await Tesseract.recognize(imageData, 'eng', {
+                    logger: m => {
+                        if (m.status === 'recognizing text') {
+                            const progress = 30 + (m.progress * 60);
+                            progressFill.style.width = progress + '%';
+                            progressText.textContent = `Recognizing text... ${Math.round(m.progress * 100)}%`;
+                        }
+                    }
+                });
+
+                progressFill.style.width = '100%';
+                progressText.textContent = 'Processing complete!';
+
+                // Display results
+                displayOCRResults(result.data.text);
+
+            } catch (error) {
+                console.error('OCR Error:', error);
+                progressText.textContent = 'Error: ' + error.message;
+                progressFill.style.width = '0%';
+            }
+        }
+
+        // Convert PDF to image
+        async function pdfToImage(file) {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+            const page = await pdf.getPage(1); // Get first page
+
+            const scale = 2; // Higher scale = better OCR
+            const viewport = page.getViewport({ scale });
+
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+
+            await page.render({
+                canvasContext: context,
+                viewport: viewport
+            }).promise;
+
+            return canvas.toDataURL('image/png');
+        }
+
+        // Convert file to data URL
+        function fileToDataURL(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Display OCR results
+        function displayOCRResults(text) {
+            const preview = document.getElementById('ocr-preview');
+            const ocrText = document.getElementById('ocr-text');
+            const extractedItemsEl = document.getElementById('extracted-items');
+            const addBtn = document.getElementById('add-extracted-btn');
+
+            ocrText.textContent = text;
+            preview.classList.add('active');
+
+            // Try to extract assignment-like items
+            extractedItems = extractAssignments(text);
+
+            if (extractedItems.length > 0) {
+                extractedItemsEl.innerHTML = `
+                    <h3 style="color: #fff; margin-bottom: 10px; font-size: 0.95em;">
+                        Detected Items (${extractedItems.length}):
+                    </h3>
+                    ${extractedItems.map((item, index) => `
+                        <div class="extracted-item">
+                            <input type="checkbox" id="extract-${index}" checked>
+                            <div class="extracted-item-text">
+                                <div>${escapeHtml(item.text)}</div>
+                                ${item.date ? `<div class="extracted-item-field">Date: ${item.date}</div>` : ''}
+                            </div>
+                        </div>
+                    `).join('')}
+                `;
+                addBtn.style.display = 'inline-block';
+            } else {
+                extractedItemsEl.innerHTML = `
+                    <p style="color: #666; font-size: 0.85em; margin-top: 10px;">
+                        No assignment patterns detected. You can still copy text manually from above.
+                    </p>
+                `;
+            }
+        }
+
+        // Extract assignments from text
+        function extractAssignments(text) {
+            const items = [];
+            const lines = text.split('\n').filter(line => line.trim());
+
+            // Date patterns
+            const datePattern = /(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4})|((Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2})/gi;
+
+            // Assignment keywords
+            const assignmentKeywords = /\b(assignment|homework|hw|quiz|exam|test|paper|essay|project|lab|report|reading|chapter|due|submit|presentation)\b/i;
+
+            for (const line of lines) {
+                const trimmed = line.trim();
+                if (trimmed.length < 5) continue;
+
+                // Check if line looks like an assignment
+                const hasKeyword = assignmentKeywords.test(trimmed);
+                const dateMatch = trimmed.match(datePattern);
+
+                if (hasKeyword || dateMatch) {
+                    items.push({
+                        text: trimmed,
+                        date: dateMatch ? dateMatch[0] : null,
+                        original: line
+                    });
+                }
+            }
+
+            return items;
+        }
+
+        // Add extracted items to table
+        function addExtractedItems() {
+            const added = [];
+
+            extractedItems.forEach((item, index) => {
+                const checkbox = document.getElementById(`extract-${index}`);
+                if (checkbox && checkbox.checked) {
+                    const newAssignment = createAssignment();
+                    newAssignment.assignment = item.text;
+                    if (item.date) {
+                        newAssignment.dueDate = item.date;
+                    }
+                    assignments.push(newAssignment);
+                    added.push(item);
+                }
+            });
+
+            if (added.length > 0) {
+                renderTable();
+                autoSave();
+                closeOCRModal();
+                showSaveStatus(`Added ${added.length} item(s)!`);
+            }
+        }
+
+        // Close modals on outside click
         document.getElementById('import-modal').addEventListener('click', (e) => {
             if (e.target.id === 'import-modal') {
                 closeImportModal();
+            }
+        });
+
+        document.getElementById('ocr-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'ocr-modal') {
+                closeOCRModal();
             }
         });
 
