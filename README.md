@@ -18,6 +18,13 @@ Fun-Innovation/
 |   |   |-- verse_engine.py
 |   |-- DELETEME.md
 |-- Roblox Innovations/
+|   |-- Academic Planner Study Hub/
+|   |-- Ecosystem Survival/
+|   |-- Flow Field Obby/
+|   |-- Generative Music Rooms/
+|   |-- Living Story RPG/
+|   |-- Notes Organizer Bulletin Board/
+|   |-- Verse Engine Skywriting/
 |   |-- FUNME.md
 |-- README.md
 ```
@@ -32,7 +39,7 @@ See [`INVALID_REQUEST/DELETEME.md`](./INVALID_REQUEST/DELETEME.md) for the full 
 
 ### [Roblox Innovations](./Roblox%20Innovations/)
 
-Design concepts for bringing every INVALID_REQUEST project into Roblox Studio. Not ports -- reimaginings that take advantage of 3D space, physics, and multiplayer. The ecosystem becomes a survival game you're inside of. The flow field becomes a moving obby. The music generator becomes rooms that react to player movement. All buildable with stock Studio and Luau.
+Design concepts for bringing every INVALID_REQUEST project into Roblox Studio. Not ports -- reimaginings that take advantage of 3D space, physics, and multiplayer. Each of the seven concepts has its own subdirectory for Roblox Studio files as development progresses. All buildable with stock Studio and Luau.
 
 See [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md) for detailed implementation breakdowns.
 
@@ -58,7 +65,7 @@ python3 "INVALID_REQUEST/Python Files/verse_engine.py"
 ```
 
 **Roblox projects:**
-Implementation concepts are documented in `Roblox Innovations/FUNME.md`. No Roblox files yet -- those will land here when we build them.
+Implementation concepts are documented in `Roblox Innovations/FUNME.md`. Each concept has its own subdirectory under `Roblox Innovations/` ready for Studio files.
 
 ---
 
