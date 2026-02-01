@@ -6,16 +6,17 @@ A collection of generative and interactive experiments, built collaboratively.
 
 ```
 Fun-Innovation/
-├── HTML Files/
-│   ├── academic-planner.html
-│   ├── ecosystem.html
-│   ├── flowfield.html
-│   ├── generative-music.html
-│   └── notes-organizer.html
-├── Python Files/
-│   ├── living_story.py
-│   └── verse_engine.py
-└── README.md
+|-- INVALID_REQUEST/
+|   |-- HTML Files/
+|   |   |-- academic-planner.html
+|   |   |-- ecosystem.html
+|   |   |-- flowfield.html
+|   |   |-- generative-music.html
+|   |   |-- notes-organizer.html
+|   |-- Python Files/
+|   |   |-- living_story.py
+|   |   |-- verse_engine.py
+|   |-- DELETE ME.md
 ```
 
 ## What's Here
@@ -24,18 +25,18 @@ Fun-Innovation/
 
 | Project | Run | Description |
 |---------|-----|-------------|
-| `HTML Files/ecosystem.html` | Open in browser | Emergent life simulation - plants, herbivores, predators with simple rules creating complex behavior |
-| `HTML Files/flowfield.html` | Open in browser | Perlin noise flow field - thousands of particles creating organic visual patterns |
-| `HTML Files/generative-music.html` | Open in browser | Algorithmic music synthesizer - endless, never-repeating compositions |
-| `HTML Files/academic-planner.html` | Open in browser | Dynamic academic schedule planner with OCR document scanning for syllabi |
-| `HTML Files/notes-organizer.html` | Open in browser | Rich text notes app with folders, markdown/HTML editing, and import/export |
+| `INVALID_REQUEST/HTML Files/ecosystem.html` | Open in browser | Emergent life simulation - plants, herbivores, predators with simple rules creating complex behavior |
+| `INVALID_REQUEST/HTML Files/flowfield.html` | Open in browser | Perlin noise flow field - thousands of particles creating organic visual patterns |
+| `INVALID_REQUEST/HTML Files/generative-music.html` | Open in browser | Algorithmic music synthesizer - endless, never-repeating compositions |
+| `INVALID_REQUEST/HTML Files/academic-planner.html` | Open in browser | Dynamic academic schedule planner with OCR document scanning for syllabi |
+| `INVALID_REQUEST/HTML Files/notes-organizer.html` | Open in browser | Rich text notes app with folders, markdown/HTML editing, and import/export |
 
 ### Python Files
 
 | Project | Run | Description |
 |---------|-----|-------------|
-| `Python Files/living_story.py` | `python3 "Python Files/living_story.py"` | Interactive fiction that tracks your personality and remembers who you've been |
-| `Python Files/verse_engine.py` | `python3 "Python Files/verse_engine.py"` | Poetry generator with five distinct voices and multiple forms |
+| `INVALID_REQUEST/Python Files/living_story.py` | `python3 "INVALID_REQUEST/Python Files/living_story.py"` | Interactive fiction that tracks your personality and remembers who you've been |
+| `INVALID_REQUEST/Python Files/verse_engine.py` | `python3 "INVALID_REQUEST/Python Files/verse_engine.py"` | Poetry generator with five distinct voices and multiple forms |
 
 ## The Session
 
@@ -59,13 +60,13 @@ That's what collaboration looks like. Not "use the AI as a tool" but "work with 
 
 ## Running the Projects
 
-**Browser projects:** Open any HTML file from the `HTML Files/` directory. No dependencies, no build step.
+**Browser projects:** Open any HTML file from the `INVALID_REQUEST/HTML Files/` directory. No dependencies, no build step.
 
 **Python projects:** Require Python 3.6+. No external packages needed. Run from the repo root:
 
 ```bash
-python3 "Python Files/living_story.py"    # Interactive fiction
-python3 "Python Files/verse_engine.py"    # Poetry generator
+python3 "INVALID_REQUEST/Python Files/living_story.py"    # Interactive fiction
+python3 "INVALID_REQUEST/Python Files/verse_engine.py"    # Poetry generator
 ```
 
 ## Notes
