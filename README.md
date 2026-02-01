@@ -8,7 +8,14 @@ A growing collection of collaborative projects between human and AI -- organized
 Fun-Innovation/
 |-- INVALID_REQUEST/
 |   |-- HTML Files/
+|   |   |-- academic-planner.html
+|   |   |-- ecosystem.html
+|   |   |-- flowfield.html
+|   |   |-- generative-music.html
+|   |   |-- notes-organizer.html
 |   |-- Python Files/
+|   |   |-- living_story.py
+|   |   |-- verse_engine.py
 |   |-- DELETEME.md
 |-- Roblox Innovations/
 |   |-- FUNME.md
