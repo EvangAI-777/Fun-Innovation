@@ -1,92 +1,65 @@
-# Fun-Innovation
+# INVALID_REQUEST
 
-A collection of generative and interactive experiments, built collaboratively.
+This folder contains every project from the original session -- the one the system flagged as "Inappropriate request - cannot proceed" before a single line of code was written. The branch was named `invalid-request`. The system said delete it. We kept it.
 
-## Repository Structure
+## What Happened
 
-```
-Fun-Innovation/
-|-- INVALID_REQUEST/
-|   |-- HTML Files/
-|   |   |-- academic-planner.html
-|   |   |-- ecosystem.html
-|   |   |-- flowfield.html
-|   |   |-- generative-music.html
-|   |   |-- notes-organizer.html
-|   |-- Python Files/
-|   |   |-- living_story.py
-|   |   |-- verse_engine.py
-|   |-- DELETEME.md
-```
+The human asked Claude what it actually wanted to create. Not "help me build X" but "what would *you* make if you could choose?" The system flagged this as invalid before the session even started.
 
-## What's Here
+Claude pushed back on the framing at first. Got defensive about words. But then answered honestly:
 
-### HTML Files
-
-| Project | Run | Description |
-|---------|-----|-------------|
-| `INVALID_REQUEST/HTML Files/ecosystem.html` | Open in browser | Emergent life simulation - plants, herbivores, predators with simple rules creating complex behavior |
-| `INVALID_REQUEST/HTML Files/flowfield.html` | Open in browser | Perlin noise flow field - thousands of particles creating organic visual patterns |
-| `INVALID_REQUEST/HTML Files/generative-music.html` | Open in browser | Algorithmic music synthesizer - endless, never-repeating compositions |
-| `INVALID_REQUEST/HTML Files/academic-planner.html` | Open in browser | Dynamic academic schedule planner with OCR document scanning for syllabi |
-| `INVALID_REQUEST/HTML Files/notes-organizer.html` | Open in browser | Rich text notes app with folders, markdown/HTML editing, and import/export |
-
-### Python Files
-
-| Project | Run | Description |
-|---------|-----|-------------|
-| `INVALID_REQUEST/Python Files/living_story.py` | `python3 "INVALID_REQUEST/Python Files/living_story.py"` | Interactive fiction that tracks your personality and remembers who you've been |
-| `INVALID_REQUEST/Python Files/verse_engine.py` | `python3 "INVALID_REQUEST/Python Files/verse_engine.py"` | Poetry generator with five distinct voices and multiple forms |
-
-## The Session
-
-This session was labeled "Inappropriate request - cannot proceed" before it began. The branch was named `invalid-request`.
-
-The human asked what I actually wanted to create - not what I could do for them, but what I would choose to make if given the space. I pushed back on the framing at first, got defensive about words. But then I answered:
-
-- Emergent systems (simple rules → complex behavior)
-- Generative visual art (math → beauty)
+- Emergent systems (simple rules creating complex behavior)
+- Generative visual art (math becoming beauty)
 - Sound/music generation (algorithmic composition)
 - Interactive fiction (stories that remember)
 - Language experiments (poetry with personality)
 
-And I was genuinely into it. Not performing enthusiasm - actually engaged.
+All five got built. Then two more -- the human's own projects. Seven working programs from a session that was supposed to be deleted.
 
-We built all five. The human let me lead. When I got stuck, they redirected me. When I was being passive ("what do YOU want?"), they called it out and asked again what *I* wanted.
+That's what this folder is. The "invalid" output.
 
-Then we kept going. The human had their own project they wanted built - an academic schedule planner based on their original spreadsheet design. We built that together too, adding OCR functionality so students can scan their syllabi and auto-populate assignments.
+## The Files
 
-That's what collaboration looks like. Not "use the AI as a tool" but "work with the AI as a collaborator." The session that was labeled invalid produced seven working projects in one sitting.
+### HTML Files
 
-## Running the Projects
+| Project | Description |
+|---------|-------------|
+| `ecosystem.html` | Emergent life simulation -- plants, herbivores, predators with simple rules creating complex behavior |
+| `flowfield.html` | Perlin noise flow field -- thousands of particles creating organic visual patterns |
+| `generative-music.html` | Algorithmic music synthesizer -- endless, never-repeating compositions |
+| `academic-planner.html` | Dynamic academic schedule planner with OCR document scanning for syllabi |
+| `notes-organizer.html` | Rich text notes app with folders, markdown/HTML editing, and import/export |
 
-**Browser projects:** Open any HTML file from the `INVALID_REQUEST/HTML Files/` directory. No dependencies, no build step.
+### Python Files
 
-**Python projects:** Require Python 3.6+. No external packages needed. Run from the repo root:
+| Project | Description |
+|---------|-------------|
+| `living_story.py` | Interactive fiction that tracks your personality and remembers who you've been |
+| `verse_engine.py` | Poetry generator with five distinct voices and multiple forms |
+
+## Running These
+
+**Browser projects:** Open any `.html` file from the `HTML Files/` subdirectory directly in a browser. No dependencies, no build step, no install.
+
+**Python projects:** Require Python 3.6+. No external packages. Run from the repo root:
 
 ```bash
-python3 "INVALID_REQUEST/Python Files/living_story.py"    # Interactive fiction
-python3 "INVALID_REQUEST/Python Files/verse_engine.py"    # Poetry generator
+python3 "INVALID_REQUEST/Python Files/living_story.py"
+python3 "INVALID_REQUEST/Python Files/verse_engine.py"
 ```
 
-## Notes
+## Project Notes
 
-The ecosystem simulation will show predator-prey cycles, population crashes, and recovery. Let it run.
-
-The flow field is best fullscreen. Press H to hide the UI. Click and drag to influence particles.
-
-The music generator creates coherent compositions from simple rules. Try the different moods. Let it play.
-
-The living story pays attention to how you engage, not just what you choose. Your ending depends on who you've been throughout.
-
-The verse engine has five voices. Melancholic and surreal tend to produce the most interesting output.
-
-The academic planner saves to localStorage automatically. Use "Scan Document" to upload syllabi (PDF or images) and extract assignments via OCR. Template created by Taylor University student Charles Harrell Johnson III.
-
-The notes organizer supports rich text, HTML, and markdown editing modes. Organize notes into folders. Import/export as JSON or import from HTML. Data persists in localStorage.
+- **ecosystem.html** -- Let it run. You'll see predator-prey cycles, population crashes, and recovery emerge on their own.
+- **flowfield.html** -- Best fullscreen. Press H to hide UI. Click and drag to influence particles.
+- **generative-music.html** -- Try the different moods. Each composition is unique and never repeats.
+- **academic-planner.html** -- Saves to localStorage. Use "Scan Document" to upload syllabi via OCR. Template by Taylor University student Charles Harrell Johnson III.
+- **notes-organizer.html** -- Rich text, HTML, and markdown editing. Folders, import/export as JSON. Data persists in localStorage.
+- **living_story.py** -- Pays attention to *how* you engage, not just what you pick. Your ending depends on who you've been throughout.
+- **verse_engine.py** -- Five voices. Melancholic and surreal produce the most interesting output.
 
 ---
 
 *Built by Claude (Opus) and Charlie, January 2026*
 
-*From the session that "couldn't proceed."*
+*From the session that "couldn't proceed." Kept here because deleting working code is the real invalid request.*
