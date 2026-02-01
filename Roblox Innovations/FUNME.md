@@ -1,20 +1,20 @@
 # Roblox Innovations
 
-Design concepts for bringing every INVALID_REQUEST project into Roblox Studio. Not ports -- reimaginings that take advantage of 3D space, physics, and multiplayer. All buildable with stock Studio and Luau. No plugins, no external APIs, no HTTP calls.
+Design concepts for bringing every INVALID_REQUEST project into Roblox Studio. Not ports -- reimaginings that take advantage of 3D space, physics, and multiplayer. All buildable with stock Studio and Luau. No plugins, no external APIs, no outbound HTTP requests. (Two projects use `HttpService` internally for JSON serialization -- no network calls are made.)
 
 Each concept has its own subdirectory for Roblox Studio files as development progresses.
 
 ## Concepts
 
-| Concept | Directory | Source | Status |
-|---------|-----------|--------|--------|
-| Flow Field Obby | `Flow Field Obby/` | `flowfield.html` | Built |
-| Verse Engine Skywriting | `Verse Engine Skywriting/` | `verse_engine.py` | Built |
-| Ecosystem Survival | `Ecosystem Survival/` | `ecosystem.html` | Built |
-| Generative Music Rooms | `Generative Music Rooms/` | `generative-music.html` | Built |
-| Living Story RPG | `Living Story RPG/` | `living_story.py` | Built |
-| Academic Planner Study Hub | `Academic Planner Study Hub/` | `academic-planner.html` | Built |
-| Notes Organizer Bulletin Board | `Notes Organizer Bulletin Board/` | `notes-organizer.html` | Built |
+| Concept | Directory | Source | Version | Status |
+|---------|-----------|--------|---------|--------|
+| Flow Field Obby | `Flow Field Obby/` | `flowfield.html` | 1.0.1 | Built |
+| Verse Engine Skywriting | `Verse Engine Skywriting/` | `verse_engine.py` | 1.0.1 | Built |
+| Ecosystem Survival | `Ecosystem Survival/` | `ecosystem.html` | 1.0.1 | Built |
+| Generative Music Rooms | `Generative Music Rooms/` | `generative-music.html` | 1.0.1 | Built |
+| Living Story RPG | `Living Story RPG/` | `living_story.py` | 1.0.1 | Built |
+| Academic Planner Study Hub | `Academic Planner Study Hub/` | `academic-planner.html` | 1.0.1 | Built |
+| Notes Organizer Bulletin Board | `Notes Organizer Bulletin Board/` | `notes-organizer.html` | 1.0.1 | Built |
 
 ## Implementation Details
 
@@ -116,14 +116,34 @@ Write a note, it becomes a framed object you can place on walls, tables, or floa
 
 See [`Notes Organizer Bulletin Board/SETUP.md`](./Notes%20Organizer%20Bulletin%20Board/SETUP.md) for full setup instructions.
 
-## API Audit (February 2026)
+## API Audit and Claim Verification (February 2026)
 
-All 28 Luau files were scanned against the current Roblox Studio API surface. Two changes were applied across the board:
+All 28 Luau files were scanned against the current Roblox Studio API surface and all claims in SETUP.md files were verified against the actual code.
+
+### Code changes
 
 - **Font enum update** -- `Enum.Font.Gotham` and `Enum.Font.GothamBold` replaced with `Enum.Font.BuilderSans` and `Enum.Font.BuilderSansBold` across 13 files. The old names still work (Roblox aliases them) but the canonical names are now BuilderSans/BuilderSansBold.
 - **Service access pattern** -- Two files used `game.ReplicatedStorage` direct property access instead of `game:GetService("ReplicatedStorage")`. Corrected to the canonical `:GetService()` pattern.
+- **Unused import removed** -- `StoryServer.luau` imported `HttpService` but never used it. Removed.
 
-No other deprecated APIs were found. The codebase uses `task.spawn` / `task.wait` / `task.delay` throughout (no legacy `spawn()` / `wait()` / `delay()`), uses `workspace:Raycast` (no legacy `FindPartOnRay`), and avoids `Instance.new` with the deprecated second parent argument.
+### Claim verification results
+
+| Claim | Result | Notes |
+|-------|--------|-------|
+| No outbound HTTP requests | Verified | `HttpService` is used in Academic Planner and Notes Organizer for `JSONEncode`/`JSONDecode` only (DataStore serialization). No `GetAsync`, `PostAsync`, or network calls anywhere. |
+| No plugins | Verified | Zero plugin references across all 28 files |
+| No external APIs | Verified | All `require()` calls reference internal modules via `ReplicatedStorage` or `ServerStorage` |
+| No external assets | Verified | Only placeholder empty strings in `MusicConfig.SoundAssets` |
+| DataStore usage accurate | Verified | Flow Field Obby, Verse Engine, Ecosystem, and Music Rooms use no DataStore. Academic Planner, Notes Organizer, and Living Story RPG use DataStore as documented. |
+| Script types match SETUP.md | Verified | All 7 projects: 2 ModuleScript + 1 Script + 1 LocalScript, placed as documented |
+| No deprecated APIs | Verified | `task.*` used throughout, no legacy `spawn`/`wait`/`delay`, no `FindPartOnRay`, no `Instance.new` with parent arg |
+
+### Versioning
+
+All projects now carry semantic version numbers in their SETUP.md files:
+
+- **1.0.0** -- Initial build
+- **1.0.1** -- API audit: font enums, service access, unused import, claim verification
 
 ## Notes
 

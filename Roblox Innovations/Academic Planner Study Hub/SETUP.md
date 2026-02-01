@@ -1,5 +1,7 @@
 # Academic Planner Study Hub -- Studio Setup
 
+**Version 1.0.1** -- API audit: font enums updated to BuilderSans/BuilderSansBold
+
 ## Overview
 
 A virtual campus where every player gets a dorm room with a desk. Assignments appear as color-coded sticky notes on the desk surface -- green for upcoming, yellow for due soon, red for overdue, gray for completed. A shared library displays who's studying what on a central whiteboard. Study rooms have group timers for focused sessions. Paste syllabus text into a text box and the system parses it into assignments automatically.
@@ -111,4 +113,4 @@ Key values in `PlannerConfig.luau`:
 
 ## No Dependencies
 
-Everything is self-contained. DataStore is the only Roblox service that requires API Services enabled. No plugins, no HTTP calls, no external assets.
+Everything is self-contained. DataStore is the only Roblox service that requires API Services enabled. `HttpService` is used solely for `JSONEncode`/`JSONDecode` (DataStore serialization) -- no network requests are made. No plugins, no external assets.

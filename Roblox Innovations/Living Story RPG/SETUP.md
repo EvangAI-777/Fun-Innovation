@@ -1,4 +1,6 @@
-# Living Story RPG — Roblox Studio Setup
+# Living Story RPG -- Studio Setup
+
+**Version 1.0.1** -- API audit: font enums updated to BuilderSans/BuilderSansBold, service access normalized to GetService, unused HttpService import removed
 
 A persistent multiplayer town where NPCs remember you. Your choices accumulate into a personality tracked across sessions via DataStore. The town's mood — its lighting, atmosphere, and NPC greetings — shifts based on the collective personality of everyone who visits. Same map, different feel every server.
 

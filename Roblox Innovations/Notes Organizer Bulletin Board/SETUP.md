@@ -1,5 +1,7 @@
 # Notes Organizer Bulletin Board -- Studio Setup
 
+**Version 1.0.1** -- API audit: font enums updated to BuilderSans/BuilderSansBold
+
 ## Overview
 
 A shared creative space where notes are physical objects. Write a note, click a wall or surface to place it, and it becomes a framed sign anyone can read. Folders become rooms -- separate 3D spaces with themed accent colors and door signs. Notes persist across sessions via DataStore. Other players can read your public notes; private notes appear faded to others.
@@ -92,4 +94,4 @@ Key values in `BulletinConfig.luau`:
 
 ## No Dependencies
 
-Everything is self-contained. DataStore is the only Roblox service that requires API Services enabled. No plugins, no HTTP calls, no external assets.
+Everything is self-contained. DataStore is the only Roblox service that requires API Services enabled. `HttpService` is used solely for `JSONEncode`/`JSONDecode` (DataStore serialization) -- no network requests are made. No plugins, no external assets.

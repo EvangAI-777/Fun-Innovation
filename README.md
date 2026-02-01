@@ -76,7 +76,7 @@ See [`INVALID_REQUEST/DELETEME.md`](./INVALID_REQUEST/DELETEME.md) for the full 
 
 ### [Roblox Innovations](./Roblox%20Innovations/)
 
-Design concepts for bringing every INVALID_REQUEST project into Roblox Studio. Not ports -- reimaginings that take advantage of 3D space, physics, and multiplayer. Each of the seven concepts has its own subdirectory for Roblox Studio files as development progresses. All buildable with stock Studio and Luau. All 28 Luau files have been audited against the current Roblox Studio API surface (February 2026) -- fonts updated to BuilderSans/BuilderSansBold, service access patterns normalized.
+Design concepts for bringing every INVALID_REQUEST project into Roblox Studio. Not ports -- reimaginings that take advantage of 3D space, physics, and multiplayer. Each of the seven concepts has its own subdirectory with versioned SETUP.md files (all currently at **v1.0.1**). All buildable with stock Studio and Luau. All 28 Luau files have been audited against the current Roblox Studio API surface (February 2026) and all SETUP.md claims verified against actual code.
 
 See [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md) for detailed implementation breakdowns.
 

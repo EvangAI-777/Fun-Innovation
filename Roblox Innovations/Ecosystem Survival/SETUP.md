@@ -1,5 +1,7 @@
 # Ecosystem Survival -- Studio Setup
 
+**Version 1.0.1** -- API audit: font enums updated to BuilderSans/BuilderSansBold
+
 ## Overview
 
 A multiplayer ecosystem simulation where players choose to be herbivores or predators and coexist with NPC flora and fauna. The world is a 600-stud biome grid generated with Perlin noise -- forests, plains, deserts, and wetlands. Plants grow and spread. NPC herbivores eat plants and flee predators. NPC predators hunt herbivores. Players do the same things but with full third-person control. Energy decays over time. Eat to survive. Sprint to chase or flee. Reproduce when you have enough energy. The leaderboard tracks ecosystem health, not kills.
