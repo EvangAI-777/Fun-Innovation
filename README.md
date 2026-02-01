@@ -30,6 +30,11 @@ Fun-Innovation/
 |   |-- Living Story RPG/
 |   |-- Notes Organizer Bulletin Board/
 |   |-- Verse Engine Skywriting/
+|   |   |-- PoetryEngine.luau
+|   |   |-- SETUP.md
+|   |   |-- SkywritingClient.luau
+|   |   |-- SkywritingServer.luau
+|   |   |-- VerseConfig.luau
 |   |-- FUNME.md
 |-- README.md
 ```
@@ -70,7 +75,7 @@ python3 "INVALID_REQUEST/Python Files/verse_engine.py"
 ```
 
 **Roblox projects (Roblox Innovations):**
-The Flow Field Obby is fully built -- see [`Flow Field Obby/SETUP.md`](./Roblox%20Innovations/Flow%20Field%20Obby/SETUP.md) for Studio setup instructions. Remaining concepts are documented in [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md).
+Two projects are fully built -- see [`Flow Field Obby/SETUP.md`](./Roblox%20Innovations/Flow%20Field%20Obby/SETUP.md) and [`Verse Engine Skywriting/SETUP.md`](./Roblox%20Innovations/Verse%20Engine%20Skywriting/SETUP.md) for Studio setup instructions. Remaining concepts are documented in [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md).
 
 ---
 
