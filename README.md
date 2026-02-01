@@ -21,6 +21,11 @@ Fun-Innovation/
 |   |-- Academic Planner Study Hub/
 |   |-- Ecosystem Survival/
 |   |-- Flow Field Obby/
+|   |   |-- FlowFieldClient.luau
+|   |   |-- FlowFieldConfig.luau
+|   |   |-- FlowFieldServer.luau
+|   |   |-- PlatformGenerator.luau
+|   |   |-- SETUP.md
 |   |-- Generative Music Rooms/
 |   |-- Living Story RPG/
 |   |-- Notes Organizer Bulletin Board/
@@ -64,8 +69,8 @@ python3 "INVALID_REQUEST/Python Files/living_story.py"
 python3 "INVALID_REQUEST/Python Files/verse_engine.py"
 ```
 
-**Roblox projects:**
-Implementation concepts are documented in `Roblox Innovations/FUNME.md`. Each concept has its own subdirectory under `Roblox Innovations/` ready for Studio files.
+**Roblox projects (Roblox Innovations):**
+The Flow Field Obby is fully built -- see [`Flow Field Obby/SETUP.md`](./Roblox%20Innovations/Flow%20Field%20Obby/SETUP.md) for Studio setup instructions. Remaining concepts are documented in [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md).
 
 ---
 

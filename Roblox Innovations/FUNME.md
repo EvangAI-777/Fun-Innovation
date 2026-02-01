@@ -6,15 +6,15 @@ Each concept has its own subdirectory for Roblox Studio files as development pro
 
 ## Concepts
 
-| Concept | Directory | Source | Description |
-|---------|-----------|--------|-------------|
-| Ecosystem Survival | `Ecosystem Survival/` | `ecosystem.html` | Multiplayer survival where players *are* the species -- plant, herbivore, or predator -- inside an emergent simulation |
-| Flow Field Obby | `Flow Field Obby/` | `flowfield.html` | Obby with platforms that drift on 3D Perlin noise currents -- the path is never the same twice |
-| Generative Music Rooms | `Generative Music Rooms/` | `generative-music.html` | Social hub where each room has a different mood and the music reacts to player count, movement, and activity |
-| Living Story RPG | `Living Story RPG/` | `living_story.py` | Multiplayer narrative RPG where the world reshapes based on collective player personality and choices |
-| Verse Engine Skywriting | `Verse Engine Skywriting/` | `verse_engine.py` | Open sky world where generated poems materialize as particle trails overhead and slowly dissolve |
-| Academic Planner Study Hub | `Academic Planner Study Hub/` | `academic-planner.html` | Virtual campus with spatial planners, study groups, and shared timers on 3D desks and whiteboards |
-| Notes Organizer Bulletin Board | `Notes Organizer Bulletin Board/` | `notes-organizer.html` | Shared creative space where notes are physical objects placed on walls, tables, or mid-air across player rooms |
+| Concept | Directory | Source | Status |
+|---------|-----------|--------|--------|
+| Flow Field Obby | `Flow Field Obby/` | `flowfield.html` | Built |
+| Ecosystem Survival | `Ecosystem Survival/` | `ecosystem.html` | Planned |
+| Generative Music Rooms | `Generative Music Rooms/` | `generative-music.html` | Planned |
+| Living Story RPG | `Living Story RPG/` | `living_story.py` | Planned |
+| Verse Engine Skywriting | `Verse Engine Skywriting/` | `verse_engine.py` | Planned |
+| Academic Planner Study Hub | `Academic Planner Study Hub/` | `academic-planner.html` | Planned |
+| Notes Organizer Bulletin Board | `Notes Organizer Bulletin Board/` | `notes-organizer.html` | Planned |
 
 ## Implementation Details
 
@@ -28,14 +28,19 @@ Third-person survival. Pick a species at spawn. Herbivores navigate terrain and 
 - `ReplicatedStorage` holds shared config: reproduction rates, energy costs, detection radii
 - Leaderboard tracks ecosystem health metrics, not kills
 
-### Flow Field Obby
+### Flow Field Obby -- Built
 
 Floating platforms drift through space on noise-driven currents. Some regions are calm, some are turbulent. Players learn to read the flow. Particle emitters on every surface stream in the direction of movement. Checkpoints are the only stationary objects in the entire experience.
 
-- Parts positioned and moved via `RunService.Heartbeat` using `math.noise(x, y, z)`
-- `ParticleEmitter`s on each platform aligned to local flow vectors
-- `Workspace.CurrentCamera` manipulation for dramatic angles in turbulent zones
-- Difficulty scales with distance from origin -- noise frequency increases, platforms shrink
+| File | Type | Studio Location |
+|------|------|-----------------|
+| `FlowFieldConfig.luau` | ModuleScript | ReplicatedStorage |
+| `PlatformGenerator.luau` | ModuleScript | ServerStorage |
+| `FlowFieldServer.luau` | Script | ServerScriptService |
+| `FlowFieldClient.luau` | LocalScript | StarterPlayerScripts |
+| `SETUP.md` | Setup guide | -- |
+
+See [`Flow Field Obby/SETUP.md`](./Flow%20Field%20Obby/SETUP.md) for full setup instructions.
 
 ### Generative Music Rooms
 
@@ -89,7 +94,7 @@ Write a note, it becomes a framed object you can place on walls, tables, or floa
 
 The browser versions were solo experiences. The Roblox versions are shared ones. That's not just a platform difference -- it's a fundamental shift in what the projects mean. An ecosystem you watch is a simulation. An ecosystem you inhabit with 30 other people is a social system. A poem you generate alone is personal. A sky full of poems from strangers is something else entirely.
 
-Subdirectories are ready. These are the blueprints. The builds come next.
+Flow Field Obby is built and ready to drop into Studio. The remaining six are blueprints. The builds continue.
 
 ---
 
