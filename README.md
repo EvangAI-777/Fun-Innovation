@@ -82,9 +82,9 @@ See [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md) for detaile
 
 ### [Minecraft Innovations](./Minecraft%20Innovations/)
 
-Concept design for a modular framework that imports real-world 3D data -- terrain heightmaps, LiDAR point clouds, photogrammetry meshes, GIS building footprints -- into playable Minecraft worlds. Palette-driven voxelization, multiple export formats, bidirectional editing. No code yet; this is the design document.
+Concept designs for Minecraft innovation. Two concepts: **GeoVox** -- a modular framework for importing real-world 3D data (heightmaps, LiDAR, photogrammetry) into playable Minecraft worlds with palette-driven voxelization. **Minecraft Studio** -- a full IDE for Minecraft mod creation modeled on Roblox Studio, with visual editors, embedded live preview, hot-reload testing, and export to any modloader format (Forge, NeoForge, Fabric, Quilt). No code yet; these are design documents.
 
-See [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md) for the full concept.
+See [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md) for both concepts.
 
 ## Adding New Directories
 
@@ -111,8 +111,8 @@ python3 "INVALID_REQUEST/Python Files/verse_engine.py"
 **Roblox projects (Roblox Innovations):**
 All seven projects are fully built. See each project's SETUP.md for Studio setup instructions: [`Flow Field Obby`](./Roblox%20Innovations/Flow%20Field%20Obby/SETUP.md), [`Verse Engine Skywriting`](./Roblox%20Innovations/Verse%20Engine%20Skywriting/SETUP.md), [`Notes Organizer Bulletin Board`](./Roblox%20Innovations/Notes%20Organizer%20Bulletin%20Board/SETUP.md), [`Academic Planner Study Hub`](./Roblox%20Innovations/Academic%20Planner%20Study%20Hub/SETUP.md), [`Ecosystem Survival`](./Roblox%20Innovations/Ecosystem%20Survival/SETUP.md), [`Generative Music Rooms`](./Roblox%20Innovations/Generative%20Music%20Rooms/SETUP.md), and [`Living Story RPG`](./Roblox%20Innovations/Living%20Story%20RPG/SETUP.md). Full details in [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md).
 
-**Minecraft concept (Minecraft Innovations):**
-Design document only -- no code yet. Read [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md) for the GeoVox framework concept.
+**Minecraft concepts (Minecraft Innovations):**
+Design documents only -- no code yet. Two concepts: GeoVox (real-world 3D data → Minecraft worlds) and Minecraft Studio (a Roblox Studio-style IDE for Minecraft mod creation). Read [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md) for both.
 
 ---
 
