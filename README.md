@@ -43,6 +43,11 @@ Fun-Innovation/
 |   |   |-- SETUP.md
 |   |   |-- SoundscapeEngine.luau
 |   |-- Living Story RPG/
+|   |   |-- DialogueManager.luau
+|   |   |-- SETUP.md
+|   |   |-- StoryClient.luau
+|   |   |-- StoryConfig.luau
+|   |   |-- StoryServer.luau
 |   |-- Notes Organizer Bulletin Board/
 |   |   |-- BulletinClient.luau
 |   |   |-- BulletinConfig.luau
@@ -95,7 +100,7 @@ python3 "INVALID_REQUEST/Python Files/verse_engine.py"
 ```
 
 **Roblox projects (Roblox Innovations):**
-Six projects are fully built -- see [`Flow Field Obby/SETUP.md`](./Roblox%20Innovations/Flow%20Field%20Obby/SETUP.md), [`Verse Engine Skywriting/SETUP.md`](./Roblox%20Innovations/Verse%20Engine%20Skywriting/SETUP.md), [`Notes Organizer Bulletin Board/SETUP.md`](./Roblox%20Innovations/Notes%20Organizer%20Bulletin%20Board/SETUP.md), [`Academic Planner Study Hub/SETUP.md`](./Roblox%20Innovations/Academic%20Planner%20Study%20Hub/SETUP.md), [`Ecosystem Survival/SETUP.md`](./Roblox%20Innovations/Ecosystem%20Survival/SETUP.md), and [`Generative Music Rooms/SETUP.md`](./Roblox%20Innovations/Generative%20Music%20Rooms/SETUP.md) for Studio setup instructions. Remaining concepts are documented in [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md).
+All seven projects are fully built. See each project's SETUP.md for Studio setup instructions: [`Flow Field Obby`](./Roblox%20Innovations/Flow%20Field%20Obby/SETUP.md), [`Verse Engine Skywriting`](./Roblox%20Innovations/Verse%20Engine%20Skywriting/SETUP.md), [`Notes Organizer Bulletin Board`](./Roblox%20Innovations/Notes%20Organizer%20Bulletin%20Board/SETUP.md), [`Academic Planner Study Hub`](./Roblox%20Innovations/Academic%20Planner%20Study%20Hub/SETUP.md), [`Ecosystem Survival`](./Roblox%20Innovations/Ecosystem%20Survival/SETUP.md), [`Generative Music Rooms`](./Roblox%20Innovations/Generative%20Music%20Rooms/SETUP.md), and [`Living Story RPG`](./Roblox%20Innovations/Living%20Story%20RPG/SETUP.md). Full details in [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md).
 
 ---
 

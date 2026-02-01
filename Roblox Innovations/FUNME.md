@@ -12,7 +12,7 @@ Each concept has its own subdirectory for Roblox Studio files as development pro
 | Verse Engine Skywriting | `Verse Engine Skywriting/` | `verse_engine.py` | Built |
 | Ecosystem Survival | `Ecosystem Survival/` | `ecosystem.html` | Built |
 | Generative Music Rooms | `Generative Music Rooms/` | `generative-music.html` | Built |
-| Living Story RPG | `Living Story RPG/` | `living_story.py` | Planned |
+| Living Story RPG | `Living Story RPG/` | `living_story.py` | Built |
 | Academic Planner Study Hub | `Academic Planner Study Hub/` | `academic-planner.html` | Built |
 | Notes Organizer Bulletin Board | `Notes Organizer Bulletin Board/` | `notes-organizer.html` | Built |
 
@@ -60,15 +60,19 @@ Six mood-themed rooms in a hexagonal ring. Each room's walls are shaped by a dif
 
 See [`Generative Music Rooms/SETUP.md`](./Generative%20Music%20Rooms/SETUP.md) for full setup instructions.
 
-### Living Story RPG
+### Living Story RPG -- Built
 
-NPCs remember individual players via `DataStoreService` and respond to server-wide trends. If most players have been aggressive, the town is fortified and suspicious. If most have been generous, the economy is thriving. Same map, different feel every server.
+A persistent multiplayer town where NPCs remember individual players via DataStore. Seven NPCs with branching dialogue trees -- the Keeper, the Guide, the Wounded Stranger, the Merchant, the Scholar, the Guardian, and the Voice. Each conversation adjusts seven personality traits (curious, cautious, bold, kind, detached, honest, deceptive) and stores memories. The town's mood -- lighting, fog, sky colour, NPC greetings -- shifts based on the aggregate personality of all online players. The Voice in the tower reflects your accumulated choices back at you with personality-aware endings. Typewriter text effect in the dialogue GUI as a nod to the terminal-based original.
 
-- Per-player personality vectors (aggression, curiosity, empathy, etc.) in `DataStoreService`
-- NPC dialogue trees driven by Luau state machines reading player data
-- Server-side world state aggregating all player personality data into environment flags
-- `ProximityPrompt`s on NPCs with branching dialogue GUI (`ScreenGui` + `TextLabel`s)
-- Lighting, music, and NPC placement shift based on the world state
+| File | Type | Studio Location |
+|------|------|-----------------|
+| `StoryConfig.luau` | ModuleScript | ReplicatedStorage |
+| `DialogueManager.luau` | ModuleScript | ServerStorage |
+| `StoryServer.luau` | Script | ServerScriptService |
+| `StoryClient.luau` | LocalScript | StarterPlayerScripts |
+| `SETUP.md` | Setup guide | -- |
+
+See [`Living Story RPG/SETUP.md`](./Living%20Story%20RPG/SETUP.md) for full setup instructions.
 
 ### Verse Engine Skywriting -- Built
 
@@ -116,7 +120,7 @@ See [`Notes Organizer Bulletin Board/SETUP.md`](./Notes%20Organizer%20Bulletin%2
 
 The browser versions were solo experiences. The Roblox versions are shared ones. That's not just a platform difference -- it's a fundamental shift in what the projects mean. An ecosystem you watch is a simulation. An ecosystem you inhabit with 30 other people is a social system. A poem you generate alone is personal. A sky full of poems from strangers is something else entirely.
 
-Flow Field Obby, Verse Engine Skywriting, Notes Organizer Bulletin Board, Academic Planner Study Hub, Ecosystem Survival, and Generative Music Rooms are built and ready to drop into Studio. One blueprint remains. The builds continue.
+All seven projects are built and ready to drop into Studio. Every concept that started as a browser demo or terminal script has been reimagined for 3D multiplayer. The builds are complete.
 
 ---
 
