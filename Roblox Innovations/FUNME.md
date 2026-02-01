@@ -10,7 +10,7 @@ Each concept has its own subdirectory for Roblox Studio files as development pro
 |---------|-----------|--------|--------|
 | Flow Field Obby | `Flow Field Obby/` | `flowfield.html` | Built |
 | Verse Engine Skywriting | `Verse Engine Skywriting/` | `verse_engine.py` | Built |
-| Ecosystem Survival | `Ecosystem Survival/` | `ecosystem.html` | Planned |
+| Ecosystem Survival | `Ecosystem Survival/` | `ecosystem.html` | Built |
 | Generative Music Rooms | `Generative Music Rooms/` | `generative-music.html` | Planned |
 | Living Story RPG | `Living Story RPG/` | `living_story.py` | Planned |
 | Academic Planner Study Hub | `Academic Planner Study Hub/` | `academic-planner.html` | Built |
@@ -18,15 +18,19 @@ Each concept has its own subdirectory for Roblox Studio files as development pro
 
 ## Implementation Details
 
-### Ecosystem Survival
+### Ecosystem Survival -- Built
 
-Third-person survival. Pick a species at spawn. Herbivores navigate terrain and avoid predators. Predators hunt with cooldowns and manage stamina. Plants spread seeds and compete for light. 30 players coexist with NPC flora and fauna. Population crashes hit different when you're the one getting eaten.
+Third-person survival. Pick a species at spawn. Herbivores navigate biome terrain and eat plants while fleeing predators. Predators hunt with cooldowns and manage stamina. NPC plants grow, mature, and spread seeds. Players coexist with NPC flora and fauna in a Perlin-noise biome grid. Energy decays over time -- eat to survive, sprint to chase or flee, reproduce to grow your population. The leaderboard tracks ecosystem health, not kills.
 
-- Terrain generation with biomes via `Terrain:FillBlock()` and noise functions
-- Custom character rigs per species with unique `AnimationController`s
-- `ServerScriptService` handles the simulation tick, spawning NPC flora/fauna alongside players
-- `ReplicatedStorage` holds shared config: reproduction rates, energy costs, detection radii
-- Leaderboard tracks ecosystem health metrics, not kills
+| File | Type | Studio Location |
+|------|------|-----------------|
+| `EcosystemConfig.luau` | ModuleScript | ReplicatedStorage |
+| `CreatureManager.luau` | ModuleScript | ServerStorage |
+| `EcosystemServer.luau` | Script | ServerScriptService |
+| `EcosystemClient.luau` | LocalScript | StarterPlayerScripts |
+| `SETUP.md` | Setup guide | -- |
+
+See [`Ecosystem Survival/SETUP.md`](./Ecosystem%20Survival/SETUP.md) for full setup instructions.
 
 ### Flow Field Obby -- Built
 
@@ -107,7 +111,7 @@ See [`Notes Organizer Bulletin Board/SETUP.md`](./Notes%20Organizer%20Bulletin%2
 
 The browser versions were solo experiences. The Roblox versions are shared ones. That's not just a platform difference -- it's a fundamental shift in what the projects mean. An ecosystem you watch is a simulation. An ecosystem you inhabit with 30 other people is a social system. A poem you generate alone is personal. A sky full of poems from strangers is something else entirely.
 
-Flow Field Obby, Verse Engine Skywriting, Notes Organizer Bulletin Board, and Academic Planner Study Hub are built and ready to drop into Studio. The remaining three are blueprints. The builds continue.
+Flow Field Obby, Verse Engine Skywriting, Notes Organizer Bulletin Board, Academic Planner Study Hub, and Ecosystem Survival are built and ready to drop into Studio. The remaining two are blueprints. The builds continue.
 
 ---
 
