@@ -1,5 +1,7 @@
 # Flow Field Obby -- Studio Setup
 
+**Version 1.0.1** -- API audit: font enums updated to BuilderSans/BuilderSansBold
+
 ## Overview
 
 An obby where the platforms move according to a 3D Perlin noise flow field. The path is never the same twice. Difficulty scales with distance from origin -- noise gets choppier, platforms shrink, flow speeds up. Checkpoints are the only stationary objects in the entire experience.

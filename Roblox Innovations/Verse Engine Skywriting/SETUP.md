@@ -1,5 +1,7 @@
 # Verse Engine Skywriting -- Studio Setup
 
+**Version 1.0.1** -- API audit: font enums updated to BuilderSans/BuilderSansBold
+
 ## Overview
 
 An open sky world where players generate poems that materialize as glowing 3D text overhead. Pick a voice (melancholic, hopeful, surreal, observational, fierce). Pick a form (poem, haiku, couplet, fragment). The poem appears above you in your voice's color, drifts upward, and slowly dissolves. Other players see every poem. A server running for hours accumulates layers of poetry fading in and out across the sky.

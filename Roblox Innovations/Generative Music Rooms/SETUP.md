@@ -1,4 +1,6 @@
-# Generative Music Rooms — Roblox Studio Setup
+# Generative Music Rooms -- Studio Setup
+
+**Version 1.0.1** -- API audit: font enums updated to BuilderSans/BuilderSansBold, service access normalized to GetService
 
 Six mood-themed rooms arranged in a hexagonal ring around a central lobby. Each room is built from waveform-shaped walls (sine, sawtooth, square, triangle, noise) and a grid of floor tiles that pulse on the beat. Walk between rooms and the music cross-fades. The composition reacts to player count and activity — more players means more layers, running adds percussion, jumping triggers melodic hits, standing still lets the ambient bed breathe.
 
