@@ -11,7 +11,7 @@ Each concept has its own subdirectory for Roblox Studio files as development pro
 | Flow Field Obby | `Flow Field Obby/` | `flowfield.html` | Built |
 | Verse Engine Skywriting | `Verse Engine Skywriting/` | `verse_engine.py` | Built |
 | Ecosystem Survival | `Ecosystem Survival/` | `ecosystem.html` | Built |
-| Generative Music Rooms | `Generative Music Rooms/` | `generative-music.html` | Planned |
+| Generative Music Rooms | `Generative Music Rooms/` | `generative-music.html` | Built |
 | Living Story RPG | `Living Story RPG/` | `living_story.py` | Planned |
 | Academic Planner Study Hub | `Academic Planner Study Hub/` | `academic-planner.html` | Built |
 | Notes Organizer Bulletin Board | `Notes Organizer Bulletin Board/` | `notes-organizer.html` | Built |
@@ -46,14 +46,19 @@ Floating platforms drift through space on noise-driven currents. Some regions ar
 
 See [`Flow Field Obby/SETUP.md`](./Flow%20Field%20Obby/SETUP.md) for full setup instructions.
 
-### Generative Music Rooms
+### Generative Music Rooms -- Built
 
-Walk between rooms and the music cross-fades. The composition reacts to player count and activity -- more players means more layers, running adds percussion, jumping triggers melodic hits, standing still lets the ambient bed breathe. Room architecture is built from waveform geometry.
+Six mood-themed rooms in a hexagonal ring. Each room's walls are shaped by a different waveform (sine, sawtooth, square, triangle, noise). Floor tiles pulse in ripple patterns synced to a global beat clock. Walk between rooms and the visuals cross-fade. The composition reacts to player count and activity -- more players means more layers, running adds percussion, jumping triggers melodic hits, standing still lets the ambient bed breathe. Fully functional as a visual installation; populate `MusicConfig.SoundAssets` with Creator Store audio IDs for the full audio-reactive experience.
 
-- `SoundService` with pre-generated stems loaded as `Sound` objects per room
-- `LocalScript` adjusts volume/pitch of individual stems based on player proximity and velocity
-- `SoundGroup`s per room with effects (reverb, chorus) tied to room geometry
-- `Region3` detection triggers crossfade logic when players move between zones
+| File | Type | Studio Location |
+|------|------|-----------------|
+| `MusicConfig.luau` | ModuleScript | ReplicatedStorage |
+| `SoundscapeEngine.luau` | ModuleScript | ServerStorage |
+| `MusicServer.luau` | Script | ServerScriptService |
+| `MusicClient.luau` | LocalScript | StarterPlayerScripts |
+| `SETUP.md` | Setup guide | -- |
+
+See [`Generative Music Rooms/SETUP.md`](./Generative%20Music%20Rooms/SETUP.md) for full setup instructions.
 
 ### Living Story RPG
 
@@ -111,7 +116,7 @@ See [`Notes Organizer Bulletin Board/SETUP.md`](./Notes%20Organizer%20Bulletin%2
 
 The browser versions were solo experiences. The Roblox versions are shared ones. That's not just a platform difference -- it's a fundamental shift in what the projects mean. An ecosystem you watch is a simulation. An ecosystem you inhabit with 30 other people is a social system. A poem you generate alone is personal. A sky full of poems from strangers is something else entirely.
 
-Flow Field Obby, Verse Engine Skywriting, Notes Organizer Bulletin Board, Academic Planner Study Hub, and Ecosystem Survival are built and ready to drop into Studio. The remaining two are blueprints. The builds continue.
+Flow Field Obby, Verse Engine Skywriting, Notes Organizer Bulletin Board, Academic Planner Study Hub, Ecosystem Survival, and Generative Music Rooms are built and ready to drop into Studio. One blueprint remains. The builds continue.
 
 ---
 
