@@ -1,6 +1,6 @@
 # Verse Engine Skywriting -- Studio Setup
 
-**Version 1.0.1** -- API audit: font enums updated to BuilderSans/BuilderSansBold
+**Version 1.0.2** -- Bug fix: voice selection now respected for haiku, couplet, and fragment forms
 
 ## Overview
 

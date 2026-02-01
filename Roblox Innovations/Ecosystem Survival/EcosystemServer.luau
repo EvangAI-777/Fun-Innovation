@@ -276,7 +276,7 @@ RunService.Heartbeat:Connect(function(dt)
                 removeEntity(herbivoreData[herbId])
             end
         end
-        for _, herbId in deadHerbs do
+        for herbId in deadHerbs do
             if herbivoreData[herbId] then
                 removeEntity(herbivoreData[herbId])
             end
