@@ -25,6 +25,11 @@ Fun-Innovation/
 |   |   |-- PlannerServer.luau
 |   |   |-- SETUP.md
 |   |-- Ecosystem Survival/
+|   |   |-- CreatureManager.luau
+|   |   |-- EcosystemClient.luau
+|   |   |-- EcosystemConfig.luau
+|   |   |-- EcosystemServer.luau
+|   |   |-- SETUP.md
 |   |-- Flow Field Obby/
 |   |   |-- FlowFieldClient.luau
 |   |   |-- FlowFieldConfig.luau
@@ -85,7 +90,7 @@ python3 "INVALID_REQUEST/Python Files/verse_engine.py"
 ```
 
 **Roblox projects (Roblox Innovations):**
-Four projects are fully built -- see [`Flow Field Obby/SETUP.md`](./Roblox%20Innovations/Flow%20Field%20Obby/SETUP.md), [`Verse Engine Skywriting/SETUP.md`](./Roblox%20Innovations/Verse%20Engine%20Skywriting/SETUP.md), [`Notes Organizer Bulletin Board/SETUP.md`](./Roblox%20Innovations/Notes%20Organizer%20Bulletin%20Board/SETUP.md), and [`Academic Planner Study Hub/SETUP.md`](./Roblox%20Innovations/Academic%20Planner%20Study%20Hub/SETUP.md) for Studio setup instructions. Remaining concepts are documented in [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md).
+Five projects are fully built -- see [`Flow Field Obby/SETUP.md`](./Roblox%20Innovations/Flow%20Field%20Obby/SETUP.md), [`Verse Engine Skywriting/SETUP.md`](./Roblox%20Innovations/Verse%20Engine%20Skywriting/SETUP.md), [`Notes Organizer Bulletin Board/SETUP.md`](./Roblox%20Innovations/Notes%20Organizer%20Bulletin%20Board/SETUP.md), [`Academic Planner Study Hub/SETUP.md`](./Roblox%20Innovations/Academic%20Planner%20Study%20Hub/SETUP.md), and [`Ecosystem Survival/SETUP.md`](./Roblox%20Innovations/Ecosystem%20Survival/SETUP.md) for Studio setup instructions. Remaining concepts are documented in [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md).
 
 ---
 
