@@ -13,7 +13,7 @@ Each concept has its own subdirectory for Roblox Studio files as development pro
 | Ecosystem Survival | `Ecosystem Survival/` | `ecosystem.html` | Planned |
 | Generative Music Rooms | `Generative Music Rooms/` | `generative-music.html` | Planned |
 | Living Story RPG | `Living Story RPG/` | `living_story.py` | Planned |
-| Academic Planner Study Hub | `Academic Planner Study Hub/` | `academic-planner.html` | Planned |
+| Academic Planner Study Hub | `Academic Planner Study Hub/` | `academic-planner.html` | Built |
 | Notes Organizer Bulletin Board | `Notes Organizer Bulletin Board/` | `notes-organizer.html` | Built |
 
 ## Implementation Details
@@ -75,15 +75,19 @@ Pick a voice. Pick a form. The poem materializes above you in 3D text made of pa
 
 See [`Verse Engine Skywriting/SETUP.md`](./Verse%20Engine%20Skywriting/SETUP.md) for full setup instructions.
 
-### Academic Planner Study Hub
+### Academic Planner Study Hub -- Built
 
-Virtual campus where each player has a dorm room with a desk. The desk has a 3D planner showing assignments via `SurfaceGui`. The campus library lets players see who's studying what, form study groups for shared classes, and set up group timers. Paste syllabus text into a `TextBox` and the system parses it into sticky notes on your desk.
+Virtual campus where each player has a dorm room with a desk. Assignments appear as color-coded sticky notes on the desk surface -- green for upcoming, yellow for due soon, red for overdue, gray for completed. A shared library displays who's studying what on a central whiteboard. Study rooms have group timers for focused sessions. Paste syllabus text and the system parses it into assignments automatically.
 
-- `SurfaceGui` on desk `Part`s displaying per-player assignment data
-- `DataStoreService` for persistent assignment storage
-- Shared spaces using `CollectionService` tags to group players by course
-- Timer system (`os.clock` based) with visible countdown on a shared whiteboard `Part`
-- Campus layout: dorm rooms (private), library (public), study rooms (group)
+| File | Type | Studio Location |
+|------|------|-----------------|
+| `PlannerConfig.luau` | ModuleScript | ReplicatedStorage |
+| `AssignmentManager.luau` | ModuleScript | ServerStorage |
+| `PlannerServer.luau` | Script | ServerScriptService |
+| `PlannerClient.luau` | LocalScript | StarterPlayerScripts |
+| `SETUP.md` | Setup guide | -- |
+
+See [`Academic Planner Study Hub/SETUP.md`](./Academic%20Planner%20Study%20Hub/SETUP.md) for full setup instructions.
 
 ### Notes Organizer Bulletin Board -- Built
 
@@ -103,7 +107,7 @@ See [`Notes Organizer Bulletin Board/SETUP.md`](./Notes%20Organizer%20Bulletin%2
 
 The browser versions were solo experiences. The Roblox versions are shared ones. That's not just a platform difference -- it's a fundamental shift in what the projects mean. An ecosystem you watch is a simulation. An ecosystem you inhabit with 30 other people is a social system. A poem you generate alone is personal. A sky full of poems from strangers is something else entirely.
 
-Flow Field Obby, Verse Engine Skywriting, and Notes Organizer Bulletin Board are built and ready to drop into Studio. The remaining four are blueprints. The builds continue.
+Flow Field Obby, Verse Engine Skywriting, Notes Organizer Bulletin Board, and Academic Planner Study Hub are built and ready to drop into Studio. The remaining three are blueprints. The builds continue.
 
 ---
 
