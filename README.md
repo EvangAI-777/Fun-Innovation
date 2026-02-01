@@ -29,6 +29,11 @@ Fun-Innovation/
 |   |-- Generative Music Rooms/
 |   |-- Living Story RPG/
 |   |-- Notes Organizer Bulletin Board/
+|   |   |-- BulletinClient.luau
+|   |   |-- BulletinConfig.luau
+|   |   |-- BulletinServer.luau
+|   |   |-- NoteManager.luau
+|   |   |-- SETUP.md
 |   |-- Verse Engine Skywriting/
 |   |   |-- PoetryEngine.luau
 |   |   |-- SETUP.md
@@ -75,7 +80,7 @@ python3 "INVALID_REQUEST/Python Files/verse_engine.py"
 ```
 
 **Roblox projects (Roblox Innovations):**
-Two projects are fully built -- see [`Flow Field Obby/SETUP.md`](./Roblox%20Innovations/Flow%20Field%20Obby/SETUP.md) and [`Verse Engine Skywriting/SETUP.md`](./Roblox%20Innovations/Verse%20Engine%20Skywriting/SETUP.md) for Studio setup instructions. Remaining concepts are documented in [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md).
+Three projects are fully built -- see [`Flow Field Obby/SETUP.md`](./Roblox%20Innovations/Flow%20Field%20Obby/SETUP.md), [`Verse Engine Skywriting/SETUP.md`](./Roblox%20Innovations/Verse%20Engine%20Skywriting/SETUP.md), and [`Notes Organizer Bulletin Board/SETUP.md`](./Roblox%20Innovations/Notes%20Organizer%20Bulletin%20Board/SETUP.md) for Studio setup instructions. Remaining concepts are documented in [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md).
 
 ---
 
