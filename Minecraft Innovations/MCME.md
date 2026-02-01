@@ -1,18 +1,31 @@
 # Minecraft Innovations
 
+Concept designs for tools that don't exist yet in the Minecraft ecosystem. Not mods -- infrastructure. The kind of tooling that changes what's possible for everyone who builds on top of Minecraft.
+
+Two concepts so far. One turns real-world data into playable worlds. The other turns Minecraft modding into something that doesn't require a computer science degree.
+
+## Concepts
+
+| Concept | Focus | Language | Status |
+|---------|-------|----------|--------|
+| GeoVox | Real-world 3D data → Minecraft worlds | Python | Concept |
+| Minecraft Studio | Roblox Studio-style IDE for Minecraft modding | Java / Kotlin | Concept |
+
+## Concept Details
+
+### GeoVox -- Real-World Data Pipeline
+
 What if Minecraft wasn't just a game you built in -- but a renderer for reality?
 
-The idea is straightforward. Take real-world 3D data -- terrain heightmaps, point clouds, photogrammetry meshes, LiDAR scans, architectural models -- and voxelize it into Minecraft block palettes. Not as a novelty. As a *pipeline*. A modular system where the input is any georeferenced or model-space 3D dataset and the output is a Minecraft world you can walk through, modify, and share.
+Take real-world 3D data -- terrain heightmaps, point clouds, photogrammetry meshes, LiDAR scans, architectural models -- and voxelize it into Minecraft block palettes. Not as a novelty. As a *pipeline*. A modular system where the input is any georeferenced or model-space 3D dataset and the output is a Minecraft world you can walk through, modify, and share.
 
 This has been done before in one-off scripts and abandoned GitHub repos. What hasn't been done is making it modular, palette-aware, and bidirectional.
 
-## The Concept: GeoVox
+#### Architecture
 
-A framework for importing real-world 3D data into Minecraft worlds. Three layers:
+Three layers:
 
-### Layer 1: Ingest
-
-Accept data from multiple formats:
+**Layer 1: Ingest.** Accept data from multiple formats:
 
 | Format | Source | Notes |
 |--------|--------|-------|
@@ -24,9 +37,7 @@ Accept data from multiple formats:
 
 Each ingest module normalizes its input into a common internal representation: a sparse 3D integer grid where each cell holds a block ID. No geometry. No floating point. Just blocks.
 
-### Layer 2: Palette Mapping
-
-This is where it gets interesting. Raw elevation data doesn't know what "grass" looks like. A LiDAR point classified as "vegetation" doesn't know it should be oak leaves vs. jungle leaves vs. azalea. The palette mapper bridges that gap.
+**Layer 2: Palette Mapping.** Raw elevation data doesn't know what "grass" looks like. A LiDAR point classified as "vegetation" doesn't know it should be oak leaves vs. jungle leaves vs. azalea. The palette mapper bridges that gap.
 
 A palette is a JSON config that maps semantic categories to Minecraft block selections:
 
@@ -44,9 +55,7 @@ Palettes are swappable. The same USGS heightmap of the Grand Canyon can render i
 
 Multiple palette layers can stack. Elevation drives the base material. Slope angle adds variation (cliff faces get exposed stone). Moisture data from satellite imagery shifts vegetation density. Classification labels from LiDAR override everything where they exist. The system composes.
 
-### Layer 3: Export
-
-The final grid writes out as:
+**Layer 3: Export.** The final grid writes out as:
 
 - **Minecraft world files** (.mca region format) -- drop into a saves folder and play
 - **Structure files** (.nbt) -- paste into existing worlds with structure blocks
@@ -55,7 +64,7 @@ The final grid writes out as:
 
 Each exporter handles Minecraft's chunk/section layout, biome assignment, heightmap recalculation, and light propagation. The world files are playable immediately. No post-processing.
 
-## What You Could Build With This
+#### What You Could Build With This
 
 **Your neighborhood.** Download a 1m LiDAR scan from your city's open data portal. Run it through GeoVox with a suburban palette. Walk through a block-scale replica of your street in Minecraft. The trees are in the right places. The rooflines match. The road curves correctly.
 
@@ -67,7 +76,7 @@ Each exporter handles Minecraft's chunk/section layout, biome assignment, height
 
 **Scientific visualization.** Voxelize a protein structure, a fluid dynamics simulation, a geological cross-section. Minecraft's rendering engine handles millions of blocks at interactive framerates. The interaction model -- walk through it, break blocks to see inside, place torches to illuminate cavities -- is more intuitive than any scientific visualization tool.
 
-## What Makes This Different From Existing Tools
+#### What Makes This Different
 
 Most Minecraft terrain generators work in one direction: they generate *fictional* terrain that looks plausible. This goes the other direction: it takes *real* terrain and makes it playable.
 
@@ -75,9 +84,7 @@ Most heightmap importers are scripts that read one format, output one format, an
 
 The bidirectional part matters too. If you modify the Minecraft world -- add a building, dig a canal, terraform a hillside -- the system can diff the modified world against the original import and export the *changes* back as a 3D point cloud or mesh. Minecraft becomes a 3D editor. A voxel-native sketch tool for landscape architecture, urban planning, or terrain modification proposals.
 
-## Technical Foundation
-
-The framework itself would be:
+#### Technical Foundation
 
 - **Python core** -- NumPy for the voxel grid, rasterio/PDAL for geospatial ingest, trimesh for mesh voxelization
 - **anvil-parser or amulet-core** for Minecraft world I/O
@@ -87,17 +94,11 @@ The framework itself would be:
 
 The hard problems are scale management (a 1:1 import of a mountain range is billions of blocks -- you need LOD or selective import), palette intelligence (automatic material assignment from classification data is an unsolved UX problem), and Minecraft's own constraints (256-block build height pre-1.18, 384 post-1.18, chunk loading radius, entity limits).
 
-## Status
-
-This is a concept document. No code yet. The ideas here are grounded in real capabilities -- every data format listed above has existing Python libraries, every Minecraft export format has community documentation, and the core voxelization algorithm (scanline fill of a 3D grid) is well-understood.
-
-What would make this worth building is the *composition*. Not another heightmap importer. A pipeline that lets you say: "Take this LiDAR scan, layer in this building footprint data, apply this palette, and give me a Minecraft world I can walk through this afternoon."
-
-The real world is already the most detailed voxel grid there is. We just need a better way to render it in blocks.
+The ideas are grounded in real capabilities -- every data format listed above has existing Python libraries, every Minecraft export format has community documentation, and the core voxelization algorithm (scanline fill of a 3D grid) is well-understood. What would make this worth building is the *composition*. Not another heightmap importer. A pipeline that lets you say: "Take this LiDAR scan, layer in this building footprint data, apply this palette, and give me a Minecraft world I can walk through this afternoon."
 
 ---
 
-## The Concept: Minecraft Studio
+### Minecraft Studio -- Modding IDE
 
 Roblox has 70 million daily active users, and a significant percentage of them are *creators*, not just players. That's not because Roblox is a better game than Minecraft. It's because Roblox has Studio.
 
@@ -109,7 +110,7 @@ To make a Minecraft mod today, you need to: install a JDK, install an IDE (Intel
 
 Minecraft Studio would be the ladder.
 
-### What It Is
+#### What It Is
 
 A standalone integrated development environment for Minecraft mod creation. One application. Download, install, open, create. Structured like Roblox Studio but built for the Minecraft ecosystem.
 
@@ -139,7 +140,7 @@ A standalone integrated development environment for Minecraft mod creation. One 
 +---------------------------------------------------------------+
 ```
 
-### The Explorer Panel
+#### The Explorer Panel
 
 The left panel mirrors Roblox Studio's Explorer tree, but organized around Minecraft's registry system:
 
@@ -157,7 +158,7 @@ The left panel mirrors Roblox Studio's Explorer tree, but organized around Minec
 | Data Packs | Functions, tags, advancements | Integrated datapack authoring alongside mod code |
 | Resource Pack | Textures, models, sounds, lang | Asset pipeline with hot-reload preview |
 
-### The 3D Viewport
+#### The 3D Viewport
 
 Center panel. This is the core innovation: an **embedded Minecraft instance** running your mod in real time.
 
@@ -172,7 +173,7 @@ Not a mock-up. Not a simplified preview. An actual Minecraft client instance, ru
 
 The Play button doesn't launch a separate process. It hot-reloads your mod into the running instance. Change a block's hardness in the Properties panel, it updates in the viewport immediately. Change a recipe in the visual editor, the recipe book updates in real time. Edit Java code, the compiler runs incrementally, and only the changed classes reload. Iteration time drops from 30-90 seconds to under 2 seconds.
 
-### The Code Editor
+#### The Code Editor
 
 Full Java IDE. Not a toy. This needs to compete with IntelliJ for mod developers who know what they're doing.
 
@@ -189,7 +190,7 @@ But here's the key: you don't *have* to touch the code editor. Every visual tool
 
 This is the Roblox Studio principle: visual tools for accessibility, full code access for power.
 
-### The Visual Editors
+#### The Visual Editors
 
 These are the tools that don't exist anywhere in the current Minecraft modding ecosystem:
 
@@ -211,7 +212,7 @@ The visual editor shows:
 
 **Particle Editor.** Live preview. Adjust count, speed, spread, color, gravity, lifetime, collision. See particles in the 3D viewport immediately. Export as a custom `ParticleType` with server/client packet handling auto-generated.
 
-### Modloader Export
+#### Modloader Export
 
 This is where Minecraft Studio breaks the modloader wars wide open.
 
@@ -231,7 +232,7 @@ The mod's logic is authored against an **abstraction layer** inside Studio. Regi
 
 This isn't hypothetical. The Architectury project already proves that a common API can target Forge, Fabric, and Quilt simultaneously. Minecraft Studio would formalize that into a first-class development experience instead of a library you have to learn separately.
 
-### The Testing Environment
+#### The Testing Environment
 
 The embedded Minecraft instance isn't just for preview. It's a full test harness.
 
@@ -255,7 +256,7 @@ The test runner executes inside the embedded instance. No separate test server. 
 
 **Version matrix testing.** Test against multiple Minecraft versions from the same project. Studio maintains a version compatibility map: "this block was added in 1.19, this method was renamed in 1.20.4, this registry moved in 1.21." Export for 1.20.1, export for 1.21.4, export for the latest snapshot. The compatibility layer handles the differences.
 
-### What This Changes
+#### What This Changes
 
 The current Minecraft modding pipeline looks like this:
 
@@ -283,7 +284,7 @@ The implications:
 
 **Server operators get mod customization.** Right now, configuring a mod means editing JSON or TOML config files and restarting the server. Minecraft Studio could provide a server configuration mode where operators visually tweak mod parameters, test changes on a local instance, and deploy updated configs -- without touching code or restarting.
 
-### Technical Architecture
+#### Technical Architecture
 
 The application itself would be:
 
@@ -300,7 +301,7 @@ The hardest problem is the hot-reload cycle. Minecraft wasn't designed for class
 
 The second hardest problem is the abstraction layer. Each modloader has different registration timing, event bus semantics, networking APIs, rendering hooks, and capability systems. The abstraction needs to be thin enough that exported code is readable and debuggable (not buried under layers of indirection) but complete enough that 95% of mod functionality doesn't require loader-specific code.
 
-### What Exists Today vs. What's Missing
+#### What Exists Today vs. What's Missing
 
 | Capability | Existing Tool | Minecraft Studio |
 |-----------|---------------|-----------------|
@@ -318,15 +319,15 @@ The second hardest problem is the abstraction layer. Each modloader has differen
 
 Every row in the "Existing Tool" column is either a separate application, a manual text-editing process, or doesn't exist at all. Minecraft Studio collapses it into one window.
 
-## Status
+## Notes
 
-Both GeoVox and Minecraft Studio are concept documents. No code for either.
+GeoVox and Minecraft Studio are different scales of ambition aimed at the same gap. Minecraft is the most popular game ever made. Its modding ecosystem is one of the most productive creative communities in software history. And the tooling is decades behind what Roblox gives its creators out of the box.
 
-GeoVox is a focused pipeline tool with well-understood components. Minecraft Studio is an order of magnitude more ambitious -- it's a full IDE with an embedded game engine, a cross-compiler for modloader ABIs, and visual editors for systems that have never had visual editors. Building the full vision would be a multi-year effort.
+GeoVox is a focused pipeline tool with well-understood components. Minecraft Studio is an order of magnitude more ambitious -- a full IDE with an embedded game engine, a cross-compiler for modloader ABIs, and visual editors for systems that have never had visual editors.
 
 But the pieces exist. Blockbench proved that visual Minecraft tooling has a massive audience. Architectury proved that cross-loader abstraction works. IntelliJ's Minecraft Development plugin proved that IDE integration helps. The Minecraft modding community has, collectively, built every piece of this puzzle in isolation. Nobody has assembled them into one coherent application.
 
-The question isn't whether this is technically possible. It's whether someone will build it before Mojang does -- or before the modding community accepts the current friction as permanent.
+The real world is already the most detailed voxel grid there is. And the Minecraft modding community is already the largest unpaid game development workforce on the planet. Both deserve better tools.
 
 ---
 
