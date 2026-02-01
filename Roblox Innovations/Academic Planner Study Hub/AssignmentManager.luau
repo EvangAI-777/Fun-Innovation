@@ -127,7 +127,7 @@ local function makeSurfaceText(parent: Part, face: Enum.NormalId, text: string, 
     label.Text = text
     label.TextScaled = false
     label.TextSize = textSize
-    label.Font = Enum.Font.GothamBold
+    label.Font = Enum.Font.BuilderSansBold
     label.TextWrapped = true
     label.TextXAlignment = Enum.TextXAlignment.Center
     label.TextYAlignment = Enum.TextYAlignment.Center
@@ -494,7 +494,7 @@ function Manager.buildStickyNote(assignment: any, deskPart: Part, slotIndex: num
     abbrevLabel.TextColor3 = Color3.fromRGB(30, 30, 30)
     abbrevLabel.Text = assignment.abbreviation or ""
     abbrevLabel.TextSize = 16
-    abbrevLabel.Font = Enum.Font.GothamBold
+    abbrevLabel.Font = Enum.Font.BuilderSansBold
     abbrevLabel.TextTruncate = Enum.TextTruncate.AtEnd
     abbrevLabel.LayoutOrder = 1
     abbrevLabel.Parent = topFrame
@@ -506,7 +506,7 @@ function Manager.buildStickyNote(assignment: any, deskPart: Part, slotIndex: num
     nameLabel.TextColor3 = Color3.fromRGB(40, 40, 40)
     nameLabel.Text = assignment.assignment or ""
     nameLabel.TextSize = 13
-    nameLabel.Font = Enum.Font.Gotham
+    nameLabel.Font = Enum.Font.BuilderSans
     nameLabel.TextWrapped = true
     nameLabel.TextTruncate = Enum.TextTruncate.AtEnd
     nameLabel.LayoutOrder = 2
@@ -519,7 +519,7 @@ function Manager.buildStickyNote(assignment: any, deskPart: Part, slotIndex: num
     dateLabel.TextColor3 = Color3.fromRGB(60, 60, 60)
     dateLabel.Text = if assignment.dueDate ~= "" then ("Due: " .. assignment.dueDate) else ""
     dateLabel.TextSize = 11
-    dateLabel.Font = Enum.Font.Gotham
+    dateLabel.Font = Enum.Font.BuilderSans
     dateLabel.LayoutOrder = 3
     dateLabel.Parent = topFrame
 
@@ -1009,7 +1009,7 @@ function Manager.buildStudyRoom(roomIndex: number): Model
     statusLabel.TextColor3 = Color3.fromRGB(100, 100, 100)
     statusLabel.Text = "Ready"
     statusLabel.TextSize = 24
-    statusLabel.Font = Enum.Font.Gotham
+    statusLabel.Font = Enum.Font.BuilderSans
     statusLabel.Parent = timerFrame
 
     local membersLabel = Instance.new("TextLabel")
@@ -1020,7 +1020,7 @@ function Manager.buildStudyRoom(roomIndex: number): Model
     membersLabel.TextColor3 = Color3.fromRGB(130, 130, 130)
     membersLabel.Text = ""
     membersLabel.TextSize = 16
-    membersLabel.Font = Enum.Font.Gotham
+    membersLabel.Font = Enum.Font.BuilderSans
     membersLabel.TextWrapped = true
     membersLabel.Parent = timerFrame
 
@@ -1069,7 +1069,7 @@ function Manager.updateLibraryBoard(playerSummaries: { { name: string, classes: 
     titleLabel.TextColor3 = Color3.fromRGB(40, 40, 40)
     titleLabel.Text = "Who's Studying What"
     titleLabel.TextSize = 22
-    titleLabel.Font = Enum.Font.GothamBold
+    titleLabel.Font = Enum.Font.BuilderSansBold
     titleLabel.Parent = frame
 
     local listLayout = Instance.new("UIListLayout")
@@ -1092,7 +1092,7 @@ function Manager.updateLibraryBoard(playerSummaries: { { name: string, classes: 
         entry.TextColor3 = Color3.fromRGB(50, 50, 50)
         entry.Text = summary.name .. ": " .. table.concat(summary.classes, ", ")
         entry.TextSize = 14
-        entry.Font = Enum.Font.Gotham
+        entry.Font = Enum.Font.BuilderSans
         entry.TextXAlignment = Enum.TextXAlignment.Left
         entry.TextTruncate = Enum.TextTruncate.AtEnd
         entry.LayoutOrder = i

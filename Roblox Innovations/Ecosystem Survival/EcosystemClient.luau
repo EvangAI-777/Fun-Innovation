@@ -71,7 +71,7 @@ selTitle.BackgroundTransparency = 1
 selTitle.TextColor3 = Color3.fromRGB(200, 220, 255)
 selTitle.Text = "ECOSYSTEM SURVIVAL"
 selTitle.TextSize = 40
-selTitle.Font = Enum.Font.GothamBold
+selTitle.Font = Enum.Font.BuilderSansBold
 selTitle.Parent = selectionScreen
 
 local selSubtitle = Instance.new("TextLabel")
@@ -81,7 +81,7 @@ selSubtitle.BackgroundTransparency = 1
 selSubtitle.TextColor3 = Color3.fromRGB(140, 150, 160)
 selSubtitle.Text = "Choose your species"
 selSubtitle.TextSize = 18
-selSubtitle.Font = Enum.Font.Gotham
+selSubtitle.Font = Enum.Font.BuilderSans
 selSubtitle.Parent = selectionScreen
 
 -- Species cards
@@ -130,7 +130,7 @@ local function makeSpeciesCard(species: string, xOffset: number)
     nameLabel.TextColor3 = Color3.new(1, 1, 1)
     nameLabel.Text = specData.name
     nameLabel.TextSize = 20
-    nameLabel.Font = Enum.Font.GothamBold
+    nameLabel.Font = Enum.Font.BuilderSansBold
     nameLabel.Parent = card
 
     -- Stats
@@ -157,7 +157,7 @@ local function makeSpeciesCard(species: string, xOffset: number)
         statLabel.TextColor3 = Color3.fromRGB(160, 165, 175)
         statLabel.Text = stat
         statLabel.TextSize = 12
-        statLabel.Font = Enum.Font.Gotham
+        statLabel.Font = Enum.Font.BuilderSans
         statLabel.TextXAlignment = Enum.TextXAlignment.Left
         statLabel.Parent = card
     end
@@ -171,7 +171,7 @@ local function makeSpeciesCard(species: string, xOffset: number)
     chooseBtn.TextColor3 = Color3.new(1, 1, 1)
     chooseBtn.Text = "Play as " .. specData.name
     chooseBtn.TextSize = 14
-    chooseBtn.Font = Enum.Font.GothamBold
+    chooseBtn.Font = Enum.Font.BuilderSansBold
     chooseBtn.Parent = card
 
     local btnCorner = Instance.new("UICorner")
@@ -212,7 +212,7 @@ energyLabel.BackgroundTransparency = 1
 energyLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
 energyLabel.Text = "Energy"
 energyLabel.TextSize = 12
-energyLabel.Font = Enum.Font.GothamBold
+energyLabel.Font = Enum.Font.BuilderSansBold
 energyLabel.Parent = energyFrame
 
 local barBg = Instance.new("Frame")
@@ -291,7 +291,7 @@ local function makeActionButton(name: string, text: string, color: Color3): Text
     btn.TextColor3 = Color3.new(1, 1, 1)
     btn.Text = text
     btn.TextSize = 13
-    btn.Font = Enum.Font.GothamBold
+    btn.Font = Enum.Font.BuilderSansBold
     btn.Parent = actionBar
 
     local corner = Instance.new("UICorner")
@@ -330,7 +330,7 @@ popTitle.BackgroundTransparency = 1
 popTitle.TextColor3 = Color3.fromRGB(200, 210, 230)
 popTitle.Text = "Population"
 popTitle.TextSize = 14
-popTitle.Font = Enum.Font.GothamBold
+popTitle.Font = Enum.Font.BuilderSansBold
 popTitle.Parent = popFrame
 
 local function makePopRow(yOffset: number, label: string, color: Color3): TextLabel
@@ -341,7 +341,7 @@ local function makePopRow(yOffset: number, label: string, color: Color3): TextLa
     row.TextColor3 = color
     row.Text = label .. ": 0"
     row.TextSize = 12
-    row.Font = Enum.Font.Gotham
+    row.Font = Enum.Font.BuilderSans
     row.TextXAlignment = Enum.TextXAlignment.Left
     row.Parent = popFrame
     return row
@@ -359,7 +359,7 @@ healthLabel.BackgroundTransparency = 1
 healthLabel.TextColor3 = Color3.fromRGB(200, 220, 200)
 healthLabel.Text = "Health: 50 (Stable)"
 healthLabel.TextSize = 13
-healthLabel.Font = Enum.Font.GothamBold
+healthLabel.Font = Enum.Font.BuilderSansBold
 healthLabel.TextXAlignment = Enum.TextXAlignment.Left
 healthLabel.Parent = popFrame
 
@@ -416,7 +416,7 @@ local function addLogEntry(msg: string)
     entry.TextColor3 = Color3.fromRGB(180, 185, 195)
     entry.Text = msg
     entry.TextSize = 11
-    entry.Font = Enum.Font.Gotham
+    entry.Font = Enum.Font.BuilderSans
     entry.TextXAlignment = Enum.TextXAlignment.Left
     entry.TextTruncate = Enum.TextTruncate.AtEnd
     entry.LayoutOrder = logOrder
@@ -477,7 +477,7 @@ deathText.BackgroundTransparency = 1
 deathText.TextColor3 = Color3.fromRGB(255, 200, 200)
 deathText.Text = "You ran out of energy!\nRespawning..."
 deathText.TextSize = 28
-deathText.Font = Enum.Font.GothamBold
+deathText.Font = Enum.Font.BuilderSansBold
 deathText.TextWrapped = true
 deathText.Parent = deathOverlay
 

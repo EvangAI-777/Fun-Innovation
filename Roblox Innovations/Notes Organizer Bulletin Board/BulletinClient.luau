@@ -84,7 +84,7 @@ panelTitle.BackgroundTransparency = 1
 panelTitle.Text = "New Note"
 panelTitle.TextColor3 = Color3.fromRGB(200, 200, 210)
 panelTitle.TextSize = 18
-panelTitle.Font = Enum.Font.GothamBold
+panelTitle.Font = Enum.Font.BuilderSansBold
 panelTitle.Parent = createPanel
 
 -- Title input
@@ -99,7 +99,7 @@ titleInput.PlaceholderColor3 = Color3.fromRGB(100, 100, 110)
 titleInput.Text = ""
 titleInput.TextColor3 = Color3.fromRGB(220, 220, 230)
 titleInput.TextSize = 14
-titleInput.Font = Enum.Font.Gotham
+titleInput.Font = Enum.Font.BuilderSans
 titleInput.TextXAlignment = Enum.TextXAlignment.Left
 titleInput.ClearTextOnFocus = false
 titleInput.Parent = createPanel
@@ -124,7 +124,7 @@ bodyInput.PlaceholderColor3 = Color3.fromRGB(100, 100, 110)
 bodyInput.Text = ""
 bodyInput.TextColor3 = Color3.fromRGB(220, 220, 230)
 bodyInput.TextSize = 13
-bodyInput.Font = Enum.Font.Gotham
+bodyInput.Font = Enum.Font.BuilderSans
 bodyInput.TextXAlignment = Enum.TextXAlignment.Left
 bodyInput.TextYAlignment = Enum.TextYAlignment.Top
 bodyInput.MultiLine = true
@@ -149,7 +149,7 @@ folderLabel.BackgroundTransparency = 1
 folderLabel.Text = "Folder:"
 folderLabel.TextColor3 = Color3.fromRGB(140, 140, 150)
 folderLabel.TextSize = 13
-folderLabel.Font = Enum.Font.Gotham
+folderLabel.Font = Enum.Font.BuilderSans
 folderLabel.TextXAlignment = Enum.TextXAlignment.Left
 folderLabel.Parent = createPanel
 
@@ -163,7 +163,7 @@ folderSelector.BorderSizePixel = 0
 folderSelector.Text = "  Lobby (no folder)"
 folderSelector.TextColor3 = Color3.fromRGB(180, 180, 190)
 folderSelector.TextSize = 12
-folderSelector.Font = Enum.Font.Gotham
+folderSelector.Font = Enum.Font.BuilderSans
 folderSelector.TextXAlignment = Enum.TextXAlignment.Left
 folderSelector.Parent = createPanel
 
@@ -192,7 +192,7 @@ placeBtn.BorderSizePixel = 0
 placeBtn.Text = "Place on Surface"
 placeBtn.TextColor3 = Color3.fromRGB(220, 230, 220)
 placeBtn.TextSize = 14
-placeBtn.Font = Enum.Font.GothamBold
+placeBtn.Font = Enum.Font.BuilderSansBold
 placeBtn.Parent = createPanel
 
 local placeBtnCorner = Instance.new("UICorner")
@@ -209,7 +209,7 @@ cancelBtn.BorderSizePixel = 0
 cancelBtn.Text = "Cancel"
 cancelBtn.TextColor3 = Color3.fromRGB(200, 180, 180)
 cancelBtn.TextSize = 13
-cancelBtn.Font = Enum.Font.Gotham
+cancelBtn.Font = Enum.Font.BuilderSans
 cancelBtn.Parent = createPanel
 
 local cancelCorner = Instance.new("UICorner")
@@ -244,7 +244,7 @@ readTitle.BackgroundTransparency = 1
 readTitle.Text = ""
 readTitle.TextColor3 = Config.TitleColor
 readTitle.TextSize = 22
-readTitle.Font = Enum.Font.GothamBold
+readTitle.Font = Enum.Font.BuilderSansBold
 readTitle.TextXAlignment = Enum.TextXAlignment.Left
 readTitle.TextTruncate = Enum.TextTruncate.AtEnd
 readTitle.Parent = readOverlay
@@ -257,7 +257,7 @@ readBody.BackgroundTransparency = 1
 readBody.Text = ""
 readBody.TextColor3 = Config.BodyColor
 readBody.TextSize = 15
-readBody.Font = Enum.Font.Gotham
+readBody.Font = Enum.Font.BuilderSans
 readBody.TextXAlignment = Enum.TextXAlignment.Left
 readBody.TextYAlignment = Enum.TextYAlignment.Top
 readBody.TextWrapped = true
@@ -271,7 +271,7 @@ readAuthor.BackgroundTransparency = 1
 readAuthor.Text = ""
 readAuthor.TextColor3 = Color3.fromRGB(140, 135, 125)
 readAuthor.TextSize = 12
-readAuthor.Font = Enum.Font.Gotham
+readAuthor.Font = Enum.Font.BuilderSans
 readAuthor.TextXAlignment = Enum.TextXAlignment.Right
 readAuthor.Parent = readOverlay
 
@@ -282,7 +282,7 @@ closeReadBtn.BackgroundTransparency = 1
 closeReadBtn.Text = "X"
 closeReadBtn.TextColor3 = Color3.fromRGB(120, 110, 100)
 closeReadBtn.TextSize = 18
-closeReadBtn.Font = Enum.Font.GothamBold
+closeReadBtn.Font = Enum.Font.BuilderSansBold
 closeReadBtn.Parent = readOverlay
 
 closeReadBtn.MouseButton1Click:Connect(function()
@@ -317,7 +317,7 @@ newNoteBtn.BorderSizePixel = 0
 newNoteBtn.Text = "+ New Note"
 newNoteBtn.TextColor3 = Color3.fromRGB(220, 225, 240)
 newNoteBtn.TextSize = 13
-newNoteBtn.Font = Enum.Font.GothamBold
+newNoteBtn.Font = Enum.Font.BuilderSansBold
 newNoteBtn.Parent = toolbar
 
 local nnCorner = Instance.new("UICorner")
@@ -333,7 +333,7 @@ newFolderBtn.BorderSizePixel = 0
 newFolderBtn.Text = "+ New Room"
 newFolderBtn.TextColor3 = Color3.fromRGB(210, 200, 230)
 newFolderBtn.TextSize = 13
-newFolderBtn.Font = Enum.Font.GothamBold
+newFolderBtn.Font = Enum.Font.BuilderSansBold
 newFolderBtn.Parent = toolbar
 
 local nfCorner = Instance.new("UICorner")
@@ -348,7 +348,7 @@ noteCountLabel.BackgroundTransparency = 1
 noteCountLabel.Text = "0 notes"
 noteCountLabel.TextColor3 = Color3.fromRGB(120, 120, 130)
 noteCountLabel.TextSize = 12
-noteCountLabel.Font = Enum.Font.Gotham
+noteCountLabel.Font = Enum.Font.BuilderSans
 noteCountLabel.TextXAlignment = Enum.TextXAlignment.Right
 noteCountLabel.Parent = toolbar
 
@@ -384,7 +384,7 @@ local function addFeedEntry(text: string)
     entry.Text = "  " .. text
     entry.TextColor3 = Color3.fromRGB(160, 165, 175)
     entry.TextSize = 11
-    entry.Font = Enum.Font.Gotham
+    entry.Font = Enum.Font.BuilderSans
     entry.TextXAlignment = Enum.TextXAlignment.Left
     entry.TextTruncate = Enum.TextTruncate.AtEnd
     entry.Parent = feedFrame

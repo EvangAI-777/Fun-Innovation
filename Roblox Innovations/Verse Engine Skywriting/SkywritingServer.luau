@@ -138,7 +138,7 @@ local function createSkyPoem(lines: {string}, voice: string, worldPos: Vector3):
         textLabel.Text = line
         textLabel.TextColor3 = color
         textLabel.TextSize = 42
-        textLabel.Font = Enum.Font.GothamBold
+        textLabel.Font = Enum.Font.BuilderSansBold
         textLabel.TextScaled = false
         textLabel.TextTransparency = 1  -- Start invisible, fade in
         textLabel.TextXAlignment = Enum.TextXAlignment.Center
@@ -161,7 +161,7 @@ local function createSkyPoem(lines: {string}, voice: string, worldPos: Vector3):
         backLabel.Text = line
         backLabel.TextColor3 = color
         backLabel.TextSize = 42
-        backLabel.Font = Enum.Font.GothamBold
+        backLabel.Font = Enum.Font.BuilderSansBold
         backLabel.TextScaled = false
         backLabel.TextTransparency = 1
         backLabel.TextXAlignment = Enum.TextXAlignment.Center

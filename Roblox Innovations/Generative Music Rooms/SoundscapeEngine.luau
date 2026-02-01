@@ -10,7 +10,7 @@
 
 local SoundscapeEngine = {}
 
-local MusicConfig = require(game.ReplicatedStorage:WaitForChild("MusicConfig"))
+local MusicConfig = require(game:GetService("ReplicatedStorage"):WaitForChild("MusicConfig"))
 
 ------------------------------------------------------------------------
 -- Waveform math
@@ -296,7 +296,7 @@ local function buildPortal(parent: Instance, center: Vector3, direction: Vector3
 	label.Size = UDim2.new(1, 0, 1, 0)
 	label.BackgroundTransparency = 1
 	label.Text = roomName
-	label.Font = Enum.Font.GothamBold
+	label.Font = Enum.Font.BuilderSansBold
 	label.TextColor3 = color
 	label.TextScaled = true
 	label.Parent = gui
@@ -482,7 +482,7 @@ function SoundscapeEngine.buildLobby(worldFolder: Instance): Instance
 	label.Size = UDim2.new(1, 0, 1, 0)
 	label.BackgroundTransparency = 1
 	label.Text = "GENERATIVE\nMUSIC ROOMS"
-	label.Font = Enum.Font.GothamBold
+	label.Font = Enum.Font.BuilderSansBold
 	label.TextColor3 = Color3.fromRGB(255, 255, 255)
 	label.TextScaled = true
 	label.Parent = gui
@@ -515,7 +515,7 @@ function SoundscapeEngine.buildLobby(worldFolder: Instance): Instance
 		sLabel.Size = UDim2.new(1, 0, 1, 0)
 		sLabel.BackgroundTransparency = 1
 		sLabel.Text = roomDef.name .. "\n→"
-		sLabel.Font = Enum.Font.GothamBold
+		sLabel.Font = Enum.Font.BuilderSansBold
 		sLabel.TextColor3 = roomDef.visuals.pulseColor
 		sLabel.TextScaled = true
 		sLabel.Parent = sGui

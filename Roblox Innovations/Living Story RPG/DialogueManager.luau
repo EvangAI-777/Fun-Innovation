@@ -10,7 +10,7 @@
 
 local DialogueManager = {}
 
-local StoryConfig = require(game.ReplicatedStorage:WaitForChild("StoryConfig"))
+local StoryConfig = require(game:GetService("ReplicatedStorage"):WaitForChild("StoryConfig"))
 
 ------------------------------------------------------------------------
 -- Town geometry builder
@@ -157,7 +157,7 @@ local function buildFountain(parent)
 	label.Size = UDim2.new(1, 0, 1, 0)
 	label.BackgroundTransparency = 1
 	label.Text = "LIVING STORY"
-	label.Font = Enum.Font.GothamBold
+	label.Font = Enum.Font.BuilderSansBold
 	label.TextColor3 = Color3.fromRGB(200, 195, 185)
 	label.TextScaled = true
 	label.Parent = gui
@@ -192,7 +192,7 @@ local function buildBuildingSign(parent, position, text, color)
 	label.Size = UDim2.new(1, 0, 1, 0)
 	label.BackgroundTransparency = 1
 	label.Text = text
-	label.Font = Enum.Font.GothamBold
+	label.Font = Enum.Font.BuilderSansBold
 	label.TextColor3 = Color3.fromRGB(220, 210, 200)
 	label.TextScaled = true
 	label.Parent = gui
@@ -292,7 +292,7 @@ function DialogueManager.buildNPC(npcDef: table, parent: Instance): Instance
 	nameLabel.Position = UDim2.new(0, 0, 0, 0)
 	nameLabel.BackgroundTransparency = 1
 	nameLabel.Text = npcDef.name
-	nameLabel.Font = Enum.Font.GothamBold
+	nameLabel.Font = Enum.Font.BuilderSansBold
 	nameLabel.TextColor3 = Color3.fromRGB(220, 215, 200)
 	nameLabel.TextScaled = true
 	nameLabel.Parent = gui
@@ -302,7 +302,7 @@ function DialogueManager.buildNPC(npcDef: table, parent: Instance): Instance
 	roleLabel.Position = UDim2.new(0, 0, 0.6, 0)
 	roleLabel.BackgroundTransparency = 1
 	roleLabel.Text = npcDef.role
-	roleLabel.Font = Enum.Font.Gotham
+	roleLabel.Font = Enum.Font.BuilderSans
 	roleLabel.TextColor3 = Color3.fromRGB(160, 155, 145)
 	roleLabel.TextScaled = true
 	roleLabel.Parent = gui

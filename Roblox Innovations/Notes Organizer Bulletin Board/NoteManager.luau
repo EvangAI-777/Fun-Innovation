@@ -136,7 +136,7 @@ function NoteManager.buildNoteModel(note: NoteData, parentFolder: Folder): Model
     titleLabel.Text = note.title
     titleLabel.TextColor3 = Config.TitleColor
     titleLabel.TextSize = Config.TitleTextSize
-    titleLabel.Font = Enum.Font.GothamBold
+    titleLabel.Font = Enum.Font.BuilderSansBold
     titleLabel.TextXAlignment = Enum.TextXAlignment.Left
     titleLabel.TextTruncate = Enum.TextTruncate.AtEnd
     titleLabel.Parent = gui
@@ -164,7 +164,7 @@ function NoteManager.buildNoteModel(note: NoteData, parentFolder: Folder): Model
     bodyLabel.Text = bodyText
     bodyLabel.TextColor3 = Config.BodyColor
     bodyLabel.TextSize = Config.BodyTextSize
-    bodyLabel.Font = Enum.Font.Gotham
+    bodyLabel.Font = Enum.Font.BuilderSans
     bodyLabel.TextXAlignment = Enum.TextXAlignment.Left
     bodyLabel.TextYAlignment = Enum.TextYAlignment.Top
     bodyLabel.TextWrapped = true
@@ -179,7 +179,7 @@ function NoteManager.buildNoteModel(note: NoteData, parentFolder: Folder): Model
     authorLabel.Text = "- " .. note.authorName
     authorLabel.TextColor3 = Color3.fromRGB(140, 135, 125)
     authorLabel.TextSize = 14
-    authorLabel.Font = Enum.Font.Gotham
+    authorLabel.Font = Enum.Font.BuilderSans
     authorLabel.TextXAlignment = Enum.TextXAlignment.Right
     authorLabel.Parent = gui
 
@@ -330,7 +330,7 @@ function NoteManager.buildRoom(folder: FolderData, gridIndex: number): Model
     signLabel.Text = folder.name
     signLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     signLabel.TextSize = 36
-    signLabel.Font = Enum.Font.GothamBold
+    signLabel.Font = Enum.Font.BuilderSansBold
     signLabel.Parent = signGui
 
     -- Room light
@@ -430,7 +430,7 @@ function NoteManager.buildLobby(): Model
     signLabel.Text = "BULLETIN BOARD"
     signLabel.TextColor3 = Color3.fromRGB(200, 195, 180)
     signLabel.TextSize = 48
-    signLabel.Font = Enum.Font.GothamBold
+    signLabel.Font = Enum.Font.BuilderSansBold
     signLabel.Parent = signGui
 
     -- Spawn

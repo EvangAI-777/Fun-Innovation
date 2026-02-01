@@ -116,6 +116,15 @@ Write a note, it becomes a framed object you can place on walls, tables, or floa
 
 See [`Notes Organizer Bulletin Board/SETUP.md`](./Notes%20Organizer%20Bulletin%20Board/SETUP.md) for full setup instructions.
 
+## API Audit (February 2026)
+
+All 28 Luau files were scanned against the current Roblox Studio API surface. Two changes were applied across the board:
+
+- **Font enum update** -- `Enum.Font.Gotham` and `Enum.Font.GothamBold` replaced with `Enum.Font.BuilderSans` and `Enum.Font.BuilderSansBold` across 13 files. The old names still work (Roblox aliases them) but the canonical names are now BuilderSans/BuilderSansBold.
+- **Service access pattern** -- Two files used `game.ReplicatedStorage` direct property access instead of `game:GetService("ReplicatedStorage")`. Corrected to the canonical `:GetService()` pattern.
+
+No other deprecated APIs were found. The codebase uses `task.spawn` / `task.wait` / `task.delay` throughout (no legacy `spawn()` / `wait()` / `delay()`), uses `workspace:Raycast` (no legacy `FindPartOnRay`), and avoids `Instance.new` with the deprecated second parent argument.
+
 ## Notes
 
 The browser versions were solo experiences. The Roblox versions are shared ones. That's not just a platform difference -- it's a fundamental shift in what the projects mean. An ecosystem you watch is a simulation. An ecosystem you inhabit with 30 other people is a social system. A poem you generate alone is personal. A sky full of poems from strangers is something else entirely.
