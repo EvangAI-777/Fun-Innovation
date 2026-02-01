@@ -61,6 +61,8 @@ Fun-Innovation/
 |   |   |-- SkywritingServer.luau
 |   |   |-- VerseConfig.luau
 |   |-- FUNME.md
+|-- Minecraft Innovations/
+|   |-- MCME.md
 |-- README.md
 ```
 
@@ -68,15 +70,21 @@ Fun-Innovation/
 
 ### [INVALID_REQUEST](./INVALID_REQUEST/)
 
-The original session. Seven standalone projects -- five browser-based HTML apps and two Python command-line programs -- all built in a single sitting from a session the system flagged as invalid before it started. Emergent simulations, generative music, interactive fiction, poetry generation, an academic planner, and a notes organizer. No external dependencies. Everything runs as-is.
+The original session. Seven standalone projects -- five **browser-based** HTML applications and two **terminal-based** Python programs -- all built in a single sitting from a session the system flagged as invalid before it started. The HTML files open directly in any browser (no server, no build step). The Python files run in any terminal with Python 3.6+ (no external packages). Emergent simulations, generative music, interactive fiction, poetry generation, an academic planner, and a notes organizer. No dependencies. Everything runs as-is.
 
 See [`INVALID_REQUEST/DELETEME.md`](./INVALID_REQUEST/DELETEME.md) for the full story and project details.
 
 ### [Roblox Innovations](./Roblox%20Innovations/)
 
-Design concepts for bringing every INVALID_REQUEST project into Roblox Studio. Not ports -- reimaginings that take advantage of 3D space, physics, and multiplayer. Each of the seven concepts has its own subdirectory for Roblox Studio files as development progresses. All buildable with stock Studio and Luau.
+Design concepts for bringing every INVALID_REQUEST project into Roblox Studio. Not ports -- reimaginings that take advantage of 3D space, physics, and multiplayer. Each of the seven concepts has its own subdirectory for Roblox Studio files as development progresses. All buildable with stock Studio and Luau. All 28 Luau files have been audited against the current Roblox Studio API surface (February 2026) -- fonts updated to BuilderSans/BuilderSansBold, service access patterns normalized.
 
 See [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md) for detailed implementation breakdowns.
+
+### [Minecraft Innovations](./Minecraft%20Innovations/)
+
+Concept design for a modular framework that imports real-world 3D data -- terrain heightmaps, LiDAR point clouds, photogrammetry meshes, GIS building footprints -- into playable Minecraft worlds. Palette-driven voxelization, multiple export formats, bidirectional editing. No code yet; this is the design document.
+
+See [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md) for the full concept.
 
 ## Adding New Directories
 
@@ -90,10 +98,11 @@ No strict naming conventions. No required templates. Just keep it organized and 
 
 ## Quick Start
 
-**Browser projects (INVALID_REQUEST):**
-Open any `.html` file from `INVALID_REQUEST/HTML Files/` in a browser. That's it.
+**Browser-based projects (INVALID_REQUEST/HTML Files):**
+Open any `.html` file directly in a browser -- double-click or drag into a tab. No server, no build step, no install. Everything runs client-side.
 
-**Python projects (INVALID_REQUEST):**
+**Terminal-based projects (INVALID_REQUEST/Python Files):**
+Run in any terminal with Python 3.6+. No external packages. Interactive stdin/stdout programs.
 ```bash
 python3 "INVALID_REQUEST/Python Files/living_story.py"
 python3 "INVALID_REQUEST/Python Files/verse_engine.py"
@@ -101,6 +110,9 @@ python3 "INVALID_REQUEST/Python Files/verse_engine.py"
 
 **Roblox projects (Roblox Innovations):**
 All seven projects are fully built. See each project's SETUP.md for Studio setup instructions: [`Flow Field Obby`](./Roblox%20Innovations/Flow%20Field%20Obby/SETUP.md), [`Verse Engine Skywriting`](./Roblox%20Innovations/Verse%20Engine%20Skywriting/SETUP.md), [`Notes Organizer Bulletin Board`](./Roblox%20Innovations/Notes%20Organizer%20Bulletin%20Board/SETUP.md), [`Academic Planner Study Hub`](./Roblox%20Innovations/Academic%20Planner%20Study%20Hub/SETUP.md), [`Ecosystem Survival`](./Roblox%20Innovations/Ecosystem%20Survival/SETUP.md), [`Generative Music Rooms`](./Roblox%20Innovations/Generative%20Music%20Rooms/SETUP.md), and [`Living Story RPG`](./Roblox%20Innovations/Living%20Story%20RPG/SETUP.md). Full details in [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md).
+
+**Minecraft concept (Minecraft Innovations):**
+Design document only -- no code yet. Read [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md) for the GeoVox framework concept.
 
 ---
 

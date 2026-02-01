@@ -60,7 +60,7 @@ local function makeSurfaceText(parent: Part, face: Enum.NormalId, text: string, 
     label.Text = text
     label.TextScaled = false
     label.TextSize = textSize
-    label.Font = Enum.Font.GothamBold
+    label.Font = Enum.Font.BuilderSansBold
     label.TextWrapped = true
     label.TextXAlignment = Enum.TextXAlignment.Center
     label.TextYAlignment = Enum.TextYAlignment.Center

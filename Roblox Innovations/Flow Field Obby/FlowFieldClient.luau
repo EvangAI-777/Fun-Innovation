@@ -55,7 +55,7 @@ checkpointLabel.BackgroundTransparency = 1
 checkpointLabel.Text = "Checkpoint: 0 / " .. Config.CheckpointCount
 checkpointLabel.TextColor3 = Color3.fromRGB(0, 200, 120)
 checkpointLabel.TextSize = 22
-checkpointLabel.Font = Enum.Font.GothamBold
+checkpointLabel.Font = Enum.Font.BuilderSansBold
 checkpointLabel.Parent = checkpointFrame
 
 -- Zone indicator (below checkpoint display)
@@ -79,7 +79,7 @@ zoneLabel.BackgroundTransparency = 1
 zoneLabel.Text = "~ Calm ~"
 zoneLabel.TextColor3 = Color3.fromRGB(100, 160, 255)
 zoneLabel.TextSize = 16
-zoneLabel.Font = Enum.Font.Gotham
+zoneLabel.Font = Enum.Font.BuilderSans
 zoneLabel.Parent = zoneFrame
 
 -- Notification label (center, fades in/out)
@@ -91,7 +91,7 @@ notifLabel.BackgroundTransparency = 1
 notifLabel.Text = ""
 notifLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 notifLabel.TextSize = 28
-notifLabel.Font = Enum.Font.GothamBold
+notifLabel.Font = Enum.Font.BuilderSansBold
 notifLabel.TextTransparency = 1
 notifLabel.Parent = screenGui
 
@@ -104,7 +104,7 @@ controlsLabel.BackgroundTransparency = 1
 controlsLabel.Text = "Press H to hide UI"
 controlsLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
 controlsLabel.TextSize = 14
-controlsLabel.Font = Enum.Font.Gotham
+controlsLabel.Font = Enum.Font.BuilderSans
 controlsLabel.TextTransparency = 0
 controlsLabel.Parent = screenGui
 

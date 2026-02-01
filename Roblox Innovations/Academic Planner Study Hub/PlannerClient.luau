@@ -87,7 +87,7 @@ local function makeToolbarButton(name: string, text: string, color: Color3): Tex
     btn.TextColor3 = Color3.new(1, 1, 1)
     btn.Text = text
     btn.TextSize = 14
-    btn.Font = Enum.Font.GothamBold
+    btn.Font = Enum.Font.BuilderSansBold
     btn.Parent = toolbar
 
     local corner = Instance.new("UICorner")
@@ -124,7 +124,7 @@ hudTitle.BackgroundTransparency = 1
 hudTitle.TextColor3 = Color3.fromRGB(255, 240, 200)
 hudTitle.Text = "Upcoming"
 hudTitle.TextSize = 16
-hudTitle.Font = Enum.Font.GothamBold
+hudTitle.Font = Enum.Font.BuilderSansBold
 hudTitle.TextXAlignment = Enum.TextXAlignment.Left
 hudTitle.Parent = hud
 
@@ -176,7 +176,7 @@ local function addFeedMessage(msg: string)
     label.TextColor3 = Color3.fromRGB(200, 200, 200)
     label.Text = msg
     label.TextSize = 12
-    label.Font = Enum.Font.Gotham
+    label.Font = Enum.Font.BuilderSans
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.TextTruncate = Enum.TextTruncate.AtEnd
     label.LayoutOrder = feedOrder
@@ -244,7 +244,7 @@ ppTitle.BorderSizePixel = 0
 ppTitle.TextColor3 = Color3.new(1, 1, 1)
 ppTitle.Text = "Assignment Planner"
 ppTitle.TextSize = 16
-ppTitle.Font = Enum.Font.GothamBold
+ppTitle.Font = Enum.Font.BuilderSansBold
 ppTitle.Parent = plannerPanel
 
 local ppTitleCorner = Instance.new("UICorner")
@@ -260,7 +260,7 @@ local function makeInputField(parent: Frame, yOffset: number, placeholderText: s
     label.TextColor3 = Color3.fromRGB(180, 180, 180)
     label.Text = placeholderText
     label.TextSize = 13
-    label.Font = Enum.Font.Gotham
+    label.Font = Enum.Font.BuilderSans
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = parent
 
@@ -275,7 +275,7 @@ local function makeInputField(parent: Frame, yOffset: number, placeholderText: s
     box.PlaceholderColor3 = Color3.fromRGB(80, 80, 80)
     box.Text = ""
     box.TextSize = 13
-    box.Font = Enum.Font.Gotham
+    box.Font = Enum.Font.BuilderSans
     box.ClearTextOnFocus = false
     box.Parent = parent
 
@@ -302,7 +302,7 @@ addBtn.BorderSizePixel = 0
 addBtn.TextColor3 = Color3.new(1, 1, 1)
 addBtn.Text = "Add Assignment"
 addBtn.TextSize = 14
-addBtn.Font = Enum.Font.GothamBold
+addBtn.Font = Enum.Font.BuilderSansBold
 addBtn.Parent = plannerPanel
 
 local addBtnCorner = Instance.new("UICorner")
@@ -324,7 +324,7 @@ listTitle.BackgroundTransparency = 1
 listTitle.TextColor3 = Color3.fromRGB(180, 180, 180)
 listTitle.Text = "Your Assignments"
 listTitle.TextSize = 13
-listTitle.Font = Enum.Font.GothamBold
+listTitle.Font = Enum.Font.BuilderSansBold
 listTitle.Parent = plannerPanel
 
 local scrollFrame = Instance.new("ScrollingFrame")
@@ -367,7 +367,7 @@ spTitle.BorderSizePixel = 0
 spTitle.TextColor3 = Color3.new(1, 1, 1)
 spTitle.Text = "Paste Syllabus Text"
 spTitle.TextSize = 16
-spTitle.Font = Enum.Font.GothamBold
+spTitle.Font = Enum.Font.BuilderSansBold
 spTitle.Parent = syllabusPanel
 
 local spTitleCorner = Instance.new("UICorner")
@@ -382,7 +382,7 @@ spHint.BackgroundTransparency = 1
 spHint.TextColor3 = Color3.fromRGB(140, 160, 180)
 spHint.Text = "Paste syllabus or schedule text below. The system will detect assignments and dates."
 spHint.TextSize = 12
-spHint.Font = Enum.Font.Gotham
+spHint.Font = Enum.Font.BuilderSans
 spHint.TextWrapped = true
 spHint.TextXAlignment = Enum.TextXAlignment.Left
 spHint.Parent = syllabusPanel
@@ -426,7 +426,7 @@ parseBtn.BorderSizePixel = 0
 parseBtn.TextColor3 = Color3.new(1, 1, 1)
 parseBtn.Text = "Parse Text"
 parseBtn.TextSize = 14
-parseBtn.Font = Enum.Font.GothamBold
+parseBtn.Font = Enum.Font.BuilderSansBold
 parseBtn.Parent = syllabusPanel
 
 local parseBtnCorner = Instance.new("UICorner")
@@ -475,7 +475,7 @@ sgTitle.BorderSizePixel = 0
 sgTitle.TextColor3 = Color3.new(1, 1, 1)
 sgTitle.Text = "Study Groups"
 sgTitle.TextSize = 16
-sgTitle.Font = Enum.Font.GothamBold
+sgTitle.Font = Enum.Font.BuilderSansBold
 sgTitle.Parent = studyPanel
 
 local sgTitleCorner = Instance.new("UICorner")
@@ -585,7 +585,7 @@ local function updateHUD()
         entry.TextColor3 = Color3.fromRGB(230, 230, 230)
         entry.Text = "  " .. (a.abbreviation or "") .. " - " .. (a.assignment or "")
         entry.TextSize = 12
-        entry.Font = Enum.Font.Gotham
+        entry.Font = Enum.Font.BuilderSans
         entry.TextXAlignment = Enum.TextXAlignment.Left
         entry.TextTruncate = Enum.TextTruncate.AtEnd
         entry.LayoutOrder = i
@@ -603,7 +603,7 @@ local function updateHUD()
         empty.TextColor3 = Color3.fromRGB(100, 100, 100)
         empty.Text = "No upcoming assignments"
         empty.TextSize = 12
-        empty.Font = Enum.Font.Gotham
+        empty.Font = Enum.Font.BuilderSans
         empty.Parent = hudList
     end
 end
@@ -660,7 +660,7 @@ local function updateAssignmentList()
         text.TextColor3 = if a.completed then Color3.fromRGB(120, 120, 120) else Color3.fromRGB(220, 220, 220)
         text.Text = (a.abbreviation or "") .. " | " .. (a.assignment or "") .. (if a.dueDate ~= "" then " | " .. a.dueDate else "")
         text.TextSize = 12
-        text.Font = Enum.Font.Gotham
+        text.Font = Enum.Font.BuilderSans
         text.TextXAlignment = Enum.TextXAlignment.Left
         text.TextTruncate = Enum.TextTruncate.AtEnd
         text.Parent = row
@@ -674,7 +674,7 @@ local function updateAssignmentList()
         completeBtn.TextColor3 = Color3.new(1, 1, 1)
         completeBtn.Text = if a.completed then "v" else ""
         completeBtn.TextSize = 14
-        completeBtn.Font = Enum.Font.GothamBold
+        completeBtn.Font = Enum.Font.BuilderSansBold
         completeBtn.Parent = row
 
         local cbCorner = Instance.new("UICorner")
@@ -694,7 +694,7 @@ local function updateAssignmentList()
         delBtn.TextColor3 = Color3.new(1, 1, 1)
         delBtn.Text = "x"
         delBtn.TextSize = 14
-        delBtn.Font = Enum.Font.GothamBold
+        delBtn.Font = Enum.Font.BuilderSansBold
         delBtn.Parent = row
 
         local dbCorner = Instance.new("UICorner")
@@ -757,7 +757,7 @@ parseBtn.MouseButton1Click:Connect(function()
         noResults.TextColor3 = Color3.fromRGB(120, 120, 120)
         noResults.Text = "No assignments detected."
         noResults.TextSize = 12
-        noResults.Font = Enum.Font.Gotham
+        noResults.Font = Enum.Font.BuilderSans
         noResults.Parent = parseResults
         return
     end
@@ -783,7 +783,7 @@ parseBtn.MouseButton1Click:Connect(function()
         textLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
         textLabel.Text = result.text or ""
         textLabel.TextSize = 11
-        textLabel.Font = Enum.Font.Gotham
+        textLabel.Font = Enum.Font.BuilderSans
         textLabel.TextXAlignment = Enum.TextXAlignment.Left
         textLabel.TextTruncate = Enum.TextTruncate.AtEnd
         textLabel.Parent = row
@@ -796,7 +796,7 @@ parseBtn.MouseButton1Click:Connect(function()
             dateLabel.TextColor3 = Color3.fromRGB(140, 160, 180)
             dateLabel.Text = "Date: " .. result.date
             dateLabel.TextSize = 10
-            dateLabel.Font = Enum.Font.Gotham
+            dateLabel.Font = Enum.Font.BuilderSans
             dateLabel.TextXAlignment = Enum.TextXAlignment.Left
             dateLabel.Parent = row
         end
@@ -810,7 +810,7 @@ parseBtn.MouseButton1Click:Connect(function()
         addToPlanner.TextColor3 = Color3.new(1, 1, 1)
         addToPlanner.Text = "Add"
         addToPlanner.TextSize = 12
-        addToPlanner.Font = Enum.Font.GothamBold
+        addToPlanner.Font = Enum.Font.BuilderSansBold
         addToPlanner.Parent = row
 
         local abCorner = Instance.new("UICorner")
@@ -870,7 +870,7 @@ local function updateStudyGroupPanel()
         roomLabel.TextColor3 = Color3.fromRGB(220, 220, 220)
         roomLabel.Text = "Room " .. roomIdx
         roomLabel.TextSize = 14
-        roomLabel.Font = Enum.Font.GothamBold
+        roomLabel.Font = Enum.Font.BuilderSansBold
         roomLabel.TextXAlignment = Enum.TextXAlignment.Left
         roomLabel.Parent = card
 
@@ -897,7 +897,7 @@ local function updateStudyGroupPanel()
         memberLabel.TextColor3 = Color3.fromRGB(140, 140, 140)
         memberLabel.Text = memberText
         memberLabel.TextSize = 11
-        memberLabel.Font = Enum.Font.Gotham
+        memberLabel.Font = Enum.Font.BuilderSans
         memberLabel.TextXAlignment = Enum.TextXAlignment.Left
         memberLabel.TextTruncate = Enum.TextTruncate.AtEnd
         memberLabel.Parent = card
@@ -919,7 +919,7 @@ local function updateStudyGroupPanel()
         joinLeaveBtn.TextColor3 = Color3.new(1, 1, 1)
         joinLeaveBtn.Text = if isInGroup then "Leave" else "Join"
         joinLeaveBtn.TextSize = 11
-        joinLeaveBtn.Font = Enum.Font.GothamBold
+        joinLeaveBtn.Font = Enum.Font.BuilderSansBold
         joinLeaveBtn.Parent = card
 
         local jlCorner = Instance.new("UICorner")
@@ -943,7 +943,7 @@ local function updateStudyGroupPanel()
             startPauseBtn.TextColor3 = Color3.new(1, 1, 1)
             startPauseBtn.Text = if status == "running" then "Pause" else "Start"
             startPauseBtn.TextSize = 11
-            startPauseBtn.Font = Enum.Font.GothamBold
+            startPauseBtn.Font = Enum.Font.BuilderSansBold
             startPauseBtn.Parent = card
 
             local spBtnCorner = Instance.new("UICorner")
@@ -968,7 +968,7 @@ local function updateStudyGroupPanel()
             resetBtn.TextColor3 = Color3.new(1, 1, 1)
             resetBtn.Text = "Reset"
             resetBtn.TextSize = 11
-            resetBtn.Font = Enum.Font.GothamBold
+            resetBtn.Font = Enum.Font.BuilderSansBold
             resetBtn.Parent = card
 
             local rBtnCorner = Instance.new("UICorner")

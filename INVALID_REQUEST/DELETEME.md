@@ -20,28 +20,32 @@ That's what this folder is. The "invalid" output.
 
 ## The Files
 
-### HTML Files
+### HTML Files — Browser-Based Projects
+
+Five standalone web applications. Each is a single `.html` file containing all markup, styling, and JavaScript. Open any of them directly in a browser -- no server, no build step, no dependencies, no install. They run entirely client-side.
 
 | Project | Description |
 |---------|-------------|
 | `ecosystem.html` | Emergent life simulation -- plants, herbivores, predators with simple rules creating complex behavior |
 | `flowfield.html` | Perlin noise flow field -- thousands of particles creating organic visual patterns |
-| `generative-music.html` | Algorithmic music synthesizer -- endless, never-repeating compositions |
+| `generative-music.html` | Algorithmic music synthesizer -- endless, never-repeating compositions using Web Audio API |
 | `academic-planner.html` | Dynamic academic schedule planner with OCR document scanning for syllabi |
 | `notes-organizer.html` | Rich text notes app with folders, markdown/HTML editing, and import/export |
 
-### Python Files
+### Python Files — Terminal-Based Projects
+
+Two command-line programs. Pure Python with no external packages -- just the standard library. Run them in any terminal with Python 3.6+. Both are interactive: they read from stdin and write to stdout. No GUI, no browser, no web server.
 
 | Project | Description |
 |---------|-------------|
-| `living_story.py` | Interactive fiction that tracks your personality and remembers who you've been |
-| `verse_engine.py` | Poetry generator with five distinct voices and multiple forms |
+| `living_story.py` | Interactive fiction that tracks your personality and remembers who you've been -- typewriter text, branching choices, all in the terminal |
+| `verse_engine.py` | Poetry generator with five distinct voices and multiple forms -- select a voice, pick a form, and poems appear line by line |
 
 ## Running These
 
-**Browser projects:** Open any `.html` file from the `HTML Files/` subdirectory directly in a browser. No dependencies, no build step, no install.
+**Browser projects (HTML Files):** Open any `.html` file from the `HTML Files/` subdirectory directly in a browser. Double-click or drag into a browser tab. No dependencies, no build step, no install. Everything runs client-side in the browser.
 
-**Python projects:** Require Python 3.6+. No external packages. Run from the repo root:
+**Terminal projects (Python Files):** Require Python 3.6+. No external packages. Run from the repo root in any terminal:
 
 ```bash
 python3 "INVALID_REQUEST/Python Files/living_story.py"

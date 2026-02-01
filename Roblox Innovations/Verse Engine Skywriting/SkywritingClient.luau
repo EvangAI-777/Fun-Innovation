@@ -81,7 +81,7 @@ title.BackgroundTransparency = 1
 title.Text = "VERSE ENGINE"
 title.TextColor3 = Color3.fromRGB(200, 210, 240)
 title.TextSize = 18
-title.Font = Enum.Font.GothamBold
+title.Font = Enum.Font.BuilderSansBold
 title.Parent = panel
 
 -- Voice selection header
@@ -92,7 +92,7 @@ voiceHeader.BackgroundTransparency = 1
 voiceHeader.Text = "Voice"
 voiceHeader.TextColor3 = Color3.fromRGB(140, 150, 180)
 voiceHeader.TextSize = 13
-voiceHeader.Font = Enum.Font.Gotham
+voiceHeader.Font = Enum.Font.BuilderSans
 voiceHeader.TextXAlignment = Enum.TextXAlignment.Left
 voiceHeader.Parent = panel
 
@@ -118,7 +118,7 @@ for i, voiceName in Config.Voices do
     btn.Text = "  " .. voiceName .. "  --  " .. desc
     btn.TextColor3 = color
     btn.TextSize = 12
-    btn.Font = Enum.Font.Gotham
+    btn.Font = Enum.Font.BuilderSans
     btn.TextXAlignment = Enum.TextXAlignment.Left
     btn.AutoButtonColor = true
     btn.Parent = panel
@@ -155,7 +155,7 @@ formHeader.BackgroundTransparency = 1
 formHeader.Text = "Form"
 formHeader.TextColor3 = Color3.fromRGB(140, 150, 180)
 formHeader.TextSize = 13
-formHeader.Font = Enum.Font.Gotham
+formHeader.Font = Enum.Font.BuilderSans
 formHeader.TextXAlignment = Enum.TextXAlignment.Left
 formHeader.Parent = panel
 
@@ -173,7 +173,7 @@ for i, formName in Config.Forms do
     btn.Text = formName
     btn.TextColor3 = Color3.fromRGB(180, 185, 200)
     btn.TextSize = 12
-    btn.Font = Enum.Font.Gotham
+    btn.Font = Enum.Font.BuilderSans
     btn.AutoButtonColor = true
     btn.Parent = panel
 
@@ -207,7 +207,7 @@ generateBtn.BorderSizePixel = 0
 generateBtn.Text = "Write to the Sky"
 generateBtn.TextColor3 = Color3.fromRGB(220, 225, 240)
 generateBtn.TextSize = 15
-generateBtn.Font = Enum.Font.GothamBold
+generateBtn.Font = Enum.Font.BuilderSansBold
 generateBtn.AutoButtonColor = true
 generateBtn.Parent = panel
 
@@ -272,7 +272,7 @@ local function addFeedEntry(playerName: string, voice: string, lines: {string})
     entry.Text = "  " .. playerName .. " [" .. voice .. "]: " .. preview
     entry.TextColor3 = color
     entry.TextSize = 12
-    entry.Font = Enum.Font.Gotham
+    entry.Font = Enum.Font.BuilderSans
     entry.TextXAlignment = Enum.TextXAlignment.Left
     entry.TextTruncate = Enum.TextTruncate.AtEnd
     entry.Parent = feedFrame
@@ -324,7 +324,7 @@ controlsLabel.BackgroundTransparency = 1
 controlsLabel.Text = "F2 = screenshot mode (hide UI)"
 controlsLabel.TextColor3 = Color3.fromRGB(120, 125, 140)
 controlsLabel.TextSize = 12
-controlsLabel.Font = Enum.Font.Gotham
+controlsLabel.Font = Enum.Font.BuilderSans
 controlsLabel.TextXAlignment = Enum.TextXAlignment.Left
 controlsLabel.Parent = screenGui
 
