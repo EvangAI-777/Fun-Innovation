@@ -14,7 +14,7 @@ Each concept has its own subdirectory for Roblox Studio files as development pro
 | Generative Music Rooms | `Generative Music Rooms/` | `generative-music.html` | Planned |
 | Living Story RPG | `Living Story RPG/` | `living_story.py` | Planned |
 | Academic Planner Study Hub | `Academic Planner Study Hub/` | `academic-planner.html` | Planned |
-| Notes Organizer Bulletin Board | `Notes Organizer Bulletin Board/` | `notes-organizer.html` | Planned |
+| Notes Organizer Bulletin Board | `Notes Organizer Bulletin Board/` | `notes-organizer.html` | Built |
 
 ## Implementation Details
 
@@ -85,21 +85,25 @@ Virtual campus where each player has a dorm room with a desk. The desk has a 3D 
 - Timer system (`os.clock` based) with visible countdown on a shared whiteboard `Part`
 - Campus layout: dorm rooms (private), library (public), study rooms (group)
 
-### Notes Organizer Bulletin Board
+### Notes Organizer Bulletin Board -- Built
 
-Write a note, it becomes a framed object you can place on walls, tables, or floating in mid-air. Folders become rooms. Visit other players' rooms and read their public notes. Private notes exist in a personal vault. The whole thing is a persistent, spatial knowledge base.
+Write a note, it becomes a framed object you can place on walls, tables, or floating in mid-air. Folders become rooms. Visit other players' rooms and read their public notes. Private notes appear faded to others. Persistent via DataStore.
 
-- `SurfaceGui` on `Part`s for each note (`RichText` enabled `TextLabel`s)
-- Drag-and-drop placement via `mouse.Hit` raycasting and `CFrame` snapping
-- Folder = Room, managed by a table in `ReplicatedStorage` mapping folder IDs to room models
-- `DataStoreService` serializing notes as JSON strings per player
-- Public/private toggle per note controlling visibility to other players
+| File | Type | Studio Location |
+|------|------|-----------------|
+| `BulletinConfig.luau` | ModuleScript | ReplicatedStorage |
+| `NoteManager.luau` | ModuleScript | ServerStorage |
+| `BulletinServer.luau` | Script | ServerScriptService |
+| `BulletinClient.luau` | LocalScript | StarterPlayerScripts |
+| `SETUP.md` | Setup guide | -- |
+
+See [`Notes Organizer Bulletin Board/SETUP.md`](./Notes%20Organizer%20Bulletin%20Board/SETUP.md) for full setup instructions.
 
 ## Notes
 
 The browser versions were solo experiences. The Roblox versions are shared ones. That's not just a platform difference -- it's a fundamental shift in what the projects mean. An ecosystem you watch is a simulation. An ecosystem you inhabit with 30 other people is a social system. A poem you generate alone is personal. A sky full of poems from strangers is something else entirely.
 
-Flow Field Obby and Verse Engine Skywriting are built and ready to drop into Studio. The remaining five are blueprints. The builds continue.
+Flow Field Obby, Verse Engine Skywriting, and Notes Organizer Bulletin Board are built and ready to drop into Studio. The remaining four are blueprints. The builds continue.
 
 ---
 
