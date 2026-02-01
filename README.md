@@ -63,6 +63,18 @@ Fun-Innovation/
 |   |-- FUNME.md
 |-- Minecraft Innovations/
 |   |-- MCME.md
+|-- Undertale Innovations/
+|   |-- Original Archive/
+|   |   |-- Artwork/
+|   |   |-- Misc/
+|   |   |-- Music/
+|   |   |-- Playable Builds/
+|   |   |-- Writing & Documents/
+|   |-- Revival/
+|   |   |-- Design/
+|   |   |-- Scripts/
+|   |   |-- Assets/
+|   |-- UTME.md
 |-- README.md
 ```
 
@@ -85,6 +97,12 @@ See [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md) for detaile
 Concept designs for Minecraft innovation. Two concepts: **GeoVox** -- a modular framework for importing real-world 3D data (heightmaps, LiDAR, photogrammetry) into playable Minecraft worlds with palette-driven voxelization. **Minecraft Studio** -- a full IDE for Minecraft mod creation modeled on Roblox Studio, with visual editors, embedded live preview, hot-reload testing, and export to any modloader format (Forge, NeoForge, Fabric, Quilt). No code yet; these are design documents.
 
 See [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md) for both concepts.
+
+### [Undertale Innovations](./Undertale%20Innovations/)
+
+Revival project built on top of OvertaleRPG -- an abandoned Undertale fan game whose dev team released their entire production folder to the public in 2017. Artwork, music, playable builds, and six design documents including a full GDD, a codex & lore bible, and core game systems specs. Preserved from a public Google Drive for four years. The `Original Archive/` directory holds the source material; `Revival/` is where new work goes.
+
+See [`Undertale Innovations/UTME.md`](./Undertale%20Innovations/UTME.md) for the full story and revival plan.
 
 ## Adding New Directories
 
@@ -113,6 +131,9 @@ All seven projects are fully built. See each project's SETUP.md for Studio setup
 
 **Minecraft concepts (Minecraft Innovations):**
 Design documents only -- no code yet. Two concepts: GeoVox (real-world 3D data → Minecraft worlds) and Minecraft Studio (a Roblox Studio-style IDE for Minecraft mod creation). Read [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md) for both.
+
+**Undertale fan game revival (Undertale Innovations):**
+Excavation and revival of OvertaleRPG. Read [`Undertale Innovations/UTME.md`](./Undertale%20Innovations/UTME.md) for the backstory and plan.
 
 ---
 
