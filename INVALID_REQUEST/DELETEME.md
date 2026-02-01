@@ -16,7 +16,7 @@ Fun-Innovation/
 |   |-- Python Files/
 |   |   |-- living_story.py
 |   |   |-- verse_engine.py
-|   |-- DELETE ME.md
+|   |-- DELETEME.md
 ```
 
 ## What's Here
