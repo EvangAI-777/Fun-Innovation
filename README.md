@@ -19,6 +19,11 @@ Fun-Innovation/
 |   |-- DELETEME.md
 |-- Roblox Innovations/
 |   |-- Academic Planner Study Hub/
+|   |   |-- AssignmentManager.luau
+|   |   |-- PlannerClient.luau
+|   |   |-- PlannerConfig.luau
+|   |   |-- PlannerServer.luau
+|   |   |-- SETUP.md
 |   |-- Ecosystem Survival/
 |   |-- Flow Field Obby/
 |   |   |-- FlowFieldClient.luau
@@ -80,7 +85,7 @@ python3 "INVALID_REQUEST/Python Files/verse_engine.py"
 ```
 
 **Roblox projects (Roblox Innovations):**
-Three projects are fully built -- see [`Flow Field Obby/SETUP.md`](./Roblox%20Innovations/Flow%20Field%20Obby/SETUP.md), [`Verse Engine Skywriting/SETUP.md`](./Roblox%20Innovations/Verse%20Engine%20Skywriting/SETUP.md), and [`Notes Organizer Bulletin Board/SETUP.md`](./Roblox%20Innovations/Notes%20Organizer%20Bulletin%20Board/SETUP.md) for Studio setup instructions. Remaining concepts are documented in [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md).
+Four projects are fully built -- see [`Flow Field Obby/SETUP.md`](./Roblox%20Innovations/Flow%20Field%20Obby/SETUP.md), [`Verse Engine Skywriting/SETUP.md`](./Roblox%20Innovations/Verse%20Engine%20Skywriting/SETUP.md), [`Notes Organizer Bulletin Board/SETUP.md`](./Roblox%20Innovations/Notes%20Organizer%20Bulletin%20Board/SETUP.md), and [`Academic Planner Study Hub/SETUP.md`](./Roblox%20Innovations/Academic%20Planner%20Study%20Hub/SETUP.md) for Studio setup instructions. Remaining concepts are documented in [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md).
 
 ---
 
