@@ -337,8 +337,8 @@ end
 --[[
     Generate a haiku (5-7-5). Returns { lines: {string}, voice: string }.
 ]]
-function PoetryEngine.generateHaiku(): { lines: {string}, voice: string }
-    local state = newState(pick({"observational", "melancholic", "surreal"}))
+function PoetryEngine.generateHaiku(voiceName: string?): { lines: {string}, voice: string }
+    local state = newState(voiceName or pick({"observational", "melancholic", "surreal"}))
 
     local lines = {}
     for _, syllableCount in {5, 7, 5} do
@@ -352,8 +352,8 @@ end
 --[[
     Generate a couplet (two lines). Returns { lines: {string}, voice: string }.
 ]]
-function PoetryEngine.generateCouplet(): { lines: {string}, voice: string }
-    local state = newState()
+function PoetryEngine.generateCouplet(voiceName: string?): { lines: {string}, voice: string }
+    local state = newState(voiceName)
 
     local line1 = generateLine(state, "medium")
     local line2 = generateLine(state, "simple")
@@ -364,8 +364,8 @@ end
 --[[
     Generate a fragment (one line). Returns { lines: {string}, voice: string }.
 ]]
-function PoetryEngine.generateFragment(): { lines: {string}, voice: string }
-    local state = newState()
+function PoetryEngine.generateFragment(voiceName: string?): { lines: {string}, voice: string }
+    local state = newState(voiceName)
 
     local templateType = rng:NextNumber() < 0.5 and "simple" or "medium"
     local line = generateLine(state, templateType)
@@ -378,11 +378,11 @@ end
 ]]
 function PoetryEngine.generate(form: string, voiceName: string?): { lines: {string}, voice: string }
     if form == "haiku" then
-        return PoetryEngine.generateHaiku()
+        return PoetryEngine.generateHaiku(voiceName)
     elseif form == "couplet" then
-        return PoetryEngine.generateCouplet()
+        return PoetryEngine.generateCouplet(voiceName)
     elseif form == "fragment" then
-        return PoetryEngine.generateFragment()
+        return PoetryEngine.generateFragment(voiceName)
     else
         return PoetryEngine.generatePoem(voiceName)
     end

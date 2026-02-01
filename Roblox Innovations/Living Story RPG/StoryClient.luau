@@ -41,6 +41,8 @@ local currentMoodName = "Neutral"
 local currentMoodGreeting = ""
 local inDialogue = false
 local hudVisible = true
+local activeDialogueNpcId: string? = nil
+local activeDialogueNodeId: string? = nil
 
 ------------------------------------------------------------------------
 -- Dialogue GUI
@@ -402,6 +404,9 @@ local function showChoices(choices: {table}, npcId: string, currentNodeId: strin
 		end
 	end
 
+	activeDialogueNpcId = npcId
+	activeDialogueNodeId = currentNodeId
+
 	for i, choice in choices do
 		local btn = Instance.new("TextButton")
 		btn.Size = UDim2.new(1, 0, 0, 28)
@@ -485,6 +490,8 @@ function closeDialogue()
 	dialogueGui.Enabled = false
 	clearDialogueText()
 	dialogueContinue = false
+	activeDialogueNpcId = nil
+	activeDialogueNodeId = nil
 end
 
 local function openDialogue(npcId: string)
@@ -579,6 +586,52 @@ UserInputService.InputBegan:Connect(function(input, processed)
 
 	if input.KeyCode == Enum.KeyCode.H then
 		setHUDVisible(not hudVisible)
+	end
+
+	-- Number keys 1-4 to select dialogue choices
+	if inDialogue and not dialogueContinue and activeDialogueNpcId and activeDialogueNodeId then
+		local keyMap = {
+			[Enum.KeyCode.One] = 1, [Enum.KeyCode.Two] = 2,
+			[Enum.KeyCode.Three] = 3, [Enum.KeyCode.Four] = 4,
+		}
+		local choiceIdx = keyMap[input.KeyCode]
+		if choiceIdx then
+			local btn = choicesFrame:FindFirstChild("Choice_" .. choiceIdx)
+			if btn and btn:IsA("TextButton") then
+				-- Replicate the choice flow: fire server, advance dialogue
+				choiceEvent:FireServer(activeDialogueNpcId, activeDialogueNodeId, choiceIdx)
+				local npcDef = nil
+				for _, def in StoryConfig.NPCs do
+					if def.id == activeDialogueNpcId then npcDef = def break end
+				end
+				if npcDef then
+					local tree = StoryConfig.DialogueTrees[npcDef.dialogueKey]
+					if tree then
+						local currentNode = tree[activeDialogueNodeId]
+						if currentNode and currentNode.choices then
+							local choiceDef = currentNode.choices[choiceIdx]
+							if choiceDef and choiceDef.nextNode then
+								local result = dialogueRequest:InvokeServer(activeDialogueNpcId, choiceDef.nextNode)
+								if result then
+									showDialogueLines(result.text)
+									if result.choices and #result.choices > 0 then
+										task.wait(0.5)
+										showChoices(result.choices, activeDialogueNpcId, choiceDef.nextNode)
+									else
+										continueLabel.Visible = true
+										dialogueContinue = true
+									end
+								else
+									closeDialogue()
+								end
+							else
+								closeDialogue()
+							end
+						end
+					end
+				end
+			end
+		end
 	end
 
 	-- Continue/dismiss dialogue

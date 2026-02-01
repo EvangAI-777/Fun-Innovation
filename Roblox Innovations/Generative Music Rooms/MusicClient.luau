@@ -466,7 +466,7 @@ local function detectActivity()
 	local rootPart = character:FindFirstChild("HumanoidRootPart")
 	if not humanoid or not rootPart then return end
 
-	local speed = rootPart.Velocity.Magnitude
+	local speed = rootPart.AssemblyLinearVelocity.Magnitude
 
 	if speed >= MusicConfig.Activity.runSpeedThreshold then
 		localActivity = "running"

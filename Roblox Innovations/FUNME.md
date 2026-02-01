@@ -9,10 +9,10 @@ Each concept has its own subdirectory for Roblox Studio files as development pro
 | Concept | Directory | Source | Version | Status |
 |---------|-----------|--------|---------|--------|
 | Flow Field Obby | `Flow Field Obby/` | `flowfield.html` | 1.0.1 | Built |
-| Verse Engine Skywriting | `Verse Engine Skywriting/` | `verse_engine.py` | 1.0.1 | Built |
-| Ecosystem Survival | `Ecosystem Survival/` | `ecosystem.html` | 1.0.1 | Built |
-| Generative Music Rooms | `Generative Music Rooms/` | `generative-music.html` | 1.0.1 | Built |
-| Living Story RPG | `Living Story RPG/` | `living_story.py` | 1.0.1 | Built |
+| Verse Engine Skywriting | `Verse Engine Skywriting/` | `verse_engine.py` | 1.0.2 | Built |
+| Ecosystem Survival | `Ecosystem Survival/` | `ecosystem.html` | 1.0.2 | Built |
+| Generative Music Rooms | `Generative Music Rooms/` | `generative-music.html` | 1.0.2 | Built |
+| Living Story RPG | `Living Story RPG/` | `living_story.py` | 1.0.2 | Built |
 | Academic Planner Study Hub | `Academic Planner Study Hub/` | `academic-planner.html` | 1.0.1 | Built |
 | Notes Organizer Bulletin Board | `Notes Organizer Bulletin Board/` | `notes-organizer.html` | 1.0.1 | Built |
 
@@ -136,7 +136,7 @@ All 28 Luau files were scanned against the current Roblox Studio API surface and
 | No external assets | Verified | Only placeholder empty strings in `MusicConfig.SoundAssets` |
 | DataStore usage accurate | Verified | Flow Field Obby, Verse Engine, Ecosystem, and Music Rooms use no DataStore. Academic Planner, Notes Organizer, and Living Story RPG use DataStore as documented. |
 | Script types match SETUP.md | Verified | All 7 projects: 2 ModuleScript + 1 Script + 1 LocalScript, placed as documented |
-| No deprecated APIs | Verified | `task.*` used throughout, no legacy `spawn`/`wait`/`delay`, no `FindPartOnRay`, no `Instance.new` with parent arg |
+| No deprecated APIs | Verified (1.0.2) | `task.*` used throughout, no legacy `spawn`/`wait`/`delay`, no `FindPartOnRay`, no `Instance.new` with parent arg. One `Velocity` usage (MusicClient) caught and replaced with `AssemblyLinearVelocity` in v1.0.2. |
 
 ### Versioning
 
@@ -144,6 +144,7 @@ All projects now carry semantic version numbers in their SETUP.md files:
 
 - **1.0.0** -- Initial build
 - **1.0.1** -- API audit: font enums, service access, unused import, claim verification
+- **1.0.2** -- Code verification: bug fixes, deprecated API replacement, missing feature implementation (4 projects patched)
 
 ## Notes
 

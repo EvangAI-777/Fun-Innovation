@@ -1,6 +1,6 @@
 # Ecosystem Survival -- Studio Setup
 
-**Version 1.0.1** -- API audit: font enums updated to BuilderSans/BuilderSansBold
+**Version 1.0.2** -- Bug fix: deadHerbs iteration used value instead of key, eaten herbivores were never removed
 
 ## Overview
 
