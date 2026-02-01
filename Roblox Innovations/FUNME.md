@@ -9,10 +9,10 @@ Each concept has its own subdirectory for Roblox Studio files as development pro
 | Concept | Directory | Source | Status |
 |---------|-----------|--------|--------|
 | Flow Field Obby | `Flow Field Obby/` | `flowfield.html` | Built |
+| Verse Engine Skywriting | `Verse Engine Skywriting/` | `verse_engine.py` | Built |
 | Ecosystem Survival | `Ecosystem Survival/` | `ecosystem.html` | Planned |
 | Generative Music Rooms | `Generative Music Rooms/` | `generative-music.html` | Planned |
 | Living Story RPG | `Living Story RPG/` | `living_story.py` | Planned |
-| Verse Engine Skywriting | `Verse Engine Skywriting/` | `verse_engine.py` | Planned |
 | Academic Planner Study Hub | `Academic Planner Study Hub/` | `academic-planner.html` | Planned |
 | Notes Organizer Bulletin Board | `Notes Organizer Bulletin Board/` | `notes-organizer.html` | Planned |
 
@@ -61,14 +61,19 @@ NPCs remember individual players via `DataStoreService` and respond to server-wi
 - `ProximityPrompt`s on NPCs with branching dialogue GUI (`ScreenGui` + `TextLabel`s)
 - Lighting, music, and NPC placement shift based on the world state
 
-### Verse Engine Skywriting
+### Verse Engine Skywriting -- Built
 
 Pick a voice. Pick a form. The poem materializes above you in 3D text made of particles, drifts upward, and slowly dissolves. Other players see it. A server running for hours accumulates layers of poetry fading in and out overhead. Collaborative art installation that's never the same twice.
 
-- `StringValue`-based poem generation in `ServerScriptService` (Luau port of the Python engine)
-- `Beam` objects and `ParticleEmitter`s arranged to form text along curved paths
-- Poems anchored to invisible `Part`s that `CFrame:Lerp` upward over time
-- Players select voice/form via a `ScreenGui`, generation happens server-side
+| File | Type | Studio Location |
+|------|------|-----------------|
+| `VerseConfig.luau` | ModuleScript | ReplicatedStorage |
+| `PoetryEngine.luau` | ModuleScript | ReplicatedStorage |
+| `SkywritingServer.luau` | Script | ServerScriptService |
+| `SkywritingClient.luau` | LocalScript | StarterPlayerScripts |
+| `SETUP.md` | Setup guide | -- |
+
+See [`Verse Engine Skywriting/SETUP.md`](./Verse%20Engine%20Skywriting/SETUP.md) for full setup instructions.
 
 ### Academic Planner Study Hub
 
@@ -94,7 +99,7 @@ Write a note, it becomes a framed object you can place on walls, tables, or floa
 
 The browser versions were solo experiences. The Roblox versions are shared ones. That's not just a platform difference -- it's a fundamental shift in what the projects mean. An ecosystem you watch is a simulation. An ecosystem you inhabit with 30 other people is a social system. A poem you generate alone is personal. A sky full of poems from strangers is something else entirely.
 
-Flow Field Obby is built and ready to drop into Studio. The remaining six are blueprints. The builds continue.
+Flow Field Obby and Verse Engine Skywriting are built and ready to drop into Studio. The remaining five are blueprints. The builds continue.
 
 ---
 
