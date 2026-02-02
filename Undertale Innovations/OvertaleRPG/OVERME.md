@@ -21,6 +21,16 @@ From the screenshots of the Google Drive:
 ```
 OvertaleRPG Resources/
 |-- Artwork/
+|   |-- 3D Models & Animations/
+|   |-- Concept Art/
+|   |   |-- Character/
+|   |   |   |-- Core Cast/
+|   |   |   |-- Enemies/
+|   |   |   |-- Overworld NPCs/
+|   |   |   |-- The Party/
+|   |   |-- Environmental/
+|   |   |-- Gameplay/
+|   |   |-- Scenes/
 |-- Misc./
 |-- Music/
 |-- Playable Builds/
@@ -49,7 +59,7 @@ All last modified November 13, 2017. That date is a tombstone. The entire projec
 
 **General Team Scrapbook** -- brainstorm dumps, reference images, half-formed ideas, arguments about game mechanics. The messy, honest document where the team actually *thought* together before ideas got formalized into the GDD. These are often more valuable than the polished docs because they contain the reasoning behind decisions, the paths not taken, and the ideas that were too weird to make the cut but might be brilliant in a different context.
 
-**Artwork folder** -- sprites? Concept art? Tilesets? Character designs? In an Undertale fan game, the art style is make-or-break. If there are usable sprite sheets or tile assets in here, that's weeks of production work already done.
+**Artwork folder** -- not a flat dump of images. This is an organized art pipeline. 3D Models & Animations in their own folder. A Concept Art directory broken into Character (Core Cast, Enemies, Overworld NPCs, The Party), Environmental, Gameplay, and Scenes. Banner art, an OST cover, promo images, and two videos at the root. Plus a HUD archive. In an Undertale fan game, the art style is make-or-break -- and this team had a structured visual production pipeline, not just sketches in a Discord channel.
 
 **Music folder** -- Undertale is 50% music. Toby Fox understood that the soundtrack carries the emotional weight of every encounter, every area transition, every dramatic reveal. If the OvertaleRPG team had a composer (or even someone with a decent FL Studio setup and good taste), this folder could contain tracks that set the tone for the entire project.
 
@@ -92,7 +102,17 @@ OvertaleRPG/
 |-- OVERME.md              This file
 |-- Original Archive/      Mirror of the 2017 Google Drive
 |   |-- Artwork/
-|   |-- Misc/
+|   |   |-- 3D Models & Animations/
+|   |   |-- Concept Art/
+|   |   |   |-- Character/
+|   |   |   |   |-- Core Cast/
+|   |   |   |   |-- Enemies/
+|   |   |   |   |-- Overworld NPCs/
+|   |   |   |   |-- The Party/
+|   |   |   |-- Environmental/
+|   |   |   |-- Gameplay/
+|   |   |   |-- Scenes/
+|   |-- Misc./
 |   |-- Music/
 |   |-- Playable Builds/
 |   |-- Writing & Documents/
