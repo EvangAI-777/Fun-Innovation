@@ -46,8 +46,20 @@ OvertaleRPG Resources/
 |   |   |       |-- Sierra/
 |   |   |       |-- Tony Roman/
 |   |   |-- Environmental/
+|   |   |   |-- Biomes/
+|   |   |   |   |-- Snow Dome (WIP Name)/
+|   |   |   |   |-- Sunblushed Meadows/
+|   |   |   |   |-- Verdant Oasis/
+|   |   |   |-- Dungeons/
+|   |   |   |   |-- Enact Sequences/
+|   |   |   |   |-- Sunblushed Meadows Caverns/
+|   |   |   |   |-- True Lab/
+|   |   |   |-- Settlements (Towns)/
+|   |   |       |-- Riremere/
 |   |   |-- Gameplay/
 |   |   |-- Scenes/
+|   |       |-- DEMO/
+|   |       |-- In Snow Dome/
 |-- Misc./
 |-- Music/
 |-- Playable Builds/
@@ -78,11 +90,11 @@ All last modified November 13, 2017. That date is a tombstone. The entire projec
 
 **Artwork folder** -- not a flat dump of images. This is an organized art pipeline. 3D Models & Animations in their own folder. A Concept Art directory broken into Character (Core Cast, Enemies, Overworld NPCs, The Party), Environmental, Gameplay, and Scenes. Banner art, an OST cover, promo images, and two videos at the root. Plus a HUD archive. In an Undertale fan game, the art style is make-or-break -- and this team had a structured visual production pipeline, not just sketches in a Discord channel.
 
-**Music folder** -- Undertale is 50% music. Toby Fox understood that the soundtrack carries the emotional weight of every encounter, every area transition, every dramatic reveal. If the OvertaleRPG team had a composer (or even someone with a decent FL Studio setup and good taste), this folder could contain tracks that set the tone for the entire project.
+**Music folder** -- Undertale is 50% music. Toby Fox understood that the soundtrack carries the emotional weight of every encounter, every area transition, every dramatic reveal. And this team had a composer. The folder contains a numbered OST -- at least tracks 002 through 009, with cover art. "Overtale OST 002 - Menu Theme," "004 - Home," "005a - Sunblushed" (almost certainly Sunblushed Meadows), three enemy encounter variants (006a/b/c), "007 - Enigma," "008 - Crossroads," "009 - Paradisium." The track numbering gaps (no 001, no 003) suggest either those tracks were in progress or exist elsewhere. Three variants of the enemy encounter theme means someone was thinking about combat pacing -- different intensities or different enemy types getting different music. This isn't placeholder audio. This is a soundtrack.
 
 **Playable Builds** -- they had *something running*. Not just docs. Not just assets. Actual builds. Probably RPG Maker, GameMaker, or Unity builds from 2017. These might not run cleanly on modern systems, but they contain implemented mechanics, level layouts, dialogue sequences, and design decisions that only reveal themselves when you play them.
 
-**Misc.** -- the junk drawer. Could be anything. Meeting notes, Trello exports, reference material, engine documentation, abandoned prototypes. Junk drawers are where you find the things nobody thought to categorize but couldn't bear to delete.
+**Misc.** -- the junk drawer. Two items: a Scripting Template.docx and a Shader Test.png. The scripting template means they had coding standards -- someone cared enough about consistency to write a template for how scripts should be structured. The shader test means someone was experimenting with visual effects beyond stock engine capabilities. Two items, but both suggest a team that was thinking about craft, not just content.
 
 ## Why This Is Actually Interesting
 
@@ -126,9 +138,9 @@ OvertaleRPG/
 |   |   |   |   |-- Enemies/           (2 characters)
 |   |   |   |   |-- Overworld NPCs/    (2+ categories)
 |   |   |   |   |-- The Party/         (5 characters)
-|   |   |   |-- Environmental/
+|   |   |   |-- Environmental/        (3 biomes, 3 dungeons, 1+ settlement)
 |   |   |   |-- Gameplay/
-|   |   |   |-- Scenes/
+|   |   |   |-- Scenes/               (DEMO, In Snow Dome)
 |   |-- Misc./
 |   |-- Music/
 |   |-- Playable Builds/

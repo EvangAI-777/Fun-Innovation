@@ -111,12 +111,41 @@ Fun-Innovation/
 |   |   |   |   |-- Concept Art/
 |   |   |   |   |   |-- Character/
 |   |   |   |   |   |   |-- Core Cast/
+|   |   |   |   |   |   |   |-- Adventure Temmie/
+|   |   |   |   |   |   |   |-- Asgore Dreemurr/
+|   |   |   |   |   |   |   |-- Auroré/
+|   |   |   |   |   |   |   |-- Dr. Ikari Chassal/
+|   |   |   |   |   |   |   |-- Muffet/
+|   |   |   |   |   |   |   |-- Toriel Dreemurr/
+|   |   |   |   |   |   |   |-- Undyne/
 |   |   |   |   |   |   |-- Enemies/
+|   |   |   |   |   |   |   |-- Mr. Not-So-Nice-Cream/
+|   |   |   |   |   |   |   |-- Starman/
 |   |   |   |   |   |   |-- Overworld NPCs/
+|   |   |   |   |   |   |   |-- Merchants/
+|   |   |   |   |   |   |   |-- Monster/
+|   |   |   |   |   |   |   |   |-- Potato People/
 |   |   |   |   |   |   |-- The Party/
+|   |   |   |   |   |   |   |-- Asriel Dreemurr/
+|   |   |   |   |   |   |   |-- GiGi/
+|   |   |   |   |   |   |   |-- Lucas Howard/
+|   |   |   |   |   |   |   |-- Sierra/
+|   |   |   |   |   |   |   |-- Tony Roman/
 |   |   |   |   |   |-- Environmental/
+|   |   |   |   |   |   |-- Biomes/
+|   |   |   |   |   |   |   |-- Snow Dome (WIP Name)/
+|   |   |   |   |   |   |   |-- Sunblushed Meadows/
+|   |   |   |   |   |   |   |-- Verdant Oasis/
+|   |   |   |   |   |   |-- Dungeons/
+|   |   |   |   |   |   |   |-- Enact Sequences/
+|   |   |   |   |   |   |   |-- Sunblushed Meadows Caverns/
+|   |   |   |   |   |   |   |-- True Lab/
+|   |   |   |   |   |   |-- Settlements (Towns)/
+|   |   |   |   |   |   |   |-- Riremere/
 |   |   |   |   |   |-- Gameplay/
 |   |   |   |   |   |-- Scenes/
+|   |   |   |   |   |   |-- DEMO/
+|   |   |   |   |   |   |-- In Snow Dome/
 |   |   |   |-- Misc./
 |   |   |   |-- Music/
 |   |   |   |-- Playable Builds/

@@ -16,8 +16,10 @@ See [`OVERME.md`](../OVERME.md) for the full backstory and revival plan.
 | `Artwork/3D Models & Animations/` | 3D assets and animation files |
 | `Artwork/Concept Art/` | Character, environmental, gameplay, and scene concept art |
 | `Artwork/Concept Art/Character/` | Core Cast (7), Enemies (2), Overworld NPCs (2+), The Party (5) |
-| `Misc./` | Meeting notes, reference material, engine docs, uncategorized assets |
-| `Music/` | Soundtrack files, sound effects, audio stems |
+| `Artwork/Concept Art/Environmental/` | Biomes (3), Dungeons (3), Settlements/Towns (1+) |
+| `Artwork/Concept Art/Scenes/` | DEMO, In Snow Dome |
+| `Misc./` | Scripting Template.docx, Shader Test.png -- scripting standards and shader experiments |
+| `Music/` | Numbered OST (tracks 002-009+), cover art -- at least 9 tracks including menu theme, biome music, 3 enemy encounter variants |
 | `Playable Builds/` | Compiled game builds (likely RPG Maker, GameMaker, or Unity circa 2017) |
 | `Writing & Documents/` | The six design documents visible in the Drive |
 
@@ -64,8 +66,20 @@ Original Archive/
 |   |   |       |-- Sierra/
 |   |   |       |-- Tony Roman/
 |   |   |-- Environmental/
+|   |   |   |-- Biomes/
+|   |   |   |   |-- Snow Dome (WIP Name)/
+|   |   |   |   |-- Sunblushed Meadows/
+|   |   |   |   |-- Verdant Oasis/
+|   |   |   |-- Dungeons/
+|   |   |   |   |-- Enact Sequences/
+|   |   |   |   |-- Sunblushed Meadows Caverns/
+|   |   |   |   |-- True Lab/
+|   |   |   |-- Settlements (Towns)/
+|   |   |       |-- Riremere/
 |   |   |-- Gameplay/
 |   |   |-- Scenes/
+|   |       |-- DEMO/
+|   |       |-- In Snow Dome/
 |-- Misc./
 |-- Music/
 |-- Playable Builds/
