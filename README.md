@@ -104,27 +104,28 @@ Fun-Innovation/
 |   |   |-- SETUP.md
 |   |-- MCME.md
 |-- Undertale Innovations/
-|   |-- Original Archive/
-|   |   |-- Artwork/
-|   |   |-- Misc/
-|   |   |-- Music/
-|   |   |-- Playable Builds/
-|   |   |-- Writing & Documents/
-|   |   |-- SETUP.md
-|   |-- Revival/
-|   |   |-- Design/
-|   |   |   |-- SCOPE.md
-|   |   |   |-- ENGINE.md
-|   |   |   |-- ROADMAP.md
-|   |   |-- Scripts/
-|   |   |-- Engine/
-|   |   |-- Assets/
-|   |   |   |-- Sprites/
+|   |-- OvertaleRPG/
+|   |   |-- Original Archive/
+|   |   |   |-- Artwork/
+|   |   |   |-- Misc/
 |   |   |   |-- Music/
-|   |   |   |-- Tilesets/
-|   |   |   |-- UI/
-|   |   |-- Builds/
-|   |   |-- SETUP.md
+|   |   |   |-- Playable Builds/
+|   |   |   |-- Writing & Documents/
+|   |   |   |-- SETUP.md
+|   |   |-- Revival/
+|   |   |   |-- Design/
+|   |   |   |   |-- SCOPE.md
+|   |   |   |   |-- ENGINE.md
+|   |   |   |   |-- ROADMAP.md
+|   |   |   |-- Scripts/
+|   |   |   |-- Engine/
+|   |   |   |-- Assets/
+|   |   |   |   |-- Sprites/
+|   |   |   |   |-- Music/
+|   |   |   |   |-- Tilesets/
+|   |   |   |   |-- UI/
+|   |   |   |-- Builds/
+|   |   |   |-- SETUP.md
 |   |-- UTME.md
 |-- README.md
 ```
@@ -154,7 +155,7 @@ No code yet -- these are design documents with scaffolded project structures. Se
 
 ### [Undertale Innovations](./Undertale%20Innovations/)
 
-Revival project built on top of OvertaleRPG -- an abandoned Undertale fan game whose dev team released their entire production folder to the public in 2017. Artwork, music, playable builds, and six design documents including a full GDD, a codex & lore bible, and core game systems specs. Preserved from a public Google Drive for four years. The `Original Archive/` directory holds the source material; `Revival/` is where new work goes.
+Revival project built on top of OvertaleRPG -- an abandoned Undertale fan game whose dev team released their entire production folder to the public in 2017. Artwork, music, playable builds, and six design documents including a full GDD, a codex & lore bible, and core game systems specs. Preserved from a public Google Drive for four years. The `OvertaleRPG/` subdirectory contains everything: `Original Archive/` holds the source material; `Revival/` is where new work goes.
 
 See [`Undertale Innovations/UTME.md`](./Undertale%20Innovations/UTME.md) for the full story and revival plan.
 
