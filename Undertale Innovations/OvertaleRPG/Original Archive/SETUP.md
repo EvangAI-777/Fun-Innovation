@@ -15,7 +15,7 @@ See [`OVERME.md`](../OVERME.md) for the full backstory and revival plan.
 | `Artwork/` | Concept art, 3D models & animations, banner/promo images, videos |
 | `Artwork/3D Models & Animations/` | 3D assets and animation files |
 | `Artwork/Concept Art/` | Character, environmental, gameplay, and scene concept art |
-| `Artwork/Concept Art/Character/` | Core Cast, Enemies, Overworld NPCs, The Party |
+| `Artwork/Concept Art/Character/` | Core Cast (7), Enemies (2), Overworld NPCs (2+), The Party (5) |
 | `Misc./` | Meeting notes, reference material, engine docs, uncategorized assets |
 | `Music/` | Soundtrack files, sound effects, audio stems |
 | `Playable Builds/` | Compiled game builds (likely RPG Maker, GameMaker, or Unity circa 2017) |
@@ -43,9 +43,26 @@ Original Archive/
 |   |-- Concept Art/
 |   |   |-- Character/
 |   |   |   |-- Core Cast/
+|   |   |   |   |-- Adventure Temmie/
+|   |   |   |   |-- Asgore Dreemurr/
+|   |   |   |   |-- Auroré/
+|   |   |   |   |-- Dr. Ikari Chassal/
+|   |   |   |   |-- Muffet/
+|   |   |   |   |-- Toriel Dreemurr/
+|   |   |   |   |-- Undyne/
 |   |   |   |-- Enemies/
+|   |   |   |   |-- Mr. Not-So-Nice-Cream/
+|   |   |   |   |-- Starman/
 |   |   |   |-- Overworld NPCs/
+|   |   |   |   |-- Merchants/
+|   |   |   |   |-- Monster/
+|   |   |   |   |   |-- Potato People/
 |   |   |   |-- The Party/
+|   |   |       |-- Asriel Dreemurr/
+|   |   |       |-- GiGi/
+|   |   |       |-- Lucas Howard/
+|   |   |       |-- Sierra/
+|   |   |       |-- Tony Roman/
 |   |   |-- Environmental/
 |   |   |-- Gameplay/
 |   |   |-- Scenes/

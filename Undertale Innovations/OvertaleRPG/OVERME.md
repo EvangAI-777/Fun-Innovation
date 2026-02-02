@@ -25,9 +25,26 @@ OvertaleRPG Resources/
 |   |-- Concept Art/
 |   |   |-- Character/
 |   |   |   |-- Core Cast/
+|   |   |   |   |-- Adventure Temmie/
+|   |   |   |   |-- Asgore Dreemurr/
+|   |   |   |   |-- Auroré/
+|   |   |   |   |-- Dr. Ikari Chassal/
+|   |   |   |   |-- Muffet/
+|   |   |   |   |-- Toriel Dreemurr/
+|   |   |   |   |-- Undyne/
 |   |   |   |-- Enemies/
+|   |   |   |   |-- Mr. Not-So-Nice-Cream/
+|   |   |   |   |-- Starman/
 |   |   |   |-- Overworld NPCs/
+|   |   |   |   |-- Merchants/
+|   |   |   |   |-- Monster/
+|   |   |   |   |   |-- Potato People/
 |   |   |   |-- The Party/
+|   |   |       |-- Asriel Dreemurr/
+|   |   |       |-- GiGi/
+|   |   |       |-- Lucas Howard/
+|   |   |       |-- Sierra/
+|   |   |       |-- Tony Roman/
 |   |   |-- Environmental/
 |   |   |-- Gameplay/
 |   |   |-- Scenes/
@@ -105,10 +122,10 @@ OvertaleRPG/
 |   |   |-- 3D Models & Animations/
 |   |   |-- Concept Art/
 |   |   |   |-- Character/
-|   |   |   |   |-- Core Cast/
-|   |   |   |   |-- Enemies/
-|   |   |   |   |-- Overworld NPCs/
-|   |   |   |   |-- The Party/
+|   |   |   |   |-- Core Cast/         (7 characters)
+|   |   |   |   |-- Enemies/           (2 characters)
+|   |   |   |   |-- Overworld NPCs/    (2+ categories)
+|   |   |   |   |-- The Party/         (5 characters)
 |   |   |   |-- Environmental/
 |   |   |   |-- Gameplay/
 |   |   |   |-- Scenes/
