@@ -135,15 +135,31 @@ Fun-Innovation/
 
 ### [INVALID_REQUEST](./INVALID_REQUEST/)
 
-The original session. Seven standalone projects -- five **browser-based** HTML applications and two **terminal-based** Python programs -- all built in a single sitting from a session the system flagged as invalid before it started. The HTML files open directly in any browser (no server, no build step). The Python files run in any terminal with Python 3.6+ (no external packages). Emergent simulations, generative music, interactive fiction, poetry generation, an academic planner, and a notes organizer. No dependencies. Everything runs as-is.
+The original session. Seven standalone projects built in a single sitting from a session the system flagged as invalid before it started. No dependencies -- everything runs as-is:
+
+- **[Ecosystem](./INVALID_REQUEST/HTML%20Files/ecosystem.html)** -- emergent life simulation with plants, herbivores, and predators creating complex behavior from simple rules (HTML, browser-based)
+- **[Flow Field](./INVALID_REQUEST/HTML%20Files/flowfield.html)** -- Perlin noise flow field with thousands of particles creating organic visual patterns (HTML, browser-based)
+- **[Generative Music](./INVALID_REQUEST/HTML%20Files/generative-music.html)** -- algorithmic music synthesizer producing endless, never-repeating compositions (HTML, browser-based)
+- **[Academic Planner](./INVALID_REQUEST/HTML%20Files/academic-planner.html)** -- dynamic academic schedule planner with OCR document scanning (HTML, browser-based)
+- **[Notes Organizer](./INVALID_REQUEST/HTML%20Files/notes-organizer.html)** -- rich text notes app with folders, markdown/HTML editing, and import/export (HTML, browser-based)
+- **[Living Story](./INVALID_REQUEST/Python%20Files/living_story.py)** -- interactive fiction that tracks your personality and remembers who you've been (Python, terminal-based)
+- **[Verse Engine](./INVALID_REQUEST/Python%20Files/verse_engine.py)** -- poetry generator with five distinct voices and multiple forms (Python, terminal-based)
 
 See [`INVALID_REQUEST/DELETEME.md`](./INVALID_REQUEST/DELETEME.md) for the full story and project details.
 
 ### [Roblox Innovations](./Roblox%20Innovations/)
 
-Design concepts for bringing every INVALID_REQUEST project into Roblox Studio. Not ports -- reimaginings that take advantage of 3D space, physics, and multiplayer. Each of the seven concepts has its own subdirectory with versioned SETUP.md files (v1.0.1 or v1.0.2). All buildable with stock Studio and Luau. All 28 Luau files have been audited against the current Roblox Studio API surface (February 2026) and all SETUP.md claims verified against actual code. Four projects (Verse Engine Skywriting, Ecosystem Survival, Generative Music Rooms, Living Story RPG) received additional code verification fixes at v1.0.2 -- bug fixes, deprecated API replacement, and missing feature implementation.
+Reimaginings of every INVALID_REQUEST project for Roblox Studio -- not ports, but designs that take advantage of 3D space, physics, and multiplayer. All buildable with stock Studio and Luau, all 28 Luau files audited against the February 2026 API surface. Each project has its own subdirectory with a versioned SETUP.md (v1.0.1 or v1.0.2):
 
-See [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md) for detailed implementation breakdowns.
+- **[Flow Field Obby](./Roblox%20Innovations/Flow%20Field%20Obby/)** -- floating platforms drift through noise-driven currents, players learn to read the flow (v1.0.1)
+- **[Verse Engine Skywriting](./Roblox%20Innovations/Verse%20Engine%20Skywriting/)** -- poems materialize as 3D particle text in the sky, drift upward, and dissolve (v1.0.2)
+- **[Ecosystem Survival](./Roblox%20Innovations/Ecosystem%20Survival/)** -- third-person survival where players pick a species and coexist in a Perlin-noise biome grid (v1.0.2)
+- **[Generative Music Rooms](./Roblox%20Innovations/Generative%20Music%20Rooms/)** -- six mood-themed rooms in a hexagonal ring, composition reacts to player count and activity (v1.0.2)
+- **[Living Story RPG](./Roblox%20Innovations/Living%20Story%20RPG/)** -- persistent multiplayer town where NPCs remember individual players via DataStore (v1.0.2)
+- **[Academic Planner Study Hub](./Roblox%20Innovations/Academic%20Planner%20Study%20Hub/)** -- virtual campus with dorm desks, color-coded assignment sticky notes, and shared study rooms (v1.0.1)
+- **[Notes Organizer Bulletin Board](./Roblox%20Innovations/Notes%20Organizer%20Bulletin%20Board/)** -- notes become framed objects placed on walls and tables, folders become rooms (v1.0.1)
+
+See [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md) for the theme overview and each project's SETUP.md for Studio setup instructions.
 
 ### [Minecraft Innovations](./Minecraft%20Innovations/)
 
@@ -174,18 +190,11 @@ No strict naming conventions. No required templates. Just keep it organized and 
 
 ## Quick Start
 
-**Browser-based projects (INVALID_REQUEST/HTML Files):**
-Open any `.html` file directly in a browser -- double-click or drag into a tab. No server, no build step, no install. Everything runs client-side.
-
-**Terminal-based projects (INVALID_REQUEST/Python Files):**
-Run in any terminal with Python 3.6+. No external packages. Interactive stdin/stdout programs.
-```bash
-python3 "INVALID_REQUEST/Python Files/living_story.py"
-python3 "INVALID_REQUEST/Python Files/verse_engine.py"
-```
+**Original projects (INVALID_REQUEST):**
+Seven standalone projects -- five browser-based HTML apps and two terminal-based Python programs. Open any `.html` file directly in a browser (no build step). Run Python files in any terminal with Python 3.6+ (no external packages). The full story and run instructions are in [`INVALID_REQUEST/DELETEME.md`](./INVALID_REQUEST/DELETEME.md).
 
 **Roblox projects (Roblox Innovations):**
-All seven projects are fully built. See each project's SETUP.md for Studio setup instructions: [`Flow Field Obby`](./Roblox%20Innovations/Flow%20Field%20Obby/SETUP.md), [`Verse Engine Skywriting`](./Roblox%20Innovations/Verse%20Engine%20Skywriting/SETUP.md), [`Notes Organizer Bulletin Board`](./Roblox%20Innovations/Notes%20Organizer%20Bulletin%20Board/SETUP.md), [`Academic Planner Study Hub`](./Roblox%20Innovations/Academic%20Planner%20Study%20Hub/SETUP.md), [`Ecosystem Survival`](./Roblox%20Innovations/Ecosystem%20Survival/SETUP.md), [`Generative Music Rooms`](./Roblox%20Innovations/Generative%20Music%20Rooms/SETUP.md), and [`Living Story RPG`](./Roblox%20Innovations/Living%20Story%20RPG/SETUP.md). Full details in [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md).
+All seven projects are fully built -- reimaginings of INVALID_REQUEST projects for 3D multiplayer. See each project's SETUP.md for Studio setup instructions: [`Flow Field Obby`](./Roblox%20Innovations/Flow%20Field%20Obby/SETUP.md), [`Verse Engine Skywriting`](./Roblox%20Innovations/Verse%20Engine%20Skywriting/SETUP.md), [`Ecosystem Survival`](./Roblox%20Innovations/Ecosystem%20Survival/SETUP.md), [`Generative Music Rooms`](./Roblox%20Innovations/Generative%20Music%20Rooms/SETUP.md), [`Living Story RPG`](./Roblox%20Innovations/Living%20Story%20RPG/SETUP.md), [`Academic Planner Study Hub`](./Roblox%20Innovations/Academic%20Planner%20Study%20Hub/SETUP.md), and [`Notes Organizer Bulletin Board`](./Roblox%20Innovations/Notes%20Organizer%20Bulletin%20Board/SETUP.md). The theme overview is [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md).
 
 **Minecraft concepts (Minecraft Innovations):**
 Design documents with scaffolded project structures -- no code yet. Two projects: [`GeoVox`](./Minecraft%20Innovations/GeoVox/) (real-world 3D data → Minecraft worlds, see [`VOXELME.md`](./Minecraft%20Innovations/GeoVox/VOXELME.md)) and [`Minecraft Studio`](./Minecraft%20Innovations/Minecraft%20Studio/) (Roblox Studio-style IDE for Minecraft modding, see [`STUDYME.md`](./Minecraft%20Innovations/Minecraft%20Studio/STUDYME.md)). The original concept document is [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md).
