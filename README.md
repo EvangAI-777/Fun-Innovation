@@ -230,7 +230,7 @@ See [`Undertale Innovations/UTME.md`](./Undertale%20Innovations/UTME.md) for the
 
 ### [Audio Innovations](./Audio%20Innovations/)
 
-Projects exploring what happens when music production becomes a conversation instead of a solo act with a wall of knobs. Current project:
+New and creative approaches to audio -- production tools, compositional systems, sound design experiments, and anything else that rethinks how music and sound get made. Some projects are conversational (AI as collaborator), some may take entirely different forms. Current project:
 
 - **[AutoMuse](./Audio%20Innovations/AutoMuse/)** -- a conversational DAW where the primary interface is a dialogue with a music AI persona. Covers all genres, scales, modes, time signatures, key signatures, and tempos. The AI collaborates on composition, arrangement, and production, with export to MIDI, MusicXML, audio stems, and project files for other DAWs. Three scaling layers: conversation (text + MIDI export), canvas (visual arrangement + notation), and full studio (real-time audio, plugin hosting, mixing).
 
@@ -261,7 +261,7 @@ Design documents with scaffolded project structures -- no code yet. Two projects
 Fan games, revivals, and experiments in the Undertale universe. Current project: [`OvertaleRPG`](./Undertale%20Innovations/OvertaleRPG/) (abandoned fan game revival from a 2017 Google Drive archive, see [`OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md)). The theme overview is [`Undertale Innovations/UTME.md`](./Undertale%20Innovations/UTME.md).
 
 **Audio projects (Audio Innovations):**
-Conversational music production tools. Current project: [`AutoMuse`](./Audio%20Innovations/AutoMuse/) (LLM-powered DAW where the interface is a conversation with a music AI persona, see [`MUSEME.md`](./Audio%20Innovations/AutoMuse/MUSEME.md)). The theme overview is [`Audio Innovations/HEARME.md`](./Audio%20Innovations/HEARME.md).
+New approaches to music and sound production. Current project: [`AutoMuse`](./Audio%20Innovations/AutoMuse/) (conversational DAW where the interface is a dialogue with a music AI persona, see [`MUSEME.md`](./Audio%20Innovations/AutoMuse/MUSEME.md)). The theme overview is [`Audio Innovations/HEARME.md`](./Audio%20Innovations/HEARME.md).
 
 ---
 
