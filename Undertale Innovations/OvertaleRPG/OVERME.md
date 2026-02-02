@@ -46,8 +46,20 @@ OvertaleRPG Resources/
 |   |   |       |-- Sierra/
 |   |   |       |-- Tony Roman/
 |   |   |-- Environmental/
+|   |   |   |-- Biomes/
+|   |   |   |   |-- Snow Dome (WIP Name)/
+|   |   |   |   |-- Sunblushed Meadows/
+|   |   |   |   |-- Verdant Oasis/
+|   |   |   |-- Dungeons/
+|   |   |   |   |-- Enact Sequences/
+|   |   |   |   |-- Sunblushed Meadows Caverns/
+|   |   |   |   |-- True Lab/
+|   |   |   |-- Settlements (Towns)/
+|   |   |       |-- Riremere/
 |   |   |-- Gameplay/
 |   |   |-- Scenes/
+|   |       |-- DEMO/
+|   |       |-- In Snow Dome/
 |-- Misc./
 |-- Music/
 |-- Playable Builds/
@@ -126,9 +138,9 @@ OvertaleRPG/
 |   |   |   |   |-- Enemies/           (2 characters)
 |   |   |   |   |-- Overworld NPCs/    (2+ categories)
 |   |   |   |   |-- The Party/         (5 characters)
-|   |   |   |-- Environmental/
+|   |   |   |-- Environmental/        (3 biomes, 3 dungeons, 1+ settlement)
 |   |   |   |-- Gameplay/
-|   |   |   |-- Scenes/
+|   |   |   |-- Scenes/               (DEMO, In Snow Dome)
 |   |-- Misc./
 |   |-- Music/
 |   |-- Playable Builds/
