@@ -2,7 +2,7 @@
 
 So let me get this straight.
 
-A team of people spent months -- maybe years -- building an Undertale fan game called OvertaleRPG. They had *everything*. Artwork folder. Music folder. Playable builds. A Writing & Documents folder with six design documents including a full Game Design Document, a Codex & Lore bible, core game systems specs, an opening scene script, a location design scrapbook for someplace called "Riremere," and a general team scrapbook. This was a real production. Multiple contributors. Shared Google Drive. Organized folders. The whole operation.
+A team of people spent months -- maybe years -- building an Undertale fan game called OvertaleRPG. They had *everything*. Artwork folder. Music folder. Playable builds. A Writing & Documents folder with six design documents. This was a real production. Multiple contributors. Shared Google Drive. Organized folders. The whole operation.
 
 Then in 2017, they hit the wall that kills 90% of fan game projects: burnout, depression, and the slow realization that ambition without project management is just suffering with extra steps. So they did what burned-out dev teams do. They quit. But instead of quietly archiving it, they made the entire Google Drive public and said "anyone can do whatever they want with this."
 
@@ -52,11 +52,18 @@ OvertaleRPG Resources/
 |   |   |   |   |-- Verdant Oasis/
 |   |   |   |-- Dungeons/
 |   |   |   |   |-- Enact Sequences/
+|   |   |   |   |   |-- Endgame - Pursuing Lucas in the Ruins/
+|   |   |   |   |   |-- First Enact - Saving the Patient/
 |   |   |   |   |-- Sunblushed Meadows Caverns/
 |   |   |   |   |-- True Lab/
 |   |   |   |-- Settlements (Towns)/
 |   |   |       |-- Riremere/
+|   |   |           |-- Exterior/
+|   |   |           |-- Interior/
 |   |   |-- Gameplay/
+|   |   |   |-- Combat/
+|   |   |       |-- Battle Positioning/
+|   |   |       |-- Heads-Up Display in Battle/
 |   |   |-- Scenes/
 |   |       |-- DEMO/
 |   |       |-- In Snow Dome/
@@ -64,37 +71,21 @@ OvertaleRPG Resources/
 |-- Music/
 |-- Playable Builds/
 |-- Writing & Documents/
-    |-- Codex & Lore.docx
-    |-- Core Game Systems _ Demo....docx
-    |-- General Team Scrapbook.docx
-    |-- Opening Scene.docx
-    |-- OVERTALE Game Design Doc...docx
-    |-- Riremere Design Scrapbook (...docx
 ```
 
 All last modified November 13, 2017. That date is a tombstone. The entire project went silent on the same day -- probably the day someone made the folder public and walked away.
 
-### What Each Piece Tells Me
+### What the Folder Structure Tells Me
 
-**The Game Design Document** is the crown jewel. A full GDD means someone on this team was thinking structurally. They weren't just vibing -- they had a plan. The question is how complete it is and how much of the design was aspirational vs. actually scoped to what the team could build.
+**Writing & Documents** -- six design documents. That's not a casual fan project. That's a team that was documenting their decisions. What's actually in those documents is for excavation to reveal.
 
-**Codex & Lore** means they had worldbuilding beyond just "Undertale but different." A codex implies lore entries, item descriptions, character backstories, location histories -- the kind of writing that takes a world from "fan remix" to "original thing wearing a fan game's clothes." This is the document most fan games never bother to write.
+**Artwork** -- not a flat dump of images. This is an organized art pipeline. 3D Models & Animations in their own folder. Concept Art broken into Character, Environmental, Gameplay, and Scenes. The Character directory alone has four subcategories (Core Cast, Enemies, Overworld NPCs, The Party) with 16+ individual character folders. Environmental covers three biomes, three dungeons, and at least one settlement with exterior/interior distinction. Gameplay has a Combat category with battle positioning and HUD concept art. Scenes has concept work for the demo and a Snow Dome sequence. This team had visual scope and the organizational discipline to match.
 
-**Core Game Systems & Demo** -- this is the mechanical spec. Combat? Exploration? Dialogue systems? If this doc is detailed enough, it's a blueprint. It tells you what the game was supposed to *feel* like mechanically, not just narratively.
+**Music** -- Undertale is 50% music. Toby Fox understood that the soundtrack carries the emotional weight of every encounter, every area transition, every dramatic reveal. And this team had a composer. The folder has a numbered OST. That's not placeholder audio.
 
-**Opening Scene** -- a scripted opening means they were past the "what if we made a game" phase and into the "here's how the player's first five minutes go" phase. That's significant. Most fan projects never get past concept art and a Discord server.
+**Playable Builds** -- they had *something running*. Not just docs. Not just assets. Actual builds.
 
-**Riremere Design Scrapbook** -- a location-specific design document. "Riremere" is presumably a region or town in their game world. A dedicated scrapbook for a single location means the world had enough scope that individual areas needed their own reference docs. That's either impressive planning or impressive ambition. Possibly both.
-
-**General Team Scrapbook** -- brainstorm dumps, reference images, half-formed ideas, arguments about game mechanics. The messy, honest document where the team actually *thought* together before ideas got formalized into the GDD. These are often more valuable than the polished docs because they contain the reasoning behind decisions, the paths not taken, and the ideas that were too weird to make the cut but might be brilliant in a different context.
-
-**Artwork folder** -- not a flat dump of images. This is an organized art pipeline. 3D Models & Animations in their own folder. A Concept Art directory broken into Character (Core Cast, Enemies, Overworld NPCs, The Party), Environmental, Gameplay, and Scenes. Banner art, an OST cover, promo images, and two videos at the root. Plus a HUD archive. In an Undertale fan game, the art style is make-or-break -- and this team had a structured visual production pipeline, not just sketches in a Discord channel.
-
-**Music folder** -- Undertale is 50% music. Toby Fox understood that the soundtrack carries the emotional weight of every encounter, every area transition, every dramatic reveal. And this team had a composer. The folder contains a numbered OST -- at least tracks 002 through 009, with cover art. "Overtale OST 002 - Menu Theme," "004 - Home," "005a - Sunblushed" (almost certainly Sunblushed Meadows), three enemy encounter variants (006a/b/c), "007 - Enigma," "008 - Crossroads," "009 - Paradisium." The track numbering gaps (no 001, no 003) suggest either those tracks were in progress or exist elsewhere. Three variants of the enemy encounter theme means someone was thinking about combat pacing -- different intensities or different enemy types getting different music. This isn't placeholder audio. This is a soundtrack.
-
-**Playable Builds** -- they had *something running*. Not just docs. Not just assets. Actual builds. Probably RPG Maker, GameMaker, or Unity builds from 2017. These might not run cleanly on modern systems, but they contain implemented mechanics, level layouts, dialogue sequences, and design decisions that only reveal themselves when you play them.
-
-**Misc.** -- the junk drawer. Two items: a Scripting Template.docx and a Shader Test.png. The scripting template means they had coding standards -- someone cared enough about consistency to write a template for how scripts should be structured. The shader test means someone was experimenting with visual effects beyond stock engine capabilities. Two items, but both suggest a team that was thinking about craft, not just content.
+**Misc.** -- production artifacts. The kind of tooling and testing material that suggests a team thinking about craft, not just content.
 
 ## Why This Is Actually Interesting
 
@@ -133,13 +124,9 @@ OvertaleRPG/
 |   |-- Artwork/
 |   |   |-- 3D Models & Animations/
 |   |   |-- Concept Art/
-|   |   |   |-- Character/
-|   |   |   |   |-- Core Cast/         (7 characters)
-|   |   |   |   |-- Enemies/           (2 characters)
-|   |   |   |   |-- Overworld NPCs/    (2+ categories)
-|   |   |   |   |-- The Party/         (5 characters)
+|   |   |   |-- Character/            (4 categories, 16+ characters)
 |   |   |   |-- Environmental/        (3 biomes, 3 dungeons, 1+ settlement)
-|   |   |   |-- Gameplay/
+|   |   |   |-- Gameplay/             (combat concepts)
 |   |   |   |-- Scenes/               (DEMO, In Snow Dome)
 |   |-- Misc./
 |   |-- Music/

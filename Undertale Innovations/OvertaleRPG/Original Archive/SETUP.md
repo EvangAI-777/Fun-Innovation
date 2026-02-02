@@ -10,31 +10,19 @@ See [`OVERME.md`](../OVERME.md) for the full backstory and revival plan.
 
 ## Contents
 
-| Folder | Expected Contents |
-|--------|-------------------|
-| `Artwork/` | Concept art, 3D models & animations, banner/promo images, videos |
+| Folder | Contents |
+|--------|----------|
+| `Artwork/` | Concept art, 3D models & animations |
 | `Artwork/3D Models & Animations/` | 3D assets and animation files |
 | `Artwork/Concept Art/` | Character, environmental, gameplay, and scene concept art |
 | `Artwork/Concept Art/Character/` | Core Cast (7), Enemies (2), Overworld NPCs (2+), The Party (5) |
 | `Artwork/Concept Art/Environmental/` | Biomes (3), Dungeons (3), Settlements/Towns (1+) |
+| `Artwork/Concept Art/Gameplay/` | Combat concepts (battle positioning, HUD) |
 | `Artwork/Concept Art/Scenes/` | DEMO, In Snow Dome |
-| `Misc./` | Scripting Template.docx, Shader Test.png -- scripting standards and shader experiments |
-| `Music/` | Numbered OST (tracks 002-009+), cover art -- at least 9 tracks including menu theme, biome music, 3 enemy encounter variants |
-| `Playable Builds/` | Compiled game builds (likely RPG Maker, GameMaker, or Unity circa 2017) |
-| `Writing & Documents/` | The six design documents visible in the Drive |
-
-## The Documents
-
-From the Google Drive screenshots, the Writing & Documents folder contains:
-
-| Document | What It Likely Contains |
-|----------|------------------------|
-| `Codex & Lore.docx` | World bible -- lore entries, character backstories, item descriptions, location histories |
-| `Core Game Systems _ Demo....docx` | Mechanical spec -- combat, exploration, dialogue systems, demo scope |
-| `General Team Scrapbook.docx` | Brainstorm dumps, reference images, design arguments, paths not taken |
-| `Opening Scene.docx` | Scripted opening sequence -- the player's first minutes |
-| `OVERTALE Game Design Doc...docx` | The full GDD -- scope, features, milestones, design pillars |
-| `Riremere Design Scrapbook (...docx` | Location-specific design doc for a region called "Riremere" |
+| `Misc./` | Production artifacts |
+| `Music/` | Numbered OST |
+| `Playable Builds/` | Compiled game builds |
+| `Writing & Documents/` | Six design documents |
 
 ## Files
 
@@ -72,11 +60,18 @@ Original Archive/
 |   |   |   |   |-- Verdant Oasis/
 |   |   |   |-- Dungeons/
 |   |   |   |   |-- Enact Sequences/
+|   |   |   |   |   |-- Endgame - Pursuing Lucas in the Ruins/
+|   |   |   |   |   |-- First Enact - Saving the Patient/
 |   |   |   |   |-- Sunblushed Meadows Caverns/
 |   |   |   |   |-- True Lab/
 |   |   |   |-- Settlements (Towns)/
 |   |   |       |-- Riremere/
+|   |   |           |-- Exterior/
+|   |   |           |-- Interior/
 |   |   |-- Gameplay/
+|   |   |   |-- Combat/
+|   |   |       |-- Battle Positioning/
+|   |   |       |-- Heads-Up Display in Battle/
 |   |   |-- Scenes/
 |   |       |-- DEMO/
 |   |       |-- In Snow Dome/
