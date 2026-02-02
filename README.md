@@ -160,7 +160,7 @@ Projects that take the Undertale universe seriously -- fan games, revivals, tool
 
 - **[OvertaleRPG](./Undertale%20Innovations/OvertaleRPG/)** -- revival of an abandoned Undertale fan game whose dev team released their entire production folder to the public in 2017. Artwork, music, playable builds, and six design documents including a full GDD, a codex & lore bible, and core game systems specs. `Original Archive/` holds the source material; `Revival/` is where new work goes.
 
-See [`Undertale Innovations/UTME.md`](./Undertale%20Innovations/UTME.md) for the full story and project details.
+See [`Undertale Innovations/UTME.md`](./Undertale%20Innovations/UTME.md) for the theme overview and [`OvertaleRPG/OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md) for the full project story and revival plan.
 
 ## Adding New Directories
 
@@ -191,7 +191,7 @@ All seven projects are fully built. See each project's SETUP.md for Studio setup
 Design documents with scaffolded project structures -- no code yet. Two projects: [`GeoVox`](./Minecraft%20Innovations/GeoVox/) (real-world 3D data → Minecraft worlds, see [`VOXELME.md`](./Minecraft%20Innovations/GeoVox/VOXELME.md)) and [`Minecraft Studio`](./Minecraft%20Innovations/Minecraft%20Studio/) (Roblox Studio-style IDE for Minecraft modding, see [`STUDYME.md`](./Minecraft%20Innovations/Minecraft%20Studio/STUDYME.md)). The original concept document is [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md).
 
 **Undertale projects (Undertale Innovations):**
-Fan games, revivals, and experiments in the Undertale universe. Current project: OvertaleRPG. Read [`Undertale Innovations/UTME.md`](./Undertale%20Innovations/UTME.md) for the full story and project details.
+Fan games, revivals, and experiments in the Undertale universe. Current project: [`OvertaleRPG`](./Undertale%20Innovations/OvertaleRPG/) (abandoned fan game revival from a 2017 Google Drive archive, see [`OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md)). The theme overview is [`Undertale Innovations/UTME.md`](./Undertale%20Innovations/UTME.md).
 
 ---
 
