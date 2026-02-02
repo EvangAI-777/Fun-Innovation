@@ -174,6 +174,10 @@ Fun-Innovation/
 |   |   |   |-- SETUP.md
 |   |   |-- OVERME.md
 |   |-- UTME.md
+|-- Audio Innovations/
+|   |-- AutoMuse/
+|   |   |-- MUSEME.md
+|   |-- HEARME.md
 |-- README.md
 ```
 
@@ -224,6 +228,14 @@ Projects that take the Undertale universe seriously -- fan games, revivals, tool
 
 See [`Undertale Innovations/UTME.md`](./Undertale%20Innovations/UTME.md) for the theme overview and [`OvertaleRPG/OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md) for the full project story and revival plan.
 
+### [Audio Innovations](./Audio%20Innovations/)
+
+Projects exploring what happens when music production becomes a conversation instead of a solo act with a wall of knobs. Current project:
+
+- **[AutoMuse](./Audio%20Innovations/AutoMuse/)** -- a conversational DAW where the primary interface is a dialogue with a music AI persona. Covers all genres, scales, modes, time signatures, key signatures, and tempos. The AI collaborates on composition, arrangement, and production, with export to MIDI, MusicXML, audio stems, and project files for other DAWs. Three scaling layers: conversation (text + MIDI export), canvas (visual arrangement + notation), and full studio (real-time audio, plugin hosting, mixing).
+
+No code yet -- concept design with scaffolded project structure. See [`Audio Innovations/HEARME.md`](./Audio%20Innovations/HEARME.md) for the theme overview and [`AutoMuse/MUSEME.md`](./Audio%20Innovations/AutoMuse/MUSEME.md) for the full project concept.
+
 ## Adding New Directories
 
 This repo is organized by project theme. Each directory is its own self-contained initiative with its own markdown file documenting what's inside. To add a new one:
@@ -247,6 +259,9 @@ Design documents with scaffolded project structures -- no code yet. Two projects
 
 **Undertale projects (Undertale Innovations):**
 Fan games, revivals, and experiments in the Undertale universe. Current project: [`OvertaleRPG`](./Undertale%20Innovations/OvertaleRPG/) (abandoned fan game revival from a 2017 Google Drive archive, see [`OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md)). The theme overview is [`Undertale Innovations/UTME.md`](./Undertale%20Innovations/UTME.md).
+
+**Audio projects (Audio Innovations):**
+Conversational music production tools. Current project: [`AutoMuse`](./Audio%20Innovations/AutoMuse/) (LLM-powered DAW where the interface is a conversation with a music AI persona, see [`MUSEME.md`](./Audio%20Innovations/AutoMuse/MUSEME.md)). The theme overview is [`Audio Innovations/HEARME.md`](./Audio%20Innovations/HEARME.md).
 
 ---
 
