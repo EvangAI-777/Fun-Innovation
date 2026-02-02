@@ -107,7 +107,17 @@ Fun-Innovation/
 |   |-- OvertaleRPG/
 |   |   |-- Original Archive/
 |   |   |   |-- Artwork/
-|   |   |   |-- Misc/
+|   |   |   |   |-- 3D Models & Animations/
+|   |   |   |   |-- Concept Art/
+|   |   |   |   |   |-- Character/
+|   |   |   |   |   |   |-- Core Cast/
+|   |   |   |   |   |   |-- Enemies/
+|   |   |   |   |   |   |-- Overworld NPCs/
+|   |   |   |   |   |   |-- The Party/
+|   |   |   |   |   |-- Environmental/
+|   |   |   |   |   |-- Gameplay/
+|   |   |   |   |   |-- Scenes/
+|   |   |   |-- Misc./
 |   |   |   |-- Music/
 |   |   |   |-- Playable Builds/
 |   |   |   |-- Writing & Documents/

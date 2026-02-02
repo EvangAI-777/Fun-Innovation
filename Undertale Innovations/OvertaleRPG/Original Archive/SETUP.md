@@ -6,14 +6,17 @@
 
 Mirror of the OvertaleRPG public Google Drive folder, last modified November 13, 2017. The original dev team released their entire production folder to the public and said anyone could do whatever they wanted with it.
 
-See [`UTME.md`](../UTME.md) for the full backstory and revival plan.
+See [`OVERME.md`](../OVERME.md) for the full backstory and revival plan.
 
 ## Contents
 
 | Folder | Expected Contents |
 |--------|-------------------|
-| `Artwork/` | Concept art, sprite sheets, character designs, tilesets, UI mockups |
-| `Misc/` | Meeting notes, reference material, engine docs, uncategorized assets |
+| `Artwork/` | Concept art, 3D models & animations, banner/promo images, videos |
+| `Artwork/3D Models & Animations/` | 3D assets and animation files |
+| `Artwork/Concept Art/` | Character, environmental, gameplay, and scene concept art |
+| `Artwork/Concept Art/Character/` | Core Cast, Enemies, Overworld NPCs, The Party |
+| `Misc./` | Meeting notes, reference material, engine docs, uncategorized assets |
 | `Music/` | Soundtrack files, sound effects, audio stems |
 | `Playable Builds/` | Compiled game builds (likely RPG Maker, GameMaker, or Unity circa 2017) |
 | `Writing & Documents/` | The six design documents visible in the Drive |
@@ -35,12 +38,22 @@ From the Google Drive screenshots, the Writing & Documents folder contains:
 
 ```
 Original Archive/
-|-- SETUP.md                This file
-|-- Artwork/                Concept art, sprites, tilesets, UI
-|-- Misc/                   Meeting notes, reference material
-|-- Music/                  Soundtrack, SFX, audio stems
-|-- Playable Builds/        Compiled game builds from 2017
-|-- Writing & Documents/    Six design documents (.docx)
+|-- Artwork/
+|   |-- 3D Models & Animations/
+|   |-- Concept Art/
+|   |   |-- Character/
+|   |   |   |-- Core Cast/
+|   |   |   |-- Enemies/
+|   |   |   |-- Overworld NPCs/
+|   |   |   |-- The Party/
+|   |   |-- Environmental/
+|   |   |-- Gameplay/
+|   |   |-- Scenes/
+|-- Misc./
+|-- Music/
+|-- Playable Builds/
+|-- Writing & Documents/
+|-- SETUP.md
 ```
 
 ## How to Populate
