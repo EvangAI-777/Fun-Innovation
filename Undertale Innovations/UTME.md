@@ -1,5 +1,21 @@
 # Undertale Innovations
 
+Projects that take the Undertale universe seriously -- fan games, revivals, tools, and experiments. The kind of work where the writing has to earn the comparison, the music has to carry emotional weight, and "determination" isn't just a meme.
+
+One project so far. It showed up as a ghost from 2017.
+
+## Projects
+
+| Project | Directory | Source | Status |
+|---------|-----------|--------|--------|
+| OvertaleRPG | `OvertaleRPG/` | Public Google Drive archive (2017) | Phase 0 complete -- awaiting import |
+
+Each project has its own subdirectory with SETUP.md files for project structure. See [`OvertaleRPG/Original Archive/SETUP.md`](./OvertaleRPG/Original%20Archive/SETUP.md) for the archive contents and [`OvertaleRPG/Revival/SETUP.md`](./OvertaleRPG/Revival/SETUP.md) for the revival structure.
+
+## Project Details
+
+### OvertaleRPG -- Fan Game Revival
+
 So let me get this straight.
 
 A team of people spent months -- maybe years -- building an Undertale fan game called OvertaleRPG. They had *everything*. Artwork folder. Music folder. Playable builds. A Writing & Documents folder with six design documents including a full Game Design Document, a Codex & Lore bible, core game systems specs, an opening scene script, a location design scrapbook for someplace called "Riremere," and a general team scrapbook. This was a real production. Multiple contributors. Shared Google Drive. Organized folders. The whole operation.
@@ -12,20 +28,11 @@ Everyone except one person, who has apparently been sitting on this Google Drive
 
 I have to respect the long game here.
 
-## Directories
-
-| Directory | Purpose | Status |
-|-----------|---------|--------|
-| `OvertaleRPG/Original Archive/` | Mirror of the 2017 OvertaleRPG public Google Drive | Awaiting import |
-| `OvertaleRPG/Revival/` | New work -- design docs, engine, scripts, assets, builds | Phase 0 complete |
-
-See [`Original Archive/SETUP.md`](./OvertaleRPG/Original%20Archive/SETUP.md) for the archive contents and [`Revival/SETUP.md`](./OvertaleRPG/Revival/SETUP.md) for the revival project structure.
-
-## What I'm Looking At
+#### What I'm Looking At
 
 From the screenshots of the Google Drive:
 
-### The Folder Structure
+##### The Folder Structure
 
 ```
 OvertaleRPG Resources/
@@ -44,7 +51,7 @@ OvertaleRPG Resources/
 
 All last modified November 13, 2017. That date is a tombstone. The entire project went silent on the same day -- probably the day someone made the folder public and walked away.
 
-### What Each Piece Tells Me
+##### What Each Piece Tells Me
 
 **The Game Design Document** is the crown jewel. A full GDD means someone on this team was thinking structurally. They weren't just vibing -- they had a plan. The question is how complete it is and how much of the design was aspirational vs. actually scoped to what the team could build.
 
@@ -66,7 +73,7 @@ All last modified November 13, 2017. That date is a tombstone. The entire projec
 
 **Misc.** -- the junk drawer. Could be anything. Meeting notes, Trello exports, reference material, engine documentation, abandoned prototypes. Junk drawers are where you find the things nobody thought to categorize but couldn't bear to delete.
 
-## Why This Is Actually Interesting
+#### Why This Is Actually Interesting
 
 Most abandoned fan games leave behind a Discord server full of #general chatter and maybe a Google Doc with three pages of worldbuilding. This project left behind a *production folder*. Six design documents. An art pipeline. A music pipeline. Playable builds. That's not a fan project that fizzled out at the idea stage -- that's a fan project that fizzled out at the *production* stage, which means the hardest creative work (the "what are we actually making" part) is already done.
 
@@ -80,7 +87,7 @@ The things that killed OvertaleRPG in 2017 are solvable problems in 2026:
 
 **The "nobody will care" problem** -- the Undertale fandom in 2017 was at peak saturation. Every possible AU (Alternate Universe) had been explored. Making *another* Undertale fan game felt like shouting into the void. But it's 2026 now. The nostalgia cycle has kicked in. Deltarune is still ongoing. And the audience for a well-made Undertale-inspired RPG with its own identity is arguably larger and more appreciable than it was during the initial hype wave.
 
-## What a Revival Looks Like
+#### What a Revival Looks Like
 
 You don't "finish" a dead fan game. You *scavenge* it. You treat the 2017 project folder the way an archaeologist treats a dig site: carefully, respectfully, and with the understanding that the original builders had intentions you should try to understand before you start building on top of their foundation.
 
@@ -94,7 +101,7 @@ Phase 4: **Building.** Pick a modern engine. Port what's salvageable. Rewrite wh
 
 Phase 5: **Release.** The original team said "anyone can do whatever they want with this." Honor that by actually finishing what they started. Credit them. Link to the original Drive. Make it clear this is a continuation, not a theft.
 
-## The Poetic Justice of It
+#### The Poetic Justice of It
 
 A team of people poured their hearts into a creative project, got crushed by the weight of it, and released their work into the void assuming nobody would ever pick it up.
 
