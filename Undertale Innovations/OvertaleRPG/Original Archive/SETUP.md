@@ -18,8 +18,8 @@ See [`OVERME.md`](../OVERME.md) for the full backstory and revival plan.
 | `Artwork/Concept Art/Character/` | Core Cast (7), Enemies (2), Overworld NPCs (2+), The Party (5) |
 | `Artwork/Concept Art/Environmental/` | Biomes (3), Dungeons (3), Settlements/Towns (1+) |
 | `Artwork/Concept Art/Scenes/` | DEMO, In Snow Dome |
-| `Misc./` | Meeting notes, reference material, engine docs, uncategorized assets |
-| `Music/` | Soundtrack files, sound effects, audio stems |
+| `Misc./` | Scripting Template.docx, Shader Test.png -- scripting standards and shader experiments |
+| `Music/` | Numbered OST (tracks 002-009+), cover art -- at least 9 tracks including menu theme, biome music, 3 enemy encounter variants |
 | `Playable Builds/` | Compiled game builds (likely RPG Maker, GameMaker, or Unity circa 2017) |
 | `Writing & Documents/` | The six design documents visible in the Drive |
 
