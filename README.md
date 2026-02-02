@@ -40,14 +40,14 @@ Fun-Innovation/
 |   |   |-- MusicClient.luau
 |   |   |-- MusicConfig.luau
 |   |   |-- MusicServer.luau
-|   |   |-- SETUP.md
 |   |   |-- SoundscapeEngine.luau
+|   |   |-- SETUP.md
 |   |-- Living Story RPG/
 |   |   |-- DialogueManager.luau
-|   |   |-- SETUP.md
 |   |   |-- StoryClient.luau
 |   |   |-- StoryConfig.luau
 |   |   |-- StoryServer.luau
+|   |   |-- SETUP.md
 |   |-- Notes Organizer Bulletin Board/
 |   |   |-- BulletinClient.luau
 |   |   |-- BulletinConfig.luau
@@ -56,12 +56,52 @@ Fun-Innovation/
 |   |   |-- SETUP.md
 |   |-- Verse Engine Skywriting/
 |   |   |-- PoetryEngine.luau
-|   |   |-- SETUP.md
 |   |   |-- SkywritingClient.luau
 |   |   |-- SkywritingServer.luau
 |   |   |-- VerseConfig.luau
+|   |   |-- SETUP.md
 |   |-- FUNME.md
 |-- Minecraft Innovations/
+|   |-- GeoVox/
+|   |   |-- Design/
+|   |   |   |-- ARCHITECTURE.md
+|   |   |-- src/
+|   |   |   |-- geovox/
+|   |   |       |-- core/
+|   |   |       |-- ingest/
+|   |   |       |-- palette/
+|   |   |       |-- export/
+|   |   |-- palettes/
+|   |   |-- tests/
+|   |   |-- examples/
+|   |   |-- README.md
+|   |-- Minecraft Studio/
+|   |   |-- Design/
+|   |   |   |-- ARCHITECTURE.md
+|   |   |-- src/
+|   |   |   |-- app/
+|   |   |   |-- explorer/
+|   |   |   |-- viewport/
+|   |   |   |-- editor/
+|   |   |   |-- visual/
+|   |   |   |   |-- recipe/
+|   |   |   |   |-- loot/
+|   |   |   |   |-- worldgen/
+|   |   |   |   |-- entity/
+|   |   |   |   |-- gui/
+|   |   |   |   |-- particle/
+|   |   |   |-- export/
+|   |   |   |   |-- forge/
+|   |   |   |   |-- neoforge/
+|   |   |   |   |-- fabric/
+|   |   |   |   |-- quilt/
+|   |   |   |   |-- datapack/
+|   |   |   |   |-- resourcepack/
+|   |   |   |-- testing/
+|   |   |   |-- abstraction/
+|   |   |-- resources/
+|   |   |-- tests/
+|   |   |-- README.md
 |   |-- MCME.md
 |-- Undertale Innovations/
 |   |-- Original Archive/
@@ -70,10 +110,21 @@ Fun-Innovation/
 |   |   |-- Music/
 |   |   |-- Playable Builds/
 |   |   |-- Writing & Documents/
+|   |   |-- README.md
 |   |-- Revival/
 |   |   |-- Design/
+|   |   |   |-- SCOPE.md
+|   |   |   |-- ENGINE.md
+|   |   |   |-- ROADMAP.md
 |   |   |-- Scripts/
+|   |   |-- Engine/
 |   |   |-- Assets/
+|   |   |   |-- Sprites/
+|   |   |   |-- Music/
+|   |   |   |-- Tilesets/
+|   |   |   |-- UI/
+|   |   |-- Builds/
+|   |   |-- README.md
 |   |-- UTME.md
 |-- README.md
 ```
@@ -88,15 +139,18 @@ See [`INVALID_REQUEST/DELETEME.md`](./INVALID_REQUEST/DELETEME.md) for the full 
 
 ### [Roblox Innovations](./Roblox%20Innovations/)
 
-Design concepts for bringing every INVALID_REQUEST project into Roblox Studio. Not ports -- reimaginings that take advantage of 3D space, physics, and multiplayer. Each of the seven concepts has its own subdirectory with versioned SETUP.md files (all currently at **v1.0.1**). All buildable with stock Studio and Luau. All 28 Luau files have been audited against the current Roblox Studio API surface (February 2026) and all SETUP.md claims verified against actual code.
+Design concepts for bringing every INVALID_REQUEST project into Roblox Studio. Not ports -- reimaginings that take advantage of 3D space, physics, and multiplayer. Each of the seven concepts has its own subdirectory with versioned SETUP.md files (v1.0.1 or v1.0.2). All buildable with stock Studio and Luau. All 28 Luau files have been audited against the current Roblox Studio API surface (February 2026) and all SETUP.md claims verified against actual code. Four projects (Verse Engine Skywriting, Ecosystem Survival, Generative Music Rooms, Living Story RPG) received additional code verification fixes at v1.0.2 -- bug fixes, deprecated API replacement, and missing feature implementation.
 
 See [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md) for detailed implementation breakdowns.
 
 ### [Minecraft Innovations](./Minecraft%20Innovations/)
 
-Concept designs for Minecraft innovation. Two concepts: **GeoVox** -- a modular framework for importing real-world 3D data (heightmaps, LiDAR, photogrammetry) into playable Minecraft worlds with palette-driven voxelization. **Minecraft Studio** -- a full IDE for Minecraft mod creation modeled on Roblox Studio, with visual editors, embedded live preview, hot-reload testing, and export to any modloader format (Forge, NeoForge, Fabric, Quilt). No code yet; these are design documents.
+Concept designs for Minecraft infrastructure tooling. Two projects, each with its own subdirectory, architecture documents, and scaffolded source structure ready for development:
 
-See [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md) for both concepts.
+- **[GeoVox](./Minecraft%20Innovations/GeoVox/)** -- a modular Python pipeline for importing real-world 3D data (heightmaps, LiDAR, photogrammetry, GeoJSON, voxel grids) into playable Minecraft worlds with palette-driven voxelization and multiple export formats (.mca, .nbt, .litematic, .mcfunction).
+- **[Minecraft Studio](./Minecraft%20Innovations/Minecraft%20Studio/)** -- a standalone Java/Kotlin IDE for Minecraft mod creation modeled on Roblox Studio, with visual editors for recipes/loot tables/world gen/entity AI/GUIs/particles, an embedded live preview with hot-reload, and export to any modloader (Forge, NeoForge, Fabric, Quilt, Data Pack, Resource Pack, Architectury multiloader).
+
+No code yet -- these are design documents with scaffolded project structures. See [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md) for the original concept document, or each project's own README for focused overviews.
 
 ### [Undertale Innovations](./Undertale%20Innovations/)
 
@@ -130,11 +184,11 @@ python3 "INVALID_REQUEST/Python Files/verse_engine.py"
 All seven projects are fully built. See each project's SETUP.md for Studio setup instructions: [`Flow Field Obby`](./Roblox%20Innovations/Flow%20Field%20Obby/SETUP.md), [`Verse Engine Skywriting`](./Roblox%20Innovations/Verse%20Engine%20Skywriting/SETUP.md), [`Notes Organizer Bulletin Board`](./Roblox%20Innovations/Notes%20Organizer%20Bulletin%20Board/SETUP.md), [`Academic Planner Study Hub`](./Roblox%20Innovations/Academic%20Planner%20Study%20Hub/SETUP.md), [`Ecosystem Survival`](./Roblox%20Innovations/Ecosystem%20Survival/SETUP.md), [`Generative Music Rooms`](./Roblox%20Innovations/Generative%20Music%20Rooms/SETUP.md), and [`Living Story RPG`](./Roblox%20Innovations/Living%20Story%20RPG/SETUP.md). Full details in [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md).
 
 **Minecraft concepts (Minecraft Innovations):**
-Design documents only -- no code yet. Two concepts: GeoVox (real-world 3D data → Minecraft worlds) and Minecraft Studio (a Roblox Studio-style IDE for Minecraft mod creation). Read [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md) for both.
+Design documents with scaffolded project structures -- no code yet. Two projects: [`GeoVox`](./Minecraft%20Innovations/GeoVox/) (real-world 3D data → Minecraft worlds) and [`Minecraft Studio`](./Minecraft%20Innovations/Minecraft%20Studio/) (a Roblox Studio-style IDE for Minecraft mod creation). Each has its own README and architecture doc. The original concept document is [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md).
 
 **Undertale fan game revival (Undertale Innovations):**
 Excavation and revival of OvertaleRPG. Read [`Undertale Innovations/UTME.md`](./Undertale%20Innovations/UTME.md) for the backstory and plan.
 
 ---
 
-*Started by Claude (Opus) and Charlie, January 2026. Still going.*
+*Started by Claude (Opus) and Charlie, January 2026. Still building.*
