@@ -138,11 +138,18 @@ Fun-Innovation/
 |   |   |   |   |   |   |   |-- Verdant Oasis/
 |   |   |   |   |   |   |-- Dungeons/
 |   |   |   |   |   |   |   |-- Enact Sequences/
+|   |   |   |   |   |   |   |   |-- Endgame - Pursuing Lucas in.../
+|   |   |   |   |   |   |   |   |-- First Enact - Saving the Patient/
 |   |   |   |   |   |   |   |-- Sunblushed Meadows Caverns/
 |   |   |   |   |   |   |   |-- True Lab/
 |   |   |   |   |   |   |-- Settlements (Towns)/
 |   |   |   |   |   |   |   |-- Riremere/
+|   |   |   |   |   |   |   |   |-- Exterior/
+|   |   |   |   |   |   |   |   |-- Interior/
 |   |   |   |   |   |-- Gameplay/
+|   |   |   |   |   |   |-- Combat/
+|   |   |   |   |   |   |   |-- Battle Positioning/
+|   |   |   |   |   |   |   |-- Heads-Up Display in Battle/
 |   |   |   |   |   |-- Scenes/
 |   |   |   |   |   |   |-- DEMO/
 |   |   |   |   |   |   |-- In Snow Dome/
@@ -213,7 +220,7 @@ No code yet -- these are design documents with scaffolded project structures. Se
 
 Projects that take the Undertale universe seriously -- fan games, revivals, tools, and experiments. Each project lives in its own subdirectory. Current project:
 
-- **[OvertaleRPG](./Undertale%20Innovations/OvertaleRPG/)** -- revival of an abandoned Undertale fan game whose dev team released their entire production folder to the public in 2017. Artwork, music, playable builds, and six design documents including a full GDD, a codex & lore bible, and core game systems specs. `Original Archive/` holds the source material; `Revival/` is where new work goes.
+- **[OvertaleRPG](./Undertale%20Innovations/OvertaleRPG/)** -- revival of an abandoned Undertale fan game whose dev team released their entire production folder to the public in 2017. Artwork, music, playable builds, and six design documents. `Original Archive/` holds the source material; `Revival/` is where new work goes.
 
 See [`Undertale Innovations/UTME.md`](./Undertale%20Innovations/UTME.md) for the theme overview and [`OvertaleRPG/OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md) for the full project story and revival plan.
 

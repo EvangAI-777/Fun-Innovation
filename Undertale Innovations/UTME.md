@@ -16,7 +16,7 @@ Each project has its own subdirectory. See [`OvertaleRPG/OVERME.md`](./OvertaleR
 
 ### OvertaleRPG -- Fan Game Revival
 
-An abandoned Undertale fan game whose dev team released their entire production folder to the public in 2017. Six design documents (full GDD, codex & lore bible, core game systems spec, opening scene script, location design scrapbook for "Riremere," and a general team scrapbook), plus artwork, music, playable builds, and miscellaneous production materials. All last modified November 13, 2017 -- the day the team walked away. Preserved from a public Google Drive for four years before landing here.
+An abandoned Undertale fan game whose dev team released their entire production folder to the public in 2017. Six design documents, artwork, music, playable builds, and miscellaneous production materials. All last modified November 13, 2017 -- the day the team walked away. Preserved from a public Google Drive for four years before landing here.
 
 This isn't a fan project that fizzled at the idea stage. It fizzled at the *production* stage, which means the hardest creative work is already done.
 
