@@ -74,7 +74,7 @@ Fun-Innovation/
 |   |   |-- palettes/
 |   |   |-- tests/
 |   |   |-- examples/
-|   |   |-- SETUP.md
+|   |   |-- VOXELME.md
 |   |-- Minecraft Studio/
 |   |   |-- Design/
 |   |   |   |-- ARCHITECTURE.md
@@ -101,7 +101,7 @@ Fun-Innovation/
 |   |   |   |-- abstraction/
 |   |   |-- resources/
 |   |   |-- tests/
-|   |   |-- SETUP.md
+|   |   |-- STUDYME.md
 |   |-- MCME.md
 |-- Undertale Innovations/
 |   |-- OvertaleRPG/
@@ -151,7 +151,7 @@ Concept designs for Minecraft infrastructure tooling. Two projects, each with it
 - **[GeoVox](./Minecraft%20Innovations/GeoVox/)** -- a modular Python pipeline for importing real-world 3D data (heightmaps, LiDAR, photogrammetry, GeoJSON, voxel grids) into playable Minecraft worlds with palette-driven voxelization and multiple export formats (.mca, .nbt, .litematic, .mcfunction).
 - **[Minecraft Studio](./Minecraft%20Innovations/Minecraft%20Studio/)** -- a standalone Java/Kotlin IDE for Minecraft mod creation modeled on Roblox Studio, with visual editors for recipes/loot tables/world gen/entity AI/GUIs/particles, an embedded live preview with hot-reload, and export to any modloader (Forge, NeoForge, Fabric, Quilt, Data Pack, Resource Pack, Architectury multiloader).
 
-No code yet -- these are design documents with scaffolded project structures. See [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md) for the original concept document, or each project's own README for focused overviews.
+No code yet -- these are design documents with scaffolded project structures. See [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md) for the original concept document, [`GeoVox/VOXELME.md`](./Minecraft%20Innovations/GeoVox/VOXELME.md) and [`Minecraft Studio/STUDYME.md`](./Minecraft%20Innovations/Minecraft%20Studio/STUDYME.md) for project overviews.
 
 ### [Undertale Innovations](./Undertale%20Innovations/)
 
@@ -187,7 +187,7 @@ python3 "INVALID_REQUEST/Python Files/verse_engine.py"
 All seven projects are fully built. See each project's SETUP.md for Studio setup instructions: [`Flow Field Obby`](./Roblox%20Innovations/Flow%20Field%20Obby/SETUP.md), [`Verse Engine Skywriting`](./Roblox%20Innovations/Verse%20Engine%20Skywriting/SETUP.md), [`Notes Organizer Bulletin Board`](./Roblox%20Innovations/Notes%20Organizer%20Bulletin%20Board/SETUP.md), [`Academic Planner Study Hub`](./Roblox%20Innovations/Academic%20Planner%20Study%20Hub/SETUP.md), [`Ecosystem Survival`](./Roblox%20Innovations/Ecosystem%20Survival/SETUP.md), [`Generative Music Rooms`](./Roblox%20Innovations/Generative%20Music%20Rooms/SETUP.md), and [`Living Story RPG`](./Roblox%20Innovations/Living%20Story%20RPG/SETUP.md). Full details in [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md).
 
 **Minecraft concepts (Minecraft Innovations):**
-Design documents with scaffolded project structures -- no code yet. Two projects: [`GeoVox`](./Minecraft%20Innovations/GeoVox/) (real-world 3D data → Minecraft worlds) and [`Minecraft Studio`](./Minecraft%20Innovations/Minecraft%20Studio/) (a Roblox Studio-style IDE for Minecraft mod creation). Each has its own README and architecture doc. The original concept document is [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md).
+Design documents with scaffolded project structures -- no code yet. Two projects: [`GeoVox`](./Minecraft%20Innovations/GeoVox/) (real-world 3D data → Minecraft worlds, see [`VOXELME.md`](./Minecraft%20Innovations/GeoVox/VOXELME.md)) and [`Minecraft Studio`](./Minecraft%20Innovations/Minecraft%20Studio/) (Roblox Studio-style IDE for Minecraft modding, see [`STUDYME.md`](./Minecraft%20Innovations/Minecraft%20Studio/STUDYME.md)). The original concept document is [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md).
 
 **Undertale projects (Undertale Innovations):**
 Fan games, revivals, and experiments in the Undertale universe. Current project: OvertaleRPG. Read [`Undertale Innovations/UTME.md`](./Undertale%20Innovations/UTME.md) for the full story and project details.
