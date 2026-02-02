@@ -60,7 +60,7 @@ Original Archive/
 |   |   |   |   |-- Verdant Oasis/
 |   |   |   |-- Dungeons/
 |   |   |   |   |-- Enact Sequences/
-|   |   |   |   |   |-- Endgame - Pursuing Lucas in.../
+|   |   |   |   |   |-- Endgame - Pursuing Lucas in the Ruins/
 |   |   |   |   |   |-- First Enact - Saving the Patient/
 |   |   |   |   |-- Sunblushed Meadows Caverns/
 |   |   |   |   |-- True Lab/
