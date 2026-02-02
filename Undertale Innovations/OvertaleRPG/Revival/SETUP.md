@@ -6,7 +6,7 @@
 
 New work for the OvertaleRPG revival. Everything in this directory is original or adapted from the public archive with modifications. Design first, build second.
 
-See [`UTME.md`](../UTME.md) for the full backstory, [`ROADMAP.md`](./Design/ROADMAP.md) for the phase breakdown, [`SCOPE.md`](./Design/SCOPE.md) for what ships, and [`ENGINE.md`](./Design/ENGINE.md) for the engine evaluation.
+See [`UTME.md`](../../UTME.md) for the full backstory, [`ROADMAP.md`](./Design/ROADMAP.md) for the phase breakdown, [`SCOPE.md`](./Design/SCOPE.md) for what ships, and [`ENGINE.md`](./Design/ENGINE.md) for the engine evaluation.
 
 ## Files
 
