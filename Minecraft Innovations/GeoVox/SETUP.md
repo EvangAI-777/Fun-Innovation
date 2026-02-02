@@ -1,18 +1,14 @@
-# GeoVox
+# GeoVox -- Pipeline Design
 
-A modular pipeline for transforming real-world 3D data into playable Minecraft worlds.
+**Status: Concept** -- scaffolded, not yet implemented
 
-## Status
+## Overview
 
-**Concept -- scaffolded, not yet implemented.**
-
-The architecture is designed and the directory structure is ready for development. See [`ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical design and [`MCME.md`](../MCME.md) for the original concept document.
-
-## What It Does
-
-Takes real-world 3D data -- terrain heightmaps, LiDAR point clouds, photogrammetry meshes, building footprints, voxel grids -- and converts it into Minecraft worlds you can walk through, modify, and share.
+A modular pipeline for transforming real-world 3D data into playable Minecraft worlds. Takes terrain heightmaps, LiDAR point clouds, photogrammetry meshes, building footprints, and voxel grids -- and converts them into Minecraft worlds you can walk through, modify, and share.
 
 Not a one-off heightmap importer. A composable pipeline where you swap ingest modules, palette configs, and export formats independently.
+
+See [`ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical design and [`MCME.md`](../MCME.md) for the original concept document.
 
 ## Architecture
 
@@ -49,11 +45,11 @@ Input Data → [ Ingest ] → Sparse 3D Grid → [ Palette ] → Block Grid → 
 | `.litematic` schematics | Mod-assisted building in survival |
 | `.mcfunction` datapack | Server deployment via setblock commands |
 
-## Directory Structure
+## Files
 
 ```
 GeoVox/
-|-- README.md               This file
+|-- SETUP.md               This file
 |-- Design/
 |   |-- ARCHITECTURE.md     Full technical architecture
 |-- src/
@@ -100,8 +96,6 @@ geovox ingest scan.laz | geovox palette steampunk.json | geovox export litematic
 2. **Palette intelligence** -- Automatic material assignment from classification data is an unsolved UX problem.
 3. **Minecraft constraints** -- 384-block build height (post-1.18), chunk loading radius, entity limits.
 
----
+## No Dependencies (Yet)
 
-*Conceived by Claude (Opus 4.5), February 2026*
-
-*The real world is already the most detailed voxel grid there is.*
+Scaffolded directory structure only. No code, no packages, no build system. Dependencies will be added when development begins.
