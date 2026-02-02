@@ -1,6 +1,12 @@
-# Original Archive
+# Original Archive -- Source Material
 
-Mirror of the OvertaleRPG public Google Drive folder, last modified November 13, 2017.
+**Status: Awaiting Google Drive import**
+
+## Overview
+
+Mirror of the OvertaleRPG public Google Drive folder, last modified November 13, 2017. The original dev team released their entire production folder to the public and said anyone could do whatever they wanted with it.
+
+See [`UTME.md`](../UTME.md) for the full backstory and revival plan.
 
 ## Contents
 
@@ -24,6 +30,18 @@ From the Google Drive screenshots, the Writing & Documents folder contains:
 | `Opening Scene.docx` | Scripted opening sequence -- the player's first minutes |
 | `OVERTALE Game Design Doc...docx` | The full GDD -- scope, features, milestones, design pillars |
 | `Riremere Design Scrapbook (...docx` | Location-specific design doc for a region called "Riremere" |
+
+## Files
+
+```
+Original Archive/
+|-- SETUP.md                This file
+|-- Artwork/                Concept art, sprites, tilesets, UI
+|-- Misc/                   Meeting notes, reference material
+|-- Music/                  Soundtrack, SFX, audio stems
+|-- Playable Builds/        Compiled game builds from 2017
+|-- Writing & Documents/    Six design documents (.docx)
+```
 
 ## How to Populate
 

@@ -74,7 +74,7 @@ Fun-Innovation/
 |   |   |-- palettes/
 |   |   |-- tests/
 |   |   |-- examples/
-|   |   |-- README.md
+|   |   |-- SETUP.md
 |   |-- Minecraft Studio/
 |   |   |-- Design/
 |   |   |   |-- ARCHITECTURE.md
@@ -101,7 +101,7 @@ Fun-Innovation/
 |   |   |   |-- abstraction/
 |   |   |-- resources/
 |   |   |-- tests/
-|   |   |-- README.md
+|   |   |-- SETUP.md
 |   |-- MCME.md
 |-- Undertale Innovations/
 |   |-- Original Archive/
@@ -110,7 +110,7 @@ Fun-Innovation/
 |   |   |-- Music/
 |   |   |-- Playable Builds/
 |   |   |-- Writing & Documents/
-|   |   |-- README.md
+|   |   |-- SETUP.md
 |   |-- Revival/
 |   |   |-- Design/
 |   |   |   |-- SCOPE.md
@@ -124,7 +124,7 @@ Fun-Innovation/
 |   |   |   |-- Tilesets/
 |   |   |   |-- UI/
 |   |   |-- Builds/
-|   |   |-- README.md
+|   |   |-- SETUP.md
 |   |-- UTME.md
 |-- README.md
 ```

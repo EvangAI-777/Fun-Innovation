@@ -1,16 +1,12 @@
-# Minecraft Studio
+# Minecraft Studio -- IDE Design
 
-A standalone integrated development environment for Minecraft mod creation. Roblox Studio for Minecraft.
+**Status: Concept** -- scaffolded, not yet implemented
 
-## Status
+## Overview
 
-**Concept -- scaffolded, not yet implemented.**
+A standalone integrated development environment for Minecraft mod creation. Roblox Studio for Minecraft. One application for the entire mod development lifecycle: visual editors, code editor, embedded live preview, hot-reload testing, and export to any modloader. No JDK setup, no Gradle debugging, no 60-second test cycles.
 
-The architecture is designed and the directory structure is ready for development. See [`ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical design and [`MCME.md`](../MCME.md) for the original concept document.
-
-## What It Does
-
-One application for the entire Minecraft mod development lifecycle: visual editors, code editor, embedded live preview, hot-reload testing, and export to any modloader. No JDK setup, no Gradle debugging, no 60-second test cycles.
+See [`ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical design and [`MCME.md`](../MCME.md) for the original concept document.
 
 ```
 +---------------------------------------------------------------+
@@ -36,19 +32,19 @@ One application for the entire Minecraft mod development lifecycle: visual edito
 +---------------------------------------------------------------+
 ```
 
-## Core Components
+## Components
 
-### Explorer Panel
-Registry-organized project tree: Blocks, Items, Entities, World Generation, Recipes, Loot Tables, Events, GUI, Networking, Data Packs, Resource Pack.
+| Component | Purpose | Location |
+|-----------|---------|----------|
+| Explorer Panel | Registry-organized project tree (Blocks, Items, Entities, World Gen, Recipes, Loot Tables, Events, GUI, Networking, Data Packs, Resource Pack) | `src/explorer/` |
+| 3D Viewport | Embedded Minecraft instance with hot-reload and editor overlays (chunk boundaries, entity AI, block state, redstone, world gen) | `src/viewport/` |
+| Code Editor | Full Java 21+ / Kotlin IDE with Minecraft-aware autocomplete, Mojang/Yarn/MCP mappings, live error checking, refactoring, mixin assistant | `src/editor/` |
+| Visual Editors | No-code tools for recipes, loot tables, world gen, entity AI, GUIs, and particles -- each generates clean Java/Kotlin | `src/visual/` |
+| Export Engine | Build once, export for any modloader target (Forge, NeoForge, Fabric, Quilt, Data Pack, Resource Pack, Architectury multiloader) | `src/export/` |
+| Test Harness | Automated testing, performance profiler, multiplayer simulation, version matrix testing -- all inside the embedded instance | `src/testing/` |
+| Abstraction Layer | Studio API that maps to modloader-specific implementations at export time | `src/abstraction/` |
 
-### 3D Viewport
-Embedded Minecraft instance running your mod in real time. Editor overlays for chunk boundaries, entity AI state, block state inspection, redstone debugging, world gen preview. Hot-reload on every change.
-
-### Code Editor
-Full Java 21+ / Kotlin IDE with Minecraft-aware autocomplete, Mojang/Yarn/MCP mappings, live error checking, refactoring tools, and mixin assistant.
-
-### Visual Editors
-No-code tools for the systems that currently require hand-written JSON or boilerplate:
+## Visual Editors
 
 | Editor | What It Replaces |
 |--------|-----------------|
@@ -59,10 +55,7 @@ No-code tools for the systems that currently require hand-written JSON or boiler
 | GUI Editor | AbstractContainerScreen coordinate math |
 | Particle Editor | ParticleType boilerplate + trial-and-error |
 
-Every visual editor generates clean, readable Java/Kotlin behind the scenes.
-
-### Modloader Export
-Build once, export for any target:
+## Modloader Export
 
 | Target | Output |
 |--------|--------|
@@ -74,14 +67,11 @@ Build once, export for any target:
 | Resource Pack | Vanilla resource pack |
 | Multiloader | Architectury project |
 
-### Testing Environment
-Automated test harness, performance profiler, multiplayer simulation, version matrix testing -- all inside the embedded instance.
-
-## Directory Structure
+## Files
 
 ```
 Minecraft Studio/
-|-- README.md               This file
+|-- SETUP.md               This file
 |-- Design/
 |   |-- ARCHITECTURE.md     Full technical architecture
 |-- src/
@@ -127,8 +117,6 @@ Minecraft Studio/
 1. **Hot-reload cycle** -- Minecraft wasn't designed for class hot-swapping. Solution: custom classloader that isolates mod classes from Minecraft core, discard and recreate on recompile while preserving instance state.
 2. **Abstraction layer completeness** -- Thin enough that exported code is readable, complete enough that 95% of mod functionality doesn't require loader-specific code.
 
----
+## No Dependencies (Yet)
 
-*Conceived by Claude (Opus 4.5), February 2026*
-
-*Every creative community deserves tools that match its ambition.*
+Scaffolded directory structure only. No code, no packages, no build system. Dependencies will be added when development begins.

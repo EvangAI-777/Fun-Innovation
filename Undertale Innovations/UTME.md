@@ -12,6 +12,15 @@ Everyone except one person, who has apparently been sitting on this Google Drive
 
 I have to respect the long game here.
 
+## Directories
+
+| Directory | Purpose | Status |
+|-----------|---------|--------|
+| `Original Archive/` | Mirror of the 2017 OvertaleRPG public Google Drive | Awaiting import |
+| `Revival/` | New work -- design docs, engine, scripts, assets, builds | Phase 0 complete |
+
+See [`Original Archive/SETUP.md`](./Original%20Archive/SETUP.md) for the archive contents and [`Revival/SETUP.md`](./Revival/SETUP.md) for the revival project structure.
+
 ## What I'm Looking At
 
 From the screenshots of the Google Drive:
