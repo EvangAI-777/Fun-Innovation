@@ -137,7 +137,9 @@ local function loadPlayerData(player: Player): any
         return plannerStore:GetAsync(key)
     end)
 
-    if success and data then
+    if not success then
+        warn("[StudyHub] Failed to load data for " .. player.Name .. ": " .. tostring(data))
+    elseif data then
         local parsed = Manager.deserialize(data)
         if parsed then return parsed end
     end
@@ -152,9 +154,12 @@ local function savePlayerData(player: Player)
     local key = "planner_" .. tostring(player.UserId)
     local serialized = Manager.serialize(data)
 
-    pcall(function()
+    local ok, err = pcall(function()
         plannerStore:SetAsync(key, serialized)
     end)
+    if not ok then
+        warn("[StudyHub] Failed to save data for " .. player.Name .. ": " .. tostring(err))
+    end
 end
 
 ------------------------------------------------------------------------

@@ -37,8 +37,9 @@ activityEvent.Parent = ReplicatedStorage
 ------------------------------------------------------------------------
 -- State
 ------------------------------------------------------------------------
-local beatEpoch = tick()  -- server start time = beat 0
+local beatEpoch = os.clock()  -- server start time = beat 0
 local prevBeat = 0
+local roomPrevBeat = {}  -- per-room beat tracking for room-specific BPM
 
 -- Per-player tracking
 -- playerState[player] = {room = roomIndex|nil, speed = n, isJumping = bool, stillTime = n, lastPos = Vector3}
@@ -266,13 +267,24 @@ RunService.Heartbeat:Connect(function(dt)
 		for _, player in Players:GetPlayers() do
 			stateEvent:FireClient(player, beatNum, payload)
 		end
+	end
 
-		-- Also fire a beat event for visual sync
-		local measure, beatInMeasure = SoundscapeEngine.beatToMeasure(beatNow)
-		for _, player in Players:GetPlayers() do
-			local ps = playerState[player]
-			local roomIdx = ps and ps.room or nil
-			beatEvent:FireClient(player, beatNum, measure, beatInMeasure, roomIdx)
+	-- Fire per-room beat events using each room's own BPM
+	for idx, roomDef in MusicConfig.Rooms do
+		local roomBpm = roomDef.music and roomDef.music.bpm or 120
+		local roomBeatNow = SoundscapeEngine.getBeat(roomBpm, beatEpoch)
+		local roomNew = SoundscapeEngine.isNewBeat(roomBeatNow, roomPrevBeat[idx] or 0)
+		roomPrevBeat[idx] = roomBeatNow
+
+		if roomNew then
+			local beatNum = math.floor(roomBeatNow)
+			local measure, beatInMeasure = SoundscapeEngine.beatToMeasure(roomBeatNow)
+			for _, player in Players:GetPlayers() do
+				local ps = playerState[player]
+				if ps and ps.room == idx then
+					beatEvent:FireClient(player, beatNum, measure, beatInMeasure, idx)
+				end
+			end
 		end
 	end
 end)

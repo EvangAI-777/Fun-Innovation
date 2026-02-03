@@ -8,13 +8,13 @@ Each concept has its own subdirectory for Roblox Studio files as development pro
 
 | Concept | Directory | Source | Version | Status |
 |---------|-----------|--------|---------|--------|
-| Flow Field Obby | `Flow Field Obby/` | `flowfield.html` | 1.0.1 | Built |
-| Verse Engine Skywriting | `Verse Engine Skywriting/` | `verse_engine.py` | 1.0.2 | Built |
-| Ecosystem Survival | `Ecosystem Survival/` | `ecosystem.html` | 1.0.2 | Built |
-| Generative Music Rooms | `Generative Music Rooms/` | `generative-music.html` | 1.0.2 | Built |
-| Living Story RPG | `Living Story RPG/` | `living_story.py` | 1.0.2 | Built |
-| Academic Planner Study Hub | `Academic Planner Study Hub/` | `academic-planner.html` | 1.0.1 | Built |
-| Notes Organizer Bulletin Board | `Notes Organizer Bulletin Board/` | `notes-organizer.html` | 1.0.1 | Built |
+| Flow Field Obby | `Flow Field Obby/` | `flowfield.html` | 1.0.3 | Built |
+| Verse Engine Skywriting | `Verse Engine Skywriting/` | `verse_engine.py` | 1.0.3 | Built |
+| Ecosystem Survival | `Ecosystem Survival/` | `ecosystem.html` | 1.0.3 | Built |
+| Generative Music Rooms | `Generative Music Rooms/` | `generative-music.html` | 1.0.3 | Built |
+| Living Story RPG | `Living Story RPG/` | `living_story.py` | 1.0.3 | Built |
+| Academic Planner Study Hub | `Academic Planner Study Hub/` | `academic-planner.html` | 1.0.3 | Built |
+| Notes Organizer Bulletin Board | `Notes Organizer Bulletin Board/` | `notes-organizer.html` | 1.0.3 | Built |
 
 ## Implementation Details
 
@@ -120,11 +120,31 @@ See [`Notes Organizer Bulletin Board/SETUP.md`](./Notes%20Organizer%20Bulletin%2
 
 All 28 Luau files were scanned against the current Roblox Studio API surface and all claims in SETUP.md files were verified against the actual code.
 
-### Code changes
+### Code changes (1.0.1 -- 1.0.2)
 
 - **Font enum update** -- `Enum.Font.Gotham` and `Enum.Font.GothamBold` replaced with `Enum.Font.BuilderSans` and `Enum.Font.BuilderSansBold` across 13 files. The old names still work (Roblox aliases them) but the canonical names are now BuilderSans/BuilderSansBold.
 - **Service access pattern** -- Two files used `game.ReplicatedStorage` direct property access instead of `game:GetService("ReplicatedStorage")`. Corrected to the canonical `:GetService()` pattern.
 - **Unused import removed** -- `StoryServer.luau` imported `HttpService` but never used it. Removed.
+
+### Code changes (1.0.3 -- full code audit)
+
+Critical fixes:
+- **Verse Engine infinite loop** -- `enforceMaxPoems()` used a `while` loop that never reduced `#activePoems`, freezing the server when the poem cap was reached. Replaced with a bounded `for` loop over excess poems.
+- **Notes Organizer room overlap** -- All players' rooms were placed at identical grid positions. Added per-player slot offsets so each player's rooms occupy unique world space.
+- **Notes Organizer pending folder ID** -- Client folder entries were stuck with ID `"pending"` forever. Now resolved when the server's `folderCreated` event arrives with the real ID.
+
+Bug fixes:
+- **Music Rooms `sound.Playing`** -- `sound.Playing` is not a valid Roblox Sound property. Changed to `sound.IsPlaying` so room crossfading doesn't restart already-playing sounds.
+- **Living Story RPG `choiceCount`** -- `choiceCount` was incremented inside the trait loop, counting once per trait instead of once per choice. Moved outside the loop.
+- **Flow Field camera shake** -- Camera shake was invisible because `RenderStepped:Connect` runs before the default camera controller overwrites the CFrame. Changed to `BindToRenderStep` at `Camera.Value + 1` priority.
+- **Music Rooms per-room BPM** -- All rooms pulsed at hardcoded 120 BPM regardless of their configured tempo. Beat events now fire per-room using each room's own BPM (64, 72, 80, 100, 120, 140).
+
+Hardening:
+- **Deprecated `tick()` removal** -- All `tick()` calls across 5 files replaced with `os.clock()`. `tick()` is deprecated and returns an epoch timestamp (unsuitable for relative timing); `os.clock()` returns a high-resolution monotonic value.
+- **DataStore error logging** -- Silent `pcall` wrappers around `SetAsync` and `GetAsync` in Academic Planner, Living Story RPG, and Notes Organizer now capture and `warn()` errors instead of discarding them.
+- **Notes Organizer input validation** -- Added `type()` checks on position/normal number values from the client to prevent data corruption.
+- **Living Story RPG global leak** -- `closeDialogue` was accidentally global. Forward-declared as `local` with assignment after `showChoices` definition.
+- **Living Story RPG dead import** -- Unused `RunService` import removed.
 
 ### Claim verification results
 
@@ -136,7 +156,7 @@ All 28 Luau files were scanned against the current Roblox Studio API surface and
 | No external assets | Verified | Only placeholder empty strings in `MusicConfig.SoundAssets` |
 | DataStore usage accurate | Verified | Flow Field Obby, Verse Engine, Ecosystem, and Music Rooms use no DataStore. Academic Planner, Notes Organizer, and Living Story RPG use DataStore as documented. |
 | Script types match SETUP.md | Verified | All 7 projects: 2 ModuleScript + 1 Script + 1 LocalScript, placed as documented |
-| No deprecated APIs | Verified (1.0.2) | `task.*` used throughout, no legacy `spawn`/`wait`/`delay`, no `FindPartOnRay`, no `Instance.new` with parent arg. One `Velocity` usage (MusicClient) caught and replaced with `AssemblyLinearVelocity` in v1.0.2. |
+| No deprecated APIs | Verified (1.0.3) | `task.*` used throughout, no legacy `spawn`/`wait`/`delay`, no `FindPartOnRay`, no `Instance.new` with parent arg. `Velocity` replaced with `AssemblyLinearVelocity` in v1.0.2. All `tick()` calls replaced with `os.clock()` in v1.0.3. |
 
 ### Versioning
 
@@ -145,6 +165,7 @@ All projects now carry semantic version numbers in their SETUP.md files:
 - **1.0.0** -- Initial build
 - **1.0.1** -- API audit: font enums, service access, unused import, claim verification
 - **1.0.2** -- Code verification: bug fixes, deprecated API replacement, missing feature implementation (4 projects patched)
+- **1.0.3** -- Full code audit: 3 critical fixes, 4 bug fixes, `tick()` removal, DataStore error logging, input validation, dead code cleanup
 
 ## Notes
 

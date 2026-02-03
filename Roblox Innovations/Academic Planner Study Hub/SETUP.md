@@ -1,6 +1,6 @@
 # Academic Planner Study Hub -- Studio Setup
 
-**Version 1.0.1** -- API audit: font enums updated to BuilderSans/BuilderSansBold
+**Version 1.0.3** -- DataStore error logging added (save/load failures now `warn()` instead of silently discarding)
 
 ## Overview
 

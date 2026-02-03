@@ -1,6 +1,6 @@
 # Living Story RPG -- Studio Setup
 
-**Version 1.0.2** -- Added keyboard shortcuts (1-4) for dialogue choice selection
+**Version 1.0.3** -- Fixed `choiceCount` incrementing per-trait instead of per-choice, DataStore error logging, removed unused `RunService` import, fixed `closeDialogue` global leak
 
 A persistent multiplayer town where NPCs remember you. Your choices accumulate into a personality tracked across sessions via DataStore. The town's mood — its lighting, atmosphere, and NPC greetings — shifts based on the collective personality of everyone who visits. Same map, different feel every server.
 

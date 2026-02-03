@@ -71,7 +71,7 @@ end
 -- referenced to an epoch (server start time). Both server and client
 -- can call this with the same epoch for sync.
 function SoundscapeEngine.getBeat(bpm: number, epoch: number): number
-	local elapsed = tick() - epoch
+	local elapsed = os.clock() - epoch
 	return elapsed * (bpm / 60)
 end
 

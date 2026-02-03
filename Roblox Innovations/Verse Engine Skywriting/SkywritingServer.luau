@@ -197,7 +197,7 @@ local function createSkyPoem(lines: {string}, voice: string, worldPos: Vector3):
 
     local poem: ActivePoem = {
         model = model,
-        createdAt = tick(),
+        createdAt = os.clock(),
         state = "fadein",
         voice = voice,
         parts = parts,
@@ -212,7 +212,7 @@ end
 ------------------------------------------------------------------------
 
 local function updatePoems(dt: number)
-    local now = tick()
+    local now = os.clock()
     local toRemove = {}
 
     for i, poem in activePoems do
@@ -286,7 +286,7 @@ local function enforceMaxPoems()
         local oldest = activePoems[i]
         if oldest and oldest.state ~= "fadeout" and oldest.state ~= "done" then
             oldest.state = "fadeout"
-            oldest.createdAt = tick() - Config.FadeInDuration - Config.HoldDuration
+            oldest.createdAt = os.clock() - Config.FadeInDuration - Config.HoldDuration
         end
     end
 end
@@ -308,7 +308,7 @@ requestPoemEvent.OnServerEvent:Connect(function(player: Player, voice: string, f
     if not validVoice or not validForm then return end
 
     -- Check cooldown
-    local now = tick()
+    local now = os.clock()
     if playerCooldowns[player] and now - playerCooldowns[player] < Config.GenerationCooldown then
         return
     end

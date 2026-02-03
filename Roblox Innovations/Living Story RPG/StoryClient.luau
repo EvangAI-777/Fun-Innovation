@@ -397,6 +397,8 @@ local function showDialogueLines(lines: {string})
 	end
 end
 
+local closeDialogue  -- forward declaration; defined after showChoices
+
 local function showChoices(choices: {table}, npcId: string, currentNodeId: string)
 	for _, child in choicesFrame:GetChildren() do
 		if child:IsA("TextButton") then
@@ -485,7 +487,7 @@ local function showChoices(choices: {table}, npcId: string, currentNodeId: strin
 	end
 end
 
-function closeDialogue()
+closeDialogue = function()
 	inDialogue = false
 	dialogueGui.Enabled = false
 	clearDialogueText()

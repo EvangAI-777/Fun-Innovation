@@ -1,6 +1,6 @@
 # Ecosystem Survival -- Studio Setup
 
-**Version 1.0.2** -- Bug fix: deadHerbs iteration used value instead of key, eaten herbivores were never removed
+**Version 1.0.3** -- No code changes (clean audit). Version bump for consistency.
 
 ## Overview
 

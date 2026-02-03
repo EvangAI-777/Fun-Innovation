@@ -203,7 +203,7 @@ RunService:BindToRenderStep("FlowFieldCamera", Enum.RenderPriority.Camera.Value 
 
     if turbulenceAlpha > 0 then
         local intensity = turbulenceAlpha * Config.TurbulentShakeIntensity
-        local t = tick() * 8
+        local t = os.clock() * 8
         shakeOffset = Vector3.new(
             math.noise(t, 0, 0) * intensity,
             math.noise(0, t, 0) * intensity,

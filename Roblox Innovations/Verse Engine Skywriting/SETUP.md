@@ -1,6 +1,6 @@
 # Verse Engine Skywriting -- Studio Setup
 
-**Version 1.0.2** -- Bug fix: voice selection now respected for haiku, couplet, and fragment forms
+**Version 1.0.3** -- Critical fix: `enforceMaxPoems()` infinite loop replaced with bounded iteration, `tick()` replaced with `os.clock()`
 
 ## Overview
 
