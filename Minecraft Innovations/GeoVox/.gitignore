@@ -1,0 +1,10 @@
+# Generated terrain files
+*.mcfunction
+examples/test_terrain.png
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/

@@ -1,0 +1,47 @@
+{
+  "name": "vanilla-survival",
+  "description": "Standard Minecraft survival blocks -- grass, dirt, stone, water",
+  "version": "1.21",
+  "mappings": {
+    "bedrock": {
+      "block": "minecraft:bedrock"
+    },
+    "ground_deep": {
+      "blocks": ["minecraft:stone", "minecraft:andesite", "minecraft:diorite"],
+      "weights": [0.7, 0.15, 0.15]
+    },
+    "ground_shallow": {
+      "block": "minecraft:dirt"
+    },
+    "surface": {
+      "block": "minecraft:grass_block"
+    },
+    "water": {
+      "block": "minecraft:water"
+    },
+    "ground_low": {
+      "blocks": ["minecraft:grass_block", "minecraft:dirt", "minecraft:coarse_dirt"],
+      "weights": [0.7, 0.2, 0.1]
+    },
+    "ground_high": {
+      "blocks": ["minecraft:stone", "minecraft:andesite", "minecraft:diorite"],
+      "weights": [0.6, 0.2, 0.2]
+    },
+    "vegetation": {
+      "blocks": ["minecraft:oak_leaves", "minecraft:birch_leaves"],
+      "weights": [0.6, 0.4]
+    },
+    "building_wall": {
+      "blocks": ["minecraft:bricks", "minecraft:stone_bricks", "minecraft:smooth_stone"],
+      "weights": [0.4, 0.4, 0.2]
+    },
+    "building_roof": {
+      "blocks": ["minecraft:dark_oak_planks", "minecraft:spruce_planks"],
+      "weights": [0.5, 0.5]
+    },
+    "road": {
+      "blocks": ["minecraft:gray_concrete", "minecraft:stone_slab"],
+      "weights": [0.7, 0.3]
+    }
+  }
+}

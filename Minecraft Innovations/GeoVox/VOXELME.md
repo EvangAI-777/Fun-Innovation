@@ -87,7 +87,16 @@ See [`ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical design 
 
 ## Status
 
-Concept. Scaffolded directory structure, no code. Every component library listed above exists and is proven. What doesn't exist is the composition -- the pipeline that lets you say "take this LiDAR scan, layer in building footprints, apply this palette, and give me a Minecraft world I can walk through this afternoon."
+**v0.1.0 -- Heightmap pipeline working.** Feed in a grayscale PNG or GeoTIFF heightmap, get out `.mcfunction` files with setblock commands you can run in any Minecraft world. The three-layer architecture (ingest → palette → export) is implemented and tested. CLI supports `pipeline`, `info`, and `preview` commands.
+
+What's here:
+- **Ingest:** Grayscale PNG and GeoTIFF (via optional rasterio) heightmap reader with configurable Y scaling, sea level, and terrain layering (bedrock → stone → dirt → grass)
+- **Palette:** JSON config loader with weighted random block selection. Ships with a vanilla-survival palette. Built-in fallback palette for zero-config usage.
+- **Export:** `.mcfunction` setblock exporter with automatic file batching for large terrains
+- **CLI:** `geovox pipeline`, `geovox info`, `geovox preview` (ASCII terrain visualization)
+- **Example:** Test terrain generator script (`examples/generate_test_terrain.py`)
+
+What's next: `.mca` world file export (drop into saves and play), point cloud ingest (LAS/LAZ), mesh ingest (OBJ/STL), palette composition (stacking multiple layers), and the bidirectional workflow.
 
 ## Dedication
 
