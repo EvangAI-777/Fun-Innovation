@@ -479,8 +479,8 @@ local function detectActivity()
 	activityStatusLabel.Text = localActivity:sub(1, 1):upper() .. localActivity:sub(2)
 
 	-- Jump detection
-	if humanoid.Jump and (tick() - lastJumpTime) >= MusicConfig.Activity.jumpCooldown then
-		lastJumpTime = tick()
+	if humanoid.Jump and (os.clock() - lastJumpTime) >= MusicConfig.Activity.jumpCooldown then
+		lastJumpTime = os.clock()
 		activityEvent:FireServer("jump")
 	end
 end

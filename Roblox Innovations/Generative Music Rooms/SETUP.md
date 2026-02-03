@@ -1,6 +1,6 @@
 # Generative Music Rooms -- Studio Setup
 
-**Version 1.0.2** -- Deprecated API fix: Velocity replaced with AssemblyLinearVelocity for activity detection
+**Version 1.0.3** -- Per-room BPM (beat events now fire at each room's configured tempo), `sound.Playing` fixed to `sound.IsPlaying`, `tick()` replaced with `os.clock()`
 
 Six mood-themed rooms arranged in a hexagonal ring around a central lobby. Each room is built from waveform-shaped walls (sine, sawtooth, square, triangle, noise) and a grid of floor tiles that pulse on the beat. Walk between rooms and the music cross-fades. The composition reacts to player count and activity — more players means more layers, running adds percussion, jumping triggers melodic hits, standing still lets the ambient bed breathe.
 

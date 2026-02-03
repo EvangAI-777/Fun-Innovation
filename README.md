@@ -199,26 +199,26 @@ See [`INVALID_REQUEST/DELETEME.md`](./INVALID_REQUEST/DELETEME.md) for the full 
 
 ### [Roblox Innovations](./Roblox%20Innovations/)
 
-Reimaginings of every INVALID_REQUEST project for Roblox Studio -- not ports, but designs that take advantage of 3D space, physics, and multiplayer. All buildable with stock Studio and Luau, all 28 Luau files audited against the February 2026 API surface. Each project has its own subdirectory with a versioned SETUP.md (v1.0.1 or v1.0.2):
+Reimaginings of every INVALID_REQUEST project for Roblox Studio -- not ports, but designs that take advantage of 3D space, physics, and multiplayer. All buildable with stock Studio and Luau, all 28 Luau files audited against the February 2026 API surface. Each project has its own subdirectory with a versioned SETUP.md (v1.0.3):
 
-- **[Flow Field Obby](./Roblox%20Innovations/Flow%20Field%20Obby/)** -- floating platforms drift through noise-driven currents, players learn to read the flow (v1.0.1)
-- **[Verse Engine Skywriting](./Roblox%20Innovations/Verse%20Engine%20Skywriting/)** -- poems materialize as 3D particle text in the sky, drift upward, and dissolve (v1.0.2)
-- **[Ecosystem Survival](./Roblox%20Innovations/Ecosystem%20Survival/)** -- third-person survival where players pick a species and coexist in a Perlin-noise biome grid (v1.0.2)
-- **[Generative Music Rooms](./Roblox%20Innovations/Generative%20Music%20Rooms/)** -- six mood-themed rooms in a hexagonal ring, composition reacts to player count and activity (v1.0.2)
-- **[Living Story RPG](./Roblox%20Innovations/Living%20Story%20RPG/)** -- persistent multiplayer town where NPCs remember individual players via DataStore (v1.0.2)
-- **[Academic Planner Study Hub](./Roblox%20Innovations/Academic%20Planner%20Study%20Hub/)** -- virtual campus with dorm desks, color-coded assignment sticky notes, and shared study rooms (v1.0.1)
-- **[Notes Organizer Bulletin Board](./Roblox%20Innovations/Notes%20Organizer%20Bulletin%20Board/)** -- notes become framed objects placed on walls and tables, folders become rooms (v1.0.1)
+- **[Flow Field Obby](./Roblox%20Innovations/Flow%20Field%20Obby/)** -- floating platforms drift through noise-driven currents, players learn to read the flow (v1.0.3)
+- **[Verse Engine Skywriting](./Roblox%20Innovations/Verse%20Engine%20Skywriting/)** -- poems materialize as 3D particle text in the sky, drift upward, and dissolve (v1.0.3)
+- **[Ecosystem Survival](./Roblox%20Innovations/Ecosystem%20Survival/)** -- third-person survival where players pick a species and coexist in a Perlin-noise biome grid (v1.0.3)
+- **[Generative Music Rooms](./Roblox%20Innovations/Generative%20Music%20Rooms/)** -- six mood-themed rooms in a hexagonal ring, composition reacts to player count and activity (v1.0.3)
+- **[Living Story RPG](./Roblox%20Innovations/Living%20Story%20RPG/)** -- persistent multiplayer town where NPCs remember individual players via DataStore (v1.0.3)
+- **[Academic Planner Study Hub](./Roblox%20Innovations/Academic%20Planner%20Study%20Hub/)** -- virtual campus with dorm desks, color-coded assignment sticky notes, and shared study rooms (v1.0.3)
+- **[Notes Organizer Bulletin Board](./Roblox%20Innovations/Notes%20Organizer%20Bulletin%20Board/)** -- notes become framed objects placed on walls and tables, folders become rooms (v1.0.3)
 
 See [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md) for the theme overview and each project's SETUP.md for Studio setup instructions.
 
 ### [Minecraft Innovations](./Minecraft%20Innovations/)
 
-Concept designs for Minecraft infrastructure tooling. Two projects, each with its own subdirectory, architecture documents, and scaffolded source structure ready for development:
+Minecraft infrastructure tooling. Two projects, each with its own subdirectory, architecture documents, and scaffolded source structure:
 
-- **[GeoVox](./Minecraft%20Innovations/GeoVox/)** -- a modular Python pipeline for importing real-world 3D data (heightmaps, LiDAR, photogrammetry, GeoJSON, voxel grids) into playable Minecraft worlds with palette-driven voxelization and multiple export formats (.mca, .nbt, .litematic, .mcfunction).
-- **[Minecraft Studio](./Minecraft%20Innovations/Minecraft%20Studio/)** -- a standalone Java/Kotlin IDE for Minecraft mod creation modeled on Roblox Studio, with visual editors for recipes/loot tables/world gen/entity AI/GUIs/particles, an embedded live preview with hot-reload, and export to any modloader (Forge, NeoForge, Fabric, Quilt, Data Pack, Resource Pack, Architectury multiloader).
+- **[GeoVox](./Minecraft%20Innovations/GeoVox/)** (v0.1.1) -- a modular Python pipeline for importing real-world 3D data (heightmaps, LiDAR, photogrammetry, GeoJSON, voxel grids) into playable Minecraft worlds with palette-driven voxelization and multiple export formats (.mca, .nbt, .litematic, .mcfunction). Working pipeline: heightmap ingest, grid engine, 4 themed palettes, .mcfunction and .nbt structure export, 27 passing tests.
+- **[Minecraft Studio](./Minecraft%20Innovations/Minecraft%20Studio/)** -- a standalone Java/Kotlin IDE for Minecraft mod creation modeled on Roblox Studio, with visual editors for recipes/loot tables/world gen/entity AI/GUIs/particles, an embedded live preview with hot-reload, and export to any modloader (Forge, NeoForge, Fabric, Quilt, Data Pack, Resource Pack, Architectury multiloader). Design documents only -- no code yet.
 
-No code yet -- these are design documents with scaffolded project structures. See [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md) for the original concept document, [`GeoVox/VOXELME.md`](./Minecraft%20Innovations/GeoVox/VOXELME.md) and [`Minecraft Studio/STUDYME.md`](./Minecraft%20Innovations/Minecraft%20Studio/STUDYME.md) for project overviews.
+See [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md) for the original concept document, [`GeoVox/VOXELME.md`](./Minecraft%20Innovations/GeoVox/VOXELME.md) and [`Minecraft Studio/STUDYME.md`](./Minecraft%20Innovations/Minecraft%20Studio/STUDYME.md) for project overviews.
 
 ### [Undertale Innovations](./Undertale%20Innovations/)
 
@@ -254,8 +254,8 @@ Seven standalone projects -- five browser-based HTML apps and two terminal-based
 **Roblox projects (Roblox Innovations):**
 All seven projects are fully built -- reimaginings of INVALID_REQUEST projects for 3D multiplayer. See each project's SETUP.md for Studio setup instructions: [`Flow Field Obby`](./Roblox%20Innovations/Flow%20Field%20Obby/SETUP.md), [`Verse Engine Skywriting`](./Roblox%20Innovations/Verse%20Engine%20Skywriting/SETUP.md), [`Ecosystem Survival`](./Roblox%20Innovations/Ecosystem%20Survival/SETUP.md), [`Generative Music Rooms`](./Roblox%20Innovations/Generative%20Music%20Rooms/SETUP.md), [`Living Story RPG`](./Roblox%20Innovations/Living%20Story%20RPG/SETUP.md), [`Academic Planner Study Hub`](./Roblox%20Innovations/Academic%20Planner%20Study%20Hub/SETUP.md), and [`Notes Organizer Bulletin Board`](./Roblox%20Innovations/Notes%20Organizer%20Bulletin%20Board/SETUP.md). The theme overview is [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md).
 
-**Minecraft concepts (Minecraft Innovations):**
-Design documents with scaffolded project structures -- no code yet. Two projects: [`GeoVox`](./Minecraft%20Innovations/GeoVox/) (real-world 3D data → Minecraft worlds, see [`VOXELME.md`](./Minecraft%20Innovations/GeoVox/VOXELME.md)) and [`Minecraft Studio`](./Minecraft%20Innovations/Minecraft%20Studio/) (Roblox Studio-style IDE for Minecraft modding, see [`STUDYME.md`](./Minecraft%20Innovations/Minecraft%20Studio/STUDYME.md)). The original concept document is [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md).
+**Minecraft projects (Minecraft Innovations):**
+Two projects. [`GeoVox`](./Minecraft%20Innovations/GeoVox/) (v0.1.1) is a working Python pipeline -- `pip install -e .` then `geovox heightmap.png out.mcfunction` (see [`VOXELME.md`](./Minecraft%20Innovations/GeoVox/VOXELME.md)). [`Minecraft Studio`](./Minecraft%20Innovations/Minecraft%20Studio/) is still design documents only (see [`STUDYME.md`](./Minecraft%20Innovations/Minecraft%20Studio/STUDYME.md)). The original concept document is [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md).
 
 **Undertale projects (Undertale Innovations):**
 Fan games, revivals, and experiments in the Undertale universe. Current project: [`OvertaleRPG`](./Undertale%20Innovations/OvertaleRPG/) (abandoned fan game revival from a 2017 Google Drive archive, see [`OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md)). The theme overview is [`Undertale Innovations/UTME.md`](./Undertale%20Innovations/UTME.md).

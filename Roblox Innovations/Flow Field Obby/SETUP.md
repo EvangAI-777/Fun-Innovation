@@ -1,6 +1,6 @@
 # Flow Field Obby -- Studio Setup
 
-**Version 1.0.1** -- API audit: font enums updated to BuilderSans/BuilderSansBold
+**Version 1.0.3** -- Camera shake fix (BindToRenderStep at Camera+1 priority), `tick()` replaced with `os.clock()`
 
 ## Overview
 

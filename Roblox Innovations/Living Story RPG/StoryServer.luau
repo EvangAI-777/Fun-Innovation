@@ -12,7 +12,6 @@
 ]]
 
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
 local DataStoreService = game:GetService("DataStoreService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
@@ -69,6 +68,10 @@ local function loadPlayerData(player: Player): table
 		return dataStore:GetAsync("player_" .. player.UserId)
 	end)
 
+	if not success then
+		warn("[StoryRPG] Failed to load data for " .. player.Name .. ": " .. tostring(saved))
+	end
+
 	if success and saved then
 		if saved.personality then
 			for trait, val in saved.personality do
@@ -104,9 +107,12 @@ local function savePlayerData(player: Player)
 		name = data.name,
 	}
 
-	pcall(function()
+	local ok, err = pcall(function()
 		dataStore:SetAsync("player_" .. player.UserId, toSave)
 	end)
+	if not ok then
+		warn("[StoryRPG] Failed to save data for " .. player.Name .. ": " .. tostring(err))
+	end
 end
 
 ------------------------------------------------------------------------

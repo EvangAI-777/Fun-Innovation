@@ -1,6 +1,6 @@
 # Notes Organizer Bulletin Board -- Studio Setup
 
-**Version 1.0.1** -- API audit: font enums updated to BuilderSans/BuilderSansBold
+**Version 1.0.3** -- Multi-player room overlap fix, pending folder ID resolution, position input validation, DataStore error logging
 
 ## Overview
 

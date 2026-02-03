@@ -99,7 +99,9 @@ local function loadPlayerData(player: Player): any
         return bulletinStore:GetAsync(key)
     end)
 
-    if success and data then
+    if not success then
+        warn("[Bulletin] Failed to load data for " .. player.Name .. ": " .. tostring(data))
+    elseif data then
         local parsed = NoteManager.deserialize(data)
         if parsed then return parsed end
     end
@@ -114,9 +116,12 @@ local function savePlayerData(player: Player)
     local key = "player_" .. tostring(player.UserId)
     local serialized = NoteManager.serialize(data)
 
-    pcall(function()
+    local ok, err = pcall(function()
         bulletinStore:SetAsync(key, serialized)
     end)
+    if not ok then
+        warn("[Bulletin] Failed to save data for " .. player.Name .. ": " .. tostring(err))
+    end
 end
 
 ------------------------------------------------------------------------
