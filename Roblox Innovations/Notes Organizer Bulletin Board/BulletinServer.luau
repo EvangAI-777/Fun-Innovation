@@ -72,6 +72,8 @@ noteUpdatedEvent.Parent = remotes
 local playerDataCache: { [number]: any } = {}  -- userId -> PlayerData
 local noteModels: { [string]: Model } = {}     -- noteId -> Model
 local roomModels: { [string]: Model } = {}     -- folderId -> Model
+local playerSlots: { [number]: number } = {}   -- userId -> slot (for room grid offset)
+local nextPlayerSlot = 0
 
 ------------------------------------------------------------------------
 -- Notes folder in workspace
@@ -156,9 +158,10 @@ local function rebuildPlayerRooms(player: Player)
         end
     end
 
-    -- Rebuild
+    -- Rebuild with player-specific slot to avoid room overlap between players
+    local slot = playerSlots[player.UserId] or 0
     for i, folder in data.folders do
-        local model = NoteManager.buildRoom(folder, i)
+        local model = NoteManager.buildRoom(folder, i, slot)
         roomModels[folder.id] = model
     end
 end
@@ -170,6 +173,10 @@ end
 local function onPlayerAdded(player: Player)
     local data = loadPlayerData(player)
     playerDataCache[player.UserId] = data
+
+    -- Assign a unique grid slot so this player's rooms don't overlap others
+    nextPlayerSlot += 1
+    playerSlots[player.UserId] = nextPlayerSlot
 
     -- Build rooms and notes
     rebuildPlayerRooms(player)
@@ -197,6 +204,7 @@ local function onPlayerRemoving(player: Player)
     end
 
     playerDataCache[player.UserId] = nil
+    playerSlots[player.UserId] = nil
 end
 
 Players.PlayerAdded:Connect(onPlayerAdded)
@@ -231,6 +239,10 @@ createNoteEvent.OnServerEvent:Connect(function(player, title, body, folderId, po
     if type(body) ~= "string" then return end
     title = string.sub(title, 1, 100)
     body = string.sub(body, 1, 2000)
+
+    -- Validate position and normal are numbers
+    if type(posX) ~= "number" or type(posY) ~= "number" or type(posZ) ~= "number" then return end
+    if type(normX) ~= "number" or type(normY) ~= "number" or type(normZ) ~= "number" then return end
 
     local note = {
         id = NoteManager.generateId(),
@@ -339,8 +351,9 @@ createFolderEvent.OnServerEvent:Connect(function(player, folderName)
     }
     table.insert(data.folders, folder)
 
-    -- Build the room
-    local model = NoteManager.buildRoom(folder, #data.folders)
+    -- Build the room with player-specific slot
+    local slot = playerSlots[player.UserId] or 0
+    local model = NoteManager.buildRoom(folder, #data.folders, slot)
     roomModels[folder.id] = model
 
     noteUpdatedEvent:FireAllClients("folderCreated", player.Name, folder.id, folderName)

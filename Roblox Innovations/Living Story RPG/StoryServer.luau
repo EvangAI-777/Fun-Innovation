@@ -260,9 +260,9 @@ choiceEvent.OnServerEvent:Connect(function(player: Player, npcId: string, nodeId
 	if choice.traits then
 		for trait, amount in choice.traits do
 			data.personality[trait] = (data.personality[trait] or 0) + amount
-			data.choiceCount = data.choiceCount + 1
 		end
 	end
+	data.choiceCount = data.choiceCount + 1
 
 	-- Store memory from the choice
 	if choice.memory and #data.memories < StoryConfig.MaxMemories then

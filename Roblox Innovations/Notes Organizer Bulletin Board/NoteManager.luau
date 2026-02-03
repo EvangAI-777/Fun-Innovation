@@ -216,17 +216,18 @@ end
 -- Build a room (folder)
 ------------------------------------------------------------------------
 
-function NoteManager.buildRoom(folder: FolderData, gridIndex: number): Model
+function NoteManager.buildRoom(folder: FolderData, gridIndex: number, playerSlot: number?): Model
     local theme = Config.RoomThemes[((folder.themeIndex - 1) % #Config.RoomThemes) + 1]
     local roomModel = Instance.new("Model")
     roomModel.Name = "Room_" .. folder.id
 
-    -- Calculate room position in grid
+    -- Calculate room position in grid, offset per player to avoid overlap
     local cols = 4
+    local maxRowsPerPlayer = math.ceil(Config.MaxRooms / cols)
     local row = math.floor((gridIndex - 1) / cols)
     local col = (gridIndex - 1) % cols
     local centerX = Config.LobbySize.X / 2 + Config.RoomSpacing + col * Config.RoomSpacing
-    local centerZ = row * Config.RoomSpacing
+    local centerZ = row * Config.RoomSpacing + (playerSlot or 0) * maxRowsPerPlayer * Config.RoomSpacing
     local centerY = Config.RoomSize.Y / 2
 
     local roomCenter = Vector3.new(centerX, centerY, centerZ)

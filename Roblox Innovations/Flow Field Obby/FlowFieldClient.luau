@@ -178,7 +178,7 @@ end)
 -- Smooth camera shake state
 local shakeOffset = Vector3.zero
 
-RunService.RenderStepped:Connect(function(dt: number)
+RunService:BindToRenderStep("FlowFieldCamera", Enum.RenderPriority.Camera.Value + 1, function(dt: number)
     -- Smooth interpolation of flow magnitude
     currentFlowMagnitude += (targetFlowMagnitude - currentFlowMagnitude) * dt * 3
 

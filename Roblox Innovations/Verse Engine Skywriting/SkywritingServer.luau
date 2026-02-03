@@ -281,9 +281,10 @@ end
 ------------------------------------------------------------------------
 
 local function enforceMaxPoems()
-    while #activePoems > Config.MaxActivePoems do
-        local oldest = activePoems[1]
-        if oldest.state ~= "fadeout" and oldest.state ~= "done" then
+    local excess = #activePoems - Config.MaxActivePoems
+    for i = 1, excess do
+        local oldest = activePoems[i]
+        if oldest and oldest.state ~= "fadeout" and oldest.state ~= "done" then
             oldest.state = "fadeout"
             oldest.createdAt = tick() - Config.FadeInDuration - Config.HoldDuration
         end
