@@ -87,7 +87,7 @@ local function crossfadeRooms(fromIdx: number?, toIdx: number?)
 		TweenService:Create(sg, TweenInfo.new(dur, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Volume = 1}):Play()
 		-- Start any sounds that have asset IDs
 		for _, sound in sg:GetChildren() do
-			if sound:IsA("Sound") and sound.SoundId ~= "" and not sound.Playing then
+			if sound:IsA("Sound") and sound.SoundId ~= "" and not sound.IsPlaying then
 				sound:Play()
 			end
 		end

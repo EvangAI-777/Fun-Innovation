@@ -407,6 +407,15 @@ noteUpdatedEvent.OnClientEvent:Connect(function(action, authorName, noteId, note
         addFeedEntry(authorName .. " removed a note")
     elseif action == "folderCreated" then
         addFeedEntry(authorName .. " created room: " .. noteTitle)
+        -- Resolve pending folder ID for the local player
+        if authorName == player.Name then
+            for _, f in myFolders do
+                if f.id == "pending" and f.name == noteTitle then
+                    f.id = noteId
+                    break
+                end
+            end
+        end
     end
 end)
 
