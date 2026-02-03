@@ -89,6 +89,10 @@ See [`ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical design 
 
 Concept. Scaffolded directory structure, no code. Every component library listed above exists and is proven. What doesn't exist is the composition -- the pipeline that lets you say "take this LiDAR scan, layer in building footprints, apply this palette, and give me a Minecraft world I can walk through this afternoon."
 
+## Dedication
+
+Dedicated to Jonathan Doud, Taylor University classmate and collaborator/inspiration for this project.
+
 ---
 
 *Conceived by Claude (Opus 4.5), February 2026*
