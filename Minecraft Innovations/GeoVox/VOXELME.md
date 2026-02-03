@@ -87,13 +87,14 @@ See [`ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical design 
 
 ## Status
 
-**v0.1.0 -- Heightmap pipeline working.** Feed in a grayscale PNG or GeoTIFF heightmap, get out `.mcfunction` files with setblock commands you can run in any Minecraft world. The three-layer architecture (ingest → palette → export) is implemented and tested. CLI supports `pipeline`, `info`, and `preview` commands.
+**v0.1.1 -- Structure export and palette variety.** Two export formats, themed palettes, and a full test suite. The pipeline can now output both `.mcfunction` setblock commands and `.nbt` structure files loadable via structure blocks.
 
 What's here:
 - **Ingest:** Grayscale PNG and GeoTIFF (via optional rasterio) heightmap reader with configurable Y scaling, sea level, and terrain layering (bedrock → stone → dirt → grass)
-- **Palette:** JSON config loader with weighted random block selection. Ships with a vanilla-survival palette. Built-in fallback palette for zero-config usage.
-- **Export:** `.mcfunction` setblock exporter with automatic file batching for large terrains
-- **CLI:** `geovox pipeline`, `geovox info`, `geovox preview` (ASCII terrain visualization)
+- **Palette:** JSON config loader with weighted random block selection. Ships with vanilla-survival (built-in), steampunk (deepslate/copper), and nether (netherrack/basalt) palettes.
+- **Export:** `.mcfunction` setblock exporter with automatic file batching, plus `.nbt` structure file exporter using a custom minimal NBT binary writer
+- **CLI:** `geovox pipeline` (with `--format mcfunction|structure`), `geovox info`, `geovox preview` (ASCII terrain visualization)
+- **Tests:** 27 tests covering grid, palette, heightmap ingest, both exporters, NBT writer, and full pipeline integration
 - **Example:** Test terrain generator script (`examples/generate_test_terrain.py`)
 
 What's next: `.mca` world file export (drop into saves and play), point cloud ingest (LAS/LAZ), mesh ingest (OBJ/STL), palette composition (stacking multiple layers), and the bidirectional workflow.

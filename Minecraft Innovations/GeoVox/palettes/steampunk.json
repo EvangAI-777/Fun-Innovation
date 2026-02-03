@@ -1,0 +1,49 @@
+{
+  "name": "steampunk",
+  "description": "Industrial aesthetic -- deepslate, copper, tuff, dark wood",
+  "version": "1.21",
+  "mappings": {
+    "bedrock": {
+      "block": "minecraft:bedrock"
+    },
+    "ground_deep": {
+      "blocks": ["minecraft:deepslate", "minecraft:tuff", "minecraft:cobbled_deepslate"],
+      "weights": [0.6, 0.25, 0.15]
+    },
+    "ground_shallow": {
+      "blocks": ["minecraft:mud_bricks", "minecraft:packed_mud"],
+      "weights": [0.6, 0.4]
+    },
+    "surface": {
+      "blocks": ["minecraft:dark_oak_planks", "minecraft:spruce_planks", "minecraft:mud_bricks"],
+      "weights": [0.4, 0.35, 0.25]
+    },
+    "water": {
+      "block": "minecraft:water"
+    },
+    "ground_low": {
+      "blocks": ["minecraft:dark_oak_planks", "minecraft:spruce_planks"],
+      "weights": [0.5, 0.5]
+    },
+    "ground_high": {
+      "blocks": ["minecraft:deepslate", "minecraft:polished_deepslate", "minecraft:deepslate_bricks"],
+      "weights": [0.4, 0.3, 0.3]
+    },
+    "vegetation": {
+      "blocks": ["minecraft:dark_oak_leaves", "minecraft:spruce_leaves"],
+      "weights": [0.5, 0.5]
+    },
+    "building_wall": {
+      "blocks": ["minecraft:deepslate_bricks", "minecraft:polished_deepslate", "minecraft:oxidized_copper"],
+      "weights": [0.4, 0.3, 0.3]
+    },
+    "building_roof": {
+      "blocks": ["minecraft:exposed_copper", "minecraft:weathered_copper", "minecraft:oxidized_copper"],
+      "weights": [0.3, 0.4, 0.3]
+    },
+    "road": {
+      "blocks": ["minecraft:deepslate_tiles", "minecraft:polished_deepslate"],
+      "weights": [0.6, 0.4]
+    }
+  }
+}

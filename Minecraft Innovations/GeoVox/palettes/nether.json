@@ -1,0 +1,49 @@
+{
+  "name": "nether",
+  "description": "Nether blocks for alien terrain -- netherrack, basalt, blackstone",
+  "version": "1.21",
+  "mappings": {
+    "bedrock": {
+      "block": "minecraft:bedrock"
+    },
+    "ground_deep": {
+      "blocks": ["minecraft:netherrack", "minecraft:basalt", "minecraft:blackstone"],
+      "weights": [0.5, 0.3, 0.2]
+    },
+    "ground_shallow": {
+      "blocks": ["minecraft:soul_soil", "minecraft:soul_sand"],
+      "weights": [0.6, 0.4]
+    },
+    "surface": {
+      "blocks": ["minecraft:crimson_nylium", "minecraft:warped_nylium", "minecraft:netherrack"],
+      "weights": [0.35, 0.35, 0.3]
+    },
+    "water": {
+      "block": "minecraft:lava"
+    },
+    "ground_low": {
+      "blocks": ["minecraft:crimson_nylium", "minecraft:warped_nylium"],
+      "weights": [0.5, 0.5]
+    },
+    "ground_high": {
+      "blocks": ["minecraft:polished_basalt", "minecraft:smooth_basalt", "minecraft:polished_blackstone"],
+      "weights": [0.4, 0.3, 0.3]
+    },
+    "vegetation": {
+      "blocks": ["minecraft:nether_wart_block", "minecraft:warped_wart_block", "minecraft:shroomlight"],
+      "weights": [0.4, 0.4, 0.2]
+    },
+    "building_wall": {
+      "blocks": ["minecraft:polished_blackstone_bricks", "minecraft:nether_bricks", "minecraft:red_nether_bricks"],
+      "weights": [0.4, 0.3, 0.3]
+    },
+    "building_roof": {
+      "blocks": ["minecraft:nether_bricks", "minecraft:red_nether_bricks"],
+      "weights": [0.5, 0.5]
+    },
+    "road": {
+      "blocks": ["minecraft:polished_blackstone", "minecraft:blackstone"],
+      "weights": [0.6, 0.4]
+    }
+  }
+}
