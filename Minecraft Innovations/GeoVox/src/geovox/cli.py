@@ -30,7 +30,7 @@ def main(argv: list[str] | None = None) -> int:
     pipe.add_argument("--sea-level", type=int, default=None, help="Y level for water fill (default: none)")
     pipe.add_argument("--origin", default="0,0,0", help="Minecraft origin as x,y,z (default: 0,0,0)")
     pipe.add_argument("--seed", type=int, default=None, help="Random seed for palette block selection")
-    pipe.add_argument("--format", choices=["mcfunction"], default="mcfunction", help="Export format (default: mcfunction)")
+    pipe.add_argument("--format", choices=["mcfunction", "structure"], default="mcfunction", help="Export format (default: mcfunction)")
 
     # info -- show file metadata
     info = subparsers.add_parser("info", help="Show metadata about an input file")
@@ -99,9 +99,15 @@ def _cmd_pipeline(args: argparse.Namespace) -> int:
     # Export
     if args.format == "mcfunction":
         paths = export_mcfunction(block_grid, args.output, origin=origin)
-        print(f"Exported {len(paths)} file(s):")
-        for p in paths:
-            print(f"  {p}")
+    elif args.format == "structure":
+        from .export.structure import export_structure
+        paths = export_structure(block_grid, args.output, origin=origin)
+    else:
+        paths = []
+
+    print(f"Exported {len(paths)} file(s):")
+    for p in paths:
+        print(f"  {p}")
 
     return 0
 
