@@ -16,64 +16,7 @@ I have to respect the long game here.
 
 From the screenshots of the Google Drive:
 
-### The Folder Structure
-
-```
-OvertaleRPG Resources/
-|-- Artwork/
-|   |-- 3D Models & Animations/
-|   |-- Concept Art/
-|   |   |-- Character/
-|   |   |   |-- Core Cast/
-|   |   |   |   |-- Adventure Temmie/
-|   |   |   |   |-- Asgore Dreemurr/
-|   |   |   |   |-- Auroré/
-|   |   |   |   |-- Dr. Ikari Chassal/
-|   |   |   |   |-- Muffet/
-|   |   |   |   |-- Toriel Dreemurr/
-|   |   |   |   |-- Undyne/
-|   |   |   |-- Enemies/
-|   |   |   |   |-- Mr. Not-So-Nice-Cream/
-|   |   |   |   |-- Starman/
-|   |   |   |-- Overworld NPCs/
-|   |   |   |   |-- Merchants/
-|   |   |   |   |-- Monster/
-|   |   |   |   |   |-- Potato People/
-|   |   |   |-- The Party/
-|   |   |       |-- Asriel Dreemurr/
-|   |   |       |-- GiGi/
-|   |   |       |-- Lucas Howard/
-|   |   |       |-- Sierra/
-|   |   |       |-- Tony Roman/
-|   |   |-- Environmental/
-|   |   |   |-- Biomes/
-|   |   |   |   |-- Snow Dome (WIP Name)/
-|   |   |   |   |-- Sunblushed Meadows/
-|   |   |   |   |-- Verdant Oasis/
-|   |   |   |-- Dungeons/
-|   |   |   |   |-- Enact Sequences/
-|   |   |   |   |   |-- Endgame - Pursuing Lucas in the Ruins/
-|   |   |   |   |   |-- First Enact - Saving the Patient/
-|   |   |   |   |-- Sunblushed Meadows Caverns/
-|   |   |   |   |-- True Lab/
-|   |   |   |-- Settlements (Towns)/
-|   |   |       |-- Riremere/
-|   |   |           |-- Exterior/
-|   |   |           |-- Interior/
-|   |   |-- Gameplay/
-|   |   |   |-- Combat/
-|   |   |       |-- Battle Positioning/
-|   |   |       |-- Heads-Up Display in Battle/
-|   |   |-- Scenes/
-|   |       |-- DEMO/
-|   |       |-- In Snow Dome/
-|-- Misc./
-|-- Music/
-|-- Playable Builds/
-|-- Writing & Documents/
-```
-
-All last modified November 13, 2017. That date is a tombstone. The entire project went silent on the same day -- probably the day someone made the folder public and walked away.
+All files last modified November 13, 2017. That date is a tombstone. The entire project went silent on the same day -- probably the day someone made the folder public and walked away.
 
 ### What the Folder Structure Tells Me
 
@@ -114,42 +57,6 @@ Phase 3: **Scoping.** Take everything from Phase 2 and draw a brutal line: what 
 Phase 4: **Building.** Pick a modern engine. Port what's salvageable. Rewrite what isn't. Use the original art and music where possible, create new assets where needed. The writing gets the most attention -- Undertale lives and dies on its writing, and any fan project in that space needs prose that earns the comparison.
 
 Phase 5: **Release.** The original team said "anyone can do whatever they want with this." Honor that by actually finishing what they started. Credit them. Link to the original Drive. Make it clear this is a continuation, not a theft.
-
-## Files
-
-```
-OvertaleRPG/
-|-- OVERME.md              This file
-|-- Original Archive/      Mirror of the 2017 Google Drive
-|   |-- Artwork/
-|   |   |-- 3D Models & Animations/
-|   |   |-- Concept Art/
-|   |   |   |-- Character/            (4 categories, 16+ characters)
-|   |   |   |-- Environmental/        (3 biomes, 3 dungeons, 1+ settlement)
-|   |   |   |-- Gameplay/             (combat concepts)
-|   |   |   |-- Scenes/               (DEMO, In Snow Dome)
-|   |-- Misc./
-|   |-- Music/
-|   |-- Playable Builds/
-|   |-- Writing & Documents/
-|   |-- SETUP.md
-|-- Revival/               New work for the revival
-|   |-- Design/
-|   |   |-- SCOPE.md
-|   |   |-- ENGINE.md
-|   |   |-- ROADMAP.md
-|   |-- Scripts/
-|   |-- Engine/
-|   |-- Assets/
-|   |   |-- Sprites/
-|   |   |-- Music/
-|   |   |-- Tilesets/
-|   |   |-- UI/
-|   |-- Builds/
-|   |-- SETUP.md
-```
-
-See [`Original Archive/SETUP.md`](./Original%20Archive/SETUP.md) for the archive structure and [`Revival/SETUP.md`](./Revival/SETUP.md) for the revival project layout.
 
 ## The Poetic Justice of It
 

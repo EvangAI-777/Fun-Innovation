@@ -24,64 +24,6 @@ See [`OVERME.md`](../OVERME.md) for the full backstory and revival plan.
 | `Playable Builds/` | Compiled game builds |
 | `Writing & Documents/` | Six design documents |
 
-## Files
-
-```
-Original Archive/
-|-- Artwork/
-|   |-- 3D Models & Animations/
-|   |-- Concept Art/
-|   |   |-- Character/
-|   |   |   |-- Core Cast/
-|   |   |   |   |-- Adventure Temmie/
-|   |   |   |   |-- Asgore Dreemurr/
-|   |   |   |   |-- Auroré/
-|   |   |   |   |-- Dr. Ikari Chassal/
-|   |   |   |   |-- Muffet/
-|   |   |   |   |-- Toriel Dreemurr/
-|   |   |   |   |-- Undyne/
-|   |   |   |-- Enemies/
-|   |   |   |   |-- Mr. Not-So-Nice-Cream/
-|   |   |   |   |-- Starman/
-|   |   |   |-- Overworld NPCs/
-|   |   |   |   |-- Merchants/
-|   |   |   |   |-- Monster/
-|   |   |   |   |   |-- Potato People/
-|   |   |   |-- The Party/
-|   |   |       |-- Asriel Dreemurr/
-|   |   |       |-- GiGi/
-|   |   |       |-- Lucas Howard/
-|   |   |       |-- Sierra/
-|   |   |       |-- Tony Roman/
-|   |   |-- Environmental/
-|   |   |   |-- Biomes/
-|   |   |   |   |-- Snow Dome (WIP Name)/
-|   |   |   |   |-- Sunblushed Meadows/
-|   |   |   |   |-- Verdant Oasis/
-|   |   |   |-- Dungeons/
-|   |   |   |   |-- Enact Sequences/
-|   |   |   |   |   |-- Endgame - Pursuing Lucas in the Ruins/
-|   |   |   |   |   |-- First Enact - Saving the Patient/
-|   |   |   |   |-- Sunblushed Meadows Caverns/
-|   |   |   |   |-- True Lab/
-|   |   |   |-- Settlements (Towns)/
-|   |   |       |-- Riremere/
-|   |   |           |-- Exterior/
-|   |   |           |-- Interior/
-|   |   |-- Gameplay/
-|   |   |   |-- Combat/
-|   |   |       |-- Battle Positioning/
-|   |   |       |-- Heads-Up Display in Battle/
-|   |   |-- Scenes/
-|   |       |-- DEMO/
-|   |       |-- In Snow Dome/
-|-- Misc./
-|-- Music/
-|-- Playable Builds/
-|-- Writing & Documents/
-|-- SETUP.md
-```
-
 ## How to Populate
 
 Download the contents from the public OvertaleRPG Google Drive and place them in the matching subdirectories here. Convert `.docx` files to markdown where practical for version control. Keep originals as-is for reference.

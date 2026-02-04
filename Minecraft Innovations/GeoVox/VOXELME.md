@@ -47,24 +47,6 @@ Your neighborhood from a city LiDAR scan. A national park at 1:1 scale. A buildi
 
 The bidirectional part matters too. Modify the Minecraft world -- add a building, dig a canal, terraform a hillside -- and diff the changes back as a point cloud or mesh. Minecraft becomes a voxel-native sketch tool for landscape architecture, urban planning, or terrain modification proposals.
 
-## Files
-
-```
-GeoVox/
-|-- VOXELME.md             This file
-|-- Design/
-|   |-- ARCHITECTURE.md     Full technical architecture
-|-- src/
-|   |-- geovox/
-|       |-- core/           Sparse 3D grid, common types
-|       |-- ingest/         Format-specific ingest modules
-|       |-- palette/        Palette loading and block mapping
-|       |-- export/         Format-specific export modules
-|-- palettes/               Sample palette JSON configs
-|-- tests/                  Test suite
-|-- examples/               Example pipelines and sample data
-```
-
 See [`ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical design and [`MCME.md`](../MCME.md) for the original concept document.
 
 ## Technical Stack
