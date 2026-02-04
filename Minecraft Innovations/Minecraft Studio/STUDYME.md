@@ -75,38 +75,6 @@ Build once. Ship everywhere. The modloader wars become irrelevant for creators.
 | Resource Pack | Vanilla resource pack |
 | Multiloader | Architectury project |
 
-## Files
-
-```
-Minecraft Studio/
-|-- STUDYME.md             This file
-|-- Design/
-|   |-- ARCHITECTURE.md     Full technical architecture
-|-- src/
-|   |-- app/                IDE shell (JavaFX / Compose Desktop)
-|   |-- explorer/           Explorer panel and registry tree
-|   |-- viewport/           Embedded MC client, overlays, hot-reload
-|   |-- editor/             Code editor, autocomplete, refactoring
-|   |-- visual/             Visual editors
-|   |   |-- recipe/         Recipe drag-and-drop grid
-|   |   |-- loot/           Loot table tree editor
-|   |   |-- worldgen/       Biome parameters, density functions, features
-|   |   |-- entity/         AI goal flowchart editor
-|   |   |-- gui/            WYSIWYG screen builder
-|   |   |-- particle/       Live particle previewer
-|   |-- export/             Modloader-specific code generators
-|   |   |-- forge/          Forge MDK export
-|   |   |-- neoforge/       NeoForge MDK export
-|   |   |-- fabric/         Fabric Loom export
-|   |   |-- quilt/          Quilt Loom export
-|   |   |-- datapack/       Vanilla data pack export
-|   |   |-- resourcepack/   Vanilla resource pack export
-|   |-- testing/            Test harness, profiler, multiplayer sim
-|   |-- abstraction/        Studio API abstraction layer
-|-- resources/              Static resources, templates, defaults
-|-- tests/                  Test suite
-```
-
 See [`ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical design and [`MCME.md`](../MCME.md) for the original concept document.
 
 ## Technical Stack

@@ -109,27 +109,6 @@ AutoMuse doesn't trap your music. Everything exports:
 
 The Muse knows about all of these. "Export the piano part as MIDI and the drums as audio stems" is a valid instruction.
 
-## Files
-
-```
-AutoMuse/
-|-- MUSEME.md              This file
-|-- Design/
-|   |-- ARCHITECTURE.md     Full technical architecture
-|-- src/
-|   |-- muse/
-|       |-- conversation/   LLM dialogue engine, context management
-|       |-- theory/         Music theory engine (scales, chords, progressions, voice leading)
-|       |-- notation/       Music representation, MusicXML/ABC/MIDI encoding
-|       |-- arrangement/    Song structure, section management, instrumentation
-|       |-- audio/          Synthesis engine, plugin hosting, effects chain
-|       |-- export/         Format-specific exporters
-|       |-- ui/             Conversation panel, canvas views, transport controls
-|-- presets/                Genre templates, scale libraries, chord progression banks
-|-- tests/                  Test suite
-|-- examples/               Example sessions and exported projects
-```
-
 ## Hard Problems
 
 1. **Musical coherence over time.** LLMs are good at local decisions. Music requires global coherence -- a chord in bar 47 needs to relate to a theme introduced in bar 3. The conversation context window must carry musical structure, not just text.

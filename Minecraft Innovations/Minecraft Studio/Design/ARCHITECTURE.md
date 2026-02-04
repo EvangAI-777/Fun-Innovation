@@ -261,39 +261,6 @@ studio_project.db
   |-- export_configs      (target, settings, last_export_time)
 ```
 
-### File System Layout (Exported Project)
-
-```
-exported-mod/
-|-- build.gradle(.kts)
-|-- settings.gradle(.kts)
-|-- gradle.properties
-|-- src/
-|   |-- main/
-|       |-- java/com/author/modid/
-|       |   |-- ModMain.java
-|       |   |-- block/
-|       |   |-- item/
-|       |   |-- entity/
-|       |   |-- world/
-|       |   |-- recipe/
-|       |   |-- gui/
-|       |   |-- network/
-|       |   |-- data/          (data generation)
-|       |-- resources/
-|           |-- META-INF/
-|           |-- assets/modid/
-|           |   |-- textures/
-|           |   |-- models/
-|           |   |-- sounds/
-|           |   |-- lang/
-|           |-- data/modid/
-|               |-- recipes/
-|               |-- loot_tables/
-|               |-- worldgen/
-|               |-- tags/
-```
-
 ---
 
 *Full concept details in [`../MCME.md`](../MCME.md)*

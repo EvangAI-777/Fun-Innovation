@@ -8,25 +8,6 @@ New work for the OvertaleRPG revival. Everything in this directory is original o
 
 See [`OVERME.md`](../OVERME.md) for the full backstory, [`ROADMAP.md`](./Design/ROADMAP.md) for the phase breakdown, [`SCOPE.md`](./Design/SCOPE.md) for what ships, and [`ENGINE.md`](./Design/ENGINE.md) for the engine evaluation.
 
-## Files
-
-```
-Revival/
-|-- SETUP.md            This file
-|-- Design/
-|   |-- SCOPE.md        What ships and what doesn't (draft)
-|   |-- ENGINE.md       Engine evaluation and selection (pending)
-|   |-- ROADMAP.md      Five-phase revival plan
-|-- Scripts/            Dialogue scripts, cutscene scripts, narrative outlines
-|-- Engine/             Game engine code, systems, tools
-|-- Assets/
-|   |-- Sprites/        Character sprites, enemy sprites, NPC sprites
-|   |-- Music/          New or adapted soundtrack files
-|   |-- Tilesets/       Environment tilesets, terrain, interiors
-|   |-- UI/             Menus, HUD elements, dialogue boxes, fonts
-|-- Builds/             Playable builds and exports
-```
-
 ## Design Documents
 
 | Document | Purpose | Status |
