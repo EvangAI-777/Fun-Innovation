@@ -8,7 +8,7 @@ GeoVox connects those two facts.
 
 ## What It Is
 
-A modular Python pipeline that takes real-world 3D data and converts it into playable Minecraft worlds. Not a heightmap importer. Not a one-off script. A composable system where the input format, the block palette, and the output format are all independent, swappable modules.
+A modular Python pipeline that takes real-world 3D data and converts it into playable Minecraft worlds. Currently a heightmap importer, but architected to grow into a universal 3D-to-Minecraft pipeline. The input format, block palette, and output format are independent, swappable modules.
 
 ```
 Input Data → [ Ingest ] → Sparse 3D Grid → [ Palette ] → Block Grid → [ Export ] → Minecraft Files
@@ -46,6 +46,18 @@ Three layers. Each is independent. Swap any of them without touching the others.
 Your neighborhood from a city LiDAR scan. A national park at 1:1 scale. A building you're designing, walked through in VR before it's built. A Roman villa reconstructed from photogrammetry. A protein structure. A fluid dynamics simulation. Minecraft as a renderer for anything that exists in three dimensions.
 
 The bidirectional part matters too. Modify the Minecraft world -- add a building, dig a canal, terraform a hillside -- and diff the changes back as a point cloud or mesh. Minecraft becomes a voxel-native sketch tool for landscape architecture, urban planning, or terrain modification proposals.
+
+## How This Differs From Existing Tools
+
+**vs. WorldPainter** -- WorldPainter is a mature GUI terrain editor that can import heightmaps and export `.mca` worlds. It's excellent for manual terrain sculpting with brushes. GeoVox is CLI-first and scriptable -- designed for batch processing, automation, and pipeline integration rather than interactive editing. WorldPainter's block assignment is layer-based and manual; GeoVox uses JSON palette configs with weighted random selection and semantic categories, so the same heightmap can render in completely different aesthetics without re-importing.
+
+**vs. Simple heightmap scripts** -- GitHub has dozens of one-off Python scripts that convert grayscale images to Minecraft columns. Most use fixed rules (stone below Y=60, dirt, grass on top) and output a single format. GeoVox separates ingest, palette, and export into independent modules -- add a new input format without touching the exporter, swap palettes without re-ingesting, export to multiple formats from the same internal grid.
+
+**vs. Minecraft Earth (2019-2021)** -- Microsoft's AR game generated Minecraft terrain from real-world map data (OpenStreetMap, Bing elevation). It was a game feature, not a user-accessible tool, and was discontinued in 2021. GeoVox is a local pipeline that processes *your* data -- your heightmaps, your LiDAR scans, your meshes -- with full control over the output.
+
+**vs. General voxelization tools (binvox, obj2voxel)** -- These convert meshes to raw voxel grids but don't output Minecraft formats. GeoVox's export layer handles Minecraft-specific concerns: block palettes, NBT structure format, `.mcfunction` command batching, and (planned) chunk/section layout for `.mca` worlds.
+
+**The gap GeoVox fills:** A scriptable, palette-driven, multi-format pipeline where the same source data can produce vanilla survival terrain, steampunk deepslate cities, or nether wastelands -- and where adding support for LiDAR point clouds doesn't require rewriting the Minecraft exporter.
 
 See [`ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical design and [`MCME.md`](../MCME.md) for the original concept document.
 
