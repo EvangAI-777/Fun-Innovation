@@ -59,12 +59,12 @@ Multiple palette layers can stack. Elevation drives the base material. Slope ang
 
 **Layer 3: Export.** The final grid writes out as:
 
-- **Minecraft world files** (.mca region format) -- drop into a saves folder and play
-- **Structure files** (.nbt) -- paste into existing worlds with structure blocks
-- **Litematica schematics** (.litematic) -- for mod-assisted building in survival
-- **Datapack functions** (.mcfunction) -- setblock commands for server deployment
+- **Structure files** (.nbt) -- paste into existing worlds with structure blocks *(implemented)*
+- **Datapack functions** (.mcfunction) -- setblock commands for server deployment *(implemented)*
+- **Minecraft world files** (.mca region format) -- drop into a saves folder and play *(planned)*
+- **Litematica schematics** (.litematic) -- for mod-assisted building in survival *(planned)*
 
-Each exporter handles Minecraft's chunk/section layout, biome assignment, heightmap recalculation, and light propagation. The world files are playable immediately. No post-processing.
+Each exporter handles Minecraft-specific concerns. The implemented exporters (.nbt, .mcfunction) work now; .mca and .litematic are next on the roadmap.
 
 #### What You Could Build With This
 
@@ -88,11 +88,16 @@ The bidirectional part matters too. If you modify the Minecraft world -- add a b
 
 #### Technical Foundation
 
-- **Python core** -- NumPy for the voxel grid, rasterio/PDAL for geospatial ingest, trimesh for mesh voxelization
-- **anvil-parser or amulet-core** for Minecraft world I/O
+*Current implementation (v0.1.1):*
+- **Python core** -- NumPy for the voxel grid, Pillow for PNG heightmaps, rasterio (optional) for GeoTIFF
+- **Custom NBT writer** for .nbt structure export (no external Minecraft libraries needed)
 - **CLI-first** -- pipe data through it, script it, batch it
-- **Config-driven** -- palettes, scale, origin offset, chunk alignment all in JSON
-- **No Minecraft installation required for processing** -- the framework reads and writes files, it doesn't need a running game
+- **Config-driven** -- palettes in JSON, scale/origin configurable
+
+*Planned additions:*
+- PDAL for LAS/LAZ point cloud ingest, trimesh for OBJ/STL mesh voxelization
+- anvil-parser or amulet-core for .mca world file export
+- **No Minecraft installation required** -- reads and writes files only
 
 The hard problems are scale management (a 1:1 import of a mountain range is billions of blocks -- you need LOD or selective import), palette intelligence (automatic material assignment from classification data is an unsolved UX problem), and Minecraft's own constraints (256-block build height pre-1.18, 384 post-1.18, chunk loading radius, entity limits).
 

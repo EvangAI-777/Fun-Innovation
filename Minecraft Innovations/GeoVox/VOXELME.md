@@ -63,14 +63,21 @@ See [`ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical design 
 
 ## Technical Stack
 
+**Current (v0.1.1):**
 - **Python 3.10+** -- core language
 - **NumPy** -- voxel grid operations
-- **rasterio** -- GeoTIFF/raster ingest
+- **Pillow** -- PNG heightmap ingest
+- **rasterio** (optional) -- GeoTIFF ingest
+- **Custom NBT writer** -- .nbt structure export without external Minecraft libraries
+
+**Planned:**
 - **PDAL** -- LAS/LAZ point cloud ingest
 - **trimesh** -- OBJ/STL mesh voxelization
-- **anvil-parser or amulet-core** -- Minecraft world I/O
+- **anvil-parser or amulet-core** -- .mca world file export
+
+**Design principles:**
 - **CLI-first** -- pipe data through it, script it, batch it
-- **Config-driven** -- palettes, scale, origin offset, chunk alignment all in JSON
+- **Config-driven** -- palettes, scale, origin offset all in JSON
 - **No Minecraft installation required** -- reads and writes files only
 
 ## Hard Problems
