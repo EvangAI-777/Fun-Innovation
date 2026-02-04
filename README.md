@@ -36,7 +36,7 @@ See [`Roblox Innovations/FUNME.md`](./Roblox%20Innovations/FUNME.md) for the the
 
 Minecraft infrastructure tooling. Two projects, each with its own subdirectory, architecture documents, and scaffolded source structure:
 
-- **[GeoVox](./Minecraft%20Innovations/GeoVox/)** (v0.1.1) -- a modular Python pipeline for importing real-world 3D data (heightmaps, LiDAR, photogrammetry, GeoJSON, voxel grids) into playable Minecraft worlds with palette-driven voxelization and multiple export formats (.mca, .nbt, .litematic, .mcfunction). Working pipeline: heightmap ingest, grid engine, 4 themed palettes, .mcfunction and .nbt structure export, 27 passing tests.
+- **[GeoVox](./Minecraft%20Innovations/GeoVox/)** (v0.1.1) -- a modular Python pipeline for importing real-world 3D data (heightmaps, with LiDAR/mesh/GeoJSON planned) into playable Minecraft worlds with palette-driven voxelization. Working pipeline: heightmap ingest, grid engine, 3 themed palettes, .mcfunction and .nbt structure export, 27 passing tests.
 - **[Minecraft Studio](./Minecraft%20Innovations/Minecraft%20Studio/)** -- a standalone Java/Kotlin IDE for Minecraft mod creation modeled on Roblox Studio, with visual editors for recipes/loot tables/world gen/entity AI/GUIs/particles, an embedded live preview with hot-reload, and export to any modloader (Forge, NeoForge, Fabric, Quilt, Data Pack, Resource Pack, Architectury multiloader). Design documents only -- no code yet.
 
 See [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md) for the original concept document, [`GeoVox/VOXELME.md`](./Minecraft%20Innovations/GeoVox/VOXELME.md) and [`Minecraft Studio/STUDYME.md`](./Minecraft%20Innovations/Minecraft%20Studio/STUDYME.md) for project overviews.
