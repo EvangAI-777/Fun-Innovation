@@ -57,6 +57,21 @@ New and creative approaches to audio -- production tools, compositional systems,
 
 No code yet -- concept design with scaffolded project structure. See [`AutoMuse/MUSEME.md`](./Audio%20Innovations/AutoMuse/MUSEME.md) for the full project concept.
 
+## Testing
+
+All tests run through pytest and are wired into CI (GitHub Actions) and a top-level Makefile.
+
+| Suite | What it covers | Tests | Run with |
+|-------|---------------|-------|----------|
+| **GeoVox** | Unit + integration tests for the voxel pipeline -- grid, palette, heightmap ingest, both exporters, NBT writer | 27 | `make test-geovox` |
+| **Roblox Static Analysis** | Python-based static analysis of all 28 Luau scripts -- architecture conformance, deprecated API detection, config sanity, cross-module references, documentation, PoetryEngine template integrity | 102 | `make test-roblox` |
+
+Run everything: `make test`
+
+The Roblox suite deserves a note: Luau scripts can't execute outside Roblox Studio, so instead of fighting the runtime, the tests parse `.luau` files as text and validate structure and conventions. This catches the same class of bugs the v1.0.3 manual audit found (deprecated `tick()`, missing module references) but automatically on every push.
+
+CI runs both suites on every push to main and on every pull request.
+
 ## Adding New Directories
 
 This repo is organized by project theme. Each directory is its own self-contained initiative with its own markdown file documenting what's inside. To add a new one:
