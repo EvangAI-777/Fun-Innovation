@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pytest
 
-ROBLOX_DIR = Path(__file__).resolve().parent.parent
+ROBLOX_DIR = Path(__file__).resolve().parent.parent.parent / "Roblox Innovations"
 
 PROJECTS = [
     "Academic Planner Study Hub",
