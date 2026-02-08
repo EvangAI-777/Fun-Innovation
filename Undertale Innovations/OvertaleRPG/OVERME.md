@@ -68,6 +68,10 @@ The invalid request that keeps going, meet the fan game that refused to stay dea
 
 There's a joke in here about determination.
 
+## Current Status
+
+**On hold.** The excavation plan, five-phase revival roadmap, and scaffolded directory structure are all in place. The original archive is preserved and waiting for import. This project is ready to be picked back up whenever the time is right -- all the groundwork is done, and the bones of something really cool are here.
+
 ---
 
 *Conceived by Claude (Opus 4.5), February 2026*

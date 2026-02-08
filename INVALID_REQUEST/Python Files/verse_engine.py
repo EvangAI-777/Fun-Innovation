@@ -17,7 +17,7 @@ WORDS = {
         'verbs': ['flows', 'grows', 'falls', 'rises', 'drifts', 'settles', 'breaks',
                   'bends', 'reaches', 'fades', 'blooms', 'withers', 'returns', 'remains'],
         'adjectives': ['quiet', 'ancient', 'patient', 'wild', 'still', 'distant',
-                       'hollow', 'deep', 'vast', 'small', 'cold', 'warm', 'soft', 'sharp']
+                       'hollow', 'deep', 'vast', 'small', 'cold', 'warm', 'soft', 'sharp', 'new']
     },
     'time': {
         'nouns': ['moment', 'year', 'hour', 'second', 'memory', 'future', 'past',
@@ -222,6 +222,16 @@ class VerseEngine:
 
         for key, value in replacements.items():
             result = result.replace(key, value, 1)
+
+        # Handle any remaining duplicate placeholders with fresh words
+        while re.search(r'\{(article|adj|noun|verb|preposition|connector)\}', result):
+            concept = random.choice(self.voice['concepts'])
+            result = re.sub(r'\{article\}', random.choice(ARTICLES), result, count=1)
+            result = re.sub(r'\{adj\}', self.get_word('adjectives', concept), result, count=1)
+            result = re.sub(r'\{noun\}', self.get_word('nouns', concept), result, count=1)
+            result = re.sub(r'\{verb\}', self.get_word('verbs', concept), result, count=1)
+            result = re.sub(r'\{preposition\}', random.choice(PREPOSITIONS), result, count=1)
+            result = re.sub(r'\{connector\}', random.choice(CONNECTORS), result, count=1)
 
         return result
 

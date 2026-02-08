@@ -92,10 +92,8 @@ class TestVoices:
         for bank in WORDS.values():
             all_adjectives.update(bank["adjectives"])
             all_verbs.update(bank["verbs"])
-        # Known issue: hopeful voice has bias 'new' not in any word bank
-        known_orphan_adj = {"new"}
         for name, voice in VOICES.items():
-            bad_adj = set(voice["adjective_bias"]) - all_adjectives - known_orphan_adj
+            bad_adj = set(voice["adjective_bias"]) - all_adjectives
             bad_verb = set(voice["verb_bias"]) - all_verbs
             assert not bad_adj, (
                 f"Voice '{name}' has adjective biases not in any word bank: {bad_adj}"
@@ -170,15 +168,9 @@ class TestGeneration:
         return e
 
     def test_fill_template_no_unfilled_placeholders(self):
-        # Known issue: templates with duplicate placeholders (e.g. "{adj} {noun}, {adj} {noun}")
-        # only get the first occurrence replaced because fill_template uses replace(key, val, 1).
-        # We skip templates with duplicate placeholders here.
         e = self._engine()
         for ttype, templates in TEMPLATES.items():
             for t in templates:
-                placeholders = re.findall(r"\{[a-z0-9]+\}", t)
-                if len(placeholders) != len(set(placeholders)):
-                    continue  # skip duplicate-placeholder templates
                 result = e.fill_template(t)
                 leftover = re.findall(r"\{[a-z0-9]+\}", result)
                 assert not leftover, (
