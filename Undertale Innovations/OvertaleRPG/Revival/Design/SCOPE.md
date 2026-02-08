@@ -23,4 +23,4 @@ This document defines what the OvertaleRPG revival includes and, more importantl
 
 ## Scope TBD
 
-To be defined after Phase 1 (Excavation) and Phase 2 (Assessment) are complete. See UTME.md for the phase breakdown.
+To be defined after Phase 1 (Excavation) and Phase 2 (Assessment) are complete. See [OVERME.md](../../OVERME.md) for the phase breakdown.

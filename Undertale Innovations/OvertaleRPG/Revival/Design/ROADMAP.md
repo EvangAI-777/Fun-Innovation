@@ -6,7 +6,7 @@ Status: **Phase 0 -- Setup complete, awaiting archive import**
 
 ### Phase 0: Setup (Current)
 - [x] Create directory structure
-- [x] Write UTME.md with project context
+- [x] Write OVERME.md with project context
 - [x] Create scaffolding docs (SCOPE.md, ENGINE.md, ROADMAP.md)
 - [ ] Download OvertaleRPG Google Drive contents into Original Archive
 
