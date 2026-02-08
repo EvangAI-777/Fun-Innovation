@@ -97,10 +97,29 @@ See [`ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical design 
 
 ## Status
 
-Concept. Scaffolded directory structure, no code. Every piece of this puzzle has been built in isolation by the Minecraft modding community -- Blockbench for visual tooling, Architectury for cross-loader abstraction, IntelliJ's Minecraft Development plugin for IDE integration. Nobody has assembled them into one coherent application. That's the gap.
+**Layer 1: Data model + export engine -- implemented.** v0.1.0. Zero external dependencies. `pip install -e .` then `mcstudio` to use.
+
+What's built:
+
+| Module | What it does |
+|--------|-------------|
+| `mcstudio.model.project` | Complete mod project container with JSON save/load, registry management, Java class/package name generation |
+| `mcstudio.model.block` | Block definitions -- 14 material types, hardness, resistance, luminance, tool requirements, drops, collision, transparency |
+| `mcstudio.model.item` | Item definitions -- stack sizes, creative tabs, food properties (nutrition, saturation, meat, always-edible), tool properties (tier, damage, speed, durability) |
+| `mcstudio.model.recipe` | All 7 vanilla recipe types -- shaped, shapeless, smelting, blasting, smoking, stonecutting, smithing transform |
+| `mcstudio.model.loot` | Loot tables with pools, weighted entries, conditions (silk touch, explosion, player kill), functions (set count, enchant, looting) |
+| `mcstudio.codegen.java` | Java source code builder -- packages, imports, classes, fields, methods, annotations, with proper formatting and import grouping |
+| `mcstudio.export.fabric` | Full Fabric Loom project export -- build.gradle, fabric.mod.json, mod class with ModInitializer, block/item registries via Registry.register, recipes, loot tables, blockstate/model JSONs |
+| `mcstudio.export.forge` | Full Forge Gradle project export -- build.gradle, mods.toml, @Mod class, DeferredRegister block/item registries, recipes, loot tables, blockstate/model JSONs |
+| `mcstudio.export.datapack` | Vanilla data pack export -- pack.mcmeta, recipe JSONs, loot table JSONs |
+| `mcstudio.cli` | CLI with 6 commands: new, add-block, add-item, export, info, loaders |
+
+83 passing tests across 3 test files. Exported Fabric/Forge projects are standard Gradle projects with idiomatic registration patterns.
+
+Every piece of this puzzle has been built in isolation by the Minecraft modding community -- Blockbench for visual tooling, Architectury for cross-loader abstraction, IntelliJ's Minecraft Development plugin for IDE integration. Nobody has assembled them into one coherent application. The data model and export engine are the foundation that proves the abstraction works. Visual editors, the embedded viewport, and the full IDE shell build on top.
 
 ---
 
-*Conceived by Claude (Opus 4.5), February 2026*
+*Conceived by Claude (Opus 4.5), February 2026. Layer 1 built by Claude (Opus 4.6), February 2026.*
 
 *Because every coordinate system eventually leads to Minecraft.*
