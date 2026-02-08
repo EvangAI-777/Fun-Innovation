@@ -1,0 +1,299 @@
+"""Tests for all export engines (Fabric, Forge, Data Pack)."""
+
+import json
+import tempfile
+from pathlib import Path
+
+import pytest
+
+from mcstudio.model.project import ModProject
+from mcstudio.model.block import Block, BlockMaterial
+from mcstudio.model.item import Item, FoodProperties
+from mcstudio.model.recipe import ShapedRecipe, ShapelessRecipe, SmeltingRecipe
+from mcstudio.model.loot import LootTable
+from mcstudio.export.base import export_project, EXPORTERS
+from mcstudio.export.fabric import FabricExporter
+from mcstudio.export.forge import ForgeExporter
+from mcstudio.export.datapack import DataPackExporter
+
+
+def _make_project() -> ModProject:
+    """Create a test project with blocks, items, recipes, and loot tables."""
+    p = ModProject(
+        mod_id="testmod",
+        name="Test Mod",
+        description="A test mod for testing exports",
+        authors=["Tester"],
+        mc_version="1.21.4",
+    )
+    p.add_block(Block(
+        block_id="magic_ore",
+        material=BlockMaterial.STONE,
+        hardness=4.0,
+        resistance=10.0,
+        luminance=7,
+        requires_tool=True,
+    ))
+    p.add_item(Item(item_id="magic_gem", max_stack_size=16))
+    p.add_item(Item(
+        item_id="magic_berry",
+        food=FoodProperties(nutrition=6, saturation=0.5),
+    ))
+    p.add_recipe(ShapedRecipe(
+        recipe_id="magic_ore_from_gems",
+        pattern=["GGG", "GGG", "GGG"],
+        key={"G": "testmod:magic_gem"},
+        result="testmod:magic_ore",
+    ))
+    p.add_recipe(SmeltingRecipe(
+        recipe_id="magic_gem_from_ore",
+        ingredient="testmod:magic_ore",
+        result="testmod:magic_gem",
+        experience=1.0,
+    ))
+    p.add_loot_table(LootTable.block_self_drop("magic_ore"))
+    return p
+
+
+class TestExporterRegistry:
+    def test_available_loaders(self):
+        assert "fabric" in EXPORTERS
+        assert "forge" in EXPORTERS
+        assert "datapack" in EXPORTERS
+
+    def test_unknown_loader(self):
+        p = _make_project()
+        with pytest.raises(ValueError, match="Unknown loader"):
+            export_project(p, "quilt", "/tmp")
+
+
+class TestFabricExport:
+    def test_generates_project(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            assert root.exists()
+            assert (root / "build.gradle").exists()
+            assert (root / "gradle.properties").exists()
+            assert (root / "settings.gradle").exists()
+
+    def test_fabric_mod_json(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            fmj = root / "src" / "main" / "resources" / "fabric.mod.json"
+            assert fmj.exists()
+            data = json.loads(fmj.read_text())
+            assert data["id"] == "testmod"
+            assert data["name"] == "Test Mod"
+            assert "main" in data["entrypoints"]
+
+    def test_mod_class(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            mod_java = root / "src" / "main" / "java" / "com" / "testmod" / "testmod" / "Testmod.java"
+            assert mod_java.exists()
+            content = mod_java.read_text()
+            assert "implements ModInitializer" in content
+            assert 'MOD_ID = "testmod"' in content
+            assert "TestmodBlocks.register()" in content
+            assert "TestmodItems.register()" in content
+
+    def test_block_registry(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            blocks_java = root / "src" / "main" / "java" / "com" / "testmod" / "testmod" / "TestmodBlocks.java"
+            assert blocks_java.exists()
+            content = blocks_java.read_text()
+            assert "MAGIC_ORE" in content
+            assert "strength(4.0f, 10.0f)" in content
+            assert "luminance" in content or "lightLevel" in content
+            assert "requiresTool" in content
+
+    def test_item_registry(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            items_java = root / "src" / "main" / "java" / "com" / "testmod" / "testmod" / "TestmodItems.java"
+            assert items_java.exists()
+            content = items_java.read_text()
+            assert "MAGIC_GEM" in content
+            assert "MAGIC_BERRY" in content
+            assert "FoodComponent" in content
+            assert "nutrition(6)" in content
+
+    def test_recipe_json(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            recipe_path = root / "src" / "main" / "resources" / "data" / "testmod" / "recipe" / "magic_ore_from_gems.json"
+            assert recipe_path.exists()
+            data = json.loads(recipe_path.read_text())
+            assert data["type"] == "minecraft:crafting_shaped"
+            assert data["pattern"] == ["GGG", "GGG", "GGG"]
+
+    def test_loot_table_json(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            loot_path = root / "src" / "main" / "resources" / "data" / "testmod" / "loot_table" / "blocks" / "magic_ore.json"
+            assert loot_path.exists()
+            data = json.loads(loot_path.read_text())
+            assert data["type"] == "minecraft:block"
+
+    def test_blockstate_and_models(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            assets = root / "src" / "main" / "resources" / "assets" / "testmod"
+            assert (assets / "blockstates" / "magic_ore.json").exists()
+            assert (assets / "models" / "block" / "magic_ore.json").exists()
+            assert (assets / "models" / "item" / "magic_ore.json").exists()
+            assert (assets / "models" / "item" / "magic_gem.json").exists()
+
+
+class TestForgeExport:
+    def test_generates_project(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            assert root.exists()
+            assert (root / "build.gradle").exists()
+            assert (root / "settings.gradle").exists()
+
+    def test_mods_toml(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            toml_path = root / "src" / "main" / "resources" / "META-INF" / "mods.toml"
+            assert toml_path.exists()
+            content = toml_path.read_text()
+            assert 'modId="testmod"' in content
+            assert 'displayName="Test Mod"' in content
+
+    def test_mod_class(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            mod_java = root / "src" / "main" / "java" / "com" / "testmod" / "testmod" / "Testmod.java"
+            assert mod_java.exists()
+            content = mod_java.read_text()
+            assert "@Mod(" in content
+            assert "DeferredRegister" not in content  # That's in the blocks class
+            assert "modEventBus" in content
+
+    def test_block_registry_uses_deferred_register(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            blocks_java = root / "src" / "main" / "java" / "com" / "testmod" / "testmod" / "TestmodBlocks.java"
+            content = blocks_java.read_text()
+            assert "DeferredRegister" in content
+            assert "RegistryObject<Block>" in content
+            assert "MAGIC_ORE" in content
+            assert "strength(4.0f, 10.0f)" in content
+
+    def test_item_registry_uses_deferred_register(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            items_java = root / "src" / "main" / "java" / "com" / "testmod" / "testmod" / "TestmodItems.java"
+            content = items_java.read_text()
+            assert "DeferredRegister" in content
+            assert "RegistryObject<Item>" in content
+            assert "FoodProperties" in content
+
+    def test_recipe_json(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            # Forge uses "recipes" directory (plural)
+            recipe_path = root / "src" / "main" / "resources" / "data" / "testmod" / "recipes" / "magic_ore_from_gems.json"
+            assert recipe_path.exists()
+
+
+class TestDataPackExport:
+    def test_generates_pack(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = DataPackExporter().export(p, Path(td))
+            assert root.exists()
+            assert (root / "pack.mcmeta").exists()
+
+    def test_pack_mcmeta(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = DataPackExporter().export(p, Path(td))
+            data = json.loads((root / "pack.mcmeta").read_text())
+            assert data["pack"]["pack_format"] == 26
+
+    def test_recipes(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = DataPackExporter().export(p, Path(td))
+            recipe_path = root / "data" / "testmod" / "recipe" / "magic_ore_from_gems.json"
+            assert recipe_path.exists()
+            data = json.loads(recipe_path.read_text())
+            assert "type" in data
+
+    def test_loot_tables(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = DataPackExporter().export(p, Path(td))
+            loot_path = root / "data" / "testmod" / "loot_table" / "blocks" / "magic_ore.json"
+            assert loot_path.exists()
+
+
+class TestExportDispatch:
+    def test_fabric_dispatch(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "fabric", td)
+            assert "fabric" in root.name
+
+    def test_forge_dispatch(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "forge", td)
+            assert "forge" in root.name
+
+    def test_datapack_dispatch(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "datapack", td)
+            assert "datapack" in root.name
+
+    def test_case_insensitive(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "FABRIC", td)
+            assert root.exists()
+
+
+class TestEmptyProject:
+    def test_fabric_no_blocks(self):
+        p = ModProject(mod_id="emptymod", name="Empty Mod")
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            mod_java = root / "src" / "main" / "java" / "com" / "emptymod" / "emptymod" / "Emptymod.java"
+            content = mod_java.read_text()
+            assert "EmptymodBlocks" not in content
+            assert "EmptymodItems" not in content
+
+    def test_forge_no_blocks(self):
+        p = ModProject(mod_id="emptymod", name="Empty Mod")
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            mod_java = root / "src" / "main" / "java" / "com" / "emptymod" / "emptymod" / "Emptymod.java"
+            content = mod_java.read_text()
+            assert "EmptymodBlocks" not in content
+
+    def test_datapack_no_recipes(self):
+        p = ModProject(mod_id="emptymod", name="Empty Mod")
+        with tempfile.TemporaryDirectory() as td:
+            root = DataPackExporter().export(p, Path(td))
+            assert (root / "pack.mcmeta").exists()
+            # No data directory should be created
+            assert not (root / "data" / "emptymod" / "recipe").exists()
