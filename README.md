@@ -47,7 +47,7 @@ Projects that take the Undertale universe seriously -- fan games, revivals, tool
 
 - **[OvertaleRPG](./Undertale%20Innovations/OvertaleRPG/)** -- revival of an abandoned Undertale fan game whose dev team released their entire production folder to the public in 2017. Artwork, music, playable builds, and six design documents. `Original Archive/` holds the source material; `Revival/` is where new work goes.
 
-See [`Undertale Innovations/UTME.md`](./Undertale%20Innovations/UTME.md) for the theme overview and [`OvertaleRPG/OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md) for the full project story and revival plan.
+See [`OvertaleRPG/OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md) for the full project story and revival plan.
 
 ### [Audio Innovations](./Audio%20Innovations/)
 
@@ -55,7 +55,7 @@ New and creative approaches to audio -- production tools, compositional systems,
 
 - **[AutoMuse](./Audio%20Innovations/AutoMuse/)** -- a conversational DAW where the primary interface is a dialogue with a music AI persona. Covers all genres, scales, modes, time signatures, key signatures, and tempos. The AI collaborates on composition, arrangement, and production, with export to MIDI, MusicXML, audio stems, and project files for other DAWs. Three scaling layers: conversation (text + MIDI export), canvas (visual arrangement + notation), and full studio (real-time audio, plugin hosting, mixing).
 
-No code yet -- concept design with scaffolded project structure. See [`Audio Innovations/HEARME.md`](./Audio%20Innovations/HEARME.md) for the theme overview and [`AutoMuse/MUSEME.md`](./Audio%20Innovations/AutoMuse/MUSEME.md) for the full project concept.
+No code yet -- concept design with scaffolded project structure. See [`AutoMuse/MUSEME.md`](./Audio%20Innovations/AutoMuse/MUSEME.md) for the full project concept.
 
 ## Adding New Directories
 
@@ -79,10 +79,10 @@ All seven projects are fully built -- reimaginings of INVALID_REQUEST projects f
 Two projects. [`GeoVox`](./Minecraft%20Innovations/GeoVox/) (v0.1.1) is a working Python pipeline -- `pip install -e .` then `geovox heightmap.png out.mcfunction` (see [`VOXELME.md`](./Minecraft%20Innovations/GeoVox/VOXELME.md)). [`Minecraft Studio`](./Minecraft%20Innovations/Minecraft%20Studio/) is still design documents only (see [`STUDYME.md`](./Minecraft%20Innovations/Minecraft%20Studio/STUDYME.md)). The original concept document is [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md).
 
 **Undertale projects (Undertale Innovations):**
-Fan games, revivals, and experiments in the Undertale universe. Current project: [`OvertaleRPG`](./Undertale%20Innovations/OvertaleRPG/) (abandoned fan game revival from a 2017 Google Drive archive, see [`OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md)). The theme overview is [`Undertale Innovations/UTME.md`](./Undertale%20Innovations/UTME.md).
+Fan games, revivals, and experiments in the Undertale universe. Current project: [`OvertaleRPG`](./Undertale%20Innovations/OvertaleRPG/) (abandoned fan game revival from a 2017 Google Drive archive, see [`OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md)).
 
 **Audio projects (Audio Innovations):**
-New approaches to music and sound production. Current project: [`AutoMuse`](./Audio%20Innovations/AutoMuse/) (conversational DAW where the interface is a dialogue with a music AI persona, see [`MUSEME.md`](./Audio%20Innovations/AutoMuse/MUSEME.md)). The theme overview is [`Audio Innovations/HEARME.md`](./Audio%20Innovations/HEARME.md).
+New approaches to music and sound production. Current project: [`AutoMuse`](./Audio%20Innovations/AutoMuse/) (conversational DAW where the interface is a dialogue with a music AI persona, see [`MUSEME.md`](./Audio%20Innovations/AutoMuse/MUSEME.md)).
 
 ---
 
