@@ -1,14 +1,17 @@
-.PHONY: test test-geovox test-roblox install clean
+.PHONY: test test-geovox test-roblox test-originals install clean
 
 GEOVOX_DIR = Minecraft Innovations/GeoVox
 
-test: test-geovox test-roblox
+test: test-geovox test-roblox test-originals
 
 test-geovox:
 	cd "$(GEOVOX_DIR)" && pytest ../../tests/geovox/ -v
 
 test-roblox:
 	pytest tests/roblox/ -v
+
+test-originals:
+	pytest tests/invalid_request/ -v
 
 install:
 	cd "$(GEOVOX_DIR)" && pip install -e ".[all]" pytest
