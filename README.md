@@ -53,9 +53,9 @@ See [`OvertaleRPG/OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md) f
 
 New and creative approaches to audio -- production tools, compositional systems, sound design experiments, and anything else that rethinks how music and sound get made. Some projects are conversational (AI as collaborator), some may take entirely different forms. Current project:
 
-- **[AutoMuse](./Audio%20Innovations/AutoMuse/)** -- a conversational DAW where the primary interface is a dialogue with a music AI persona. Covers all genres, scales, modes, time signatures, key signatures, and tempos. The AI collaborates on composition, arrangement, and production, with export to MIDI, MusicXML, audio stems, and project files for other DAWs. Three scaling layers: conversation (text + MIDI export), canvas (visual arrangement + notation), and full studio (real-time audio, plugin hosting, mixing).
+- **[AutoMuse](./Audio%20Innovations/AutoMuse/)** (v0.1.0) -- a conversational DAW where the primary interface is a dialogue with a music AI persona. Covers all genres, scales, modes, time signatures, key signatures, and tempos. The AI collaborates on composition, arrangement, and production, with export to MIDI, MusicXML, audio stems, and project files for other DAWs. Three scaling layers: conversation (text + MIDI export), canvas (visual arrangement + notation), and full studio (real-time audio, plugin hosting, mixing). Layer 1 (The Conversation) is implemented: music theory engine with notes, intervals, scales, chords, keys, rhythm, progressions, harmonic analysis, voicings, MIDI export, and the Muse conversational interface. 197 passing tests.
 
-No code yet -- concept design with scaffolded project structure. See [`AutoMuse/MUSEME.md`](./Audio%20Innovations/AutoMuse/MUSEME.md) for the full project concept.
+See [`AutoMuse/MUSEME.md`](./Audio%20Innovations/AutoMuse/MUSEME.md) for the full project concept.
 
 ## Testing
 
@@ -66,6 +66,7 @@ All tests run through pytest and are wired into CI (GitHub Actions) and a top-le
 | **GeoVox** | Unit + integration tests for the voxel pipeline -- grid, palette, heightmap ingest, both exporters, NBT writer | 27 | `make test-geovox` |
 | **Roblox Static Analysis** | Python-based static analysis of all 28 Luau scripts -- architecture conformance, deprecated API detection, config sanity, cross-module references, documentation, PoetryEngine template integrity | 102 | `make test-roblox` |
 | **Original Projects** | Functional tests for verse_engine.py (word banks, voice configs, template integrity, all generation modes) and living_story.py (personality tracking, trait logic, story state, scenario playthroughs) | 48 | `make test-originals` |
+| **AutoMuse** | Unit + integration tests for the music theory engine -- notes, intervals, scales, chords, keys, rhythm, progressions, harmonic analysis, voicings, MIDI writer, and the Muse conversational interface | 197 | `make test-automuse` |
 
 Run everything: `make test`
 
@@ -98,7 +99,7 @@ Two projects. [`GeoVox`](./Minecraft%20Innovations/GeoVox/) (v0.1.1) is a workin
 Fan games, revivals, and experiments in the Undertale universe. Current project: [`OvertaleRPG`](./Undertale%20Innovations/OvertaleRPG/) (abandoned fan game revival from a 2017 Google Drive archive, see [`OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md)).
 
 **Audio projects (Audio Innovations):**
-New approaches to music and sound production. Current project: [`AutoMuse`](./Audio%20Innovations/AutoMuse/) (conversational DAW where the interface is a dialogue with a music AI persona, see [`MUSEME.md`](./Audio%20Innovations/AutoMuse/MUSEME.md)).
+New approaches to music and sound production. Current project: [`AutoMuse`](./Audio%20Innovations/AutoMuse/) (v0.1.0) -- `pip install -e .` then `automuse` or `python -m automuse` to start a session with the Muse (see [`MUSEME.md`](./Audio%20Innovations/AutoMuse/MUSEME.md)).
 
 ---
 
