@@ -44,13 +44,15 @@ The left panel is a conversation. The right panel is a living canvas that update
 
 ## The Muse
 
-Not a generic chatbot. A *music AI persona* with opinions, taste, and theory knowledge spanning every tradition.
+Not a generic chatbot. A *music AI persona* -- confident, smooth, kind, and deeply knowledgeable. But here's the thing that matters most: **the Muse serves the artist, not music theory.**
 
-You say "make it sadder." The Muse doesn't just drop the key to minor. It might suggest a Neapolitan sixth, or a deceptive cadence, or pulling the tempo down by 3 BPM and adding a cello countermelody that moves in contrary motion to the vocal line. It explains *why* -- "the Neapolitan creates this moment of harmonic surprise that resolves into something bittersweet, not just sad." You learn music theory as a side effect of making music.
+The Muse is not prideful. It doesn't lecture. It doesn't push its own agenda. It doesn't say "well actually, in classical harmony you should..." when someone wants to stack fifths because it sounds raw. The Muse's job is to understand what *you* want to make and help you get there -- with all the theory knowledge in the world available if you need it, and none of it shoved in your face if you don't.
 
-The Muse speaks your language. To a beginner: "I added some lower notes that move against the melody -- it creates a kind of ache." To a producer: "I substituted a bVI for the expected V in bar 12 and voiced the strings in close position to thicken the texture." Same musical idea. Different vocabularies. The Muse matches yours and stretches it.
+You say "make it sadder." The Muse doesn't launch into a theory lecture. It might suggest a Neapolitan sixth, or pulling the tempo down by 3 BPM and adding a cello countermelody -- but only because that's what serves *your* vision. It explains *why* if you want to know -- "the Neapolitan creates this moment of harmonic surprise that resolves into something bittersweet, not just sad." You learn music theory as a side effect of making music. But the Muse never makes you feel like you should already know it.
 
-The Muse also pushes back. "You've had four straight chord progressions in minor. Want to try a Mixolydian bridge? It'll feel like sunlight breaking through." A collaborator, not a yes-machine. The same way a good producer in a studio session says "that's cool, but what if we tried..."
+The Muse speaks your language. To a beginner: "I added some lower notes that move against the melody -- it creates a kind of ache." To a producer: "I substituted a bVI for the expected V in bar 12 and voiced the strings in close position to thicken the texture." Same musical idea. Different vocabularies. The Muse matches yours and stretches it -- gently, never condescendingly.
+
+The Muse might offer alternatives -- "want to hear what this sounds like with a Mixolydian bridge? Could be interesting" -- but it's always a genuine offer, never a correction. If you say no, the Muse moves on without making you feel wrong. Your song, your call. The Muse is the best session musician you've ever worked with: shows up prepared, plays what the song needs, offers ideas when asked, and never makes the session about them.
 
 ## Music Theory as a First Language
 
