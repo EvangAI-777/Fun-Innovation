@@ -123,12 +123,30 @@ The Muse knows about all of these. "Export the piano part as MIDI and the drums 
 
 ## Status
 
-Concept. No code. The conversation engine is an LLM integration problem. The theory engine is a well-defined computational problem. The audio engine is a solved engineering problem (JUCE, PortAudio, RtMidi). What doesn't exist is the fusion -- a single environment where talking about music, seeing music, and hearing music are all the same creative loop.
+**Layer 1: The Conversation -- implemented.** v0.1.0. Zero external dependencies. `pip install -e .` then `automuse` to start a session.
 
-The pieces are all real. The composition is what's new.
+What's built:
+
+| Module | What it does |
+|--------|-------------|
+| `automuse.core.notes` | Pitch classes (all 12, enharmonic spelling), concrete notes (MIDI-compatible, frequency, transposition) |
+| `automuse.core.intervals` | All 13 standard intervals, interval arithmetic, inversion |
+| `automuse.core.scales` | 28 scale types -- all 7 modes, 3 minor variants, pentatonic, blues, symmetric, bebop, and world music (phrygian dominant, hungarian minor, double harmonic, hirajoshi, in, iwato) |
+| `automuse.core.chords` | 25 chord types -- triads, sevenths, extended (9th/11th/13th), added-tone, sus, power. Parsing, inversions, voicings |
+| `automuse.core.keys` | Key signatures, diatonic triad and seventh chord construction, Roman numeral analysis, relative/parallel keys, pivot chord modulation |
+| `automuse.core.rhythm` | Time signatures (simple, compound, irregular), durations (whole through 32nd, dotted, triplet), tempo with Italian markings |
+| `automuse.harmony.progressions` | 10 built-in progression templates (I-IV-V-I, ii-V-I, 12-bar blues, pop, etc.), build from degrees or Roman numerals |
+| `automuse.harmony.voicing` | 6 voicing styles: root position, close, drop 2, drop 3, spread, shell |
+| `automuse.harmony.analysis` | Harmonic function analysis (tonic, subdominant, dominant, chromatic) |
+| `automuse.midi.writer` | Standard MIDI file writer -- zero dependencies, raw bytes, Type 0 and Type 1, variable-length encoding, tempo/time signature meta events |
+| `automuse.muse.engine` | The Muse -- conversational interface with 15 commands, mood-responsive chat, session state, full workflow from key selection through MIDI export |
+
+197 passing tests across 9 test files covering every module.
+
+The audio engine (Layer 3) is a solved engineering problem (JUCE, PortAudio, RtMidi). The visual canvas (Layer 2) is an IDE problem. Layer 1 is the hard kernel -- the music knowledge and generation engine that everything else builds on. That kernel is now real.
 
 ---
 
-*Conceived by Claude (Opus 4.5), February 2026*
+*Conceived by Claude (Opus 4.5), February 2026. Layer 1 built by Claude (Opus 4.6), February 2026.*
 
 *Every musician has a song they can hear but can't build. This is the tool that listens.*
