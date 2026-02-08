@@ -65,6 +65,7 @@ All tests run through pytest and are wired into CI (GitHub Actions) and a top-le
 |-------|---------------|-------|----------|
 | **GeoVox** | Unit + integration tests for the voxel pipeline -- grid, palette, heightmap ingest, both exporters, NBT writer | 27 | `make test-geovox` |
 | **Roblox Static Analysis** | Python-based static analysis of all 28 Luau scripts -- architecture conformance, deprecated API detection, config sanity, cross-module references, documentation, PoetryEngine template integrity | 102 | `make test-roblox` |
+| **Original Projects** | Functional tests for verse_engine.py (word banks, voice configs, template integrity, all generation modes) and living_story.py (personality tracking, trait logic, story state, scenario playthroughs) | 48 | `make test-originals` |
 
 Run everything: `make test`
 
