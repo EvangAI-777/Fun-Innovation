@@ -335,6 +335,82 @@
         .calc-btn.danger { color: #f85149; border-color: rgba(248,81,73,0.3); }
         .calc-btn.danger:hover { background: rgba(248,81,73,0.15); }
 
+        /* ── Real Universe – Google Scientific Calculator Style ── */
+        #panel-real .real-grid {
+            gap: 6px 8px;
+            margin-top: 0;
+        }
+        #panel-real .calc-btn {
+            border: none;
+            border-radius: 20px;
+            padding: 14px 8px;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-size: 1.05em;
+            font-weight: 500;
+            background: #3c4043;
+            color: #e8eaed;
+        }
+        #panel-real .calc-btn:hover {
+            background: #4a4e52;
+            border-color: transparent;
+        }
+        #panel-real .real-sci {
+            background: #b0bec5;
+            color: #1b1b1f;
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+        #panel-real .real-sci:hover {
+            background: #90a4ae;
+        }
+        #panel-real .real-sci.toggled {
+            background: #78909c;
+            color: #ffffff;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.3);
+        }
+        #panel-real .real-num {
+            background: #3c4043;
+            color: #e8eaed;
+            font-size: 1.15em;
+            font-weight: 400;
+        }
+        #panel-real .real-num:hover {
+            background: #4a4e52;
+        }
+        #panel-real .real-op {
+            background: #5f6368;
+            color: #e8eaed;
+            font-size: 1.1em;
+        }
+        #panel-real .real-op:hover {
+            background: #6f7478;
+        }
+        #panel-real .real-ac {
+            background: #00bcd4;
+            color: #1b1b1f;
+            font-weight: 700;
+            font-size: 1.05em;
+        }
+        #panel-real .real-ac:hover {
+            background: #00acc1;
+        }
+        #panel-real .real-func {
+            background: #5f6368;
+            color: #e8eaed;
+        }
+        #panel-real .real-func:hover {
+            background: #6f7478;
+        }
+        #panel-real .real-eq {
+            background: #e8def8;
+            color: #1b1b1f;
+            font-weight: 700;
+            font-size: 1.2em;
+        }
+        #panel-real .real-eq:hover {
+            background: #d0c4e8;
+        }
+
         /* Ripple effect */
         .ripple {
             position: absolute;
@@ -459,6 +535,8 @@
             .universe-bar { gap: 6px; padding: 12px 0 20px; }
             .display-result { font-size: 1.4em; }
             .calc-btn { padding: 10px 6px; font-size: 0.85em; }
+            #panel-real .calc-btn { padding: 12px 6px; font-size: 0.9em; }
+            #panel-real .real-sci { font-size: 0.8em; }
             .matrix-grid.size-2 { grid-template-columns: repeat(2, 60px); }
             .matrix-grid.size-3 { grid-template-columns: repeat(3, 50px); }
             .matrix-grid input { padding: 6px 2px; font-size: 0.8em; }
@@ -611,42 +689,51 @@
 
             <!-- ═══ REAL ═══ -->
             <div class="universe-panel active" id="panel-real">
-                <div class="btn-grid cols-5">
-                    <button class="calc-btn op" data-action="fn" data-fn="sin">sin</button>
-                    <button class="calc-btn op" data-action="fn" data-fn="cos">cos</button>
-                    <button class="calc-btn op" data-action="fn" data-fn="tan">tan</button>
-                    <button class="calc-btn op" data-action="const" data-val="pi">&pi;</button>
-                    <button class="calc-btn op" data-action="const" data-val="e">e</button>
+                <div class="btn-grid cols-4 real-grid">
+                    <!-- Scientific row 1 -->
+                    <button class="calc-btn real-sci" data-action="fn" data-fn="sqrt">&radic;</button>
+                    <button class="calc-btn real-sci" data-action="const" data-val="pi">&pi;</button>
+                    <button class="calc-btn real-sci" data-action="binop" data-op="pow">^</button>
+                    <button class="calc-btn real-sci" data-action="fn" data-fn="fact">!</button>
 
-                    <button class="calc-btn op" data-action="fn" data-fn="sq">x&sup2;</button>
-                    <button class="calc-btn op" data-action="fn" data-fn="sqrt">&radic;x</button>
-                    <button class="calc-btn op" data-action="binop" data-op="pow">x<sup>y</sup></button>
-                    <button class="calc-btn op" data-action="fn" data-fn="ln">ln</button>
-                    <button class="calc-btn op" data-action="fn" data-fn="log">log</button>
+                    <!-- Scientific row 2 -->
+                    <button class="calc-btn real-sci" data-action="deg-toggle" id="degToggle">Deg</button>
+                    <button class="calc-btn real-sci" data-action="fn" data-fn="sin">sin</button>
+                    <button class="calc-btn real-sci" data-action="fn" data-fn="cos">cos</button>
+                    <button class="calc-btn real-sci" data-action="fn" data-fn="tan">tan</button>
 
-                    <button class="calc-btn" data-action="digit" data-val="7">7</button>
-                    <button class="calc-btn" data-action="digit" data-val="8">8</button>
-                    <button class="calc-btn" data-action="digit" data-val="9">9</button>
-                    <button class="calc-btn op" data-action="binop" data-op="div">&divide;</button>
-                    <button class="calc-btn danger" data-action="backspace">&larr;</button>
+                    <!-- Scientific row 3 -->
+                    <button class="calc-btn real-sci" data-action="inv-toggle" id="invToggle">Inv</button>
+                    <button class="calc-btn real-sci" data-action="const" data-val="e">e</button>
+                    <button class="calc-btn real-sci" data-action="fn" data-fn="ln">ln</button>
+                    <button class="calc-btn real-sci" data-action="fn" data-fn="log">log</button>
 
-                    <button class="calc-btn" data-action="digit" data-val="4">4</button>
-                    <button class="calc-btn" data-action="digit" data-val="5">5</button>
-                    <button class="calc-btn" data-action="digit" data-val="6">6</button>
-                    <button class="calc-btn op" data-action="binop" data-op="mul">&times;</button>
-                    <button class="calc-btn danger" data-action="clear">C</button>
+                    <!-- Utility row -->
+                    <button class="calc-btn real-ac" data-action="clear">AC</button>
+                    <button class="calc-btn real-func" data-action="paren">( )</button>
+                    <button class="calc-btn real-func" data-action="percent">%</button>
+                    <button class="calc-btn real-op" data-action="binop" data-op="div">&divide;</button>
 
-                    <button class="calc-btn" data-action="digit" data-val="1">1</button>
-                    <button class="calc-btn" data-action="digit" data-val="2">2</button>
-                    <button class="calc-btn" data-action="digit" data-val="3">3</button>
-                    <button class="calc-btn op" data-action="binop" data-op="sub">&minus;</button>
-                    <button class="calc-btn op" data-action="fn" data-fn="abs">|x|</button>
+                    <!-- Number pad -->
+                    <button class="calc-btn real-num" data-action="digit" data-val="7">7</button>
+                    <button class="calc-btn real-num" data-action="digit" data-val="8">8</button>
+                    <button class="calc-btn real-num" data-action="digit" data-val="9">9</button>
+                    <button class="calc-btn real-op" data-action="binop" data-op="mul">&times;</button>
 
-                    <button class="calc-btn" data-action="digit" data-val="0">0</button>
-                    <button class="calc-btn" data-action="decimal">.</button>
-                    <button class="calc-btn op" data-action="negate">&plusmn;</button>
-                    <button class="calc-btn op" data-action="binop" data-op="add">+</button>
-                    <button class="calc-btn action" data-action="equals">=</button>
+                    <button class="calc-btn real-num" data-action="digit" data-val="4">4</button>
+                    <button class="calc-btn real-num" data-action="digit" data-val="5">5</button>
+                    <button class="calc-btn real-num" data-action="digit" data-val="6">6</button>
+                    <button class="calc-btn real-op" data-action="binop" data-op="sub">&minus;</button>
+
+                    <button class="calc-btn real-num" data-action="digit" data-val="1">1</button>
+                    <button class="calc-btn real-num" data-action="digit" data-val="2">2</button>
+                    <button class="calc-btn real-num" data-action="digit" data-val="3">3</button>
+                    <button class="calc-btn real-op" data-action="binop" data-op="add">+</button>
+
+                    <button class="calc-btn real-num" data-action="digit" data-val="0">0</button>
+                    <button class="calc-btn real-num" data-action="decimal">.</button>
+                    <button class="calc-btn real-op" data-action="backspace">&#9003;</button>
+                    <button class="calc-btn real-eq" data-action="equals">=</button>
                 </div>
             </div>
 
@@ -988,7 +1075,11 @@
             expr: '',
             prevValue: null,
             pendingOp: null,
-            freshResult: false
+            freshResult: false,
+            useDegrees: true,
+            invMode: false,
+            parenDepth: 0,
+            stack: []
         };
 
         // ══════════════════════════════════════
@@ -1159,16 +1250,35 @@
             }
         }
 
+        function factorial(n) {
+            if (n < 0 || !Number.isInteger(n)) return NaN;
+            if (n > 170) return Infinity;
+            let r = 1;
+            for (let i = 2; i <= n; i++) r *= i;
+            return r;
+        }
+
         function realFn(fn, x) {
+            const toRad = real.useDegrees ? Math.PI / 180 : 1;
+            const toDeg = real.useDegrees ? 180 / Math.PI : 1;
+
+            if (real.invMode) {
+                switch (fn) {
+                    case 'sin':  return Math.asin(x) * toDeg;
+                    case 'cos':  return Math.acos(x) * toDeg;
+                    case 'tan':  return Math.atan(x) * toDeg;
+                }
+            }
             switch (fn) {
-                case 'sin':  return Math.sin(x);
-                case 'cos':  return Math.cos(x);
-                case 'tan':  return Math.cos(x) === 0 ? NaN : Math.tan(x);
+                case 'sin':  return Math.sin(x * toRad);
+                case 'cos':  return Math.cos(x * toRad);
+                case 'tan':  { const a = x * toRad; return Math.abs(Math.cos(a)) < 1e-15 ? NaN : Math.tan(a); }
                 case 'sq':   return x * x;
                 case 'sqrt': return x < 0 ? NaN : Math.sqrt(x);
                 case 'ln':   return x <= 0 ? NaN : Math.log(x);
                 case 'log':  return x <= 0 ? NaN : Math.log10(x);
                 case 'abs':  return Math.abs(x);
+                case 'fact': return factorial(x);
             }
         }
 
@@ -1242,17 +1352,82 @@
             }
             else if (action === 'fn') {
                 const val = parseFloat(real.display);
-                const result = realFn(btn.dataset.fn, val);
-                const expr = btn.dataset.fn + '(' + fmt(val) + ')';
+                const fn = btn.dataset.fn;
+                const result = realFn(fn, val);
+                const invNames = { sin: 'asin', cos: 'acos', tan: 'atan' };
+                const label = (real.invMode && invNames[fn]) ? invNames[fn] : fn;
+                const expr = label + '(' + fmt(val) + ')';
                 real.display = fmt(result);
                 real.freshResult = true;
                 showResult(expr, real.display);
+                // Auto-deactivate Inv after use
+                if (real.invMode && invNames[fn]) {
+                    real.invMode = false;
+                    document.getElementById('invToggle').classList.remove('toggled');
+                }
             }
             else if (action === 'const') {
                 if (real.freshResult) { real.expr = ''; }
                 real.display = btn.dataset.val === 'pi' ? fmt(Math.PI) : fmt(Math.E);
                 real.freshResult = true;
                 updateRealDisplay();
+            }
+            else if (action === 'deg-toggle') {
+                real.useDegrees = !real.useDegrees;
+                const toggle = document.getElementById('degToggle');
+                toggle.textContent = real.useDegrees ? 'Deg' : 'Rad';
+                toggle.classList.toggle('toggled', !real.useDegrees);
+            }
+            else if (action === 'inv-toggle') {
+                real.invMode = !real.invMode;
+                const toggle = document.getElementById('invToggle');
+                toggle.classList.toggle('toggled', real.invMode);
+                // Update trig button labels
+                const sinBtn = document.querySelector('#panel-real [data-fn="sin"]');
+                const cosBtn = document.querySelector('#panel-real [data-fn="cos"]');
+                const tanBtn = document.querySelector('#panel-real [data-fn="tan"]');
+                if (sinBtn) sinBtn.textContent = real.invMode ? 'sin\u207B\u00B9' : 'sin';
+                if (cosBtn) cosBtn.textContent = real.invMode ? 'cos\u207B\u00B9' : 'cos';
+                if (tanBtn) tanBtn.textContent = real.invMode ? 'tan\u207B\u00B9' : 'tan';
+            }
+            else if (action === 'percent') {
+                const val = parseFloat(real.display);
+                const result = val / 100;
+                const expr = fmt(val) + '%';
+                real.display = fmt(result);
+                real.freshResult = true;
+                showResult(expr, real.display);
+            }
+            else if (action === 'paren') {
+                // Smart parentheses: push/pop calculator state
+                if (real.parenDepth === 0 || real.freshResult === false) {
+                    // Open paren: save state and start fresh sub-expression
+                    real.stack.push({
+                        prevValue: real.prevValue,
+                        pendingOp: real.pendingOp,
+                        expr: real.expr
+                    });
+                    real.prevValue = null;
+                    real.pendingOp = null;
+                    real.expr = (real.expr || '') + '(';
+                    real.parenDepth++;
+                    real.freshResult = true;
+                    updateRealDisplay();
+                } else if (real.stack.length > 0) {
+                    // Close paren: evaluate sub-expression and restore
+                    if (real.pendingOp) {
+                        const val = parseFloat(real.display);
+                        const result = realCalc(real.pendingOp, real.prevValue, val);
+                        real.display = fmt(result);
+                    }
+                    const saved = real.stack.pop();
+                    real.prevValue = saved.prevValue;
+                    real.pendingOp = saved.pendingOp;
+                    real.expr = saved.expr + '(' + real.display + ')';
+                    real.parenDepth--;
+                    real.freshResult = true;
+                    updateRealDisplay();
+                }
             }
         });
 
@@ -2058,6 +2233,14 @@
             } else if (key === '/') {
                 e.preventDefault();
                 document.querySelector('[data-op="div"]').click();
+            } else if (key === '^') {
+                document.querySelector('[data-op="pow"]').click();
+            } else if (key === '!') {
+                document.querySelector('[data-fn="fact"]').click();
+            } else if (key === '%') {
+                document.querySelector('[data-action="percent"]').click();
+            } else if (key === '(' || key === ')') {
+                document.querySelector('[data-action="paren"]').click();
             } else if (key === 'Enter' || key === '=') {
                 document.querySelector('[data-action="equals"]').click();
             } else if (key === 'Backspace') {

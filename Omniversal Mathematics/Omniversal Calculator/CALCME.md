@@ -14,7 +14,7 @@ Every universe has a genuine math engine behind it. These aren't toy implementat
 
 ### Universe Guide
 
-**Real Numbers (R)** -- A full scientific calculator with keyboard support. Trig functions, powers, roots, logarithms, constants (pi, e). Standard infix entry with operator chaining. Keys: 0-9, +, -, *, /, Enter, Backspace, Escape.
+**Real Numbers (R)** -- A full scientific calculator styled after the Google/Android scientific calculator. Dark theme with four distinct button categories: light blue-gray scientific functions, cyan AC button, dark charcoal number pad, medium gray operators, and a lavender equals button. Features include trig functions (with degree/radian toggle and inverse mode), factorial, powers, roots, logarithms, constants (pi, e), percentage, and smart parentheses. Standard infix entry with operator chaining. Keys: 0-9, +, -, *, /, ^, !, %, (, ), Enter, Backspace, Escape.
 
 **Complex Numbers (C)** -- Enter two complex numbers z1 and z2 as real + imaginary parts. Supports addition, subtraction, multiplication, division, modulus, argument, conjugate, and squaring. Includes a live Argand diagram that plots z1 and the result on the complex plane with a dashed line from the origin.
 
@@ -36,7 +36,7 @@ Every universe has a genuine math engine behind it. These aren't toy implementat
 
 **Single file.** Everything -- HTML structure, CSS styles, JavaScript engines, starfield animation -- lives in one `.html` file. No dependencies, no build tools, no frameworks.
 
-**Dark theme.** Deep space aesthetic with a twinkling starfield background. Each universe has its own accent color that tints the entire interface when selected.
+**Dark theme.** Deep space aesthetic with a twinkling starfield background. Each universe has its own accent color that tints the entire interface when selected. The Real universe features a Google/Android scientific calculator-inspired design with pill-shaped buttons in four color categories: light blue-gray for scientific functions, cyan for AC, dark charcoal for the number pad, medium gray for operators, and lavender for the equals button.
 
 **Responsive.** Flexbox and CSS Grid with media queries at 600px and 380px breakpoints. The calculator works on phones, tablets, and desktops. Universe orbs shrink, button grids reorganize, matrix inputs compact.
 
