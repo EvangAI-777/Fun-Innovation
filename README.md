@@ -49,6 +49,14 @@ Projects that take the Undertale universe seriously -- fan games, revivals, tool
 
 See [`OvertaleRPG/OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md) for the full project story and revival plan.
 
+### [Omniversal Mathematics](./Omniversal%20Mathematics/)
+
+Mathematics across universes. Tools and experiences that work with multiple mathematical structures -- not just the reals, but complex numbers, modular arithmetic, matrices, quaternions, boolean algebra, tropical semirings, dual numbers, and whatever else turns out to be interesting. Current project:
+
+- **[Omniversal Calculator](./Omniversal%20Mathematics/Omniversal%20Calculator/)** -- the world's first Omniversal Calculator. Eight mathematical universes in a single browser-based interface, each with its own color identity, custom input layout, and genuine math engine. Includes an animated starfield background, Argand diagram visualization for complex numbers, live truth tables for boolean algebra, and automatic differentiation via dual numbers. Zero dependencies -- open the HTML file in any browser. 108 passing tests.
+
+See [`Omniversal Mathematics/OMNIME.md`](./Omniversal%20Mathematics/OMNIME.md) for the section overview and [`Omniversal Calculator/CALCME.md`](./Omniversal%20Mathematics/Omniversal%20Calculator/CALCME.md) for the full project details.
+
 ### [Audio Innovations](./Audio%20Innovations/)
 
 New and creative approaches to audio -- production tools, compositional systems, sound design experiments, and anything else that rethinks how music and sound get made. Some projects are conversational (AI as collaborator), some may take entirely different forms. Current project:
@@ -68,6 +76,7 @@ All tests run through pytest and are wired into CI (GitHub Actions) and a top-le
 | **Original Projects** | Functional tests for verse_engine.py (word banks, voice configs, template integrity, all generation modes) and living_story.py (personality tracking, trait logic, story state, scenario playthroughs) | 48 | `make test-originals` |
 | **AutoMuse** | Unit + integration tests for the music theory engine -- notes, intervals, scales, chords, keys, rhythm, progressions, harmonic analysis, voicings, MIDI writer, and the Muse conversational interface | 197 | `make test-automuse` |
 | **Minecraft Studio** | Unit + integration tests for the mod data model and export engine -- blocks, items, recipes, loot tables, project serialization, Java codegen, Fabric/Forge/Data Pack export with generated Java source validation | 83 | `make test-mcstudio` |
+| **Omniversal Calculator** | Structural validation of the HTML file (all 8 universes, responsive tags, no external deps) + reference math-engine tests for real, complex, modular, matrix, quaternion, boolean, tropical, and dual number arithmetic | 108 | `make test-omniversal` |
 
 Run everything: `make test`
 
@@ -98,6 +107,9 @@ Two projects. [`GeoVox`](./Minecraft%20Innovations/GeoVox/) (v0.1.1) is a workin
 
 **Undertale projects (Undertale Innovations):**
 Fan games, revivals, and experiments in the Undertale universe. Current project: [`OvertaleRPG`](./Undertale%20Innovations/OvertaleRPG/) (abandoned fan game revival from a 2017 Google Drive archive, see [`OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md)).
+
+**Omniversal math projects (Omniversal Mathematics):**
+Mathematical tools that span multiple number systems. Current project: [`Omniversal Calculator`](./Omniversal%20Mathematics/Omniversal%20Calculator/) -- open `omniversal-calculator.html` in any browser. Eight mathematical universes (real, complex, modular, matrix, quaternion, boolean, tropical, dual) with a responsive dark-themed UI and animated starfield. See [`CALCME.md`](./Omniversal%20Mathematics/Omniversal%20Calculator/CALCME.md) for the full guide.
 
 **Audio projects (Audio Innovations):**
 New approaches to music and sound production. Current project: [`AutoMuse`](./Audio%20Innovations/AutoMuse/) (v0.1.0) -- `pip install -e .` then `automuse` or `python -m automuse` to start a session with the Muse (see [`MUSEME.md`](./Audio%20Innovations/AutoMuse/MUSEME.md)).

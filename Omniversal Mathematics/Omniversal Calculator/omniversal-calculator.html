@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omniversal Calculator</title>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-void: #06060e;
+            --bg-primary: #0a0a16;
+            --bg-secondary: #10102a;
+            --bg-panel: #161640;
+            --bg-input: #0e0e24;
+            --text-primary: #e0e0f0;
+            --text-secondary: #7878a0;
+            --border: #252550;
+            --accent: #58a6ff;
+            --accent-dim: rgba(88, 166, 255, 0.15);
+            --accent-glow: rgba(88, 166, 255, 0.4);
+            --radius: 8px;
+            --transition: 0.3s ease;
+        }
+
+        body {
+            background: var(--bg-void);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Starfield ── */
+        #starfield {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0; pointer-events: none;
+        }
+
+        /* ── Main Layout ── */
+        .app {
+            position: relative; z-index: 1;
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+            min-height: 100vh;
+        }
+
+        /* ── Header ── */
+        .header {
+            text-align: center;
+            padding: 24px 0 20px;
+        }
+        .header h1 {
+            font-size: 1.6em;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--accent), #b48ead, #ebcb8b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header .tagline {
+            font-size: 0.78em;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* ── Universe Selector ── */
+        .universe-bar {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 16px 0;
+            margin-bottom: 8px;
+        }
+        .universe-orb {
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: var(--bg-secondary);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition);
+            position: relative;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+        .universe-orb:hover {
+            border-color: var(--accent);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px var(--accent-dim);
+        }
+        .universe-orb.active {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+            box-shadow: 0 0 24px var(--accent-glow), inset 0 0 12px var(--accent-dim);
+            transform: scale(1.12);
+        }
+        .universe-orb .orb-label {
+            position: absolute;
+            bottom: -18px;
+            font-size: 0.55em;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: color var(--transition);
+        }
+        .universe-orb.active .orb-label { color: var(--accent); }
+
+        /* Universe color themes */
+        [data-universe="real"]       { --accent: #58a6ff; --accent-dim: rgba(88,166,255,0.15); --accent-glow: rgba(88,166,255,0.35); }
+        [data-universe="complex"]    { --accent: #b48ead; --accent-dim: rgba(180,142,173,0.15); --accent-glow: rgba(180,142,173,0.35); }
+        [data-universe="modular"]    { --accent: #a3be8c; --accent-dim: rgba(163,190,140,0.15); --accent-glow: rgba(163,190,140,0.35); }
+        [data-universe="matrix"]     { --accent: #88c0d0; --accent-dim: rgba(136,192,208,0.15); --accent-glow: rgba(136,192,208,0.35); }
+        [data-universe="quaternion"] { --accent: #d08770; --accent-dim: rgba(208,135,112,0.15); --accent-glow: rgba(208,135,112,0.35); }
+        [data-universe="boolean"]    { --accent: #d8dee9; --accent-dim: rgba(216,222,233,0.15); --accent-glow: rgba(216,222,233,0.35); }
+        [data-universe="tropical"]   { --accent: #ebcb8b; --accent-dim: rgba(235,203,139,0.15); --accent-glow: rgba(235,203,139,0.35); }
+        [data-universe="dual"]       { --accent: #8fbcbb; --accent-dim: rgba(143,188,187,0.15); --accent-glow: rgba(143,188,187,0.35); }
+
+        /* ── Calculator Container ── */
+        .calc-container {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 40px rgba(0,0,0,0.5);
+        }
+
+        /* Universe description bar */
+        .universe-desc {
+            padding: 12px 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            font-size: 0.78em;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .universe-desc .desc-symbol {
+            font-size: 1.4em;
+            color: var(--accent);
+            min-width: 24px;
+            text-align: center;
+        }
+        .universe-desc .desc-name {
+            color: var(--accent);
+            font-weight: 600;
+            margin-right: 6px;
+        }
+
+        /* ── Display / Result ── */
+        .display {
+            padding: 20px;
+            background: var(--bg-input);
+            border-bottom: 1px solid var(--border);
+            min-height: 80px;
+        }
+        .display-expression {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            min-height: 1.2em;
+            word-break: break-all;
+        }
+        .display-result {
+            font-size: 1.8em;
+            font-weight: 300;
+            font-family: 'Courier New', monospace;
+            color: var(--text-primary);
+            word-break: break-all;
+            transition: color 0.2s;
+        }
+        .display-result.fresh { color: var(--accent); }
+
+        /* ── Universe Panels (shared styles) ── */
+        .universe-panel { display: none; padding: 16px 20px 20px; }
+        .universe-panel.active { display: block; }
+
+        /* Input fields */
+        .field-group { margin-bottom: 12px; }
+        .field-label {
+            font-size: 0.72em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 4px;
+        }
+        .field-input {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            outline: none;
+            transition: border-color var(--transition);
+        }
+        .field-input:focus { border-color: var(--accent); }
+        .field-input::placeholder { color: #444468; }
+
+        .field-row {
+            display: flex; gap: 8px; align-items: center;
+        }
+        .field-row .field-input { flex: 1; }
+        .field-separator {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            min-width: fit-content;
+        }
+
+        /* Select dropdowns */
+        .field-select {
+            padding: 8px 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9em;
+            outline: none;
+            cursor: pointer;
+        }
+        .field-select:focus { border-color: var(--accent); }
+        .field-select option { background: var(--bg-primary); }
+
+        /* ── Button Grid ── */
+        .btn-grid {
+            display: grid;
+            gap: 6px;
+            margin-top: 12px;
+        }
+        .btn-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+        .btn-grid.cols-5 { grid-template-columns: repeat(5, 1fr); }
+        .btn-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+        .calc-btn {
+            padding: 12px 8px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.15s;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .calc-btn:hover {
+            background: var(--accent-dim);
+            border-color: var(--accent);
+        }
+        .calc-btn:active {
+            transform: scale(0.96);
+        }
+        .calc-btn.op {
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .calc-btn.action {
+            background: var(--accent-dim);
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .calc-btn.action:hover {
+            background: var(--accent);
+            color: var(--bg-primary);
+        }
+        .calc-btn.wide { grid-column: span 2; }
+        .calc-btn.danger { color: #f85149; border-color: rgba(248,81,73,0.3); }
+        .calc-btn.danger:hover { background: rgba(248,81,73,0.15); }
+
+        /* Ripple effect */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--accent-glow);
+            transform: scale(0);
+            animation: ripple-anim 0.5s ease-out;
+            pointer-events: none;
+        }
+        @keyframes ripple-anim { to { transform: scale(3); opacity: 0; } }
+
+        /* ── Matrix-specific grid ── */
+        .matrix-grid {
+            display: inline-grid;
+            gap: 4px;
+            margin: 8px 0;
+        }
+        .matrix-grid.size-2 { grid-template-columns: repeat(2, 72px); }
+        .matrix-grid.size-3 { grid-template-columns: repeat(3, 62px); }
+        .matrix-grid input {
+            width: 100%; padding: 8px 4px;
+            background: var(--bg-input); border: 1px solid var(--border);
+            border-radius: 4px; color: var(--text-primary);
+            font-family: 'Courier New', monospace; font-size: 0.9em;
+            text-align: center; outline: none;
+        }
+        .matrix-grid input:focus { border-color: var(--accent); }
+        .matrix-wrapper {
+            display: flex; gap: 20px; flex-wrap: wrap;
+            align-items: flex-start; justify-content: center;
+        }
+        .matrix-block { text-align: center; }
+        .matrix-block .field-label { margin-bottom: 6px; }
+        .matrix-bracket {
+            display: flex; align-items: center; gap: 2px;
+        }
+        .bracket {
+            font-size: 2.8em; color: var(--accent); font-weight: 200;
+            line-height: 1; user-select: none;
+        }
+        .size-3 ~ .bracket, .matrix-grid.size-3 + .nothing { font-size: 3.4em; }
+
+        /* ── Boolean truth table ── */
+        .truth-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+        }
+        .truth-table th, .truth-table td {
+            padding: 6px 10px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        .truth-table th {
+            background: var(--accent-dim);
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+        .truth-table td { background: var(--bg-input); }
+        .truth-table tr:hover td { background: var(--bg-secondary); }
+        .val-1 { color: #a3be8c; }
+        .val-0 { color: #bf616a; }
+
+        /* ── History Panel ── */
+        .history-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            cursor: pointer;
+            user-select: none;
+            font-size: 0.78em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .history-toggle:hover { color: var(--accent); }
+        .history-toggle .arrow {
+            transition: transform var(--transition);
+            font-size: 0.8em;
+        }
+        .history-toggle.open .arrow { transform: rotate(180deg); }
+        .history-list {
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.4s ease;
+            background: var(--bg-input);
+        }
+        .history-list.open { max-height: 300px; overflow-y: auto; }
+        .history-item {
+            padding: 8px 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.8em;
+            display: flex; justify-content: space-between; gap: 12px;
+        }
+        .history-item .h-expr { color: var(--text-secondary); flex: 1; word-break: break-all; }
+        .history-item .h-result { color: var(--accent); font-family: 'Courier New', monospace; white-space: nowrap; }
+        .history-item .h-universe {
+            font-size: 0.75em; color: var(--text-secondary);
+            background: var(--bg-secondary); padding: 1px 6px;
+            border-radius: 4px; white-space: nowrap; align-self: center;
+        }
+        .history-empty {
+            padding: 20px;
+            text-align: center;
+            color: #444468;
+            font-size: 0.8em;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 600px) {
+            .app { padding: 12px 10px 30px; }
+            .header h1 { font-size: 1.2em; }
+            .universe-orb { width: 44px; height: 44px; font-size: 0.9em; }
+            .universe-orb .orb-label { font-size: 0.5em; bottom: -16px; }
+            .universe-bar { gap: 6px; padding: 12px 0 20px; }
+            .display-result { font-size: 1.4em; }
+            .calc-btn { padding: 10px 6px; font-size: 0.85em; }
+            .matrix-grid.size-2 { grid-template-columns: repeat(2, 60px); }
+            .matrix-grid.size-3 { grid-template-columns: repeat(3, 50px); }
+            .matrix-grid input { padding: 6px 2px; font-size: 0.8em; }
+            .matrix-wrapper { gap: 12px; }
+            .bracket { font-size: 2em; }
+        }
+
+        @media (max-width: 380px) {
+            .universe-bar { gap: 4px; }
+            .universe-orb { width: 38px; height: 38px; font-size: 0.8em; }
+            .btn-grid.cols-5 { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        /* ── Toggle switches (Boolean) ── */
+        .toggle-row {
+            display: flex; align-items: center; gap: 12px; margin-bottom: 8px;
+        }
+        .toggle-label {
+            font-family: 'Courier New', monospace;
+            font-size: 1em; min-width: 24px;
+            color: var(--text-secondary);
+        }
+        .toggle-switch {
+            width: 52px; height: 28px;
+            background: #bf616a;
+            border-radius: 14px;
+            cursor: pointer;
+            position: relative;
+            transition: background var(--transition);
+        }
+        .toggle-switch.on { background: #a3be8c; }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 22px; height: 22px;
+            background: #fff;
+            border-radius: 50%;
+            top: 3px; left: 3px;
+            transition: transform var(--transition);
+        }
+        .toggle-switch.on::after { transform: translateX(24px); }
+        .toggle-value {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em; font-weight: 600;
+            min-width: 16px;
+        }
+
+        /* ── Convention radio (Tropical) ── */
+        .radio-group {
+            display: flex; gap: 8px; margin-bottom: 12px;
+        }
+        .radio-opt {
+            flex: 1; padding: 8px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all var(--transition);
+        }
+        .radio-opt.selected {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+            color: var(--accent);
+        }
+
+        /* ── Visualization canvas ── */
+        .vis-canvas {
+            width: 100%;
+            height: 180px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-top: 12px;
+            background: var(--bg-void);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-input); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+    </style>
+</head>
+<body>
+    <canvas id="starfield"></canvas>
+
+    <div class="app" data-universe="real">
+
+        <!-- Header -->
+        <div class="header">
+            <h1>OMNIVERSAL CALCULATOR</h1>
+            <div class="tagline">Eight mathematical universes. One interface.</div>
+        </div>
+
+        <!-- Universe Selector -->
+        <div class="universe-bar" id="universeBar">
+            <div class="universe-orb active" data-uni="real" title="Real Numbers">
+                <span>&Ropf;</span>
+                <span class="orb-label">Real</span>
+            </div>
+            <div class="universe-orb" data-uni="complex" title="Complex Numbers">
+                <span>&Copf;</span>
+                <span class="orb-label">Complex</span>
+            </div>
+            <div class="universe-orb" data-uni="modular" title="Modular Arithmetic">
+                <span>&Zopf;<sub>n</sub></span>
+                <span class="orb-label">Modular</span>
+            </div>
+            <div class="universe-orb" data-uni="matrix" title="Matrix Algebra">
+                <span>M</span>
+                <span class="orb-label">Matrix</span>
+            </div>
+            <div class="universe-orb" data-uni="quaternion" title="Quaternions">
+                <span>&Hopf;</span>
+                <span class="orb-label">Quaternion</span>
+            </div>
+            <div class="universe-orb" data-uni="boolean" title="Boolean Algebra">
+                <span>&Bopf;</span>
+                <span class="orb-label">Boolean</span>
+            </div>
+            <div class="universe-orb" data-uni="tropical" title="Tropical Semiring">
+                <span>&Topf;</span>
+                <span class="orb-label">Tropical</span>
+            </div>
+            <div class="universe-orb" data-uni="dual" title="Dual Numbers">
+                <span>&Dopf;</span>
+                <span class="orb-label">Dual</span>
+            </div>
+        </div>
+
+        <!-- Calculator -->
+        <div class="calc-container">
+
+            <!-- Universe Description -->
+            <div class="universe-desc" id="universeDesc">
+                <span class="desc-symbol">&Ropf;</span>
+                <span><span class="desc-name">Real Numbers</span> &mdash; standard arithmetic, trig, powers, and roots on the number line</span>
+            </div>
+
+            <!-- Display -->
+            <div class="display">
+                <div class="display-expression" id="displayExpr"></div>
+                <div class="display-result" id="displayResult">0</div>
+            </div>
+
+            <!-- ═══ REAL ═══ -->
+            <div class="universe-panel active" id="panel-real">
+                <div class="btn-grid cols-5">
+                    <button class="calc-btn op" data-action="fn" data-fn="sin">sin</button>
+                    <button class="calc-btn op" data-action="fn" data-fn="cos">cos</button>
+                    <button class="calc-btn op" data-action="fn" data-fn="tan">tan</button>
+                    <button class="calc-btn op" data-action="const" data-val="pi">&pi;</button>
+                    <button class="calc-btn op" data-action="const" data-val="e">e</button>
+
+                    <button class="calc-btn op" data-action="fn" data-fn="sq">x&sup2;</button>
+                    <button class="calc-btn op" data-action="fn" data-fn="sqrt">&radic;x</button>
+                    <button class="calc-btn op" data-action="binop" data-op="pow">x<sup>y</sup></button>
+                    <button class="calc-btn op" data-action="fn" data-fn="ln">ln</button>
+                    <button class="calc-btn op" data-action="fn" data-fn="log">log</button>
+
+                    <button class="calc-btn" data-action="digit" data-val="7">7</button>
+                    <button class="calc-btn" data-action="digit" data-val="8">8</button>
+                    <button class="calc-btn" data-action="digit" data-val="9">9</button>
+                    <button class="calc-btn op" data-action="binop" data-op="div">&divide;</button>
+                    <button class="calc-btn danger" data-action="backspace">&larr;</button>
+
+                    <button class="calc-btn" data-action="digit" data-val="4">4</button>
+                    <button class="calc-btn" data-action="digit" data-val="5">5</button>
+                    <button class="calc-btn" data-action="digit" data-val="6">6</button>
+                    <button class="calc-btn op" data-action="binop" data-op="mul">&times;</button>
+                    <button class="calc-btn danger" data-action="clear">C</button>
+
+                    <button class="calc-btn" data-action="digit" data-val="1">1</button>
+                    <button class="calc-btn" data-action="digit" data-val="2">2</button>
+                    <button class="calc-btn" data-action="digit" data-val="3">3</button>
+                    <button class="calc-btn op" data-action="binop" data-op="sub">&minus;</button>
+                    <button class="calc-btn op" data-action="fn" data-fn="abs">|x|</button>
+
+                    <button class="calc-btn" data-action="digit" data-val="0">0</button>
+                    <button class="calc-btn" data-action="decimal">.</button>
+                    <button class="calc-btn op" data-action="negate">&plusmn;</button>
+                    <button class="calc-btn op" data-action="binop" data-op="add">+</button>
+                    <button class="calc-btn action" data-action="equals">=</button>
+                </div>
+            </div>
+
+            <!-- ═══ COMPLEX ═══ -->
+            <div class="universe-panel" id="panel-complex">
+                <div class="field-group">
+                    <div class="field-label">z₁</div>
+                    <div class="field-row">
+                        <input class="field-input" id="c1re" type="number" placeholder="real" step="any">
+                        <span class="field-separator">+</span>
+                        <input class="field-input" id="c1im" type="number" placeholder="imag" step="any">
+                        <span class="field-separator">i</span>
+                    </div>
+                </div>
+                <div class="field-group">
+                    <div class="field-label">z₂</div>
+                    <div class="field-row">
+                        <input class="field-input" id="c2re" type="number" placeholder="real" step="any">
+                        <span class="field-separator">+</span>
+                        <input class="field-input" id="c2im" type="number" placeholder="imag" step="any">
+                        <span class="field-separator">i</span>
+                    </div>
+                </div>
+                <div class="btn-grid cols-4">
+                    <button class="calc-btn action" data-cop="add">z₁ + z₂</button>
+                    <button class="calc-btn action" data-cop="sub">z₁ &minus; z₂</button>
+                    <button class="calc-btn action" data-cop="mul">z₁ &times; z₂</button>
+                    <button class="calc-btn action" data-cop="div">z₁ &divide; z₂</button>
+                    <button class="calc-btn op" data-cop="mod">|z₁|</button>
+                    <button class="calc-btn op" data-cop="arg">arg(z₁)</button>
+                    <button class="calc-btn op" data-cop="conj">conj(z₁)</button>
+                    <button class="calc-btn op" data-cop="sq">z₁&sup2;</button>
+                </div>
+                <canvas class="vis-canvas" id="complexPlane"></canvas>
+            </div>
+
+            <!-- ═══ MODULAR ═══ -->
+            <div class="universe-panel" id="panel-modular">
+                <div class="field-group">
+                    <div class="field-label">Modulus n</div>
+                    <input class="field-input" id="modN" type="number" value="7" min="2" step="1" placeholder="modulus">
+                </div>
+                <div class="field-group">
+                    <div class="field-row">
+                        <div style="flex:1">
+                            <div class="field-label">a</div>
+                            <input class="field-input" id="modA" type="number" placeholder="a" step="1">
+                        </div>
+                        <div style="flex:1">
+                            <div class="field-label">b</div>
+                            <input class="field-input" id="modB" type="number" placeholder="b" step="1">
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-grid cols-3">
+                    <button class="calc-btn action" data-mop="add">a + b</button>
+                    <button class="calc-btn action" data-mop="sub">a &minus; b</button>
+                    <button class="calc-btn action" data-mop="mul">a &times; b</button>
+                    <button class="calc-btn action" data-mop="pow">a<sup>b</sup></button>
+                    <button class="calc-btn op" data-mop="inv">a&macr;&sup1;</button>
+                    <button class="calc-btn op" data-mop="gcd">gcd(a, n)</button>
+                </div>
+            </div>
+
+            <!-- ═══ MATRIX ═══ -->
+            <div class="universe-panel" id="panel-matrix">
+                <div class="field-group">
+                    <div class="field-label">Size</div>
+                    <div class="radio-group">
+                        <div class="radio-opt selected" data-msize="2">2 &times; 2</div>
+                        <div class="radio-opt" data-msize="3">3 &times; 3</div>
+                    </div>
+                </div>
+                <div class="matrix-wrapper" id="matrixInputs">
+                    <!-- populated by JS -->
+                </div>
+                <div class="btn-grid cols-3" style="margin-top:16px">
+                    <button class="calc-btn action" data-matop="add">A + B</button>
+                    <button class="calc-btn action" data-matop="mul">A &times; B</button>
+                    <button class="calc-btn op" data-matop="det">det(A)</button>
+                    <button class="calc-btn op" data-matop="trans">A&top;</button>
+                    <button class="calc-btn op" data-matop="inv">A&macr;&sup1;</button>
+                    <button class="calc-btn op" data-matop="trace">tr(A)</button>
+                </div>
+            </div>
+
+            <!-- ═══ QUATERNION ═══ -->
+            <div class="universe-panel" id="panel-quaternion">
+                <div class="field-group">
+                    <div class="field-label">q₁ = a + bi + cj + dk</div>
+                    <div class="field-row">
+                        <input class="field-input" id="q1a" type="number" placeholder="a" step="any">
+                        <input class="field-input" id="q1b" type="number" placeholder="b" step="any">
+                        <input class="field-input" id="q1c" type="number" placeholder="c" step="any">
+                        <input class="field-input" id="q1d" type="number" placeholder="d" step="any">
+                    </div>
+                </div>
+                <div class="field-group">
+                    <div class="field-label">q₂ = a + bi + cj + dk</div>
+                    <div class="field-row">
+                        <input class="field-input" id="q2a" type="number" placeholder="a" step="any">
+                        <input class="field-input" id="q2b" type="number" placeholder="b" step="any">
+                        <input class="field-input" id="q2c" type="number" placeholder="c" step="any">
+                        <input class="field-input" id="q2d" type="number" placeholder="d" step="any">
+                    </div>
+                </div>
+                <div class="btn-grid cols-3">
+                    <button class="calc-btn action" data-qop="add">q₁ + q₂</button>
+                    <button class="calc-btn action" data-qop="sub">q₁ &minus; q₂</button>
+                    <button class="calc-btn action" data-qop="mul">q₁ &times; q₂</button>
+                    <button class="calc-btn op" data-qop="conj">conj(q₁)</button>
+                    <button class="calc-btn op" data-qop="norm">&Vert;q₁&Vert;</button>
+                    <button class="calc-btn op" data-qop="inv">q₁&macr;&sup1;</button>
+                </div>
+            </div>
+
+            <!-- ═══ BOOLEAN ═══ -->
+            <div class="universe-panel" id="panel-boolean">
+                <div class="field-group">
+                    <div class="toggle-row">
+                        <span class="toggle-label">A</span>
+                        <div class="toggle-switch" id="boolA" data-val="0"></div>
+                        <span class="toggle-value val-0" id="boolAVal">0</span>
+                    </div>
+                    <div class="toggle-row">
+                        <span class="toggle-label">B</span>
+                        <div class="toggle-switch" id="boolB" data-val="0"></div>
+                        <span class="toggle-value val-0" id="boolBVal">0</span>
+                    </div>
+                </div>
+                <div class="btn-grid cols-4">
+                    <button class="calc-btn action" data-bop="and">AND</button>
+                    <button class="calc-btn action" data-bop="or">OR</button>
+                    <button class="calc-btn action" data-bop="xor">XOR</button>
+                    <button class="calc-btn op" data-bop="not">NOT A</button>
+                    <button class="calc-btn op" data-bop="nand">NAND</button>
+                    <button class="calc-btn op" data-bop="nor">NOR</button>
+                    <button class="calc-btn op" data-bop="xnor">XNOR</button>
+                    <button class="calc-btn op" data-bop="impl">A&rarr;B</button>
+                </div>
+                <div class="field-label" style="margin-top:14px">Truth Table</div>
+                <table class="truth-table" id="truthTable">
+                    <thead><tr><th>A</th><th>B</th><th>AND</th><th>OR</th><th>XOR</th><th>NAND</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <!-- ═══ TROPICAL ═══ -->
+            <div class="universe-panel" id="panel-tropical">
+                <div class="field-group">
+                    <div class="field-label">Convention</div>
+                    <div class="radio-group">
+                        <div class="radio-opt selected" data-tconv="min">Min-Plus (&oplus; = min)</div>
+                        <div class="radio-opt" data-tconv="max">Max-Plus (&oplus; = max)</div>
+                    </div>
+                </div>
+                <div class="field-group">
+                    <div class="field-row">
+                        <div style="flex:1">
+                            <div class="field-label">a</div>
+                            <input class="field-input" id="tropA" type="number" placeholder="a" step="any">
+                        </div>
+                        <div style="flex:1">
+                            <div class="field-label">b</div>
+                            <input class="field-input" id="tropB" type="number" placeholder="b" step="any">
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-grid cols-3">
+                    <button class="calc-btn action" data-top="tadd">a &oplus; b</button>
+                    <button class="calc-btn action" data-top="tmul">a &otimes; b</button>
+                    <button class="calc-btn op" data-top="tpow">a<sup>&otimes;b</sup></button>
+                </div>
+                <div style="margin-top:14px; padding:12px; background:var(--bg-input); border-radius:var(--radius); font-size:0.78em; color:var(--text-secondary); line-height:1.6">
+                    <strong style="color:var(--accent)">Tropical Semiring:</strong>
+                    In min-plus, &oplus; means min(a, b) and &otimes; means a + b.
+                    The additive identity is &infin; and the multiplicative identity is 0.
+                    Used in optimization, phylogenetics, and algebraic geometry.
+                </div>
+            </div>
+
+            <!-- ═══ DUAL ═══ -->
+            <div class="universe-panel" id="panel-dual">
+                <div class="field-group">
+                    <div class="field-label">z₁ = a + b&epsilon; &nbsp;(where &epsilon;&sup2; = 0)</div>
+                    <div class="field-row">
+                        <input class="field-input" id="d1a" type="number" placeholder="a (value)" step="any">
+                        <span class="field-separator">+</span>
+                        <input class="field-input" id="d1b" type="number" placeholder="b (deriv)" step="any">
+                        <span class="field-separator">&epsilon;</span>
+                    </div>
+                </div>
+                <div class="field-group">
+                    <div class="field-label">z₂ = c + d&epsilon;</div>
+                    <div class="field-row">
+                        <input class="field-input" id="d2a" type="number" placeholder="c (value)" step="any">
+                        <span class="field-separator">+</span>
+                        <input class="field-input" id="d2b" type="number" placeholder="d (deriv)" step="any">
+                        <span class="field-separator">&epsilon;</span>
+                    </div>
+                </div>
+                <div class="btn-grid cols-4">
+                    <button class="calc-btn action" data-dop="add">z₁ + z₂</button>
+                    <button class="calc-btn action" data-dop="sub">z₁ &minus; z₂</button>
+                    <button class="calc-btn action" data-dop="mul">z₁ &times; z₂</button>
+                    <button class="calc-btn action" data-dop="div">z₁ &divide; z₂</button>
+                    <button class="calc-btn op" data-dop="sin">sin(z₁)</button>
+                    <button class="calc-btn op" data-dop="cos">cos(z₁)</button>
+                    <button class="calc-btn op" data-dop="exp">e<sup>z₁</sup></button>
+                    <button class="calc-btn op" data-dop="ln">ln(z₁)</button>
+                </div>
+                <div style="margin-top:14px; padding:12px; background:var(--bg-input); border-radius:var(--radius); font-size:0.78em; color:var(--text-secondary); line-height:1.6">
+                    <strong style="color:var(--accent)">Automatic Differentiation:</strong>
+                    Dual numbers carry a value and its derivative simultaneously.
+                    Set z₁ = x + 1&epsilon; to evaluate f(x) and f&prime;(x) in one pass.
+                    Try sin(3 + 1&epsilon;) &rarr; sin(3) + cos(3)&epsilon;.
+                </div>
+            </div>
+
+            <!-- History -->
+            <div class="history-toggle" id="histToggle">
+                <span>History</span>
+                <span class="arrow">&#9660;</span>
+            </div>
+            <div class="history-list" id="histList">
+                <div class="history-empty">No calculations yet.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (() => {
+        'use strict';
+
+        // ══════════════════════════════════════
+        //  STARFIELD
+        // ══════════════════════════════════════
+        const sfCanvas = document.getElementById('starfield');
+        const sfCtx = sfCanvas.getContext('2d');
+        let stars = [];
+
+        function initStarfield() {
+            sfCanvas.width = window.innerWidth;
+            sfCanvas.height = window.innerHeight;
+            stars = [];
+            const count = Math.floor((sfCanvas.width * sfCanvas.height) / 6000);
+            for (let i = 0; i < count; i++) {
+                stars.push({
+                    x: Math.random() * sfCanvas.width,
+                    y: Math.random() * sfCanvas.height,
+                    r: Math.random() * 1.2 + 0.3,
+                    a: Math.random(),
+                    da: (Math.random() - 0.5) * 0.01
+                });
+            }
+        }
+
+        function drawStarfield() {
+            sfCtx.clearRect(0, 0, sfCanvas.width, sfCanvas.height);
+            for (const s of stars) {
+                s.a += s.da;
+                if (s.a > 1 || s.a < 0.1) s.da *= -1;
+                s.a = Math.max(0.1, Math.min(1, s.a));
+                sfCtx.beginPath();
+                sfCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                sfCtx.fillStyle = `rgba(200, 200, 240, ${s.a * 0.6})`;
+                sfCtx.fill();
+            }
+            requestAnimationFrame(drawStarfield);
+        }
+
+        initStarfield();
+        drawStarfield();
+        window.addEventListener('resize', initStarfield);
+
+        // ══════════════════════════════════════
+        //  STATE
+        // ══════════════════════════════════════
+        let currentUniverse = 'real';
+        const history = [];
+
+        // Real calculator state
+        const real = {
+            display: '0',
+            expr: '',
+            prevValue: null,
+            pendingOp: null,
+            freshResult: false
+        };
+
+        // ══════════════════════════════════════
+        //  DOM REFS
+        // ══════════════════════════════════════
+        const app = document.querySelector('.app');
+        const displayExpr = document.getElementById('displayExpr');
+        const displayResult = document.getElementById('displayResult');
+        const universeDesc = document.getElementById('universeDesc');
+        const histToggle = document.getElementById('histToggle');
+        const histList = document.getElementById('histList');
+
+        // ══════════════════════════════════════
+        //  UNIVERSE SWITCHING
+        // ══════════════════════════════════════
+        const universeInfo = {
+            real:       { symbol: '\u211D', name: 'Real Numbers',       desc: 'standard arithmetic, trig, powers, and roots on the number line' },
+            complex:    { symbol: '\u2102', name: 'Complex Numbers',    desc: 'arithmetic on the plane with real and imaginary parts' },
+            modular:    { symbol: '\u2124\u2099', name: 'Modular Arithmetic', desc: 'clock arithmetic \u2014 numbers wrap around a modulus' },
+            matrix:     { symbol: 'M',      name: 'Matrix Algebra',     desc: 'operations on rectangular arrays of numbers' },
+            quaternion: { symbol: '\u210D', name: 'Quaternions',        desc: 'four-dimensional extension of complex numbers where multiplication is non-commutative' },
+            boolean:    { symbol: '\uD835\uDD39', name: 'Boolean Algebra',   desc: 'logic operations on true and false values' },
+            tropical:   { symbol: '\uD835\uDD4B', name: 'Tropical Semiring',  desc: 'where addition means min (or max) and multiplication means addition' },
+            dual:       { symbol: '\uD835\uDD3B', name: 'Dual Numbers',      desc: 'automatic differentiation \u2014 compute f(x) and f\u2032(x) simultaneously' }
+        };
+
+        function switchUniverse(uni) {
+            currentUniverse = uni;
+            app.setAttribute('data-universe', uni);
+
+            // Update orbs
+            document.querySelectorAll('.universe-orb').forEach(o => {
+                o.classList.toggle('active', o.dataset.uni === uni);
+            });
+
+            // Update panels
+            document.querySelectorAll('.universe-panel').forEach(p => {
+                p.classList.toggle('active', p.id === `panel-${uni}`);
+            });
+
+            // Update description
+            const info = universeInfo[uni];
+            universeDesc.innerHTML = `<span class="desc-symbol">${info.symbol}</span><span><span class="desc-name">${info.name}</span> &mdash; ${info.desc}</span>`;
+
+            // Reset display for non-real universes
+            if (uni !== 'real') {
+                displayExpr.textContent = '';
+                displayResult.textContent = '0';
+                displayResult.classList.remove('fresh');
+            } else {
+                displayResult.textContent = real.display;
+                displayExpr.textContent = real.expr;
+            }
+
+            // Init matrix inputs if needed
+            if (uni === 'matrix') buildMatrixInputs();
+            // Init truth table
+            if (uni === 'boolean') buildTruthTable();
+            // Resize complex plane
+            if (uni === 'complex') setTimeout(drawComplexPlane, 50);
+        }
+
+        document.getElementById('universeBar').addEventListener('click', e => {
+            const orb = e.target.closest('.universe-orb');
+            if (orb) switchUniverse(orb.dataset.uni);
+        });
+
+        // ══════════════════════════════════════
+        //  HISTORY
+        // ══════════════════════════════════════
+        histToggle.addEventListener('click', () => {
+            histToggle.classList.toggle('open');
+            histList.classList.toggle('open');
+        });
+
+        function addHistory(universe, expression, result) {
+            history.unshift({ universe, expression, result });
+            if (history.length > 50) history.pop();
+            renderHistory();
+        }
+
+        function renderHistory() {
+            if (history.length === 0) {
+                histList.innerHTML = '<div class="history-empty">No calculations yet.</div>';
+                return;
+            }
+            histList.innerHTML = history.map(h =>
+                `<div class="history-item"><span class="h-universe">${h.universe}</span><span class="h-expr">${h.expression}</span><span class="h-result">${h.result}</span></div>`
+            ).join('');
+        }
+
+        // ══════════════════════════════════════
+        //  DISPLAY HELPERS
+        // ══════════════════════════════════════
+        function showResult(expr, result) {
+            displayExpr.textContent = expr;
+            displayResult.textContent = result;
+            displayResult.classList.add('fresh');
+            setTimeout(() => displayResult.classList.remove('fresh'), 400);
+            addHistory(currentUniverse, expr, result);
+        }
+
+        function fmt(n) {
+            if (typeof n !== 'number' || isNaN(n)) return 'NaN';
+            if (!isFinite(n)) return n > 0 ? '\u221E' : '-\u221E';
+            if (Number.isInteger(n) && Math.abs(n) < 1e15) return String(n);
+            const s = n.toPrecision(10);
+            return parseFloat(s).toString();
+        }
+
+        function fmtComplex(re, im) {
+            const rs = fmt(re);
+            if (im === 0) return rs;
+            const is = Math.abs(im) === 1 ? '' : fmt(Math.abs(im));
+            if (re === 0) return (im < 0 ? '-' : '') + is + 'i';
+            return rs + (im < 0 ? ' - ' : ' + ') + is + 'i';
+        }
+
+        function fmtQuat(a, b, c, d) {
+            const parts = [];
+            if (a !== 0 || (b === 0 && c === 0 && d === 0)) parts.push(fmt(a));
+            if (b !== 0) parts.push((b < 0 && parts.length ? '- ' + fmt(-b) : (parts.length ? '+ ' + fmt(b) : fmt(b))) + 'i');
+            if (c !== 0) parts.push((c < 0 && parts.length ? '- ' + fmt(-c) : (parts.length ? '+ ' + fmt(c) : fmt(c))) + 'j');
+            if (d !== 0) parts.push((d < 0 && parts.length ? '- ' + fmt(-d) : (parts.length ? '+ ' + fmt(d) : fmt(d))) + 'k');
+            return parts.join(' ') || '0';
+        }
+
+        function fmtDual(a, b) {
+            const as = fmt(a);
+            if (b === 0) return as;
+            const bs = Math.abs(b) === 1 ? '' : fmt(Math.abs(b));
+            if (a === 0) return (b < 0 ? '-' : '') + bs + '\u03B5';
+            return as + (b < 0 ? ' - ' : ' + ') + bs + '\u03B5';
+        }
+
+        // ══════════════════════════════════════
+        //  RIPPLE EFFECT
+        // ══════════════════════════════════════
+        document.addEventListener('click', e => {
+            const btn = e.target.closest('.calc-btn');
+            if (!btn) return;
+            const rect = btn.getBoundingClientRect();
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+            ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+            btn.appendChild(ripple);
+            ripple.addEventListener('animationend', () => ripple.remove());
+        });
+
+        // ══════════════════════════════════════
+        //  REAL CALCULATOR ENGINE
+        // ══════════════════════════════════════
+        const opSymbols = { add: '+', sub: '\u2212', mul: '\u00D7', div: '\u00F7', pow: '^' };
+
+        function realCalc(op, a, b) {
+            switch (op) {
+                case 'add': return a + b;
+                case 'sub': return a - b;
+                case 'mul': return a * b;
+                case 'div': return b === 0 ? NaN : a / b;
+                case 'pow': return Math.pow(a, b);
+            }
+        }
+
+        function realFn(fn, x) {
+            switch (fn) {
+                case 'sin':  return Math.sin(x);
+                case 'cos':  return Math.cos(x);
+                case 'tan':  return Math.cos(x) === 0 ? NaN : Math.tan(x);
+                case 'sq':   return x * x;
+                case 'sqrt': return x < 0 ? NaN : Math.sqrt(x);
+                case 'ln':   return x <= 0 ? NaN : Math.log(x);
+                case 'log':  return x <= 0 ? NaN : Math.log10(x);
+                case 'abs':  return Math.abs(x);
+            }
+        }
+
+        function updateRealDisplay() {
+            displayResult.textContent = real.display;
+            displayExpr.textContent = real.expr;
+        }
+
+        document.getElementById('panel-real').addEventListener('click', e => {
+            const btn = e.target.closest('.calc-btn');
+            if (!btn) return;
+            const action = btn.dataset.action;
+            if (!action) return;
+
+            if (action === 'digit') {
+                if (real.freshResult) { real.display = ''; real.freshResult = false; }
+                if (real.display === '0') real.display = '';
+                real.display += btn.dataset.val;
+                updateRealDisplay();
+            }
+            else if (action === 'decimal') {
+                if (real.freshResult) { real.display = '0'; real.freshResult = false; }
+                if (!real.display.includes('.')) real.display += '.';
+                updateRealDisplay();
+            }
+            else if (action === 'negate') {
+                if (real.display !== '0') {
+                    real.display = real.display.startsWith('-') ? real.display.slice(1) : '-' + real.display;
+                }
+                updateRealDisplay();
+            }
+            else if (action === 'backspace') {
+                if (real.freshResult) return;
+                real.display = real.display.slice(0, -1) || '0';
+                updateRealDisplay();
+            }
+            else if (action === 'clear') {
+                real.display = '0';
+                real.expr = '';
+                real.prevValue = null;
+                real.pendingOp = null;
+                real.freshResult = false;
+                updateRealDisplay();
+            }
+            else if (action === 'binop') {
+                const val = parseFloat(real.display);
+                if (real.pendingOp && !real.freshResult) {
+                    const result = realCalc(real.pendingOp, real.prevValue, val);
+                    real.display = fmt(result);
+                    real.prevValue = result;
+                } else {
+                    real.prevValue = val;
+                }
+                real.pendingOp = btn.dataset.op;
+                real.expr = fmt(real.prevValue) + ' ' + opSymbols[real.pendingOp];
+                real.freshResult = true;
+                updateRealDisplay();
+            }
+            else if (action === 'equals') {
+                if (real.pendingOp) {
+                    const val = parseFloat(real.display);
+                    const result = realCalc(real.pendingOp, real.prevValue, val);
+                    const expr = real.expr + ' ' + fmt(val) + ' =';
+                    real.display = fmt(result);
+                    real.freshResult = true;
+                    showResult(expr, real.display);
+                    real.expr = '';
+                    real.pendingOp = null;
+                    real.prevValue = null;
+                }
+            }
+            else if (action === 'fn') {
+                const val = parseFloat(real.display);
+                const result = realFn(btn.dataset.fn, val);
+                const expr = btn.dataset.fn + '(' + fmt(val) + ')';
+                real.display = fmt(result);
+                real.freshResult = true;
+                showResult(expr, real.display);
+            }
+            else if (action === 'const') {
+                if (real.freshResult) { real.expr = ''; }
+                real.display = btn.dataset.val === 'pi' ? fmt(Math.PI) : fmt(Math.E);
+                real.freshResult = true;
+                updateRealDisplay();
+            }
+        });
+
+        // ══════════════════════════════════════
+        //  COMPLEX CALCULATOR
+        // ══════════════════════════════════════
+        function getC1() { return { re: parseFloat(document.getElementById('c1re').value) || 0, im: parseFloat(document.getElementById('c1im').value) || 0 }; }
+        function getC2() { return { re: parseFloat(document.getElementById('c2re').value) || 0, im: parseFloat(document.getElementById('c2im').value) || 0 }; }
+
+        const complexOps = {
+            add:  (a, b) => ({ re: a.re + b.re, im: a.im + b.im }),
+            sub:  (a, b) => ({ re: a.re - b.re, im: a.im - b.im }),
+            mul:  (a, b) => ({ re: a.re * b.re - a.im * b.im, im: a.re * b.im + a.im * b.re }),
+            div:  (a, b) => {
+                const d = b.re * b.re + b.im * b.im;
+                if (d === 0) return { re: NaN, im: NaN };
+                return { re: (a.re * b.re + a.im * b.im) / d, im: (a.im * b.re - a.re * b.im) / d };
+            },
+            mod:  (a) => ({ re: Math.sqrt(a.re * a.re + a.im * a.im), im: 0, scalar: true }),
+            arg:  (a) => ({ re: Math.atan2(a.im, a.re), im: 0, scalar: true }),
+            conj: (a) => ({ re: a.re, im: -a.im }),
+            sq:   (a) => ({ re: a.re * a.re - a.im * a.im, im: 2 * a.re * a.im })
+        };
+
+        const complexExprLabels = {
+            add: 'z\u2081 + z\u2082', sub: 'z\u2081 \u2212 z\u2082',
+            mul: 'z\u2081 \u00D7 z\u2082', div: 'z\u2081 \u00F7 z\u2082',
+            mod: '|z\u2081|', arg: 'arg(z\u2081)', conj: 'conj(z\u2081)', sq: 'z\u2081\u00B2'
+        };
+
+        document.getElementById('panel-complex').addEventListener('click', e => {
+            const btn = e.target.closest('[data-cop]');
+            if (!btn) return;
+            const op = btn.dataset.cop;
+            const z1 = getC1(), z2 = getC2();
+            const unary = ['mod', 'arg', 'conj', 'sq'].includes(op);
+            const result = unary ? complexOps[op](z1) : complexOps[op](z1, z2);
+            const rStr = result.scalar ? fmt(result.re) : fmtComplex(result.re, result.im);
+            showResult(complexExprLabels[op], rStr);
+            drawComplexPlane(z1, result.scalar ? null : result);
+        });
+
+        // Complex plane visualization
+        const complexCanvas = document.getElementById('complexPlane');
+
+        function drawComplexPlane(z1, z2) {
+            if (!z1) z1 = getC1();
+            const ctx = complexCanvas.getContext('2d');
+            const w = complexCanvas.width = complexCanvas.offsetWidth * (window.devicePixelRatio || 1);
+            const h = complexCanvas.height = complexCanvas.offsetHeight * (window.devicePixelRatio || 1);
+            ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+            const dw = complexCanvas.offsetWidth, dh = complexCanvas.offsetHeight;
+
+            ctx.fillStyle = '#06060e';
+            ctx.fillRect(0, 0, dw, dh);
+
+            // Determine scale
+            const points = [z1];
+            if (z2) points.push(z2);
+            let maxR = 2;
+            for (const p of points) maxR = Math.max(maxR, Math.abs(p.re) * 1.5, Math.abs(p.im) * 1.5);
+
+            const cx = dw / 2, cy = dh / 2;
+            const scale = Math.min(dw, dh) / (2 * maxR) * 0.8;
+
+            // Grid
+            ctx.strokeStyle = '#1a1a3a';
+            ctx.lineWidth = 0.5;
+            const step = Math.pow(10, Math.floor(Math.log10(maxR)));
+            for (let v = -maxR; v <= maxR; v += step) {
+                const sx = cx + v * scale, sy = cy - v * scale;
+                ctx.beginPath(); ctx.moveTo(sx, 0); ctx.lineTo(sx, dh); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0, sy); ctx.lineTo(dw, sy); ctx.stroke();
+            }
+
+            // Axes
+            ctx.strokeStyle = '#333366';
+            ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(dw, cy); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, dh); ctx.stroke();
+
+            // Labels
+            ctx.fillStyle = '#555588';
+            ctx.font = '10px sans-serif';
+            ctx.fillText('Re', dw - 18, cy - 5);
+            ctx.fillText('Im', cx + 5, 12);
+
+            // Plot points
+            function plotPoint(z, color, label) {
+                const px = cx + z.re * scale;
+                const py = cy - z.im * scale;
+                // Line from origin
+                ctx.strokeStyle = color + '44';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([4, 4]);
+                ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
+                ctx.setLineDash([]);
+                // Point
+                ctx.beginPath();
+                ctx.arc(px, py, 5, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+                // Glow
+                ctx.beginPath();
+                ctx.arc(px, py, 10, 0, Math.PI * 2);
+                ctx.fillStyle = color + '33';
+                ctx.fill();
+                // Label
+                ctx.fillStyle = color;
+                ctx.font = '11px monospace';
+                ctx.fillText(label, px + 10, py - 8);
+            }
+
+            plotPoint(z1, '#b48ead', 'z\u2081 = ' + fmtComplex(z1.re, z1.im));
+            if (z2) plotPoint(z2, '#a3be8c', 'result = ' + fmtComplex(z2.re, z2.im));
+        }
+
+        // ══════════════════════════════════════
+        //  MODULAR CALCULATOR
+        // ══════════════════════════════════════
+        function getModInputs() {
+            return {
+                n: parseInt(document.getElementById('modN').value) || 7,
+                a: parseInt(document.getElementById('modA').value) || 0,
+                b: parseInt(document.getElementById('modB').value) || 0
+            };
+        }
+
+        function mod(a, n) { return ((a % n) + n) % n; }
+
+        function modPow(base, exp, n) {
+            if (n === 1) return 0;
+            let result = 1;
+            base = mod(base, n);
+            exp = Math.max(0, Math.floor(exp));
+            while (exp > 0) {
+                if (exp % 2 === 1) result = (result * base) % n;
+                exp = Math.floor(exp / 2);
+                base = (base * base) % n;
+            }
+            return result;
+        }
+
+        function extgcd(a, b) {
+            if (a === 0) return { g: b, x: 0, y: 1 };
+            const r = extgcd(b % a, a);
+            return { g: r.g, x: r.y - Math.floor(b / a) * r.x, y: r.x };
+        }
+
+        function modInverse(a, n) {
+            const { g, x } = extgcd(mod(a, n), n);
+            if (g !== 1) return null;
+            return mod(x, n);
+        }
+
+        function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b]; } return a; }
+
+        document.getElementById('panel-modular').addEventListener('click', e => {
+            const btn = e.target.closest('[data-mop]');
+            if (!btn) return;
+            const { n, a, b } = getModInputs();
+            const op = btn.dataset.mop;
+            let result, expr;
+            switch (op) {
+                case 'add': result = mod(a + b, n); expr = `(${a} + ${b}) mod ${n}`; break;
+                case 'sub': result = mod(a - b, n); expr = `(${a} \u2212 ${b}) mod ${n}`; break;
+                case 'mul': result = mod(a * b, n); expr = `(${a} \u00D7 ${b}) mod ${n}`; break;
+                case 'pow': result = modPow(a, b, n); expr = `${a}^${b} mod ${n}`; break;
+                case 'inv':
+                    const inv = modInverse(a, n);
+                    result = inv !== null ? inv : 'no inverse';
+                    expr = `${a}\u207B\u00B9 mod ${n}`;
+                    break;
+                case 'gcd': result = gcd(a, n); expr = `gcd(${a}, ${n})`; break;
+            }
+            showResult(expr, String(result));
+        });
+
+        // ══════════════════════════════════════
+        //  MATRIX CALCULATOR
+        // ══════════════════════════════════════
+        let matrixSize = 2;
+
+        function buildMatrixInputs() {
+            const container = document.getElementById('matrixInputs');
+            const n = matrixSize;
+            const makeGrid = (label) => {
+                let html = `<div class="matrix-block"><div class="field-label">${label}</div><div class="matrix-bracket"><span class="bracket">[</span><div class="matrix-grid size-${n}">`;
+                for (let i = 0; i < n * n; i++) {
+                    html += `<input type="number" step="any" value="0" data-mat="${label.toLowerCase()}" data-idx="${i}">`;
+                }
+                html += `</div><span class="bracket">]</span></div></div>`;
+                return html;
+            };
+            container.innerHTML = makeGrid('A') + makeGrid('B');
+        }
+
+        function getMatrix(label) {
+            const n = matrixSize;
+            const inputs = document.querySelectorAll(`input[data-mat="${label}"]`);
+            const m = [];
+            for (let i = 0; i < n; i++) {
+                m[i] = [];
+                for (let j = 0; j < n; j++) {
+                    m[i][j] = parseFloat(inputs[i * n + j].value) || 0;
+                }
+            }
+            return m;
+        }
+
+        function matAdd(a, b) {
+            const n = a.length;
+            return a.map((row, i) => row.map((v, j) => v + b[i][j]));
+        }
+
+        function matMul(a, b) {
+            const n = a.length;
+            const r = Array.from({ length: n }, () => Array(n).fill(0));
+            for (let i = 0; i < n; i++)
+                for (let j = 0; j < n; j++)
+                    for (let k = 0; k < n; k++)
+                        r[i][j] += a[i][k] * b[k][j];
+            return r;
+        }
+
+        function matDet(m) {
+            const n = m.length;
+            if (n === 1) return m[0][0];
+            if (n === 2) return m[0][0] * m[1][1] - m[0][1] * m[1][0];
+            let det = 0;
+            for (let j = 0; j < n; j++) {
+                const sub = m.slice(1).map(row => [...row.slice(0, j), ...row.slice(j + 1)]);
+                det += (j % 2 === 0 ? 1 : -1) * m[0][j] * matDet(sub);
+            }
+            return det;
+        }
+
+        function matTranspose(m) {
+            const n = m.length;
+            return m[0].map((_, j) => m.map(row => row[j]));
+        }
+
+        function matInverse(m) {
+            const n = m.length;
+            const det = matDet(m);
+            if (det === 0) return null;
+            if (n === 2) {
+                return [
+                    [m[1][1] / det, -m[0][1] / det],
+                    [-m[1][0] / det, m[0][0] / det]
+                ];
+            }
+            // Cofactor method for 3x3
+            const cofactors = [];
+            for (let i = 0; i < n; i++) {
+                cofactors[i] = [];
+                for (let j = 0; j < n; j++) {
+                    const sub = m.filter((_, ri) => ri !== i).map(row => row.filter((_, ci) => ci !== j));
+                    cofactors[i][j] = ((i + j) % 2 === 0 ? 1 : -1) * matDet(sub);
+                }
+            }
+            const adj = matTranspose(cofactors);
+            return adj.map(row => row.map(v => v / det));
+        }
+
+        function matTrace(m) {
+            let t = 0;
+            for (let i = 0; i < m.length; i++) t += m[i][i];
+            return t;
+        }
+
+        function fmtMatrix(m) {
+            return '[' + m.map(row => '[' + row.map(v => fmt(v)).join(', ') + ']').join(', ') + ']';
+        }
+
+        // Size selector
+        document.querySelectorAll('[data-msize]').forEach(opt => {
+            opt.addEventListener('click', () => {
+                document.querySelectorAll('[data-msize]').forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+                matrixSize = parseInt(opt.dataset.msize);
+                buildMatrixInputs();
+            });
+        });
+
+        document.getElementById('panel-matrix').addEventListener('click', e => {
+            const btn = e.target.closest('[data-matop]');
+            if (!btn) return;
+            const A = getMatrix('a');
+            const B = getMatrix('b');
+            const op = btn.dataset.matop;
+            let result, expr;
+            switch (op) {
+                case 'add':
+                    result = fmtMatrix(matAdd(A, B));
+                    expr = 'A + B';
+                    break;
+                case 'mul':
+                    result = fmtMatrix(matMul(A, B));
+                    expr = 'A \u00D7 B';
+                    break;
+                case 'det':
+                    result = fmt(matDet(A));
+                    expr = 'det(A)';
+                    break;
+                case 'trans':
+                    result = fmtMatrix(matTranspose(A));
+                    expr = 'A\u1D40';
+                    break;
+                case 'inv':
+                    const inv = matInverse(A);
+                    result = inv ? fmtMatrix(inv) : 'singular (no inverse)';
+                    expr = 'A\u207B\u00B9';
+                    break;
+                case 'trace':
+                    result = fmt(matTrace(A));
+                    expr = 'tr(A)';
+                    break;
+            }
+            showResult(expr, result);
+        });
+
+        // ══════════════════════════════════════
+        //  QUATERNION CALCULATOR
+        // ══════════════════════════════════════
+        function getQ1() {
+            return [
+                parseFloat(document.getElementById('q1a').value) || 0,
+                parseFloat(document.getElementById('q1b').value) || 0,
+                parseFloat(document.getElementById('q1c').value) || 0,
+                parseFloat(document.getElementById('q1d').value) || 0
+            ];
+        }
+        function getQ2() {
+            return [
+                parseFloat(document.getElementById('q2a').value) || 0,
+                parseFloat(document.getElementById('q2b').value) || 0,
+                parseFloat(document.getElementById('q2c').value) || 0,
+                parseFloat(document.getElementById('q2d').value) || 0
+            ];
+        }
+
+        const quatOps = {
+            add: ([a,b,c,d], [e,f,g,h]) => [a+e, b+f, c+g, d+h],
+            sub: ([a,b,c,d], [e,f,g,h]) => [a-e, b-f, c-g, d-h],
+            mul: ([a,b,c,d], [e,f,g,h]) => [
+                a*e - b*f - c*g - d*h,
+                a*f + b*e + c*h - d*g,
+                a*g - b*h + c*e + d*f,
+                a*h + b*g - c*f + d*e
+            ],
+            conj: ([a,b,c,d]) => [a, -b, -c, -d],
+            norm: ([a,b,c,d]) => [Math.sqrt(a*a + b*b + c*c + d*d), 0, 0, 0],
+            inv: ([a,b,c,d]) => {
+                const n2 = a*a + b*b + c*c + d*d;
+                if (n2 === 0) return [NaN, NaN, NaN, NaN];
+                return [a/n2, -b/n2, -c/n2, -d/n2];
+            }
+        };
+
+        const quatExprLabels = {
+            add: 'q\u2081 + q\u2082', sub: 'q\u2081 \u2212 q\u2082', mul: 'q\u2081 \u00D7 q\u2082',
+            conj: 'conj(q\u2081)', norm: '\u2016q\u2081\u2016', inv: 'q\u2081\u207B\u00B9'
+        };
+
+        document.getElementById('panel-quaternion').addEventListener('click', e => {
+            const btn = e.target.closest('[data-qop]');
+            if (!btn) return;
+            const op = btn.dataset.qop;
+            const q1 = getQ1(), q2 = getQ2();
+            const unary = ['conj', 'norm', 'inv'].includes(op);
+            const r = unary ? quatOps[op](q1) : quatOps[op](q1, q2);
+            const rStr = op === 'norm' ? fmt(r[0]) : fmtQuat(...r);
+            showResult(quatExprLabels[op], rStr);
+        });
+
+        // ══════════════════════════════════════
+        //  BOOLEAN CALCULATOR
+        // ══════════════════════════════════════
+        function setupToggle(id, valId) {
+            const toggle = document.getElementById(id);
+            const valSpan = document.getElementById(valId);
+            toggle.addEventListener('click', () => {
+                const newVal = toggle.dataset.val === '0' ? '1' : '0';
+                toggle.dataset.val = newVal;
+                toggle.classList.toggle('on', newVal === '1');
+                valSpan.textContent = newVal;
+                valSpan.className = 'toggle-value ' + (newVal === '1' ? 'val-1' : 'val-0');
+                buildTruthTable();
+            });
+        }
+        setupToggle('boolA', 'boolAVal');
+        setupToggle('boolB', 'boolBVal');
+
+        function getBools() {
+            return {
+                a: parseInt(document.getElementById('boolA').dataset.val),
+                b: parseInt(document.getElementById('boolB').dataset.val)
+            };
+        }
+
+        const boolOps = {
+            and:  (a, b) => a & b,
+            or:   (a, b) => a | b,
+            xor:  (a, b) => a ^ b,
+            not:  (a) => a ? 0 : 1,
+            nand: (a, b) => (a & b) ? 0 : 1,
+            nor:  (a, b) => (a | b) ? 0 : 1,
+            xnor: (a, b) => (a ^ b) ? 0 : 1,
+            impl: (a, b) => (!a || b) ? 1 : 0
+        };
+
+        const boolExprLabels = {
+            and: 'A AND B', or: 'A OR B', xor: 'A XOR B', not: 'NOT A',
+            nand: 'A NAND B', nor: 'A NOR B', xnor: 'A XNOR B', impl: 'A \u2192 B'
+        };
+
+        document.getElementById('panel-boolean').addEventListener('click', e => {
+            const btn = e.target.closest('[data-bop]');
+            if (!btn) return;
+            const op = btn.dataset.bop;
+            const { a, b } = getBools();
+            const result = op === 'not' ? boolOps[op](a) : boolOps[op](a, b);
+            showResult(boolExprLabels[op], String(result));
+        });
+
+        function buildTruthTable() {
+            const tbody = document.querySelector('#truthTable tbody');
+            let html = '';
+            for (let a = 0; a <= 1; a++) {
+                for (let b = 0; b <= 1; b++) {
+                    const cls = v => v ? 'val-1' : 'val-0';
+                    const and = boolOps.and(a, b), or = boolOps.or(a, b);
+                    const xor = boolOps.xor(a, b), nand = boolOps.nand(a, b);
+                    html += `<tr>
+                        <td class="${cls(a)}">${a}</td><td class="${cls(b)}">${b}</td>
+                        <td class="${cls(and)}">${and}</td><td class="${cls(or)}">${or}</td>
+                        <td class="${cls(xor)}">${xor}</td><td class="${cls(nand)}">${nand}</td>
+                    </tr>`;
+                }
+            }
+            tbody.innerHTML = html;
+        }
+
+        // ══════════════════════════════════════
+        //  TROPICAL CALCULATOR
+        // ══════════════════════════════════════
+        let tropConvention = 'min';
+
+        document.querySelectorAll('[data-tconv]').forEach(opt => {
+            opt.addEventListener('click', () => {
+                document.querySelectorAll('[data-tconv]').forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+                tropConvention = opt.dataset.tconv;
+            });
+        });
+
+        function getTropInputs() {
+            return {
+                a: parseFloat(document.getElementById('tropA').value),
+                b: parseFloat(document.getElementById('tropB').value)
+            };
+        }
+
+        document.getElementById('panel-tropical').addEventListener('click', e => {
+            const btn = e.target.closest('[data-top]');
+            if (!btn) return;
+            const { a, b } = getTropInputs();
+            const op = btn.dataset.top;
+            let result, expr;
+            const conv = tropConvention === 'min' ? 'min' : 'max';
+            switch (op) {
+                case 'tadd':
+                    result = tropConvention === 'min' ? Math.min(a, b) : Math.max(a, b);
+                    expr = `${fmt(a)} \u2295 ${fmt(b)} = ${conv}(${fmt(a)}, ${fmt(b)})`;
+                    break;
+                case 'tmul':
+                    result = a + b;
+                    expr = `${fmt(a)} \u2297 ${fmt(b)} = ${fmt(a)} + ${fmt(b)}`;
+                    break;
+                case 'tpow':
+                    // Tropical power: a^⊗n = a ⊗ a ⊗ ... ⊗ a (n times) = n * a (conventional multiplication)
+                    result = b * a;
+                    expr = `${fmt(a)}\u2297${fmt(b)} = ${fmt(b)} \u00D7 ${fmt(a)}`;
+                    break;
+            }
+            showResult(expr, fmt(result));
+        });
+
+        // ══════════════════════════════════════
+        //  DUAL NUMBER CALCULATOR
+        // ══════════════════════════════════════
+        function getD1() { return { a: parseFloat(document.getElementById('d1a').value) || 0, b: parseFloat(document.getElementById('d1b').value) || 0 }; }
+        function getD2() { return { a: parseFloat(document.getElementById('d2a').value) || 0, b: parseFloat(document.getElementById('d2b').value) || 0 }; }
+
+        const dualOps = {
+            add: (x, y) => ({ a: x.a + y.a, b: x.b + y.b }),
+            sub: (x, y) => ({ a: x.a - y.a, b: x.b - y.b }),
+            mul: (x, y) => ({ a: x.a * y.a, b: x.a * y.b + x.b * y.a }),
+            div: (x, y) => {
+                if (y.a === 0) return { a: NaN, b: NaN };
+                return { a: x.a / y.a, b: (x.b * y.a - x.a * y.b) / (y.a * y.a) };
+            },
+            sin: (x) => ({ a: Math.sin(x.a), b: x.b * Math.cos(x.a) }),
+            cos: (x) => ({ a: Math.cos(x.a), b: -x.b * Math.sin(x.a) }),
+            exp: (x) => ({ a: Math.exp(x.a), b: x.b * Math.exp(x.a) }),
+            ln:  (x) => {
+                if (x.a <= 0) return { a: NaN, b: NaN };
+                return { a: Math.log(x.a), b: x.b / x.a };
+            }
+        };
+
+        const dualExprLabels = {
+            add: 'z\u2081 + z\u2082', sub: 'z\u2081 \u2212 z\u2082',
+            mul: 'z\u2081 \u00D7 z\u2082', div: 'z\u2081 \u00F7 z\u2082',
+            sin: 'sin(z\u2081)', cos: 'cos(z\u2081)', exp: 'e^z\u2081', ln: 'ln(z\u2081)'
+        };
+
+        document.getElementById('panel-dual').addEventListener('click', e => {
+            const btn = e.target.closest('[data-dop]');
+            if (!btn) return;
+            const op = btn.dataset.dop;
+            const z1 = getD1(), z2 = getD2();
+            const unary = ['sin', 'cos', 'exp', 'ln'].includes(op);
+            const r = unary ? dualOps[op](z1) : dualOps[op](z1, z2);
+            showResult(dualExprLabels[op], fmtDual(r.a, r.b));
+        });
+
+        // ══════════════════════════════════════
+        //  KEYBOARD SUPPORT
+        // ══════════════════════════════════════
+        document.addEventListener('keydown', e => {
+            if (currentUniverse !== 'real') return;
+            if (e.target.tagName === 'INPUT') return;
+            const key = e.key;
+            if (/^[0-9]$/.test(key)) {
+                document.querySelector(`[data-action="digit"][data-val="${key}"]`).click();
+            } else if (key === '.') {
+                document.querySelector('[data-action="decimal"]').click();
+            } else if (key === '+') {
+                document.querySelector('[data-op="add"]').click();
+            } else if (key === '-') {
+                document.querySelector('[data-op="sub"]').click();
+            } else if (key === '*') {
+                document.querySelector('[data-op="mul"]').click();
+            } else if (key === '/') {
+                e.preventDefault();
+                document.querySelector('[data-op="div"]').click();
+            } else if (key === 'Enter' || key === '=') {
+                document.querySelector('[data-action="equals"]').click();
+            } else if (key === 'Backspace') {
+                document.querySelector('[data-action="backspace"]').click();
+            } else if (key === 'Escape' || key === 'c' || key === 'C') {
+                document.querySelector('[data-action="clear"]').click();
+            }
+        });
+
+        // ══════════════════════════════════════
+        //  INIT
+        // ══════════════════════════════════════
+        buildMatrixInputs();
+        buildTruthTable();
+        drawComplexPlane();
+    })();
+    </script>
+</body>
+</html>

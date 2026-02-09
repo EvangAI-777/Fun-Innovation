@@ -1,10 +1,10 @@
-.PHONY: test test-geovox test-roblox test-originals test-automuse test-mcstudio install clean
+.PHONY: test test-geovox test-roblox test-originals test-automuse test-mcstudio test-omniversal install clean
 
 GEOVOX_DIR = Minecraft Innovations/GeoVox
 AUTOMUSE_DIR = Audio Innovations/AutoMuse
 MCSTUDIO_DIR = Minecraft Innovations/Minecraft Studio
 
-test: test-geovox test-roblox test-originals test-automuse test-mcstudio
+test: test-geovox test-roblox test-originals test-automuse test-mcstudio test-omniversal
 
 test-geovox:
 	cd "$(GEOVOX_DIR)" && pytest ../../tests/geovox/ -v
@@ -20,6 +20,9 @@ test-automuse:
 
 test-mcstudio:
 	cd "$(MCSTUDIO_DIR)" && python -m pytest ../../tests/mcstudio/ -v
+
+test-omniversal:
+	pytest tests/omniversal/ -v
 
 install:
 	cd "$(GEOVOX_DIR)" && pip install -e ".[all]" pytest
