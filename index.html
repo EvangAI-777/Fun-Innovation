@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun-Innovation</title>
+    <meta name="description" content="Collaborative human-AI projects: Omniversal Calculator, generative music, ecosystem simulations, and more.">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #06060e;
+            color: #e0e0f0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        canvas#stars {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0; pointer-events: none;
+        }
+        .page { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 40px 20px 60px; }
+
+        .hero { text-align: center; padding: 40px 0 30px; }
+        .hero h1 {
+            font-size: 2.2em; font-weight: 700; letter-spacing: 3px;
+            background: linear-gradient(135deg, #58a6ff, #b48ead, #ebcb8b, #c084fc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p { color: #7878a0; font-size: 0.9em; margin-top: 8px; letter-spacing: 1px; }
+
+        .section-label {
+            font-size: 0.72em; color: #7878a0; text-transform: uppercase;
+            letter-spacing: 2px; margin: 36px 0 14px; padding-bottom: 6px;
+            border-bottom: 1px solid #1a1a3a;
+        }
+
+        .card {
+            display: block;
+            background: #0a0a16;
+            border: 1px solid #252550;
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin-bottom: 12px;
+            text-decoration: none;
+            color: #e0e0f0;
+            transition: all 0.25s ease;
+        }
+        .card:hover {
+            border-color: var(--accent, #58a6ff);
+            box-shadow: 0 0 24px rgba(88, 166, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        .card-title {
+            font-size: 1.15em; font-weight: 600;
+            color: var(--accent, #58a6ff);
+            margin-bottom: 4px;
+        }
+        .card-desc { font-size: 0.85em; color: #9898b8; line-height: 1.5; }
+        .card-tag {
+            display: inline-block; font-size: 0.7em;
+            padding: 2px 8px; border-radius: 4px;
+            background: rgba(88, 166, 255, 0.12);
+            color: var(--accent, #58a6ff);
+            margin-top: 8px; letter-spacing: 0.5px;
+        }
+
+        .featured {
+            border-color: #c084fc44;
+            background: linear-gradient(135deg, #0a0a16, #12102a);
+        }
+        .featured:hover {
+            border-color: #c084fc;
+            box-shadow: 0 0 30px rgba(192, 132, 252, 0.2);
+        }
+        .featured .card-title { font-size: 1.3em; }
+
+        .footer {
+            text-align: center; padding: 40px 0 0;
+            font-size: 0.78em; color: #444468;
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 1.5em; }
+            .card { padding: 16px 18px; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="stars"></canvas>
+    <div class="page">
+        <div class="hero">
+            <h1>FUN-INNOVATION</h1>
+            <p>Collaborative projects between human and AI</p>
+        </div>
+
+        <div class="section-label">Featured</div>
+
+        <a class="card featured" href="Omniversal%20Mathematics/Omniversal%20Calculator/omniversal-calculator.html" style="--accent: #c084fc;">
+            <div class="card-title">Omniversal Calculator</div>
+            <div class="card-desc">Nine mathematical universes in one interface. Real, complex, modular, matrix, quaternion, boolean, tropical, dual numbers, and omnidirectional transforms. Genuine math engines, animated starfield, fully responsive.</div>
+            <span class="card-tag">9 universes</span>
+            <span class="card-tag">137 tests</span>
+            <span class="card-tag">zero dependencies</span>
+        </a>
+
+        <div class="section-label">Browser Apps</div>
+
+        <a class="card" href="INVALID_REQUEST/HTML%20Files/ecosystem.html" style="--accent: #3fb950;">
+            <div class="card-title">Emergent Ecosystem</div>
+            <div class="card-desc">Life simulation with plants, herbivores, and predators creating complex behavior from simple rules.</div>
+            <span class="card-tag">simulation</span>
+        </a>
+
+        <a class="card" href="INVALID_REQUEST/HTML%20Files/flowfield.html" style="--accent: #8be9fd;">
+            <div class="card-title">Flow Field</div>
+            <div class="card-desc">Perlin noise flow field with thousands of particles creating organic visual patterns.</div>
+            <span class="card-tag">generative art</span>
+        </a>
+
+        <a class="card" href="INVALID_REQUEST/HTML%20Files/generative-music.html" style="--accent: #ebcb8b;">
+            <div class="card-title">Generative Music</div>
+            <div class="card-desc">Algorithmic synthesizer producing endless, never-repeating compositions.</div>
+            <span class="card-tag">audio</span>
+        </a>
+
+        <a class="card" href="INVALID_REQUEST/HTML%20Files/academic-planner.html" style="--accent: #58a6ff;">
+            <div class="card-title">Academic Planner</div>
+            <div class="card-desc">Dynamic schedule planner with OCR document scanning.</div>
+            <span class="card-tag">productivity</span>
+        </a>
+
+        <a class="card" href="INVALID_REQUEST/HTML%20Files/notes-organizer.html" style="--accent: #d08770;">
+            <div class="card-title">Notes Organizer</div>
+            <div class="card-desc">Rich text notes with folders, markdown/HTML editing, and import/export.</div>
+            <span class="card-tag">productivity</span>
+        </a>
+
+        <div class="section-label">More Projects (Code)</div>
+
+        <div class="card" style="--accent: #88c0d0; cursor: default;">
+            <div class="card-title">AutoMuse</div>
+            <div class="card-desc">Conversational DAW where the primary interface is a dialogue with a music AI persona. Music theory engine with scales, chords, progressions, voicings, and MIDI export.</div>
+            <span class="card-tag">python</span>
+            <span class="card-tag">197 tests</span>
+        </div>
+
+        <div class="card" style="--accent: #a3be8c; cursor: default;">
+            <div class="card-title">Minecraft Studio + GeoVox</div>
+            <div class="card-desc">A visual IDE for Minecraft mod creation and a pipeline for importing real-world 3D data into playable Minecraft worlds.</div>
+            <span class="card-tag">python</span>
+            <span class="card-tag">110 tests</span>
+        </div>
+
+        <div class="card" style="--accent: #b48ead; cursor: default;">
+            <div class="card-title">Roblox Innovations</div>
+            <div class="card-desc">Seven projects reimagined for Roblox Studio -- 3D multiplayer experiences built with stock Luau.</div>
+            <span class="card-tag">luau</span>
+            <span class="card-tag">102 tests</span>
+        </div>
+
+        <div class="footer">Built by Claude (Opus) and Charlie. Still building.</div>
+    </div>
+
+    <script>
+    (() => {
+        const c = document.getElementById('stars');
+        const ctx = c.getContext('2d');
+        let stars = [];
+        function init() {
+            c.width = innerWidth; c.height = innerHeight;
+            stars = [];
+            const n = Math.floor((c.width * c.height) / 7000);
+            for (let i = 0; i < n; i++) stars.push({
+                x: Math.random() * c.width, y: Math.random() * c.height,
+                r: Math.random() * 1.1 + 0.3, a: Math.random(), da: (Math.random() - 0.5) * 0.008
+            });
+        }
+        function draw() {
+            ctx.clearRect(0, 0, c.width, c.height);
+            for (const s of stars) {
+                s.a += s.da;
+                if (s.a > 1 || s.a < 0.1) s.da *= -1;
+                s.a = Math.max(0.1, Math.min(1, s.a));
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(200,200,240,${s.a * 0.5})`;
+                ctx.fill();
+            }
+            requestAnimationFrame(draw);
+        }
+        init(); draw();
+        addEventListener('resize', init);
+    })();
+    </script>
+</body>
+</html>

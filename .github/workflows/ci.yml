@@ -48,3 +48,16 @@ jobs:
         run: pip install pytest
       - name: Run original project tests
         run: pytest tests/invalid_request/ -v
+
+  omniversal:
+    name: Omniversal Calculator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pytest
+        run: pip install pytest
+      - name: Run omniversal tests
+        run: pytest tests/omniversal/ -v
