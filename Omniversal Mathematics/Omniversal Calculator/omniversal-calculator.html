@@ -122,6 +122,61 @@
         [data-universe="boolean"]    { --accent: #d8dee9; --accent-dim: rgba(216,222,233,0.15); --accent-glow: rgba(216,222,233,0.35); }
         [data-universe="tropical"]   { --accent: #ebcb8b; --accent-dim: rgba(235,203,139,0.15); --accent-glow: rgba(235,203,139,0.35); }
         [data-universe="dual"]       { --accent: #8fbcbb; --accent-dim: rgba(143,188,187,0.15); --accent-glow: rgba(143,188,187,0.35); }
+        [data-universe="omnidirectional"] { --accent: #c084fc; --accent-dim: rgba(192,132,252,0.15); --accent-glow: rgba(192,132,252,0.35); }
+
+        /* ── Omni-specific styles ── */
+        .omni-expression {
+            padding: 12px 16px;
+            background: var(--bg-void);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-family: 'Courier New', monospace;
+            font-size: 1.05em;
+            color: var(--accent);
+            min-height: 48px;
+            word-break: break-all;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+        .omni-expression .omni-origin { color: var(--text-primary); }
+        .omni-expression .omni-flow { color: var(--text-secondary); margin: 0 4px; }
+        .omni-expression .omni-op { color: var(--accent); }
+        .omni-expression .omni-param { color: #ebcb8b; }
+        .omni-state-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 6px;
+            margin: 12px 0;
+        }
+        .omni-state-item {
+            padding: 8px 10px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 0.78em;
+        }
+        .omni-state-label {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+        .omni-state-value {
+            font-family: 'Courier New', monospace;
+            color: var(--accent);
+            font-size: 1.15em;
+            font-weight: 600;
+        }
+        .omni-vis {
+            width: 100%;
+            height: 160px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--bg-void);
+            margin-top: 8px;
+        }
 
         /* ── Calculator Container ── */
         .calc-container {
@@ -496,7 +551,7 @@
         <!-- Header -->
         <div class="header">
             <h1>OMNIVERSAL CALCULATOR</h1>
-            <div class="tagline">Eight mathematical universes. One interface.</div>
+            <div class="tagline">Nine mathematical universes. One interface.</div>
         </div>
 
         <!-- Universe Selector -->
@@ -532,6 +587,10 @@
             <div class="universe-orb" data-uni="dual" title="Dual Numbers">
                 <span>&Dopf;</span>
                 <span class="orb-label">Dual</span>
+            </div>
+            <div class="universe-orb" data-uni="omnidirectional" title="Omnidirectional Transforms">
+                <span>&Omega;</span>
+                <span class="orb-label">Omni</span>
             </div>
         </div>
 
@@ -807,6 +866,60 @@
                 </div>
             </div>
 
+            <!-- ═══ OMNIDIRECTIONAL ═══ -->
+            <div class="universe-panel" id="panel-omnidirectional">
+                <div class="field-group">
+                    <div class="field-row">
+                        <div style="flex:1">
+                            <div class="field-label">Origin (&alpha;)</div>
+                            <input class="field-input" id="omniOrigin" type="text" placeholder="Earth" value="Earth">
+                        </div>
+                        <div style="flex:1">
+                            <div class="field-label">Destination (&omega;)</div>
+                            <input class="field-input" id="omniDest" type="text" placeholder="Celestial_Realm" value="Celestial_Realm">
+                        </div>
+                    </div>
+                </div>
+                <div class="field-group">
+                    <div class="field-label">Parameter (for &oplus; &ominus; &#10226; &#10227;)</div>
+                    <input class="field-input" id="omniParam" type="number" value="1" min="0" step="any" style="max-width:120px">
+                </div>
+                <div class="field-label">Expression</div>
+                <div class="omni-expression" id="omniExpr">
+                    <span class="omni-origin" id="omniExprOrigin">Earth</span>
+                    <span class="omni-flow">&#10239;</span>
+                    <span id="omniExprOps"></span>
+                    <span class="omni-flow">&#10239;</span>
+                    <span class="omni-origin" id="omniExprDest">Celestial_Realm</span>
+                </div>
+                <div class="btn-grid cols-4">
+                    <button class="calc-btn action" data-omniop="ascend">&oplus; Ascend</button>
+                    <button class="calc-btn action" data-omniop="descend">&ominus; Descend</button>
+                    <button class="calc-btn action" data-omniop="rotateCW">&#10226; CW</button>
+                    <button class="calc-btn action" data-omniop="rotateCCW">&#10227; CCW</button>
+                    <button class="calc-btn op" data-omniop="reverse">&harr; Reverse</button>
+                    <button class="calc-btn op" data-omniop="wave">&sim; Wave</button>
+                    <button class="calc-btn op" data-omniop="intersect">&boxtimes; Intersect</button>
+                    <button class="calc-btn op" data-omniop="parallel">&parallel; Parallel</button>
+                    <button class="calc-btn op" data-omniop="orthogonal">&perp; Ortho</button>
+                    <button class="calc-btn op" data-omniop="boundary">&#9708; Boundary</button>
+                    <button class="calc-btn op" data-omniop="recurse">&infin; Recurse</button>
+                    <button class="calc-btn op" data-omniop="void">&empty; Void</button>
+                    <button class="calc-btn danger wide" data-omniop="undo">&larr; Undo</button>
+                    <button class="calc-btn danger wide" data-omniop="clear">Clear Sequence</button>
+                </div>
+                <div class="field-label" style="margin-top:14px">Traversal State</div>
+                <div class="omni-state-grid" id="omniStateGrid">
+                    <div class="omni-state-item"><div class="omni-state-label">Dimension</div><div class="omni-state-value" id="osD">0</div></div>
+                    <div class="omni-state-item"><div class="omni-state-label">Angle</div><div class="omni-state-value" id="osA">0&deg;</div></div>
+                    <div class="omni-state-item"><div class="omni-state-label">Polarity</div><div class="omni-state-value" id="osP">+1</div></div>
+                    <div class="omni-state-item"><div class="omni-state-label">Wave</div><div class="omni-state-value" id="osW">expanded</div></div>
+                    <div class="omni-state-item"><div class="omni-state-label">Boundaries</div><div class="omni-state-value" id="osB">0</div></div>
+                    <div class="omni-state-item"><div class="omni-state-label">Intersections</div><div class="omni-state-value" id="osI">0</div></div>
+                </div>
+                <canvas class="omni-vis" id="omniVis"></canvas>
+            </div>
+
             <!-- History -->
             <div class="history-toggle" id="histToggle">
                 <span>History</span>
@@ -899,7 +1012,8 @@
             quaternion: { symbol: '\u210D', name: 'Quaternions',        desc: 'four-dimensional extension of complex numbers where multiplication is non-commutative' },
             boolean:    { symbol: '\uD835\uDD39', name: 'Boolean Algebra',   desc: 'logic operations on true and false values' },
             tropical:   { symbol: '\uD835\uDD4B', name: 'Tropical Semiring',  desc: 'where addition means min (or max) and multiplication means addition' },
-            dual:       { symbol: '\uD835\uDD3B', name: 'Dual Numbers',      desc: 'automatic differentiation \u2014 compute f(x) and f\u2032(x) simultaneously' }
+            dual:       { symbol: '\uD835\uDD3B', name: 'Dual Numbers',      desc: 'automatic differentiation \u2014 compute f(x) and f\u2032(x) simultaneously' },
+            omnidirectional: { symbol: '\u03A9', name: 'Omnidirectional Transforms', desc: 'movement across dimensional spaces \u2014 the meta-notation of mathematics itself' }
         };
 
         function switchUniverse(uni) {
@@ -936,6 +1050,8 @@
             if (uni === 'boolean') buildTruthTable();
             // Resize complex plane
             if (uni === 'complex') setTimeout(drawComplexPlane, 50);
+            // Render omni visualization
+            if (uni === 'omnidirectional') setTimeout(drawOmniVis, 50);
         }
 
         document.getElementById('universeBar').addEventListener('click', e => {
@@ -1666,6 +1782,263 @@
         });
 
         // ══════════════════════════════════════
+        //  OMNIDIRECTIONAL CALCULATOR
+        // ══════════════════════════════════════
+        const omniSequence = [];  // array of { op, param, symbol }
+
+        function omniDefaultState() {
+            return { d: 0, angle: 0, polarity: 1, wave: 'expanded', boundaries: 0, intersections: 0, mode: 'normal', isVoid: false };
+        }
+
+        function omniApply(state, op, param) {
+            const s = { ...state };
+            switch (op) {
+                case 'ascend':  s.d += param; break;
+                case 'descend': s.d -= param; break;
+                case 'rotateCW':  s.angle = ((s.angle + param) % 360 + 360) % 360; break;
+                case 'rotateCCW': s.angle = ((s.angle - param) % 360 + 360) % 360; break;
+                case 'reverse':  s.polarity *= -1; break;
+                case 'wave':     s.wave = s.wave === 'expanded' ? 'collapsed' : 'expanded'; break;
+                case 'intersect': s.intersections++; break;
+                case 'parallel':  s.mode = 'parallel'; break;
+                case 'orthogonal': s.mode = 'orthogonal'; break;
+                case 'boundary':  s.boundaries++; break;
+                case 'recurse':   break; // marker only
+                case 'void':     Object.assign(s, { d: 0, angle: 0, polarity: 1, wave: 'collapsed', boundaries: 0, mode: 'normal', isVoid: true }); break;
+            }
+            return s;
+        }
+
+        function omniComputeStates() {
+            const states = [omniDefaultState()];
+            for (const step of omniSequence) {
+                states.push(omniApply(states[states.length - 1], step.op, step.param));
+            }
+            return states;
+        }
+
+        const omniSymbols = {
+            ascend:     (p) => `\u2295[${p}]`,
+            descend:    (p) => `\u2296[${p}]`,
+            rotateCW:   (p) => `\u27F2[${p}\u00B0]`,
+            rotateCCW:  (p) => `\u27F3[${p}\u00B0]`,
+            reverse:    ()  => '\u21C4',
+            wave:       ()  => '\u223F',
+            intersect:  ()  => '\u22A0',
+            parallel:   ()  => '\u2225',
+            orthogonal: ()  => '\u22A5',
+            boundary:   ()  => '\u25EC',
+            recurse:    ()  => '\u221E',
+            void:       ()  => '\u2205'
+        };
+
+        function omniRenderExpr() {
+            document.getElementById('omniExprOrigin').textContent = document.getElementById('omniOrigin').value || '\u03B1';
+            document.getElementById('omniExprDest').textContent = document.getElementById('omniDest').value || '\u03C9';
+            const opsSpan = document.getElementById('omniExprOps');
+            if (omniSequence.length === 0) {
+                opsSpan.textContent = '\u2026';
+                return;
+            }
+            opsSpan.innerHTML = omniSequence.map(s => {
+                const sym = omniSymbols[s.op](s.param);
+                return `<span class="omni-op">${sym}</span>`;
+            }).join('');
+        }
+
+        function omniRenderState() {
+            const states = omniComputeStates();
+            const s = states[states.length - 1];
+            document.getElementById('osD').textContent = s.d;
+            document.getElementById('osA').innerHTML = s.angle + '\u00B0';
+            document.getElementById('osP').textContent = s.polarity > 0 ? '+1' : '\u22121';
+            document.getElementById('osW').textContent = s.wave;
+            document.getElementById('osB').textContent = s.boundaries;
+            document.getElementById('osI').textContent = s.intersections;
+
+            // Build display result
+            const origin = document.getElementById('omniOrigin').value || '\u03B1';
+            const dest = document.getElementById('omniDest').value || '\u03C9';
+            const exprStr = origin + ' \u27FF ' + omniSequence.map(s => omniSymbols[s.op](s.param)).join('') + ' \u27FF ' + dest;
+            const stateStr = `d=${s.d} \u03B8=${s.angle}\u00B0 p=${s.polarity > 0 ? '+' : '\u2212'}1 \u03C8=${s.wave} b=${s.boundaries}`;
+
+            if (omniSequence.length > 0) {
+                displayExpr.textContent = exprStr;
+                displayResult.textContent = stateStr;
+                displayResult.classList.add('fresh');
+                setTimeout(() => displayResult.classList.remove('fresh'), 400);
+            }
+        }
+
+        function drawOmniVis() {
+            const canvas = document.getElementById('omniVis');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            const w = canvas.width = canvas.offsetWidth * dpr;
+            const h = canvas.height = canvas.offsetHeight * dpr;
+            ctx.scale(dpr, dpr);
+            const dw = canvas.offsetWidth, dh = canvas.offsetHeight;
+
+            ctx.fillStyle = '#06060e';
+            ctx.fillRect(0, 0, dw, dh);
+
+            const states = omniComputeStates();
+            if (states.length < 2) {
+                ctx.fillStyle = '#333355';
+                ctx.font = '11px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('Add operations to visualize the transformation path', dw / 2, dh / 2);
+                return;
+            }
+
+            // Map states to 2D: x = step index, y = dimension level
+            // Secondary: angle shown as line direction from point, polarity as color
+            const padX = 40, padY = 30;
+            const plotW = dw - padX * 2, plotH = dh - padY * 2;
+
+            let minD = 0, maxD = 0;
+            for (const s of states) { minD = Math.min(minD, s.d); maxD = Math.max(maxD, s.d); }
+            if (minD === maxD) { minD -= 1; maxD += 1; }
+            const dRange = maxD - minD;
+
+            const stepW = plotW / Math.max(states.length - 1, 1);
+
+            // Grid
+            ctx.strokeStyle = '#151530';
+            ctx.lineWidth = 0.5;
+            for (let d = minD; d <= maxD; d++) {
+                const y = padY + plotH - ((d - minD) / dRange) * plotH;
+                ctx.beginPath(); ctx.moveTo(padX, y); ctx.lineTo(padX + plotW, y); ctx.stroke();
+                ctx.fillStyle = '#333355';
+                ctx.font = '9px monospace';
+                ctx.textAlign = 'right';
+                ctx.fillText('d=' + d, padX - 4, y + 3);
+            }
+
+            // Path
+            const points = states.map((s, i) => ({
+                x: padX + i * stepW,
+                y: padY + plotH - ((s.d - minD) / dRange) * plotH,
+                state: s
+            }));
+
+            // Draw connecting lines
+            for (let i = 0; i < points.length - 1; i++) {
+                const a = points[i], b = points[i + 1];
+                const step = omniSequence[i];
+                ctx.strokeStyle = step && step.op === 'void' ? '#bf616a44' :
+                                  step && step.op === 'boundary' ? '#ebcb8b66' : '#c084fc44';
+                ctx.lineWidth = 2;
+                if (step && step.op === 'boundary') {
+                    ctx.setLineDash([4, 4]);
+                } else {
+                    ctx.setLineDash([]);
+                }
+                ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+            }
+            ctx.setLineDash([]);
+
+            // Draw points
+            for (let i = 0; i < points.length; i++) {
+                const pt = points[i];
+                const s = pt.state;
+                const color = s.polarity > 0 ? '#c084fc' : '#bf616a';
+                const radius = s.wave === 'expanded' ? 6 : 4;
+
+                // Glow
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, radius + 4, 0, Math.PI * 2);
+                ctx.fillStyle = color + '22';
+                ctx.fill();
+
+                // Point
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, radius, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+
+                // Angle indicator (small line from point showing rotation)
+                if (s.angle !== 0) {
+                    const rad = (s.angle * Math.PI) / 180;
+                    ctx.strokeStyle = color + '88';
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.moveTo(pt.x, pt.y);
+                    ctx.lineTo(pt.x + Math.cos(rad) * 12, pt.y - Math.sin(rad) * 12);
+                    ctx.stroke();
+                }
+
+                // Intersection marker
+                if (i > 0 && omniSequence[i - 1] && omniSequence[i - 1].op === 'intersect') {
+                    ctx.strokeStyle = '#ebcb8b';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.arc(pt.x, pt.y, radius + 8, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+            }
+
+            // Origin/destination labels
+            ctx.font = '10px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#c084fc';
+            const originName = document.getElementById('omniOrigin').value || '\u03B1';
+            const destName = document.getElementById('omniDest').value || '\u03C9';
+            ctx.fillText(originName, points[0].x, points[0].y + 18);
+            if (points.length > 1) {
+                ctx.fillText(destName, points[points.length - 1].x, points[points.length - 1].y + 18);
+            }
+        }
+
+        // Event handlers
+        document.getElementById('panel-omnidirectional').addEventListener('click', e => {
+            const btn = e.target.closest('[data-omniop]');
+            if (!btn) return;
+            const op = btn.dataset.omniop;
+
+            if (op === 'clear') {
+                omniSequence.length = 0;
+                omniRenderExpr();
+                omniRenderState();
+                drawOmniVis();
+                displayExpr.textContent = '';
+                displayResult.textContent = '0';
+                return;
+            }
+            if (op === 'undo') {
+                omniSequence.pop();
+                omniRenderExpr();
+                omniRenderState();
+                drawOmniVis();
+                if (omniSequence.length === 0) {
+                    displayExpr.textContent = '';
+                    displayResult.textContent = '0';
+                }
+                return;
+            }
+
+            const param = parseFloat(document.getElementById('omniParam').value) || 1;
+            const needsParam = ['ascend', 'descend', 'rotateCW', 'rotateCCW'].includes(op);
+            omniSequence.push({ op, param: needsParam ? param : 0 });
+            omniRenderExpr();
+            omniRenderState();
+            drawOmniVis();
+
+            // Add to history when sequence has steps
+            const origin = document.getElementById('omniOrigin').value || '\u03B1';
+            const dest = document.getElementById('omniDest').value || '\u03C9';
+            const exprStr = origin + ' \u27FF ' + omniSequence.map(s => omniSymbols[s.op](s.param)).join('') + ' \u27FF ' + dest;
+            const states = omniComputeStates();
+            const final_s = states[states.length - 1];
+            addHistory('omni', exprStr, `d=${final_s.d} \u03B8=${final_s.angle}\u00B0 p=${final_s.polarity > 0 ? '+' : '\u2212'}1`);
+        });
+
+        // Update expression when origin/dest names change
+        document.getElementById('omniOrigin').addEventListener('input', omniRenderExpr);
+        document.getElementById('omniDest').addEventListener('input', omniRenderExpr);
+
+        // ══════════════════════════════════════
         //  KEYBOARD SUPPORT
         // ══════════════════════════════════════
         document.addEventListener('keydown', e => {
@@ -1700,6 +2073,7 @@
         buildMatrixInputs();
         buildTruthTable();
         drawComplexPlane();
+        omniRenderExpr();
     })();
     </script>
 </body>

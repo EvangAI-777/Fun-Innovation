@@ -1,6 +1,6 @@
 # Omniversal Calculator
 
-The world's first Omniversal Calculator. Eight mathematical universes, one interface, zero dependencies.
+The world's first Omniversal Calculator. Nine mathematical universes, one interface, zero dependencies.
 
 ## Quick Start
 
@@ -8,7 +8,7 @@ Open `omniversal-calculator.html` in any modern browser. That's it. No install, 
 
 ## How It Works
 
-The top of the page shows eight **universe orbs** -- glowing circles labeled with each mathematical system's symbol. Click one to enter that universe. The entire calculator transforms: the color palette shifts, the description bar updates, and the input area reconfigures itself for the selected number system.
+The top of the page shows nine **universe orbs** -- glowing circles labeled with each mathematical system's symbol. Click one to enter that universe. The entire calculator transforms: the color palette shifts, the description bar updates, and the input area reconfigures itself for the selected number system.
 
 Every universe has a genuine math engine behind it. These aren't toy implementations -- they handle edge cases (division by zero, singular matrices, non-invertible elements) and follow the actual algebraic rules of each system.
 
@@ -30,6 +30,8 @@ Every universe has a genuine math engine behind it. These aren't toy implementat
 
 **Dual Numbers (D)** -- Enter dual numbers z1 = a + b*epsilon where epsilon^2 = 0. Supports arithmetic (+, -, x, /) and functions (sin, cos, exp, ln). The key trick: set b = 1 to perform automatic differentiation. sin(3 + 1*epsilon) returns sin(3) + cos(3)*epsilon -- the value AND the derivative in one pass. Composes via chain rule automatically.
 
+**Omnidirectional Transforms (Omega)** -- The meta-universe. Build transformation sequences across dimensional spaces using the formal Omnidirectional Mathematics notation. Name an origin and destination, then compose operations: dimensional ascension/descension, clockwise/counterclockwise rotation, polarity reversal, wave collapse/expansion, intersection marking, parallel/orthogonal modes, boundary crossing, infinite recursion marking, and void traversal. The expression builder shows the full notation in real time, the state grid tracks dimension level, angle, polarity, wave state, and boundary count, and the visualization canvas plots the transformation path through dimensional space. See [NOTATION.md](../../NOTATION.md) for the formal specification.
+
 ## Design
 
 **Single file.** Everything -- HTML structure, CSS styles, JavaScript engines, starfield animation -- lives in one `.html` file. No dependencies, no build tools, no frameworks.
@@ -42,9 +44,9 @@ Every universe has a genuine math engine behind it. These aren't toy implementat
 
 ## Testing
 
-108 tests in `tests/omniversal/test_omniversal_calculator.py`:
+137 tests in `tests/omniversal/test_omniversal_calculator.py`:
 
-- **20 structural tests** -- validate the HTML file has all universes, UI elements, responsive tags, no external dependencies, and dark theme
+- **24 structural tests** -- validate the HTML file has all 9 universes, UI elements, responsive tags, omni operator buttons, notation file, no external dependencies, and dark theme
 - **14 real arithmetic tests** -- trig, powers, roots, logarithms
 - **10 complex arithmetic tests** -- all operations plus modulus, argument, conjugate
 - **10 modular arithmetic tests** -- mod operations, Fermat's little theorem, extended Euclidean algorithm
@@ -53,6 +55,7 @@ Every universe has a genuine math engine behind it. These aren't toy implementat
 - **10 boolean tests** -- all gates plus De Morgan's laws
 - **9 tropical tests** -- both conventions, distributive law, associativity
 - **12 dual number tests** -- epsilon^2=0, autodiff for sin/cos/exp/ln, chain rule, product rule
+- **25 omnidirectional tests** -- all 12 operators, void annihilation, the Earth-to-Celestial example, property verification (double reversal, boundary accumulation, rotation commutativity)
 
 Run with: `make test-omniversal`
 
@@ -68,3 +71,4 @@ Run with: `make test-omniversal`
 | Boolean | #d8dee9 (silver) |
 | Tropical | #ebcb8b (gold) |
 | Dual | #8fbcbb (teal) |
+| Omnidirectional | #c084fc (violet) |

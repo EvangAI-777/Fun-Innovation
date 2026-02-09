@@ -55,9 +55,10 @@ class TestStructure:
         assert m, "must have a <title>"
         assert "omniversal" in m.group(1).lower()
 
-    def test_has_all_eight_universes(self, html):
+    def test_has_all_nine_universes(self, html):
         universes = ["real", "complex", "modular", "matrix",
-                     "quaternion", "boolean", "tropical", "dual"]
+                     "quaternion", "boolean", "tropical", "dual",
+                     "omnidirectional"]
         for uni in universes:
             assert f'data-uni="{uni}"' in html, f"missing universe orb: {uni}"
             assert f'id="panel-{uni}"' in html, f"missing panel: {uni}"
@@ -66,7 +67,7 @@ class TestStructure:
         descriptions = [
             "Real Numbers", "Complex Numbers", "Modular Arithmetic",
             "Matrix Algebra", "Quaternion", "Boolean Algebra",
-            "Tropical", "Dual Numbers",
+            "Tropical", "Dual Numbers", "Omnidirectional",
         ]
         for desc in descriptions:
             assert desc in html, f"missing universe description: {desc}"
@@ -115,9 +116,31 @@ class TestStructure:
         assert 'data-tconv="min"' in html
         assert 'data-tconv="max"' in html
 
+    def test_has_omni_expression_builder(self, html):
+        assert 'id="omniExpr"' in html, "omnidirectional must have expression builder"
+        assert 'id="omniOrigin"' in html, "omnidirectional must have origin input"
+        assert 'id="omniDest"' in html, "omnidirectional must have destination input"
+
+    def test_has_omni_state_display(self, html):
+        assert 'id="omniStateGrid"' in html, "omnidirectional must have state grid"
+        assert 'id="omniVis"' in html, "omnidirectional must have visualization canvas"
+
+    def test_has_omni_operators(self, html):
+        ops = ["ascend", "descend", "rotateCW", "rotateCCW", "reverse",
+               "wave", "intersect", "parallel", "orthogonal", "boundary",
+               "recurse", "void"]
+        for op in ops:
+            assert f'data-omniop="{op}"' in html, f"missing omni operator button: {op}"
+
+    def test_notation_file_exists(self):
+        notation_path = os.path.join(
+            os.path.dirname(__file__), "..", "..", "Omniversal Mathematics", "NOTATION.md"
+        )
+        assert os.path.isfile(notation_path), "NOTATION.md must exist"
+
     def test_button_count_reasonable(self, html):
         count = html.count("calc-btn")
-        assert count >= 60, f"expected many calculator buttons, found {count} class refs"
+        assert count >= 70, f"expected many calculator buttons, found {count} class refs"
 
     def test_dark_theme(self, html):
         # All projects in the repo use dark themes
@@ -762,3 +785,199 @@ class TestDualNumbers:
         expected_deriv = math.sin(x) + x * math.cos(x)
         assert abs(result[0] - expected_val) < 1e-10
         assert abs(result[1] - expected_deriv) < 1e-10
+
+
+# ── Omnidirectional Transforms ────────────────────
+
+
+def omni_default():
+    """Default traversal state."""
+    return {
+        "d": 0, "angle": 0, "polarity": 1,
+        "wave": "expanded", "boundaries": 0,
+        "intersections": 0, "mode": "normal",
+    }
+
+
+def omni_apply(state, op, param=0):
+    """Apply a single omnidirectional operation to a state."""
+    s = dict(state)
+    if op == "ascend":
+        s["d"] += param
+    elif op == "descend":
+        s["d"] -= param
+    elif op == "rotateCW":
+        s["angle"] = (s["angle"] + param) % 360
+    elif op == "rotateCCW":
+        s["angle"] = (s["angle"] - param) % 360
+        if s["angle"] < 0:
+            s["angle"] += 360
+    elif op == "reverse":
+        s["polarity"] *= -1
+    elif op == "wave":
+        s["wave"] = "collapsed" if s["wave"] == "expanded" else "expanded"
+    elif op == "intersect":
+        s["intersections"] += 1
+    elif op == "parallel":
+        s["mode"] = "parallel"
+    elif op == "orthogonal":
+        s["mode"] = "orthogonal"
+    elif op == "boundary":
+        s["boundaries"] += 1
+    elif op == "void":
+        s.update({"d": 0, "angle": 0, "polarity": 1, "wave": "collapsed",
+                  "boundaries": 0, "mode": "normal"})
+    return s
+
+
+def omni_run(ops):
+    """Run a sequence of (op,) or (op, param) tuples from default state."""
+    state = omni_default()
+    for step in ops:
+        op = step[0]
+        param = step[1] if len(step) > 1 else 0
+        state = omni_apply(state, op, param)
+    return state
+
+
+class TestOmnidirectionalTransforms:
+    """Reference tests for omnidirectional mathematics operations."""
+
+    # ── Basic operations ──
+
+    def test_default_state(self):
+        s = omni_default()
+        assert s["d"] == 0
+        assert s["angle"] == 0
+        assert s["polarity"] == 1
+        assert s["wave"] == "expanded"
+        assert s["boundaries"] == 0
+
+    def test_ascend(self):
+        s = omni_run([("ascend", 3)])
+        assert s["d"] == 3
+
+    def test_descend(self):
+        s = omni_run([("descend", 2)])
+        assert s["d"] == -2
+
+    def test_ascend_then_descend(self):
+        s = omni_run([("ascend", 5), ("descend", 3)])
+        assert s["d"] == 2
+
+    def test_rotate_clockwise(self):
+        s = omni_run([("rotateCW", 90)])
+        assert s["angle"] == 90
+
+    def test_rotate_counterclockwise(self):
+        s = omni_run([("rotateCCW", 90)])
+        assert s["angle"] == 270  # -90 mod 360
+
+    def test_rotation_wraps(self):
+        s = omni_run([("rotateCW", 270), ("rotateCW", 180)])
+        assert s["angle"] == 90  # 450 mod 360
+
+    def test_polarity_reversal(self):
+        s = omni_run([("reverse",)])
+        assert s["polarity"] == -1
+
+    def test_double_reversal_identity(self):
+        s = omni_run([("reverse",), ("reverse",)])
+        assert s["polarity"] == 1
+
+    def test_wave_collapse(self):
+        s = omni_run([("wave",)])
+        assert s["wave"] == "collapsed"
+
+    def test_wave_double_toggle(self):
+        s = omni_run([("wave",), ("wave",)])
+        assert s["wave"] == "expanded"
+
+    def test_boundary_crossing(self):
+        s = omni_run([("boundary",), ("boundary",), ("boundary",)])
+        assert s["boundaries"] == 3
+
+    def test_intersection_count(self):
+        s = omni_run([("intersect",), ("intersect",)])
+        assert s["intersections"] == 2
+
+    def test_parallel_mode(self):
+        s = omni_run([("parallel",)])
+        assert s["mode"] == "parallel"
+
+    def test_orthogonal_mode(self):
+        s = omni_run([("orthogonal",)])
+        assert s["mode"] == "orthogonal"
+
+    # ── Void ──
+
+    def test_void_resets_state(self):
+        s = omni_run([("ascend", 5), ("rotateCW", 45), ("reverse",),
+                      ("boundary",), ("void",)])
+        assert s["d"] == 0
+        assert s["angle"] == 0
+        assert s["polarity"] == 1
+        assert s["wave"] == "collapsed"
+        assert s["boundaries"] == 0
+
+    def test_void_then_rebuild(self):
+        s = omni_run([("ascend", 10), ("void",), ("ascend", 3)])
+        assert s["d"] == 3
+
+    def test_void_is_annihilation(self):
+        # Operations before void have no effect on final state
+        s1 = omni_run([("ascend", 100), ("rotateCW", 359), ("void",), ("ascend", 1)])
+        s2 = omni_run([("void",), ("ascend", 1)])
+        assert s1["d"] == s2["d"]
+        assert s1["angle"] == s2["angle"]
+
+    # ── Complex sequences ──
+
+    def test_earth_to_celestial(self):
+        """The original example from the notation: Earth ⟿ ⊕[3]⟲[90°]◬⊠∿ ⟿ Celestial_Realm"""
+        s = omni_run([
+            ("ascend", 3),
+            ("rotateCW", 90),
+            ("boundary",),
+            ("intersect",),
+            ("wave",),
+        ])
+        assert s["d"] == 3
+        assert s["angle"] == 90
+        assert s["polarity"] == 1
+        assert s["wave"] == "collapsed"
+        assert s["boundaries"] == 1
+        assert s["intersections"] == 1
+
+    def test_round_trip_dimension(self):
+        s = omni_run([("ascend", 7), ("descend", 7)])
+        assert s["d"] == 0
+
+    def test_full_rotation(self):
+        s = omni_run([("rotateCW", 360)])
+        assert s["angle"] == 0
+
+    def test_polarity_inversion_loop(self):
+        """Origin ⟿ ⊕[1]⇄⊕[1]⇄ ⟿ Origin_Prime"""
+        s = omni_run([("ascend", 1), ("reverse",), ("ascend", 1), ("reverse",)])
+        assert s["d"] == 2
+        assert s["polarity"] == 1
+
+    # ── Properties ──
+
+    def test_ascend_descend_inverse(self):
+        for n in range(1, 10):
+            s = omni_run([("ascend", n), ("descend", n)])
+            assert s["d"] == 0
+
+    def test_rotation_commutes_with_itself(self):
+        s1 = omni_run([("rotateCW", 30), ("rotateCW", 60)])
+        s2 = omni_run([("rotateCW", 60), ("rotateCW", 30)])
+        assert s1["angle"] == s2["angle"] == 90
+
+    def test_boundary_only_increases(self):
+        s = omni_default()
+        for _ in range(5):
+            old_b = s["boundaries"]
+            s = omni_apply(s, "boundary")
+            assert s["boundaries"] == old_b + 1
