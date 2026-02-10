@@ -411,6 +411,46 @@
             background: #d0c4e8;
         }
 
+        /* ── Real Universe – Editable Expression Display ── */
+        .display-result.editable {
+            cursor: text;
+            user-select: none;
+            min-height: 1.5em;
+            word-break: break-all;
+            direction: ltr;
+        }
+        .display-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.1em;
+            background: var(--accent);
+            vertical-align: text-bottom;
+            animation: cursor-blink 1s step-end infinite;
+            margin: 0 0.5px;
+            border-radius: 1px;
+        }
+        @keyframes cursor-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .display-char {
+            cursor: text;
+            display: inline;
+            position: relative;
+        }
+        .display-char:hover {
+            color: var(--accent);
+        }
+        .display-preview {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            min-height: 1.2em;
+            transition: color 0.2s;
+        }
+        .display-preview.has-result {
+            color: var(--accent);
+        }
+
         /* Ripple effect */
         .ripple {
             position: absolute;
@@ -1071,15 +1111,11 @@
 
         // Real calculator state
         const real = {
-            display: '0',
-            expr: '',
-            prevValue: null,
-            pendingOp: null,
-            freshResult: false,
-            useDegrees: true,
-            invMode: false,
-            parenDepth: 0,
-            stack: []
+            expr: '',           // the expression string being built
+            cursor: 0,          // cursor position within expr
+            useDegrees: true,   // Deg/Rad toggle
+            invMode: false,     // inverse trig toggle
+            justEvaluated: false // true right after pressing =
         };
 
         // ══════════════════════════════════════
@@ -1126,13 +1162,16 @@
             universeDesc.innerHTML = `<span class="desc-symbol">${info.symbol}</span><span><span class="desc-name">${info.name}</span> &mdash; ${info.desc}</span>`;
 
             // Reset display for non-real universes
-            if (uni !== 'real') {
+            if (uni === 'real') {
+                displayResult.classList.add('editable');
+                renderRealDisplay();
+            } else {
+                displayResult.classList.remove('editable');
                 displayExpr.textContent = '';
+                displayExpr.classList.remove('has-result');
+                displayResult.innerHTML = '';
                 displayResult.textContent = '0';
                 displayResult.classList.remove('fresh');
-            } else {
-                displayResult.textContent = real.display;
-                displayExpr.textContent = real.expr;
             }
 
             // Init matrix inputs if needed
@@ -1236,20 +1275,10 @@
         });
 
         // ══════════════════════════════════════
-        //  REAL CALCULATOR ENGINE
+        //  REAL CALCULATOR ENGINE (expression-based)
         // ══════════════════════════════════════
-        const opSymbols = { add: '+', sub: '\u2212', mul: '\u00D7', div: '\u00F7', pow: '^' };
 
-        function realCalc(op, a, b) {
-            switch (op) {
-                case 'add': return a + b;
-                case 'sub': return a - b;
-                case 'mul': return a * b;
-                case 'div': return b === 0 ? NaN : a / b;
-                case 'pow': return Math.pow(a, b);
-            }
-        }
-
+        // ── Helpers ──
         function factorial(n) {
             if (n < 0 || !Number.isInteger(n)) return NaN;
             if (n > 170) return Infinity;
@@ -1258,176 +1287,348 @@
             return r;
         }
 
-        function realFn(fn, x) {
-            const toRad = real.useDegrees ? Math.PI / 180 : 1;
-            const toDeg = real.useDegrees ? 180 / Math.PI : 1;
+        function escHtml(s) {
+            return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }
 
-            if (real.invMode) {
-                switch (fn) {
-                    case 'sin':  return Math.asin(x) * toDeg;
-                    case 'cos':  return Math.acos(x) * toDeg;
-                    case 'tan':  return Math.atan(x) * toDeg;
+        // ── Insert / delete at cursor ──
+        function realInsert(text) {
+            if (real.justEvaluated) {
+                // After =, start fresh for value-producing input, continue for operators
+                const isOp = /^[+\u2212\u00D7\u00F7^!%]$/.test(text);
+                if (!isOp) { real.expr = ''; real.cursor = 0; }
+                real.justEvaluated = false;
+            }
+            real.expr = real.expr.slice(0, real.cursor) + text + real.expr.slice(real.cursor);
+            real.cursor += text.length;
+            renderRealDisplay();
+        }
+
+        function realBackspace() {
+            if (real.justEvaluated) {
+                real.expr = ''; real.cursor = 0; real.justEvaluated = false;
+                renderRealDisplay(); return;
+            }
+            if (real.cursor <= 0) return;
+            // Delete multi-char tokens (like "sin(" or "asin(") as a unit
+            const before = real.expr.slice(0, real.cursor);
+            const funcs = ['asin(','acos(','atan(','sin(','cos(','tan(','ln(','log(','√('];
+            let del = 1;
+            for (const f of funcs) { if (before.endsWith(f)) { del = f.length; break; } }
+            real.expr = real.expr.slice(0, real.cursor - del) + real.expr.slice(real.cursor);
+            real.cursor -= del;
+            renderRealDisplay();
+        }
+
+        // ── Render expression with cursor ──
+        function renderRealDisplay() {
+            const container = displayResult;
+            container.classList.add('editable');
+            let html = '';
+            for (let i = 0; i < real.expr.length; i++) {
+                if (i === real.cursor) html += '<span class="display-cursor"></span>';
+                html += '<span class="display-char" data-pos="' + i + '">' + escHtml(real.expr[i]) + '</span>';
+            }
+            if (real.cursor >= real.expr.length) html += '<span class="display-cursor"></span>';
+            if (real.expr.length === 0) html = '<span class="display-cursor"></span>';
+            container.innerHTML = html;
+
+            // Live preview of result
+            if (real.expr.length > 0) {
+                try {
+                    const result = realEvaluate(real.expr);
+                    if (!isNaN(result) && isFinite(result)) {
+                        displayExpr.textContent = '= ' + fmt(result);
+                        displayExpr.classList.add('has-result');
+                    } else if (isNaN(result)) {
+                        displayExpr.textContent = '';
+                        displayExpr.classList.remove('has-result');
+                    } else {
+                        displayExpr.textContent = '= ' + (result > 0 ? '\u221E' : '-\u221E');
+                        displayExpr.classList.add('has-result');
+                    }
+                } catch (e) {
+                    displayExpr.textContent = '';
+                    displayExpr.classList.remove('has-result');
+                }
+            } else {
+                displayExpr.textContent = '';
+                displayExpr.classList.remove('has-result');
+            }
+        }
+
+        // ── Click on display to reposition cursor ──
+        displayResult.addEventListener('click', e => {
+            if (currentUniverse !== 'real') return;
+            const charEl = e.target.closest('.display-char');
+            if (charEl) {
+                const pos = parseInt(charEl.dataset.pos);
+                const rect = charEl.getBoundingClientRect();
+                real.cursor = (e.clientX - rect.left < rect.width / 2) ? pos : pos + 1;
+            } else {
+                real.cursor = real.expr.length;
+            }
+            real.justEvaluated = false;
+            renderRealDisplay();
+        });
+
+        // ── Tokenizer ──
+        function realTokenize(expr) {
+            const tokens = [];
+            let i = 0;
+            while (i < expr.length) {
+                const c = expr[i];
+                if (c === ' ') { i++; continue; }
+                // Numbers
+                if (/[0-9]/.test(c) || (c === '.' && i + 1 < expr.length && /[0-9]/.test(expr[i + 1]))) {
+                    let num = '';
+                    while (i < expr.length && /[0-9.]/.test(expr[i])) num += expr[i++];
+                    tokens.push({ type: 'number', value: num });
+                    continue;
+                }
+                // Functions (must check before constants — "e" vs "exp")
+                const funcNames = ['asin','acos','atan','sin','cos','tan','ln','log'];
+                let matched = false;
+                for (const fn of funcNames) {
+                    if (expr.slice(i, i + fn.length) === fn &&
+                        (i + fn.length >= expr.length || !/[a-z]/i.test(expr[i + fn.length]))) {
+                        tokens.push({ type: 'function', value: fn });
+                        i += fn.length;
+                        matched = true;
+                        break;
+                    }
+                }
+                if (matched) continue;
+                // Constants
+                if (c === '\u03C0') { tokens.push({ type: 'constant', value: '\u03C0' }); i++; continue; } // π
+                if (c === 'e') { tokens.push({ type: 'constant', value: 'e' }); i++; continue; }
+                // √ as function
+                if (c === '\u221A') { tokens.push({ type: 'function', value: '\u221A' }); i++; continue; }
+                // Operators and parens
+                if ('+\u2212\u00D7\u00F7^!%()'.includes(c) || c === '-') {
+                    tokens.push({ type: 'operator', value: c }); i++; continue;
+                }
+                // Unknown → skip
+                i++;
+            }
+            return tokens;
+        }
+
+        // ── Implicit multiplication ──
+        function addImplicitMul(tokens) {
+            const out = [];
+            const endsValue = t => ['number','constant'].includes(t.type) || [')',  '!', '%'].includes(t.value);
+            const startsValue = t => ['number','constant','function'].includes(t.type) || ['(', '\u221A'].includes(t.value);
+            for (let i = 0; i < tokens.length; i++) {
+                out.push(tokens[i]);
+                if (i < tokens.length - 1 && endsValue(tokens[i]) && startsValue(tokens[i + 1])) {
+                    out.push({ type: 'operator', value: '\u00D7' }); // ×
                 }
             }
-            switch (fn) {
-                case 'sin':  return Math.sin(x * toRad);
-                case 'cos':  return Math.cos(x * toRad);
-                case 'tan':  { const a = x * toRad; return Math.abs(Math.cos(a)) < 1e-15 ? NaN : Math.tan(a); }
-                case 'sq':   return x * x;
-                case 'sqrt': return x < 0 ? NaN : Math.sqrt(x);
-                case 'ln':   return x <= 0 ? NaN : Math.log(x);
-                case 'log':  return x <= 0 ? NaN : Math.log10(x);
-                case 'abs':  return Math.abs(x);
-                case 'fact': return factorial(x);
+            return out;
+        }
+
+        // ── Recursive-descent parser + evaluator ──
+        function realEvaluate(exprStr) {
+            let tokens = realTokenize(exprStr);
+            tokens = addImplicitMul(tokens);
+            let pos = 0;
+            function peek() { return tokens[pos]; }
+            function next() { return tokens[pos++]; }
+
+            // expr → term (('+' | '−') term)*
+            function parseExpr() {
+                let left = parseTerm();
+                while (peek() && (peek().value === '+' || peek().value === '\u2212' || peek().value === '-')) {
+                    const op = next().value;
+                    const right = parseTerm();
+                    left = (op === '+') ? left + right : left - right;
+                }
+                return left;
             }
+            // term → power (('×' | '÷') power)*
+            function parseTerm() {
+                let left = parsePower();
+                while (peek() && (peek().value === '\u00D7' || peek().value === '\u00F7')) {
+                    const op = next().value;
+                    const right = parsePower();
+                    left = (op === '\u00D7') ? left * right : (right === 0 ? NaN : left / right);
+                }
+                return left;
+            }
+            // power → unary ('^' power)?     (right-associative)
+            function parsePower() {
+                let base = parseUnary();
+                if (peek() && peek().value === '^') {
+                    next();
+                    base = Math.pow(base, parsePower());
+                }
+                return base;
+            }
+            // unary → '−' unary | '+' unary | postfix
+            function parseUnary() {
+                if (peek() && (peek().value === '\u2212' || peek().value === '-')) { next(); return -parseUnary(); }
+                if (peek() && peek().value === '+') { next(); return parseUnary(); }
+                return parsePostfix();
+            }
+            // postfix → primary ('!' | '%')*
+            function parsePostfix() {
+                let val = parsePrimary();
+                while (peek() && (peek().value === '!' || peek().value === '%')) {
+                    val = next().value === '!' ? factorial(val) : val / 100;
+                }
+                return val;
+            }
+            // primary → NUMBER | CONSTANT | FUNCTION '(' expr ')' | '(' expr ')' | √ ...
+            function parsePrimary() {
+                const t = peek();
+                if (!t) return NaN;
+                if (t.type === 'number') { next(); return parseFloat(t.value); }
+                if (t.type === 'constant') {
+                    next();
+                    return t.value === '\u03C0' ? Math.PI : Math.E;
+                }
+                if (t.type === 'function') {
+                    const fn = next().value;
+                    // optional opening paren
+                    if (peek() && peek().value === '(') { next(); }
+                    const arg = parseExpr();
+                    if (peek() && peek().value === ')') next();
+                    return applyFn(fn, arg);
+                }
+                if (t.value === '(') {
+                    next();
+                    const val = parseExpr();
+                    if (peek() && peek().value === ')') next();
+                    return val;
+                }
+                // Fallback: consume and return NaN
+                next();
+                return NaN;
+            }
+
+            function applyFn(fn, x) {
+                const toRad = real.useDegrees ? Math.PI / 180 : 1;
+                const toDeg = real.useDegrees ? 180 / Math.PI : 1;
+                switch (fn) {
+                    case 'sin':   return Math.sin(x * toRad);
+                    case 'cos':   return Math.cos(x * toRad);
+                    case 'tan':   return Math.abs(Math.cos(x * toRad)) < 1e-15 ? NaN : Math.tan(x * toRad);
+                    case 'asin':  return Math.asin(x) * toDeg;
+                    case 'acos':  return Math.acos(x) * toDeg;
+                    case 'atan':  return Math.atan(x) * toDeg;
+                    case 'ln':    return x <= 0 ? NaN : Math.log(x);
+                    case 'log':   return x <= 0 ? NaN : Math.log10(x);
+                    case '\u221A': return x < 0 ? NaN : Math.sqrt(x);
+                    default:      return NaN;
+                }
+            }
+
+            const result = parseExpr();
+            return result;
         }
 
-        function updateRealDisplay() {
-            displayResult.textContent = real.display;
-            displayExpr.textContent = real.expr;
-        }
-
+        // ── Button click handler ──
         document.getElementById('panel-real').addEventListener('click', e => {
             const btn = e.target.closest('.calc-btn');
             if (!btn) return;
             const action = btn.dataset.action;
             if (!action) return;
 
-            if (action === 'digit') {
-                if (real.freshResult) { real.display = ''; real.freshResult = false; }
-                if (real.display === '0') real.display = '';
-                real.display += btn.dataset.val;
-                updateRealDisplay();
-            }
-            else if (action === 'decimal') {
-                if (real.freshResult) { real.display = '0'; real.freshResult = false; }
-                if (!real.display.includes('.')) real.display += '.';
-                updateRealDisplay();
-            }
-            else if (action === 'negate') {
-                if (real.display !== '0') {
-                    real.display = real.display.startsWith('-') ? real.display.slice(1) : '-' + real.display;
-                }
-                updateRealDisplay();
-            }
-            else if (action === 'backspace') {
-                if (real.freshResult) return;
-                real.display = real.display.slice(0, -1) || '0';
-                updateRealDisplay();
-            }
-            else if (action === 'clear') {
-                real.display = '0';
-                real.expr = '';
-                real.prevValue = null;
-                real.pendingOp = null;
-                real.freshResult = false;
-                updateRealDisplay();
-            }
-            else if (action === 'binop') {
-                const val = parseFloat(real.display);
-                if (real.pendingOp && !real.freshResult) {
-                    const result = realCalc(real.pendingOp, real.prevValue, val);
-                    real.display = fmt(result);
-                    real.prevValue = result;
-                } else {
-                    real.prevValue = val;
-                }
-                real.pendingOp = btn.dataset.op;
-                real.expr = fmt(real.prevValue) + ' ' + opSymbols[real.pendingOp];
-                real.freshResult = true;
-                updateRealDisplay();
-            }
-            else if (action === 'equals') {
-                if (real.pendingOp) {
-                    const val = parseFloat(real.display);
-                    const result = realCalc(real.pendingOp, real.prevValue, val);
-                    const expr = real.expr + ' ' + fmt(val) + ' =';
-                    real.display = fmt(result);
-                    real.freshResult = true;
-                    showResult(expr, real.display);
-                    real.expr = '';
-                    real.pendingOp = null;
-                    real.prevValue = null;
-                }
-            }
-            else if (action === 'fn') {
-                const val = parseFloat(real.display);
-                const fn = btn.dataset.fn;
-                const result = realFn(fn, val);
-                const invNames = { sin: 'asin', cos: 'acos', tan: 'atan' };
-                const label = (real.invMode && invNames[fn]) ? invNames[fn] : fn;
-                const expr = label + '(' + fmt(val) + ')';
-                real.display = fmt(result);
-                real.freshResult = true;
-                showResult(expr, real.display);
-                // Auto-deactivate Inv after use
-                if (real.invMode && invNames[fn]) {
-                    real.invMode = false;
-                    document.getElementById('invToggle').classList.remove('toggled');
-                }
-            }
-            else if (action === 'const') {
-                if (real.freshResult) { real.expr = ''; }
-                real.display = btn.dataset.val === 'pi' ? fmt(Math.PI) : fmt(Math.E);
-                real.freshResult = true;
-                updateRealDisplay();
-            }
-            else if (action === 'deg-toggle') {
-                real.useDegrees = !real.useDegrees;
-                const toggle = document.getElementById('degToggle');
-                toggle.textContent = real.useDegrees ? 'Deg' : 'Rad';
-                toggle.classList.toggle('toggled', !real.useDegrees);
-            }
-            else if (action === 'inv-toggle') {
-                real.invMode = !real.invMode;
-                const toggle = document.getElementById('invToggle');
-                toggle.classList.toggle('toggled', real.invMode);
-                // Update trig button labels
-                const sinBtn = document.querySelector('#panel-real [data-fn="sin"]');
-                const cosBtn = document.querySelector('#panel-real [data-fn="cos"]');
-                const tanBtn = document.querySelector('#panel-real [data-fn="tan"]');
-                if (sinBtn) sinBtn.textContent = real.invMode ? 'sin\u207B\u00B9' : 'sin';
-                if (cosBtn) cosBtn.textContent = real.invMode ? 'cos\u207B\u00B9' : 'cos';
-                if (tanBtn) tanBtn.textContent = real.invMode ? 'tan\u207B\u00B9' : 'tan';
-            }
-            else if (action === 'percent') {
-                const val = parseFloat(real.display);
-                const result = val / 100;
-                const expr = fmt(val) + '%';
-                real.display = fmt(result);
-                real.freshResult = true;
-                showResult(expr, real.display);
-            }
-            else if (action === 'paren') {
-                // Smart parentheses: push/pop calculator state
-                if (real.parenDepth === 0 || real.freshResult === false) {
-                    // Open paren: save state and start fresh sub-expression
-                    real.stack.push({
-                        prevValue: real.prevValue,
-                        pendingOp: real.pendingOp,
-                        expr: real.expr
-                    });
-                    real.prevValue = null;
-                    real.pendingOp = null;
-                    real.expr = (real.expr || '') + '(';
-                    real.parenDepth++;
-                    real.freshResult = true;
-                    updateRealDisplay();
-                } else if (real.stack.length > 0) {
-                    // Close paren: evaluate sub-expression and restore
-                    if (real.pendingOp) {
-                        const val = parseFloat(real.display);
-                        const result = realCalc(real.pendingOp, real.prevValue, val);
-                        real.display = fmt(result);
+            const opMap = { add: '+', sub: '\u2212', mul: '\u00D7', div: '\u00F7', pow: '^' };
+
+            switch (action) {
+                case 'digit':
+                    realInsert(btn.dataset.val);
+                    break;
+                case 'decimal':
+                    realInsert('.');
+                    break;
+                case 'binop':
+                    realInsert(opMap[btn.dataset.op]);
+                    break;
+                case 'fn': {
+                    const fn = btn.dataset.fn;
+                    if (fn === 'fact') {
+                        realInsert('!');
+                    } else if (fn === 'sqrt') {
+                        realInsert('\u221A(');
+                    } else {
+                        const invMap = { sin: 'asin', cos: 'acos', tan: 'atan' };
+                        const name = (real.invMode && invMap[fn]) ? invMap[fn] : fn;
+                        realInsert(name + '(');
+                        // Auto-deactivate Inv after use
+                        if (real.invMode && invMap[fn]) {
+                            real.invMode = false;
+                            document.getElementById('invToggle').classList.remove('toggled');
+                            const sinBtn = document.querySelector('#panel-real [data-fn="sin"]');
+                            const cosBtn = document.querySelector('#panel-real [data-fn="cos"]');
+                            const tanBtn = document.querySelector('#panel-real [data-fn="tan"]');
+                            if (sinBtn) sinBtn.textContent = 'sin';
+                            if (cosBtn) cosBtn.textContent = 'cos';
+                            if (tanBtn) tanBtn.textContent = 'tan';
+                        }
                     }
-                    const saved = real.stack.pop();
-                    real.prevValue = saved.prevValue;
-                    real.pendingOp = saved.pendingOp;
-                    real.expr = saved.expr + '(' + real.display + ')';
-                    real.parenDepth--;
-                    real.freshResult = true;
-                    updateRealDisplay();
+                    break;
                 }
+                case 'const':
+                    realInsert(btn.dataset.val === 'pi' ? '\u03C0' : 'e');
+                    break;
+                case 'paren': {
+                    // Smart parens: count open vs close to decide
+                    const opens = (real.expr.match(/\(/g) || []).length;
+                    const closes = (real.expr.match(/\)/g) || []).length;
+                    realInsert(opens > closes ? ')' : '(');
+                    break;
+                }
+                case 'percent':
+                    realInsert('%');
+                    break;
+                case 'backspace':
+                    realBackspace();
+                    break;
+                case 'clear':
+                    real.expr = '';
+                    real.cursor = 0;
+                    real.justEvaluated = false;
+                    displayExpr.textContent = '';
+                    displayExpr.classList.remove('has-result');
+                    renderRealDisplay();
+                    break;
+                case 'equals':
+                    if (real.expr.length > 0) {
+                        try {
+                            const result = realEvaluate(real.expr);
+                            const exprStr = real.expr;
+                            displayExpr.textContent = exprStr + ' =';
+                            displayExpr.classList.remove('has-result');
+                            addHistory('real', exprStr, fmt(result));
+                            real.expr = fmt(result);
+                            real.cursor = real.expr.length;
+                            real.justEvaluated = true;
+                            renderRealDisplay();
+                        } catch (e) {
+                            displayExpr.textContent = 'Error';
+                            displayExpr.classList.remove('has-result');
+                        }
+                    }
+                    break;
+                case 'deg-toggle':
+                    real.useDegrees = !real.useDegrees;
+                    btn.textContent = real.useDegrees ? 'Deg' : 'Rad';
+                    btn.classList.toggle('toggled', !real.useDegrees);
+                    renderRealDisplay(); // re-evaluate live preview
+                    break;
+                case 'inv-toggle':
+                    real.invMode = !real.invMode;
+                    btn.classList.toggle('toggled', real.invMode);
+                    const sinBtn = document.querySelector('#panel-real [data-fn="sin"]');
+                    const cosBtn = document.querySelector('#panel-real [data-fn="cos"]');
+                    const tanBtn = document.querySelector('#panel-real [data-fn="tan"]');
+                    if (sinBtn) sinBtn.textContent = real.invMode ? 'sin\u207B\u00B9' : 'sin';
+                    if (cosBtn) cosBtn.textContent = real.invMode ? 'cos\u207B\u00B9' : 'cos';
+                    if (tanBtn) tanBtn.textContent = real.invMode ? 'tan\u207B\u00B9' : 'tan';
+                    break;
             }
         });
 
@@ -2221,32 +2422,49 @@
             if (e.target.tagName === 'INPUT') return;
             const key = e.key;
             if (/^[0-9]$/.test(key)) {
-                document.querySelector(`[data-action="digit"][data-val="${key}"]`).click();
+                realInsert(key);
             } else if (key === '.') {
-                document.querySelector('[data-action="decimal"]').click();
+                realInsert('.');
             } else if (key === '+') {
-                document.querySelector('[data-op="add"]').click();
+                realInsert('+');
             } else if (key === '-') {
-                document.querySelector('[data-op="sub"]').click();
+                realInsert('\u2212');
             } else if (key === '*') {
-                document.querySelector('[data-op="mul"]').click();
+                realInsert('\u00D7');
             } else if (key === '/') {
                 e.preventDefault();
-                document.querySelector('[data-op="div"]').click();
+                realInsert('\u00F7');
             } else if (key === '^') {
-                document.querySelector('[data-op="pow"]').click();
+                realInsert('^');
             } else if (key === '!') {
-                document.querySelector('[data-fn="fact"]').click();
+                realInsert('!');
             } else if (key === '%') {
-                document.querySelector('[data-action="percent"]').click();
-            } else if (key === '(' || key === ')') {
-                document.querySelector('[data-action="paren"]').click();
+                realInsert('%');
+            } else if (key === '(') {
+                realInsert('(');
+            } else if (key === ')') {
+                realInsert(')');
             } else if (key === 'Enter' || key === '=') {
                 document.querySelector('[data-action="equals"]').click();
             } else if (key === 'Backspace') {
-                document.querySelector('[data-action="backspace"]').click();
-            } else if (key === 'Escape' || key === 'c' || key === 'C') {
+                e.preventDefault();
+                realBackspace();
+            } else if (key === 'Delete') {
+                // Delete character after cursor
+                if (real.cursor < real.expr.length) {
+                    real.expr = real.expr.slice(0, real.cursor) + real.expr.slice(real.cursor + 1);
+                    renderRealDisplay();
+                }
+            } else if (key === 'Escape') {
                 document.querySelector('[data-action="clear"]').click();
+            } else if (key === 'ArrowLeft') {
+                if (real.cursor > 0) { real.cursor--; real.justEvaluated = false; renderRealDisplay(); }
+            } else if (key === 'ArrowRight') {
+                if (real.cursor < real.expr.length) { real.cursor++; real.justEvaluated = false; renderRealDisplay(); }
+            } else if (key === 'Home') {
+                real.cursor = 0; real.justEvaluated = false; renderRealDisplay();
+            } else if (key === 'End') {
+                real.cursor = real.expr.length; real.justEvaluated = false; renderRealDisplay();
             }
         });
 
@@ -2257,6 +2475,7 @@
         buildTruthTable();
         drawComplexPlane();
         omniRenderExpr();
+        renderRealDisplay();
     })();
     </script>
 </body>
