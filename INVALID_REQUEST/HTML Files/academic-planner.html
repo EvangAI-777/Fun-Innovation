@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Academic Schedule Planner</title>
+    <meta name="description" content="Dynamic academic schedule planner with OCR document scanning for automatic assignment extraction.">
+    <meta name="theme-color" content="#1a1a1a">
     <!-- Tesseract.js for OCR -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <!-- PDF.js for PDF rendering -->
@@ -430,11 +432,21 @@
         .extracted-item-field {
             color: #888;
         }
+        .skip-link { position:absolute;top:-100%;left:16px;background:#58a6ff;color:#1a1a1a;padding:8px 16px;border-radius:0 0 6px 6px;font-size:0.85em;font-weight:600;text-decoration:none;z-index:10000; }
+        .skip-link:focus { top:0; }
+        button:focus-visible, select:focus-visible, input:focus-visible { outline:2px solid #58a6ff;outline-offset:2px; }
+        @media (max-width:768px) {
+            .toolbar { flex-direction:column; }
+            .table-container { font-size:0.85em; }
+            th.col-name, td:nth-child(3) { display:none; }
+        }
+        @media (prefers-reduced-motion:reduce) { *, *::before, *::after { animation-duration:0.01ms!important;transition-duration:0.01ms!important; } }
     </style>
 </head>
 <body>
+    <a class="skip-link" href="#schedule-table">Skip to schedule</a>
     <a href="../../index.html" style="position:fixed;top:14px;left:14px;z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;color:#aaa;text-decoration:none;font-family:'Segoe UI',system-ui,sans-serif;font-size:0.8em;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.14)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.07)';this.style.color='#aaa'">&larr; Home</a>
-    <div class="container">
+    <main class="container">
         <h1>Academic Schedule Planner</h1>
 
         <div class="toolbar">

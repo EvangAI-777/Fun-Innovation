@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notes Organizer</title>
+    <meta name="description" content="Rich text notes app with folders, markdown and HTML editing, and import/export.">
+    <meta name="theme-color" content="#1a1a1a">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #1a1a1a; color: #e0e0e0; font-family: 'Segoe UI', Roboto, sans-serif; height: 100vh; display: flex; flex-direction: column; }
@@ -109,11 +111,20 @@
         .import-preview-item { padding: 8px; background: #252525; border-radius: 4px; margin-bottom: 5px; font-size: 0.85em; }
         .import-preview-item .title { color: #fff; font-weight: 500; }
         .import-preview-item .preview { color: #888; font-size: 0.9em; margin-top: 3px; }
+        .skip-link { position:absolute;top:-100%;left:16px;background:#4a6a8a;color:#fff;padding:8px 16px;border-radius:0 0 6px 6px;font-size:0.85em;font-weight:600;text-decoration:none;z-index:10000; }
+        .skip-link:focus { top:0; }
+        button:focus-visible, select:focus-visible, input:focus-visible, .editor:focus-visible { outline:2px solid #4a6a8a;outline-offset:2px; }
+        @media (max-width:768px) {
+            .main-container { flex-direction:column; }
+            .sidebar { width:100%;max-height:40vh;border-right:none;border-bottom:1px solid #333; }
+        }
+        @media (prefers-reduced-motion:reduce) { *, *::before, *::after { animation-duration:0.01ms!important;transition-duration:0.01ms!important; } }
     </style>
 </head>
 <body>
+    <a class="skip-link" href="#editor-area">Skip to editor</a>
     <a href="../../index.html" style="position:fixed;top:14px;left:14px;z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;color:#aaa;text-decoration:none;font-family:'Segoe UI',system-ui,sans-serif;font-size:0.8em;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.14)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.07)';this.style.color='#aaa'">&larr; Home</a>
-    <div class="header">
+    <header class="header">
         <h1>📝 Notes Organizer</h1>
         <div class="header-actions">
             <button class="header-btn primary" onclick="createNewNote()">+ New Note</button>
@@ -123,9 +134,9 @@
     </div>
 
     <div class="main-container">
-        <div class="sidebar">
+        <nav class="sidebar" aria-label="Notes navigation">
             <div class="sidebar-header">
-                <input type="text" class="search-input" id="search-input" placeholder="Search notes..." oninput="filterNotes()">
+                <input type="text" class="search-input" id="search-input" placeholder="Search notes..." oninput="filterNotes()" aria-label="Search notes">
             </div>
 
             <div class="folders-section">

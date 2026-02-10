@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flow Field</title>
+    <meta name="description" content="Perlin noise flow field with thousands of particles creating organic visual patterns.">
+    <meta name="theme-color" content="#000000">
     <style>
         * {
             margin: 0;
@@ -130,15 +132,21 @@
             font-family: inherit;
             z-index: 101;
         }
+        .skip-link { position:absolute;top:-100%;left:16px;background:#8be9fd;color:#000;padding:8px 16px;border-radius:0 0 6px 6px;font-size:0.85em;font-weight:600;text-decoration:none;z-index:10000; }
+        .skip-link:focus { top:0; }
+        button:focus-visible, input[type="range"]:focus-visible { outline:2px solid #8be9fd;outline-offset:2px; }
+        @media (max-width:600px) { #controls { width:220px;right:10px;padding:14px;font-size:0.9em; } }
+        @media (prefers-reduced-motion:reduce) { *, *::before, *::after { animation-duration:0.01ms!important;transition-duration:0.01ms!important; } }
     </style>
 </head>
 <body>
+    <a class="skip-link" href="#controls">Skip to controls</a>
     <a href="../../index.html" style="position:fixed;top:14px;left:14px;z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;color:#aaa;text-decoration:none;font-family:'Segoe UI',system-ui,sans-serif;font-size:0.8em;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.14)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.07)';this.style.color='#aaa'">&larr; Home</a>
-    <canvas id="canvas"></canvas>
+    <canvas id="canvas" aria-label="Flow field visualization canvas"></canvas>
 
-    <button id="toggle-ui">☰</button>
+    <button id="toggle-ui" aria-label="Toggle controls panel">☰</button>
 
-    <div id="controls">
+    <aside id="controls" aria-label="Flow field controls">
         <h1>Flow Field</h1>
         <p class="subtitle">Move mouse to influence the field</p>
 
@@ -147,7 +155,7 @@
                 <span>Particle Count</span>
                 <span id="count-val">3000</span>
             </div>
-            <input type="range" id="particle-count" min="500" max="10000" step="100" value="3000">
+            <input type="range" id="particle-count" min="500" max="10000" step="100" value="3000" aria-label="Particle Count">
         </div>
 
         <div class="control-group">
@@ -155,7 +163,7 @@
                 <span>Flow Speed</span>
                 <span id="speed-val">2</span>
             </div>
-            <input type="range" id="flow-speed" min="0.5" max="5" step="0.1" value="2">
+            <input type="range" id="flow-speed" min="0.5" max="5" step="0.1" value="2" aria-label="Flow Speed">
         </div>
 
         <div class="control-group">
@@ -163,7 +171,7 @@
                 <span>Noise Scale</span>
                 <span id="scale-val">0.003</span>
             </div>
-            <input type="range" id="noise-scale" min="0.001" max="0.01" step="0.0005" value="0.003">
+            <input type="range" id="noise-scale" min="0.001" max="0.01" step="0.0005" value="0.003" aria-label="Noise Scale">
         </div>
 
         <div class="control-group">
@@ -171,7 +179,7 @@
                 <span>Noise Evolution</span>
                 <span id="evolution-val">0.002</span>
             </div>
-            <input type="range" id="noise-evolution" min="0" max="0.01" step="0.0005" value="0.002">
+            <input type="range" id="noise-evolution" min="0" max="0.01" step="0.0005" value="0.002" aria-label="Noise Evolution">
         </div>
 
         <div class="control-group">

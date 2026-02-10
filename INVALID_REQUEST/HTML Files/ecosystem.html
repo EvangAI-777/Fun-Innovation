@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emergent Ecosystem</title>
+    <meta name="description" content="Emergent life simulation with plants, herbivores, and predators creating complex behavior from simple rules.">
+    <meta name="theme-color" content="#0a0a0f">
     <style>
         * {
             margin: 0;
@@ -160,14 +162,23 @@
         .log-entry:last-child {
             border-bottom: none;
         }
+        .skip-link { position:absolute;top:-100%;left:16px;background:#58a6ff;color:#0a0a0f;padding:8px 16px;border-radius:0 0 6px 6px;font-size:0.85em;font-weight:600;text-decoration:none;z-index:10000; }
+        .skip-link:focus { top:0; }
+        button:focus-visible, input[type="range"]:focus-visible { outline:2px solid #58a6ff;outline-offset:2px; }
+        @media (max-width:768px) {
+            body { flex-direction:column; }
+            #controls { width:100%;border-left:none;border-top:1px solid #333;max-height:40vh;overflow-y:auto; }
+        }
+        @media (prefers-reduced-motion:reduce) { *, *::before, *::after { animation-duration:0.01ms!important;transition-duration:0.01ms!important; } }
     </style>
 </head>
 <body>
+    <a class="skip-link" href="#controls">Skip to controls</a>
     <a href="../../index.html" style="position:fixed;top:14px;left:14px;z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;color:#aaa;text-decoration:none;font-family:'Segoe UI',system-ui,sans-serif;font-size:0.8em;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.14)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.07)';this.style.color='#aaa'">&larr; Home</a>
-    <div id="canvas-container">
-        <canvas id="world"></canvas>
-    </div>
-    <div id="controls">
+    <main id="canvas-container">
+        <canvas id="world" aria-label="Ecosystem simulation canvas"></canvas>
+    </main>
+    <aside id="controls" aria-label="Simulation controls">
         <h1>Emergent Ecosystem</h1>
         <p class="subtitle">Simple rules → Complex behavior</p>
 
@@ -199,7 +210,7 @@
                     <span>Plant Growth Rate</span>
                     <span id="plant-rate-val">0.02</span>
                 </div>
-                <input type="range" id="plant-rate" min="0.001" max="0.1" step="0.001" value="0.02">
+                <input type="range" id="plant-rate" min="0.001" max="0.1" step="0.001" value="0.02" aria-label="Plant Growth Rate">
             </div>
 
             <div class="control-group">
@@ -207,7 +218,7 @@
                     <span>Herbivore Speed</span>
                     <span id="herb-speed-val">2</span>
                 </div>
-                <input type="range" id="herb-speed" min="0.5" max="5" step="0.1" value="2">
+                <input type="range" id="herb-speed" min="0.5" max="5" step="0.1" value="2" aria-label="Herbivore Speed">
             </div>
 
             <div class="control-group">
@@ -215,7 +226,7 @@
                     <span>Predator Speed</span>
                     <span id="pred-speed-val">2.5</span>
                 </div>
-                <input type="range" id="pred-speed" min="0.5" max="6" step="0.1" value="2.5">
+                <input type="range" id="pred-speed" min="0.5" max="6" step="0.1" value="2.5" aria-label="Predator Speed">
             </div>
 
             <div class="control-group">
@@ -223,7 +234,7 @@
                     <span>Reproduction Threshold</span>
                     <span id="repro-thresh-val">80</span>
                 </div>
-                <input type="range" id="repro-thresh" min="50" max="150" step="5" value="80">
+                <input type="range" id="repro-thresh" min="50" max="150" step="5" value="80" aria-label="Reproduction Threshold">
             </div>
 
             <div class="control-group">
@@ -231,7 +242,7 @@
                     <span>Vision Range</span>
                     <span id="vision-val">80</span>
                 </div>
-                <input type="range" id="vision" min="30" max="200" step="5" value="80">
+                <input type="range" id="vision" min="30" max="200" step="5" value="80" aria-label="Vision Range">
             </div>
         </div>
 
