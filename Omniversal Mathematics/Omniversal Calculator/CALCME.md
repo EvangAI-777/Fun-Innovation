@@ -14,7 +14,7 @@ Every universe has a genuine math engine behind it. These aren't toy implementat
 
 ### Universe Guide
 
-**Real Numbers (R)** -- A full scientific calculator styled after the Google/Android scientific calculator. Dark theme with four distinct button categories: light blue-gray scientific functions, cyan AC button, dark charcoal number pad, medium gray operators, and a lavender equals button. Features include trig functions (with degree/radian toggle and inverse mode), factorial, powers, roots, logarithms, constants (pi, e), percentage, and smart parentheses. Standard infix entry with operator chaining. Keys: 0-9, +, -, *, /, ^, !, %, (, ), Enter, Backspace, Escape.
+**Real Numbers (R)** -- A full expression-based scientific calculator styled after the Google/Android scientific calculator. Dark theme with four distinct button categories: light blue-gray scientific functions, cyan AC button, dark charcoal number pad, medium gray operators, and a lavender equals button. The display is fully modular -- every button press inserts into the expression at the cursor position rather than replacing it, and a blinking cursor shows where input goes. Click anywhere in the expression to reposition the cursor. Arrow keys (Left/Right/Home/End) navigate the cursor; Delete removes the character after it. Live result preview appears above the expression as you type. A recursive-descent parser evaluates expressions with proper operator precedence (parentheses > functions > exponents > multiply/divide > add/subtract), implicit multiplication (e.g., 2pi = 2*pi), and postfix operators (! for factorial, % for percentage). Features: trig functions (with Deg/Rad toggle and Inv mode for asin/acos/atan), factorial, powers, roots, logarithms, constants (pi, e), percentage, and smart parentheses. Keys: 0-9, +, -, *, /, ^, !, %, (, ), Arrow keys, Enter, Backspace, Delete, Escape.
 
 **Complex Numbers (C)** -- Enter two complex numbers z1 and z2 as real + imaginary parts. Supports addition, subtraction, multiplication, division, modulus, argument, conjugate, and squaring. Includes a live Argand diagram that plots z1 and the result on the complex plane with a dashed line from the origin.
 
@@ -40,7 +40,7 @@ Every universe has a genuine math engine behind it. These aren't toy implementat
 
 **Responsive.** Flexbox and CSS Grid with media queries at 600px and 380px breakpoints. The calculator works on phones, tablets, and desktops. Universe orbs shrink, button grids reorganize, matrix inputs compact.
 
-**Accessible.** Keyboard support for the real calculator. Clear labels. High-contrast text. Semantic HTML structure.
+**Accessible.** Full keyboard support for the real calculator including cursor navigation (arrow keys, Home, End). Clickable expression display for cursor repositioning. Clear labels. High-contrast text. Semantic HTML structure.
 
 ## Testing
 
