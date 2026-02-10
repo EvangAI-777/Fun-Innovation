@@ -21,7 +21,7 @@ HTML_PATH = os.path.join(
     os.path.dirname(__file__),
     "..",
     "..",
-    "Omniversal Mathematics",
+    "OMNI INNOVATIONS",
     "Omniversal Calculator",
     "omniversal-calculator.html",
 )
@@ -134,9 +134,9 @@ class TestStructure:
 
     def test_notation_file_exists(self):
         notation_path = os.path.join(
-            os.path.dirname(__file__), "..", "..", "Omniversal Mathematics", "NOTATION.md"
+            os.path.dirname(__file__), "..", "..", "OMNI INNOVATIONS", "Omniversal Mathematics", "MATHME.md"
         )
-        assert os.path.isfile(notation_path), "NOTATION.md must exist"
+        assert os.path.isfile(notation_path), "MATHME.md must exist"
 
     def test_button_count_reasonable(self, html):
         count = html.count("calc-btn")
