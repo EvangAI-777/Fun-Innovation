@@ -6,13 +6,13 @@ Mathematics isn't one thing. It's a landscape of interconnected systems, each wi
 
 ### [Omniversal Calculator](./Omniversal%20Calculator/)
 
-The world's first Omniversal Calculator. Nine mathematical universes in a single browser-based interface, each with its own color identity, custom input layout, and genuine math engine. No dependencies, no build step -- open the HTML file and start calculating.
+The world's first Omniversal Calculator (v1.3.0). Nine mathematical universes in a single browser-based interface, each with its own color identity, custom input layout, and genuine math engine. The Real universe features an expression-based engine with a recursive-descent parser, clickable cursor, and live result preview. No dependencies, no build step -- open the HTML file and start calculating.
 
 **The Universes:**
 
 | Universe | Symbol | What it computes |
 |----------|--------|-----------------|
-| Real | R | Scientific calculator -- trig, powers, roots, logarithms |
+| Real | R | Expression-based scientific calculator -- trig, powers, roots, logarithms, factorial, with clickable cursor and live preview |
 | Complex | C | Arithmetic on the complex plane with Argand diagram visualization |
 | Modular | Z_n | Clock arithmetic -- addition, multiplication, powers, and inverses mod n |
 | Matrix | M | 2x2 and 3x3 matrix algebra -- multiplication, determinants, inverses, traces |
