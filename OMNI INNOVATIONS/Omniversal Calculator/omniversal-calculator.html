@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Omniversal Calculator</title>
+    <meta name="description" content="Nine mathematical universes in one browser-based calculator. Real, complex, modular, matrix, quaternion, boolean, tropical, dual, and omnidirectional math with zero dependencies.">
+    <meta name="theme-color" content="#06060e">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -659,62 +661,89 @@
         ::-webkit-scrollbar-track { background: var(--bg-input); }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        /* ── Accessibility ── */
+        .skip-link {
+            position: absolute; top: -100%; left: 16px;
+            background: var(--accent); color: var(--bg-void);
+            padding: 8px 16px; border-radius: 0 0 6px 6px;
+            font-size: 0.85em; font-weight: 600;
+            text-decoration: none; z-index: 10000;
+        }
+        .skip-link:focus { top: 0; }
+        .universe-orb:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+        .calc-btn:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 1px;
+        }
+        .field-input:focus-visible, .field-select:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 1px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+        }
     </style>
 </head>
 <body>
+    <a class="skip-link" href="#calculator">Skip to calculator</a>
     <a href="../../index.html" style="position:fixed;top:14px;left:14px;z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;color:#aaa;text-decoration:none;font-family:'Segoe UI',system-ui,sans-serif;font-size:0.8em;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.14)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.07)';this.style.color='#aaa'">&larr; Home</a>
-    <canvas id="starfield"></canvas>
+    <canvas id="starfield" aria-hidden="true"></canvas>
 
-    <div class="app" data-universe="real">
+    <main class="app" data-universe="real">
 
         <!-- Header -->
-        <div class="header">
+        <header class="header">
             <h1>OMNIVERSAL CALCULATOR</h1>
             <div class="tagline">Nine mathematical universes. One interface.</div>
-        </div>
+        </header>
 
         <!-- Universe Selector -->
-        <div class="universe-bar" id="universeBar">
-            <div class="universe-orb active" data-uni="real" title="Real Numbers">
-                <span>&Ropf;</span>
+        <nav class="universe-bar" id="universeBar" aria-label="Mathematical universe selector">
+            <div class="universe-orb active" data-uni="real" role="button" tabindex="0" aria-label="Real Numbers" aria-pressed="true">
+                <span aria-hidden="true">&Ropf;</span>
                 <span class="orb-label">Real</span>
             </div>
-            <div class="universe-orb" data-uni="complex" title="Complex Numbers">
-                <span>&Copf;</span>
+            <div class="universe-orb" data-uni="complex" role="button" tabindex="0" aria-label="Complex Numbers" aria-pressed="false">
+                <span aria-hidden="true">&Copf;</span>
                 <span class="orb-label">Complex</span>
             </div>
-            <div class="universe-orb" data-uni="modular" title="Modular Arithmetic">
-                <span>&Zopf;<sub>n</sub></span>
+            <div class="universe-orb" data-uni="modular" role="button" tabindex="0" aria-label="Modular Arithmetic" aria-pressed="false">
+                <span aria-hidden="true">&Zopf;<sub>n</sub></span>
                 <span class="orb-label">Modular</span>
             </div>
-            <div class="universe-orb" data-uni="matrix" title="Matrix Algebra">
-                <span>M</span>
+            <div class="universe-orb" data-uni="matrix" role="button" tabindex="0" aria-label="Matrix Algebra" aria-pressed="false">
+                <span aria-hidden="true">M</span>
                 <span class="orb-label">Matrix</span>
             </div>
-            <div class="universe-orb" data-uni="quaternion" title="Quaternions">
-                <span>&Hopf;</span>
+            <div class="universe-orb" data-uni="quaternion" role="button" tabindex="0" aria-label="Quaternions" aria-pressed="false">
+                <span aria-hidden="true">&Hopf;</span>
                 <span class="orb-label">Quaternion</span>
             </div>
-            <div class="universe-orb" data-uni="boolean" title="Boolean Algebra">
-                <span>&Bopf;</span>
+            <div class="universe-orb" data-uni="boolean" role="button" tabindex="0" aria-label="Boolean Algebra" aria-pressed="false">
+                <span aria-hidden="true">&Bopf;</span>
                 <span class="orb-label">Boolean</span>
             </div>
-            <div class="universe-orb" data-uni="tropical" title="Tropical Semiring">
-                <span>&Topf;</span>
+            <div class="universe-orb" data-uni="tropical" role="button" tabindex="0" aria-label="Tropical Semiring" aria-pressed="false">
+                <span aria-hidden="true">&Topf;</span>
                 <span class="orb-label">Tropical</span>
             </div>
-            <div class="universe-orb" data-uni="dual" title="Dual Numbers">
-                <span>&Dopf;</span>
+            <div class="universe-orb" data-uni="dual" role="button" tabindex="0" aria-label="Dual Numbers" aria-pressed="false">
+                <span aria-hidden="true">&Dopf;</span>
                 <span class="orb-label">Dual</span>
             </div>
-            <div class="universe-orb" data-uni="omnidirectional" title="Omnidirectional Transforms">
-                <span>&Omega;</span>
+            <div class="universe-orb" data-uni="omnidirectional" role="button" tabindex="0" aria-label="Omnidirectional Transforms" aria-pressed="false">
+                <span aria-hidden="true">&Omega;</span>
                 <span class="orb-label">Omni</span>
             </div>
-        </div>
+        </nav>
 
         <!-- Calculator -->
-        <div class="calc-container">
+        <div class="calc-container" id="calculator">
 
             <!-- Universe Description -->
             <div class="universe-desc" id="universeDesc">
@@ -783,18 +812,18 @@
                 <div class="field-group">
                     <div class="field-label">z₁</div>
                     <div class="field-row">
-                        <input class="field-input" id="c1re" type="number" placeholder="real" step="any">
+                        <input class="field-input" id="c1re" type="number" placeholder="real" step="any" aria-label="z1 real part">
                         <span class="field-separator">+</span>
-                        <input class="field-input" id="c1im" type="number" placeholder="imag" step="any">
+                        <input class="field-input" id="c1im" type="number" placeholder="imag" step="any" aria-label="z1 imaginary part">
                         <span class="field-separator">i</span>
                     </div>
                 </div>
                 <div class="field-group">
                     <div class="field-label">z₂</div>
                     <div class="field-row">
-                        <input class="field-input" id="c2re" type="number" placeholder="real" step="any">
+                        <input class="field-input" id="c2re" type="number" placeholder="real" step="any" aria-label="z2 real part">
                         <span class="field-separator">+</span>
-                        <input class="field-input" id="c2im" type="number" placeholder="imag" step="any">
+                        <input class="field-input" id="c2im" type="number" placeholder="imag" step="any" aria-label="z2 imaginary part">
                         <span class="field-separator">i</span>
                     </div>
                 </div>
@@ -815,17 +844,17 @@
             <div class="universe-panel" id="panel-modular">
                 <div class="field-group">
                     <div class="field-label">Modulus n</div>
-                    <input class="field-input" id="modN" type="number" value="7" min="2" step="1" placeholder="modulus">
+                    <input class="field-input" id="modN" type="number" value="7" min="2" step="1" placeholder="modulus" aria-label="Modulus n">
                 </div>
                 <div class="field-group">
                     <div class="field-row">
                         <div style="flex:1">
                             <div class="field-label">a</div>
-                            <input class="field-input" id="modA" type="number" placeholder="a" step="1">
+                            <input class="field-input" id="modA" type="number" placeholder="a" step="1" aria-label="Operand a">
                         </div>
                         <div style="flex:1">
                             <div class="field-label">b</div>
-                            <input class="field-input" id="modB" type="number" placeholder="b" step="1">
+                            <input class="field-input" id="modB" type="number" placeholder="b" step="1" aria-label="Operand b">
                         </div>
                     </div>
                 </div>
@@ -1000,17 +1029,17 @@
                     <div class="field-row">
                         <div style="flex:1">
                             <div class="field-label">Origin (&alpha;)</div>
-                            <input class="field-input" id="omniOrigin" type="text" placeholder="Earth" value="Earth">
+                            <input class="field-input" id="omniOrigin" type="text" placeholder="Earth" value="Earth" aria-label="Origin point">
                         </div>
                         <div style="flex:1">
                             <div class="field-label">Destination (&omega;)</div>
-                            <input class="field-input" id="omniDest" type="text" placeholder="Celestial_Realm" value="Celestial_Realm">
+                            <input class="field-input" id="omniDest" type="text" placeholder="Celestial_Realm" value="Celestial_Realm" aria-label="Destination point">
                         </div>
                     </div>
                 </div>
                 <div class="field-group">
                     <div class="field-label">Parameter (for &oplus; &ominus; &#10226; &#10227;)</div>
-                    <input class="field-input" id="omniParam" type="number" value="1" min="0" step="any" style="max-width:120px">
+                    <input class="field-input" id="omniParam" type="number" value="1" min="0" step="any" style="max-width:120px" aria-label="Operation parameter">
                 </div>
                 <div class="field-label">Expression</div>
                 <div class="omni-expression" id="omniExpr">
@@ -1057,7 +1086,7 @@
                 <div class="history-empty">No calculations yet.</div>
             </div>
         </div>
-    </div>
+    </main>
 
     <script>
     (() => {
@@ -1086,12 +1115,16 @@
             }
         }
 
+        const prefersReducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
         function drawStarfield() {
             sfCtx.clearRect(0, 0, sfCanvas.width, sfCanvas.height);
             for (const s of stars) {
-                s.a += s.da;
-                if (s.a > 1 || s.a < 0.1) s.da *= -1;
-                s.a = Math.max(0.1, Math.min(1, s.a));
+                if (!prefersReducedMotion) {
+                    s.a += s.da;
+                    if (s.a > 1 || s.a < 0.1) s.da *= -1;
+                    s.a = Math.max(0.1, Math.min(1, s.a));
+                }
                 sfCtx.beginPath();
                 sfCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
                 sfCtx.fillStyle = `rgba(200, 200, 240, ${s.a * 0.6})`;
@@ -1150,7 +1183,9 @@
 
             // Update orbs
             document.querySelectorAll('.universe-orb').forEach(o => {
-                o.classList.toggle('active', o.dataset.uni === uni);
+                const isActive = o.dataset.uni === uni;
+                o.classList.toggle('active', isActive);
+                o.setAttribute('aria-pressed', isActive);
             });
 
             // Update panels
@@ -1188,6 +1223,12 @@
         document.getElementById('universeBar').addEventListener('click', e => {
             const orb = e.target.closest('.universe-orb');
             if (orb) switchUniverse(orb.dataset.uni);
+        });
+        document.getElementById('universeBar').addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                const orb = e.target.closest('.universe-orb');
+                if (orb) { e.preventDefault(); switchUniverse(orb.dataset.uni); }
+            }
         });
 
         // ══════════════════════════════════════

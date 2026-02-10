@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generative Music</title>
+    <meta name="description" content="Algorithmic music synthesizer producing endless, never-repeating compositions in your browser.">
+    <meta name="theme-color" content="#0a0a12">
     <style>
         * {
             margin: 0;
@@ -257,19 +259,25 @@
         .note-dot.pad { background: #50fa7b; box-shadow: 0 0 10px #50fa7b; }
         .note-dot.arp { background: #bd93f9; box-shadow: 0 0 10px #bd93f9; }
         .note-dot.perc { background: #ffb86c; box-shadow: 0 0 10px #ffb86c; }
+        .skip-link { position:absolute;top:-100%;left:16px;background:#8be9fd;color:#0a0a12;padding:8px 16px;border-radius:0 0 6px 6px;font-size:0.85em;font-weight:600;text-decoration:none;z-index:10000; }
+        .skip-link:focus { top:0; }
+        button:focus-visible, select:focus-visible, input[type="range"]:focus-visible { outline:2px solid #8be9fd;outline-offset:2px; }
+        @media (max-width:600px) { .control-row { gap:10px; } .control-group { min-width:100%; } }
+        @media (prefers-reduced-motion:reduce) { *, *::before, *::after { animation-duration:0.01ms!important;transition-duration:0.01ms!important; } }
     </style>
 </head>
 <body>
+    <a class="skip-link" href="#controls">Skip to controls</a>
     <a href="../../index.html" style="position:fixed;top:14px;left:14px;z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;color:#aaa;text-decoration:none;font-family:'Segoe UI',system-ui,sans-serif;font-size:0.8em;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.14)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.07)';this.style.color='#aaa'">&larr; Home</a>
-    <div id="visualizer">
-        <canvas id="viz-canvas"></canvas>
-        <div id="start-overlay">
+    <main id="visualizer">
+        <canvas id="viz-canvas" aria-label="Music visualization canvas"></canvas>
+        <div id="start-overlay" role="button" tabindex="0" aria-label="Click to begin playing generative music">
             <h1>▶ Generative Music</h1>
             <p>Click anywhere to begin</p>
         </div>
-    </div>
+    </main>
 
-    <div id="controls">
+    <section id="controls" aria-label="Music controls">
         <div class="control-row">
             <div class="main-controls">
                 <button class="play-btn" id="play-btn">▶ Play</button>
@@ -347,14 +355,14 @@
                         <span>BPM</span>
                         <span id="bpm-val">72</span>
                     </div>
-                    <input type="range" id="bpm" min="40" max="160" value="72">
+                    <input type="range" id="bpm" min="40" max="160" value="72" aria-label="Tempo BPM">
                 </div>
                 <div class="control-group">
                     <div class="control-label">
                         <span>Swing</span>
                         <span id="swing-val">0%</span>
                     </div>
-                    <input type="range" id="swing" min="0" max="50" value="0">
+                    <input type="range" id="swing" min="0" max="50" value="0" aria-label="Swing">
                 </div>
             </div>
 
@@ -365,14 +373,14 @@
                         <span>Density</span>
                         <span id="density-val">50%</span>
                     </div>
-                    <input type="range" id="density" min="10" max="100" value="50">
+                    <input type="range" id="density" min="10" max="100" value="50" aria-label="Density">
                 </div>
                 <div class="control-group">
                     <div class="control-label">
                         <span>Randomness</span>
                         <span id="random-val">30%</span>
                     </div>
-                    <input type="range" id="randomness" min="0" max="100" value="30">
+                    <input type="range" id="randomness" min="0" max="100" value="30" aria-label="Randomness">
                 </div>
             </div>
 
@@ -383,14 +391,14 @@
                         <span>Reverb</span>
                         <span id="reverb-val">40%</span>
                     </div>
-                    <input type="range" id="reverb" min="0" max="100" value="40">
+                    <input type="range" id="reverb" min="0" max="100" value="40" aria-label="Reverb">
                 </div>
                 <div class="control-group">
                     <div class="control-label">
                         <span>Master Volume</span>
                         <span id="volume-val">70%</span>
                     </div>
-                    <input type="range" id="volume" min="0" max="100" value="70">
+                    <input type="range" id="volume" min="0" max="100" value="70" aria-label="Volume">
                 </div>
             </div>
         </div>

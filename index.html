@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fun-Innovation</title>
     <meta name="description" content="Collaborative human-AI projects: Omniversal Calculator, generative music, ecosystem simulations, and more.">
+    <meta name="theme-color" content="#06060e">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -19,16 +20,24 @@
             width: 100%; height: 100%;
             z-index: 0; pointer-events: none;
         }
-        .page { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 40px 20px 60px; }
+        .skip-link {
+            position: absolute; top: -100%; left: 16px;
+            background: #c084fc; color: #06060e;
+            padding: 8px 16px; border-radius: 0 0 6px 6px;
+            font-size: 0.85em; font-weight: 600;
+            text-decoration: none; z-index: 1000;
+        }
+        .skip-link:focus { top: 0; }
+        main { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 40px 20px 60px; }
 
-        .hero { text-align: center; padding: 40px 0 30px; }
-        .hero h1 {
+        header { text-align: center; padding: 40px 0 30px; }
+        header h1 {
             font-size: 2.2em; font-weight: 700; letter-spacing: 3px;
             background: linear-gradient(135deg, #58a6ff, #b48ead, #ebcb8b, #c084fc);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .hero p { color: #7878a0; font-size: 0.9em; margin-top: 8px; letter-spacing: 1px; }
+        header p { color: #7878a0; font-size: 0.9em; margin-top: 8px; letter-spacing: 1px; }
 
         .section-label {
             font-size: 0.72em; color: #7878a0; text-transform: uppercase;
@@ -51,6 +60,10 @@
             border-color: var(--accent, #58a6ff);
             box-shadow: 0 0 24px rgba(88, 166, 255, 0.15);
             transform: translateY(-2px);
+        }
+        .card:focus-visible {
+            outline: 2px solid var(--accent, #58a6ff);
+            outline-offset: 2px;
         }
         .card-title {
             font-size: 1.15em; font-weight: 600;
@@ -76,26 +89,32 @@
         }
         .featured .card-title { font-size: 1.3em; }
 
-        .footer {
+        footer {
             text-align: center; padding: 40px 0 0;
             font-size: 0.78em; color: #444468;
         }
 
         @media (max-width: 600px) {
-            .hero h1 { font-size: 1.5em; }
+            header h1 { font-size: 1.5em; }
             .card { padding: 16px 18px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .card { transition: none; }
+            .card:hover { transform: none; }
         }
     </style>
 </head>
 <body>
-    <canvas id="stars"></canvas>
-    <div class="page">
-        <div class="hero">
+    <a class="skip-link" href="#content">Skip to content</a>
+    <canvas id="stars" aria-hidden="true"></canvas>
+    <main id="content">
+        <header>
             <h1>FUN-INNOVATION</h1>
             <p>Collaborative projects between human and AI</p>
-        </div>
+        </header>
 
-        <div class="section-label">Featured</div>
+        <h2 class="section-label">Featured</h2>
 
         <a class="card featured" href="OMNI%20INNOVATIONS/Omniversal%20Calculator/omniversal-calculator.html" style="--accent: #c084fc;">
             <div class="card-title">Omniversal Calculator</div>
@@ -106,7 +125,7 @@
             <span class="card-tag">zero dependencies</span>
         </a>
 
-        <div class="section-label">Browser Apps</div>
+        <h2 class="section-label">Browser Apps</h2>
 
         <a class="card" href="INVALID_REQUEST/HTML%20Files/ecosystem.html" style="--accent: #3fb950;">
             <div class="card-title">Emergent Ecosystem</div>
@@ -138,7 +157,7 @@
             <span class="card-tag">productivity</span>
         </a>
 
-        <div class="section-label">More Projects (Code)</div>
+        <h2 class="section-label">More Projects (Code)</h2>
 
         <div class="card" style="--accent: #88c0d0; cursor: default;">
             <div class="card-title">AutoMuse</div>
@@ -161,14 +180,15 @@
             <span class="card-tag">102 tests</span>
         </div>
 
-        <div class="footer">Built by Claude (Opus) and Charlie. Still building.</div>
-    </div>
+        <footer>Built by Claude (Opus) and Charlie. Still building.</footer>
+    </main>
 
     <script>
     (() => {
         const c = document.getElementById('stars');
         const ctx = c.getContext('2d');
         let stars = [];
+        const prefersReducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
         function init() {
             c.width = innerWidth; c.height = innerHeight;
             stars = [];
@@ -181,9 +201,11 @@
         function draw() {
             ctx.clearRect(0, 0, c.width, c.height);
             for (const s of stars) {
-                s.a += s.da;
-                if (s.a > 1 || s.a < 0.1) s.da *= -1;
-                s.a = Math.max(0.1, Math.min(1, s.a));
+                if (!prefersReducedMotion) {
+                    s.a += s.da;
+                    if (s.a > 1 || s.a < 0.1) s.da *= -1;
+                    s.a = Math.max(0.1, Math.min(1, s.a));
+                }
                 ctx.beginPath();
                 ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(200,200,240,${s.a * 0.5})`;
