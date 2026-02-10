@@ -113,17 +113,22 @@
         .import-preview-item .preview { color: #888; font-size: 0.9em; margin-top: 3px; }
         .skip-link { position:absolute;top:-100%;left:16px;background:#4a6a8a;color:#fff;padding:8px 16px;border-radius:0 0 6px 6px;font-size:0.85em;font-weight:600;text-decoration:none;z-index:10000; }
         .skip-link:focus { top:0; }
+        .home-btn { position:fixed;top:14px;left:14px;z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:10px 18px;min-height:44px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;color:#aaa;text-decoration:none;font-family:'Segoe UI',system-ui,sans-serif;font-size:0.85em;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:background 0.2s,color 0.2s; }
+        .home-btn:hover,.home-btn:focus-visible { background:rgba(255,255,255,0.14);color:#fff; }
+        .home-btn:focus-visible { outline:2px solid #fff;outline-offset:2px; }
         button:focus-visible, select:focus-visible, input:focus-visible, .editor:focus-visible { outline:2px solid #4a6a8a;outline-offset:2px; }
         @media (max-width:768px) {
             .main-container { flex-direction:column; }
             .sidebar { width:100%;max-height:40vh;border-right:none;border-bottom:1px solid #333; }
+            .home-btn { position:static;display:flex;width:fit-content;margin:0 auto;padding:10px 20px; }
+            .header { padding-top:8px; }
         }
         @media (prefers-reduced-motion:reduce) { *, *::before, *::after { animation-duration:0.01ms!important;transition-duration:0.01ms!important; } }
     </style>
 </head>
 <body>
     <a class="skip-link" href="#editor-area">Skip to editor</a>
-    <a href="../../index.html" style="position:fixed;top:14px;left:14px;z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;color:#aaa;text-decoration:none;font-family:'Segoe UI',system-ui,sans-serif;font-size:0.8em;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.14)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.07)';this.style.color='#aaa'">&larr; Home</a>
+    <a class="home-btn" href="../../index.html">&larr; Home</a>
     <header class="header">
         <h1>📝 Notes Organizer</h1>
         <div class="header-actions">

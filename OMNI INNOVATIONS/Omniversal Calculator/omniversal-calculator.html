@@ -266,8 +266,9 @@
 
         .field-row {
             display: flex; gap: 8px; align-items: center;
+            flex-wrap: wrap;
         }
-        .field-row .field-input { flex: 1; }
+        .field-row .field-input { flex: 1; min-width: 60px; }
         .field-separator {
             color: var(--text-secondary);
             font-size: 0.9em;
@@ -568,28 +569,94 @@
             font-size: 0.8em;
         }
 
+        /* ── Home Button ── */
+        .home-btn {
+            position: fixed;
+            top: 14px; left: 14px;
+            z-index: 9999;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 18px;
+            min-height: 44px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px;
+            color: #aaa;
+            text-decoration: none;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 0.85em;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: background 0.2s, color 0.2s;
+        }
+        .home-btn:hover, .home-btn:focus-visible {
+            background: rgba(255,255,255,0.14);
+            color: #fff;
+        }
+        .home-btn:focus-visible {
+            outline: 2px solid #fff;
+            outline-offset: 2px;
+        }
+
         /* ── Responsive ── */
         @media (max-width: 600px) {
-            .app { padding: 12px 10px 30px; }
-            .header h1 { font-size: 1.2em; }
+            .home-btn {
+                position: static;
+                display: flex;
+                width: fit-content;
+                margin: 10px auto 0;
+                padding: 10px 20px;
+            }
+            .app { padding: 8px 8px 30px; }
+            .header { padding: 14px 0 12px; }
+            .header h1 { font-size: 1.15em; letter-spacing: 1px; }
+            .header .tagline { font-size: 0.68em; }
+            .universe-bar { gap: 6px; padding: 10px 0 16px; }
             .universe-orb { width: 44px; height: 44px; font-size: 0.9em; }
-            .universe-orb .orb-label { font-size: 0.5em; bottom: -16px; }
-            .universe-bar { gap: 6px; padding: 12px 0 20px; }
-            .display-result { font-size: 1.4em; }
-            .calc-btn { padding: 10px 6px; font-size: 0.85em; }
-            #panel-real .calc-btn { padding: 12px 6px; font-size: 0.9em; }
-            #panel-real .real-sci { font-size: 0.8em; }
-            .matrix-grid.size-2 { grid-template-columns: repeat(2, 60px); }
-            .matrix-grid.size-3 { grid-template-columns: repeat(3, 50px); }
-            .matrix-grid input { padding: 6px 2px; font-size: 0.8em; }
-            .matrix-wrapper { gap: 12px; }
+            .universe-orb .orb-label { font-size: 0.5em; bottom: -14px; }
+            .universe-desc { padding: 10px 14px; font-size: 0.72em; gap: 8px; }
+            .universe-desc .desc-symbol { font-size: 1.2em; }
+            .display { padding: 14px; min-height: 64px; }
+            .display-expression { font-size: 0.78em; }
+            .display-result { font-size: 1.3em; }
+            .universe-panel { padding: 12px 12px 16px; }
+            .calc-btn { padding: 12px 4px; font-size: 0.85em; }
+            .btn-grid { gap: 5px; }
+            #panel-real .calc-btn { padding: 14px 4px; font-size: 0.95em; border-radius: 16px; }
+            #panel-real .real-sci { font-size: 0.82em; padding: 12px 4px; }
+            .field-row { flex-wrap: wrap; }
+            .field-input { padding: 10px 8px; font-size: 0.9em; min-width: 0; }
+            .field-separator { font-size: 0.85em; }
+            .matrix-grid.size-2 { grid-template-columns: repeat(2, 1fr); }
+            .matrix-grid.size-3 { grid-template-columns: repeat(3, 1fr); }
+            .matrix-grid input { padding: 8px 2px; font-size: 0.8em; }
+            .matrix-wrapper { gap: 10px; }
             .bracket { font-size: 2em; }
+            .omni-state-grid { grid-template-columns: repeat(3, 1fr); }
         }
 
         @media (max-width: 380px) {
-            .universe-bar { gap: 4px; }
-            .universe-orb { width: 38px; height: 38px; font-size: 0.8em; }
+            .home-btn { font-size: 0.8em; padding: 8px 16px; }
+            .app { padding: 6px 6px 24px; }
+            .header h1 { font-size: 1em; }
+            .universe-bar { gap: 3px; }
+            .universe-orb { width: 36px; height: 36px; font-size: 0.75em; }
+            .universe-orb .orb-label { display: none; }
+            .display { padding: 10px; }
+            .display-result { font-size: 1.15em; }
+            .universe-panel { padding: 10px 8px 14px; }
+            #panel-real .real-grid { gap: 4px; }
+            #panel-real .calc-btn { padding: 12px 2px; font-size: 0.85em; border-radius: 14px; }
+            #panel-real .real-sci { font-size: 0.72em; padding: 10px 2px; }
             .btn-grid.cols-5 { grid-template-columns: repeat(4, 1fr); }
+            .btn-grid.cols-4 { gap: 4px; }
+            .calc-btn { padding: 10px 3px; font-size: 0.78em; }
+            .calc-btn.wide { font-size: 0.75em; }
+            .field-row { gap: 4px; }
+            .field-input { padding: 8px 6px; font-size: 0.85em; }
+            .omni-state-grid { grid-template-columns: repeat(2, 1fr); }
+            .matrix-grid.size-3 input { padding: 6px 1px; font-size: 0.75em; }
         }
 
         /* ── Toggle switches (Boolean) ── */
@@ -691,7 +758,7 @@
 </head>
 <body>
     <a class="skip-link" href="#calculator">Skip to calculator</a>
-    <a href="../../index.html" style="position:fixed;top:14px;left:14px;z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;color:#aaa;text-decoration:none;font-family:'Segoe UI',system-ui,sans-serif;font-size:0.8em;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.14)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.07)';this.style.color='#aaa'">&larr; Home</a>
+    <a class="home-btn" href="../../index.html">&larr; Home</a>
     <canvas id="starfield" aria-hidden="true"></canvas>
 
     <main class="app" data-universe="real">
