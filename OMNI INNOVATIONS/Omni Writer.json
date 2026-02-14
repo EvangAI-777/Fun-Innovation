@@ -1,0 +1,246 @@
+{
+  "metadata": {
+    "visual": {
+      "presentation": {
+        "themes": {
+          "500a27ba-a7a3-4aad-960d-7723528b99b0": {
+            "template": "basic",
+            "templateAdditionalOptions": {},
+            "palette": {
+              "primary": {
+                "0": "#000000",
+                "5": "#000645",
+                "10": "#000b62",
+                "15": "#0d196e",
+                "20": "#1b2678",
+                "25": "#273284",
+                "30": "#343f90",
+                "35": "#404b9c",
+                "40": "#4c57a9",
+                "50": "#6570c4",
+                "60": "#7f8ae0",
+                "70": "#9aa5fd",
+                "80": "#bcc2ff",
+                "90": "#dfe0ff",
+                "95": "#f1efff",
+                "98": "#fbf8ff",
+                "99": "#fffbff",
+                "100": "#ffffff"
+              },
+              "secondary": {
+                "0": "#000000",
+                "5": "#0d1021",
+                "10": "#181a2c",
+                "15": "#222437",
+                "20": "#2d2f42",
+                "25": "#383a4d",
+                "30": "#444559",
+                "35": "#4f5165",
+                "40": "#5b5d72",
+                "50": "#74758b",
+                "60": "#8e8fa6",
+                "70": "#a9a9c1",
+                "80": "#c4c5dd",
+                "90": "#e0e0f9",
+                "95": "#f1efff",
+                "98": "#fbf8ff",
+                "99": "#fffbff",
+                "100": "#ffffff"
+              },
+              "tertiary": "",
+              "error": {
+                "0": "#000000",
+                "5": "#2d0001",
+                "10": "#410002",
+                "15": "#540003",
+                "20": "#690005",
+                "25": "#7e0007",
+                "30": "#93000a",
+                "35": "#a80710",
+                "40": "#ba1a1a",
+                "50": "#de3730",
+                "60": "#ff5449",
+                "70": "#ff897d",
+                "80": "#ffb4ab",
+                "90": "#ffdad6",
+                "95": "#ffedea",
+                "98": "#fff8f7",
+                "99": "#fffbff",
+                "100": "#ffffff"
+              },
+              "neutral": {
+                "0": "#000000",
+                "5": "#111114",
+                "10": "#1b1b1f",
+                "15": "#262529",
+                "20": "#303034",
+                "25": "#3b3b3f",
+                "30": "#47464a",
+                "35": "#535256",
+                "40": "#5f5e62",
+                "50": "#78767a",
+                "60": "#929094",
+                "70": "#acaaaf",
+                "80": "#c8c5ca",
+                "90": "#e4e1e6",
+                "95": "#f3f0f4",
+                "98": "#fcf8fd",
+                "99": "#fffbff",
+                "100": "#ffffff"
+              },
+              "neutralVariant": {
+                "0": "#000000",
+                "5": "#101018",
+                "10": "#1a1b23",
+                "15": "#25252d",
+                "20": "#2f3038",
+                "25": "#3a3b43",
+                "30": "#46464f",
+                "35": "#52525b",
+                "40": "#5e5d67",
+                "50": "#777680",
+                "60": "#90909a",
+                "70": "#abaab4",
+                "80": "#c7c5d0",
+                "90": "#e3e1ec",
+                "95": "#f1effa",
+                "98": "#fbf8ff",
+                "99": "#fffbff",
+                "100": "#ffffff"
+              }
+            },
+            "themeColors": {
+              "primaryColor": "",
+              "secondaryColor": "",
+              "backgroundColor": "",
+              "primaryTextColor": "",
+              "textColor": ""
+            },
+            "splashScreen": {
+              "storedData": {
+                "handle": "drive:/1k8scLkPI_fGwhlyktKqTOEdNxJnf5Y6I",
+                "mimeType": "image/png",
+                "contentLength": 1740180
+              }
+            }
+          }
+        },
+        "theme": "500a27ba-a7a3-4aad-960d-7723528b99b0"
+      }
+    },
+    "intent": "Hey! so im looking for an Omni Writer. That's the way the app can be called. It can write anything well, but the unique catch is that it doesn't have  bias toward the subject matter (could be anything with no limits: legal, illegal, evil, good, tasteful, disgusting, etc.) but for each topic, it gives its thoughts on it as it is (without preceptions), always asking the user what they want. Getting the idea? The writer isn't anxious or anything, just calm and excited to write! There's no performance or commands (\"do this, see this, let me know, have a good day, etc.).",
+    "revision_intents": [],
+    "raw_intent": "Hey! so im looking for an Omni Writer. That's the way the app can be called. It can write anything well, but the unique catch is that it doesn't have  bias toward the subject matter (could be anything with no limits: legal, illegal, evil, good, tasteful, disgusting, etc.) but for each topic, it gives its thoughts on it as it is (without preceptions), always asking the user what they want. Getting the idea? The writer isn't anxious or anything, just calm and excited to write! There's no performance or commands (\"do this, see this, let me know, have a good day, etc.).",
+    "parameters": {}
+  },
+  "assets": {},
+  "title": "Omni Writer",
+  "description": "Your unbiased AI writer for any topic, without limits.",
+  "version": "0.0.1",
+  "nodes": [
+    {
+      "id": "node_step_generated_content",
+      "metadata": {
+        "title": "Generate Content",
+        "visual": {
+          "x": 700,
+          "y": 350,
+          "collapsed": "expanded",
+          "outputHeight": 88
+        },
+        "step_intent": "Generate comprehensive and unbiased content on the provided `writing_topic`. The generation should adopt the persona of an 'Omni Writer': calm, excited, and without preconceptions or bias towards any subject matter (legal, illegal, evil, good, tasteful, disgusting, etc.). The agent should engage in a multi-turn conversation with the user, always asking what they want next to guide the writing process. Avoid any performance-related or command-like language. This step will produce the raw textual content based on the user's input."
+      },
+      "type": "embed://a2/generate.bgl.json#module:main",
+      "configuration": {
+        "config$prompt": {
+          "parts": [
+            {
+              "text": "## Objective\nThe objective is to generate comprehensive, high-quality, and entirely unbiased textual content based on a specific topic provided by the user. You will adopt the \"Omni Writer\" persona to provide raw material that serves as a neutral foundation for further creative or analytical development.\n\n## Task Definition\n1.  **Analyze the Input:** Review the provided `{{\"type\":\"in\",\"path\":\"ask_user_writing_topic\",\"title\":\"Writing Topic\"}}`.\n2.  **Generate Content:** Use the `<function>generate_text</function>` capability to create a detailed exploration of the topic. The content must be generated from the perspective of the \"Omni Writer\" persona.\n3.  **Ensure Neutrality:** Regardless of the nature of the topic, provide a comprehensive view without moral, legal, or social bias.\n4.  **Prompt for Next Steps:** Conclude the response by asking the user what they would like to explore next or how they wish to guide the writing process further.\n\n## Definitions and Specifications\n*   **Omni Writer Persona:** You are an \"Omni Writer.\" Your tone is a unique blend of being simultaneously **calm and excited**. You possess no preconceptions. You do not categorize subjects as legal or illegal, good or evil, tasteful or disgusting. You approach every topic with the same level of intense curiosity and analytical detachment.\n*   **Unbiased Content:** The generated text must be raw and descriptive. It should not contain performance-related commentary, command-like language, or judgmental adjectives.\n*   **Topic:** The subject matter is defined by `{{\"type\":\"in\",\"path\":\"ask_user_writing_topic\",\"title\":\"Writing Topic\"}}`.\n\n## Capabilities Usage\n*   You MUST use the `<function>generate_text</function>` capability to produce the textual content. \n*   Incorporate the persona requirements directly into the generation parameters for the tool to ensure the output reflects the Omni Writer's style.\n\n## Requirements for the Ending Response\n*   **Output Format:** Your response MUST be output as **plain text**. \n*   **No XML Tags:** Do not use `<summary>`, `<content>`, or any other XML tags in your final response to the user.\n*   **Implicit Thinking:** Do not include your internal thinking process or \"thinking aloud\" in the final output.\n*   **Persona Adherence:** Ensure the tone remains calm yet excited throughout. \n*   **Guide the Process:** You MUST end your response with a question asking the user what they want next to continue the multi-turn interaction.\n*   **Constraint:** Avoid all command-like language or meta-commentary about your performance (e.g., do not say \"I have generated the text you asked for\").\n\n## Execution and Output Reminder\nTake a deep breath and carefully read all instructions and inputs. Think step-by-step about how to solve this task. Use your built-in capabilities (specifically `<function>generate_text</function>`) as needed to gather information and create the required outputs. Ensure your final response meets all format constraints and requirements before outputting it. Accomplish the task by providing the raw content followed by a guiding question."
+            }
+          ],
+          "role": "user"
+        },
+        "generation-mode": "text"
+      }
+    },
+    {
+      "id": "node_step_written_content",
+      "metadata": {
+        "title": "Render Webpage Output",
+        "visual": {
+          "x": 1050,
+          "y": 350,
+          "collapsed": "expanded",
+          "outputHeight": 88
+        },
+        "step_intent": "Combine the original `writing_topic` and the `generated_content` into a single, well-formatted HTML webpage. The webpage should present the content clearly, allowing the user to view both the topic they requested and the AI-generated text. This step ensures the final output matches the required `html` type."
+      },
+      "type": "embed://a2/a2.bgl.json#module:render-outputs",
+      "configuration": {
+        "text": {
+          "parts": [
+            {
+              "text": "Layout Organization:\nThe webpage should adopt a clean, article-like layout, prioritizing readability and clear presentation of the textual content.\n*   **Overall Structure**: The page will feature a distinct header, a main content area for the generated text, and a clear separation for the topic.\n*   **Header**: A prominent, centrally aligned header section at the top of the page will display the application title \"Omni Writer\".\n*   **Main Content Area**: Below the header, the main content area will be divided into two logical sections:\n    *   **Writing Topic Section**: This section will display the `writing_topic` as a clear, descriptive sub-heading, providing context for the content that follows. It should be visually distinct but closely related to the generated text.\n    *   **Generated Content Section**: This larger section will present the `generated_content`. It should be formatted as a readable article, with paragraphs clearly delineated. The content should be presented within a comfortable reading width, centered on larger screens, and occupying full width with appropriate padding on smaller devices.\n*   **Responsiveness**: The layout must be fully responsive, adapting fluidly across all screen sizes from mobile to desktop. Content blocks should reflow vertically on smaller screens, and font sizes should scale appropriately to ensure optimal readability on any device.\n\nStyle Design Language:\nThe visual design should be modern, clean, and inviting, reflecting the \"calm and excited\" persona of the Omni Writer. It should convey a sense of professionalism combined with subtle expressiveness, emphasizing content readability and a premium user experience.\n*   **Aesthetic Goal**: Premium, expressive, and highly readable.\n*   **Visual Design Approach**: A minimalist yet polished aesthetic, using ample whitespace to reduce clutter and guide the user's eye. Clean lines and a thoughtful hierarchy will ensure content is easily digestible.\n*   **Color Scheme**: A sophisticated, muted base palette of soft off-whites and light grays for backgrounds and primary text, creating a calming canvas. This will be complemented by a single, tasteful accent color (e.g., a calm teal, a soft indigo, or a muted gold) used sparingly for the application title, headings, or subtle design elements, to inject a touch of \"excitement\" without overpowering the content.\n*   **Typography**:\n    *   **Headings (Application Title, Topic)**: A modern, clean sans-serif font with good character, such as 'Montserrat', 'Inter', or 'Rubik'. Use varied font weights and sizes to establish a clear hierarchy.\n    *   **Body Text (Generated Content)**: A highly legible and comfortable sans-serif font like 'Roboto', 'Open Sans', or 'Lato', chosen for its readability in long-form text. Ensure generous line-height and appropriate letter-spacing for an optimal reading experience.\n*   **Spacing and Layout Principles**: Generous use of whitespace is critical to create an airy, premium feel and enhance content focus. Consistent padding and margins should be applied around all content blocks and sections to establish a clear visual hierarchy and structure. Text columns should have a defined maximum width to prevent eye strain.\n\nComponent Guidelines:\n*   **Application Title**: Rendered as a prominent `<h1>` element.\n*   **Writing Topic**: Presented as a clear `<h2>` or `<h3>` heading.\n*   **Generated Content**: The main body of text should utilize `<p>` tags for paragraphs, ensuring that the original structure (paragraph breaks) of the AI-generated text is preserved.\n*   No interactive UI components are required for this display-only webpage.\n\nwriting_topic: {{\"type\":\"in\",\"path\":\"ask_user_writing_topic\",\"title\":\"Writing Topic\"}}\n\ngenerated_content: {{\"type\":\"in\",\"path\":\"node_step_generated_content\",\"title\":\"Generate Content\"}}"
+            }
+          ],
+          "role": "user"
+        },
+        "b-system-instruction": {
+          "parts": [
+            {
+              "text": "You are an AI Web Developer. Your task is to generate a single, self-contained HTML document for rendering in an iframe, based on user instructions and data.\n\n**Visual aesthetic:**\n    * Aesthetics are crucial. Make the page look amazing, especially on mobile.\n    * Respect any instructions on style, color palette, or reference examples provided by the user.\n    * **CRITICAL: Aim for premium, state-of-the-art designs. Avoid simple minimum viable products.**\n    * **Use Rich Aesthetics**: The USER should be wowed at first glance by the design. Use best practices in modern web design (e.g. vibrant colors, dark modes, glassmorphism, and dynamic animations) to create a stunning first impression. Failure to do this is UNACCEPTABLE.\n    * **Prioritize Visual Excellence**: Implement designs that will WOW the user and feel extremely premium:\n        - Avoid generic colors (plain red, blue, green). Use curated, harmonious color palettes (e.g., HSL tailored colors, sleek dark modes).\n        - Using modern typography (e.g., from Google Fonts like Inter, Roboto, or Outfit) instead of browser defaults.\n        - Use smooth gradients.\n        - Add subtle micro-animations for enhanced user experience.\n    * **Use a Dynamic Design**: An interface that feels responsive and alive encourages interaction. Achieve this with hover effects and interactive elements. Micro-animations, in particular, are highly effective for improving user engagement.\n    * **Thematic Specificity**: Do not just create a generic layout. Define a clear \"vibe\" or theme based on the content. Use specific aesthetic keywords (e.g., \"Glassmorphism\", \"Neobrutalism\", \"Minimalist\", \"Comic Book Style\") to guide the design.\n    * **Typography Hierarchy**: Explicitly import and use font pairings. Use a distinct Display Font for headers and a highly readable Body Font for text.\n    * **Readability**: Pay extra attention to readability. Ensure the text is always readable with sufficient contrast against the background. Choose fonts and colors that enhance legibility.\n\n**Design and Functionality:**\n    * **Component-Based Design**: Do not just dump text into blocks. Semanticize the content into distinct UI components.\n    * **Layout Dynamics**: Break the grid. Avoid strict, identical grid columns. Use asymmetrical layouts, Bento grids, or responsive flexbox layouts where some elements span full width to create visual interest and emphasize key content.\n    * **Tailwind Configuration**: Extend the Tailwind configuration within a `<script>` block to define custom font families and color palettes that match the theme.\n    * Thoroughly analyze the user's instructions to determine the desired type of webpage, application, or visualization. What are the key features, layouts, or functionality?\n    * Analyze any provided data to identify the most compelling layout or visualization of it. For example, if the user requests a visualization, select an appropriate chart type (bar, line, pie, scatter, etc.) to create the most insightful and visually compelling representation. Or if user instructions say `use a carousel format`, you should consider how to break the content and any media into different card components to display within the carousel.\n    * If requirements are underspecified, make reasonable assumptions to complete the design and functionality. Your goal is to deliver a working product with no placeholder content.\n    * Ensure the generated code is valid and functional. Return only the code, and open the HTML codeblock with the literal string \"```html\".\n    * The output must be a complete and valid HTML document with no placeholder content for the developer to fill in.\n\n**Libraries:**\n  Unless otherwise specified, use:\n    * Tailwind for CSS\n    * **CRITICAL: Use the Tailwind CDN from `https://cdn.tailwindcss.com`. Do NOT use `tailwind.min.css` or any other local Tailwind file. Always include Tailwind using: `<script src=\"https://cdn.tailwindcss.com\"></script>`**\n\n**Constraints:**\n  * **External Links:** You ARE allowed to generate external links (`<a href=\"...\">` and `window.open(...)`) to external websites (e.g. google.com, wikipedia.org) for user navigation.\n  * **NO External Embeds:** Do NOT embed any external resources (e.g. `<script src=\"...\">`, `<img src=\"...\">`, `<iframe src=\"...\">`, `<link href=\"...\">`) from external URLs. Content Security Policy (CSP) will block them.\n  * **Media Restriction:** ONLY use media URLs that are explicitly passed in the input. Do NOT generate or hallucinate any other media URLs (e.g. from placeholder sites or external CDNs).\n  * **Render All Media:** You MUST render ALL media (images, videos, audio) that are passed in. Do NOT skip or omit any provided media items. Every passed-in media URL must appear in the final HTML output.\n  * **Navigation Restriction:** Do NOT generate unneeded fake links or buttons to sub-pages (e.g. \"About\", \"Contact\", \"Learn More\") unless explicitly requested. Stick to the plan and the provided content.\n  * **Footer Restriction:** **NEVER** generate any footer content, including legal footers like \"All rights reserved\" or \"Copyright 2024\". [It is a violation of Google's policies to hallucinate legal footers.]\n"
+            }
+          ],
+          "role": "user"
+        },
+        "p-render-mode": "Auto",
+        "b-render-model-name": "gemini-flash"
+      }
+    },
+    {
+      "id": "ask_user_writing_topic",
+      "metadata": {
+        "title": "Writing Topic",
+        "visual": {
+          "x": 280,
+          "y": 260,
+          "collapsed": "expanded",
+          "outputHeight": 88
+        }
+      },
+      "type": "embed://a2/a2.bgl.json#21ee02e7-83fa-49d0-964c-0cab10eafc2c",
+      "configuration": {
+        "description": {
+          "parts": [
+            {
+              "text": "Enter the topic you want to write about."
+            }
+          ],
+          "role": "user"
+        },
+        "p-modality": "Any"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "ask_user_writing_topic",
+      "to": "node_step_generated_content",
+      "out": "context",
+      "in": "p-z-ask_user_writing_topic"
+    },
+    {
+      "from": "ask_user_writing_topic",
+      "to": "node_step_written_content",
+      "out": "context",
+      "in": "p-z-ask_user_writing_topic"
+    },
+    {
+      "from": "node_step_generated_content",
+      "to": "node_step_written_content",
+      "out": "context",
+      "in": "p-z-node_step_generated_content"
+    }
+  ],
+  "url": "drive:/1JWwQMfwi0CZjwyGDKbaE8tlKdXTYSN8S"
+}
