@@ -210,6 +210,92 @@ class TestStructure:
 
 
 # ════════════════════════════════════════════════════
+#  AI MODE STRUCTURAL TESTS
+# ════════════════════════════════════════════════════
+
+
+class TestAIMode:
+    """Validate that AI Mode UI elements and infrastructure are present."""
+
+    def test_has_ai_toggle(self, html):
+        assert 'id="aiToggle"' in html, "must have AI toggle element"
+        assert 'role="switch"' in html, "AI toggle must have switch role"
+
+    def test_has_ai_action_bar(self, html):
+        assert 'id="aiActionBar"' in html, "must have AI action bar"
+
+    def test_has_ai_continue_btn(self, html):
+        assert 'id="aiContinueBtn"' in html, "must have AI continue button"
+
+    def test_has_ai_generate_btn(self, html):
+        assert 'id="aiGenerateBtn"' in html, "must have AI generate button"
+
+    def test_has_ai_stop_btn(self, html):
+        assert 'id="aiStopBtn"' in html, "must have AI stop button"
+
+    def test_has_ai_enhance_tooltip(self, html):
+        assert 'id="aiEnhanceTooltip"' in html, "must have AI enhance tooltip"
+
+    def test_has_ai_prompt_bar(self, html):
+        assert 'id="aiPromptBar"' in html, "must have AI prompt bar"
+        assert 'id="aiPromptInput"' in html, "must have AI prompt input"
+
+    def test_has_settings_modal(self, html):
+        assert 'id="settingsModal"' in html, "must have settings modal"
+
+    def test_has_provider_select(self, html):
+        assert 'id="settingsProvider"' in html, "must have provider select"
+        assert 'value="openai"' in html, "must have OpenAI option"
+        assert 'value="gemini"' in html, "must have Gemini option"
+        assert 'value="anthropic"' in html, "must have Anthropic option"
+
+    def test_has_api_key_input(self, html):
+        assert 'id="settingsApiKey"' in html, "must have API key input"
+
+    def test_has_context_bell(self, html):
+        assert 'id="contextBell"' in html, "must have context notification bell"
+
+    def test_has_context_panel(self, html):
+        assert 'id="contextPanel"' in html, "must have context summary panel"
+        assert 'id="contextSummaryText"' in html, "must have summary text element"
+        assert 'id="contextYesBtn"' in html, "must have Yes verification button"
+        assert 'id="contextNoBtn"' in html, "must have No verification button"
+
+    def test_has_context_correction(self, html):
+        assert 'id="contextCorrection"' in html, "must have correction area"
+        assert 'id="contextCorrectionInput"' in html, "must have correction input"
+
+    def test_has_ai_streaming_css(self, html):
+        assert "ai-streaming" in html, "must have AI streaming indicator CSS class"
+        assert "ai-pulse" in html, "must have pulse animation for streaming"
+
+    def test_has_ai_generated_marker(self, html):
+        assert "ai-generated" in html, "must have AI-generated text marker class"
+
+    def test_has_provider_configs(self, html):
+        assert "api.openai.com" in html, "must have OpenAI endpoint"
+        assert "generativelanguage.googleapis.com" in html, "must have Gemini endpoint"
+        assert "api.anthropic.com" in html, "must have Anthropic endpoint"
+
+    def test_has_ai_config_storage_key(self, html):
+        assert "omni-writer-ai-config" in html, "must have AI config storage key"
+
+    def test_has_summaries_storage_key(self, html):
+        assert "omni-writer-summaries" in html, "must have summaries storage key"
+
+    def test_has_system_prompt(self, html):
+        assert "Omni Writer" in html, "must reference Omni Writer in system prompt"
+        assert "OMNI_SYSTEM_PROMPT" in html, "must define the system prompt constant"
+
+    def test_still_no_external_deps(self, html):
+        """AI Mode uses fetch to user-configured API endpoints, not bundled CDN deps."""
+        lower = html.lower()
+        assert "cdn" not in lower, "must not reference CDNs"
+        assert "unpkg" not in lower, "must not reference unpkg"
+        assert "jsdelivr" not in lower, "must not reference jsdelivr"
+
+
+# ════════════════════════════════════════════════════
 #  LOGIC REFERENCE TESTS
 # ════════════════════════════════════════════════════
 

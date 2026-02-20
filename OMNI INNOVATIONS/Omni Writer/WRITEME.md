@@ -19,7 +19,7 @@ The HTML app implements this creative philosophy as a self-contained local writi
 3. **Continue.** Add chapters to your story using the + button in the chapter bar. Switch between chapters via tabs. Double-click a tab to rename it.
 4. **Export.** When you're ready, export your story as plain text, markdown, or a self-contained HTML document with the same dark theme.
 
-All data stays in your browser. Nothing is sent to any server.
+All data stays in your browser. Nothing is sent to any server -- except when AI Mode is enabled, where your text is sent directly to the AI provider you configured (and nowhere else).
 
 ## Feature Guide
 
@@ -75,6 +75,35 @@ The stats bar at the bottom updates in real time as you type:
 - **Paragraphs** -- count of block-level elements (p, h1-h3, li, blockquote, div)
 - **Reading time** -- words / 200 wpm, rounded up, minimum 1 minute
 
+### AI Mode
+
+Toggle AI on with the switch in the toolbar (or Ctrl+Shift+A). The first time you enable it, you'll be prompted to configure your AI provider in Settings. Once configured, the provider is invisible -- you just see "AI" on/off.
+
+**Three AI actions:**
+
+- **Continue** -- Click the Continue button (or Ctrl+Shift+Enter) and the AI picks up where your text ends, writing 2-3 paragraphs that match your style and voice. The text streams in token by token.
+- **Enhance** -- Select any text in your story and a floating "Enhance" tooltip appears. Click it, and the AI rewrites/improves the selected passage while preserving meaning. Ctrl+Z undoes if you don't like it.
+- **Generate** -- Click Generate, type a prompt describing what you want (e.g., "a tense dialogue scene between the two characters"), and the AI writes it fresh, inserting at the cursor position.
+
+AI-generated text gets a subtle dotted underline so you can tell what was written by the AI vs. what you typed yourself.
+
+**Supported providers:**
+
+- Google Gemini (default: gemini-2.0-flash)
+- OpenAI (default: gpt-4o-mini)
+- Anthropic (default: claude-sonnet-4-5-20250929)
+
+Your API key stays in your browser's localStorage. It's sent directly to your chosen provider's API and nowhere else.
+
+### Smart Context Management
+
+When your story grows beyond what the AI can hold in memory, the writer automatically generates a summary of the story so far. A small notification bell appears in the bottom-right corner. Click it to review the summary and confirm its accuracy:
+
+- **Yes** -- The summary is marked as verified and used as context for all future AI calls, keeping the AI coherent across long stories.
+- **No** -- You describe what's wrong, and the AI regenerates the summary with your corrections.
+
+This checkpoint happens unobtrusively in the corner, never interrupting your writing flow.
+
 ### Keyboard Shortcuts
 
 | Shortcut | Action |
@@ -86,7 +115,9 @@ The stats bar at the bottom updates in real time as you type:
 | Ctrl+E | Export modal |
 | Ctrl+Z | Undo |
 | Ctrl+Y | Redo |
-| Escape | Close modal / sidebar |
+| Ctrl+Shift+A | Toggle AI Mode |
+| Ctrl+Shift+Enter | AI Continue |
+| Escape | Stop generating / Close modal / sidebar |
 
 ## Design
 
@@ -133,6 +164,18 @@ The HTML app implements the same creative philosophy -- write about anything, wi
 # Changelog
 
 All notable changes to the Omni Writer are documented here.
+
+## [v2.0.0] - 2026-02-20
+
+### Added
+- **AI Mode** -- Toggle AI on/off in the toolbar. Invisible provider switching -- configure once in settings, then just write. Supports OpenAI, Google Gemini, and Anthropic.
+- **Continue** -- AI extends the story from where the text ends, matching style and voice. Streams token by token.
+- **Enhance** -- Select text, click the floating Enhance tooltip, and the AI rewrites/improves the selection.
+- **Generate** -- Describe what you want in a prompt bar, and the AI generates it fresh at the cursor position.
+- **Smart context management** -- Automatic story summarization when content exceeds the AI's context window. Unobtrusive notification bell with summary verification (Yes/No) and correction flow.
+- **AI Settings modal** -- Provider selection, API key configuration, model selection, and connection testing.
+- **Streaming output** -- All AI responses stream in real-time with a pulsing border indicator and Stop button.
+- **Keyboard shortcuts** -- Ctrl+Shift+A to toggle AI, Ctrl+Shift+Enter to continue writing, Escape to stop generation.
 
 ## [v1.0.0] - 2026-02-20
 

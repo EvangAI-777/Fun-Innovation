@@ -695,6 +695,392 @@
             *, *::before, *::after { transition: none !important; }
         }
 
+        /* ── AI Toggle ── */
+        .ai-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .ai-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            padding: 3px 4px;
+            border-radius: var(--radius);
+            transition: all var(--transition);
+            user-select: none;
+        }
+        .ai-toggle:hover { background: var(--primary-glow); }
+        .ai-toggle-label {
+            font-size: 0.82em;
+            font-weight: 700;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+            transition: color var(--transition);
+        }
+        .ai-toggle.active .ai-toggle-label { color: var(--primary-bright); }
+        .ai-toggle-track {
+            width: 36px; height: 20px;
+            border-radius: 10px;
+            background: var(--border);
+            position: relative;
+            transition: all var(--transition);
+        }
+        .ai-toggle.active .ai-toggle-track {
+            background: var(--primary);
+            box-shadow: 0 0 12px var(--primary-glow-strong);
+        }
+        .ai-toggle-thumb {
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            background: var(--text-secondary);
+            position: absolute;
+            top: 2px; left: 2px;
+            transition: all var(--transition);
+        }
+        .ai-toggle.active .ai-toggle-thumb {
+            transform: translateX(16px);
+            background: #fff;
+        }
+        .ai-settings-btn {
+            background: none;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 4px;
+            font-size: 1em;
+            transition: all var(--transition);
+        }
+        .ai-settings-btn:hover {
+            color: var(--primary);
+            background: var(--primary-glow);
+        }
+
+        /* ── AI Action Bar ── */
+        .ai-action-bar {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-dim);
+            flex-shrink: 0;
+        }
+        .ai-action-bar.visible { display: flex; }
+        .ai-action {
+            padding: 5px 14px;
+            border-radius: var(--radius);
+            border: 1px solid var(--primary-deep);
+            background: var(--primary-glow);
+            color: var(--primary-bright);
+            font-size: 0.8em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+        .ai-action:hover {
+            background: var(--primary-glow-strong);
+            border-color: var(--primary);
+        }
+        .ai-action:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .ai-status {
+            font-size: 0.75em;
+            color: var(--text-secondary);
+            flex: 1;
+        }
+        .ai-stop-btn {
+            display: none;
+            padding: 5px 14px;
+            border-radius: var(--radius);
+            border: 1px solid var(--error);
+            background: var(--error-dim);
+            color: var(--error);
+            font-size: 0.8em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+        .ai-stop-btn.visible { display: inline-flex; }
+        .ai-stop-btn:hover { background: var(--error); color: #fff; }
+
+        /* ── AI Prompt Bar ── */
+        .ai-prompt-bar {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-dim);
+            flex-shrink: 0;
+        }
+        .ai-prompt-bar.visible { display: flex; }
+        .ai-prompt-bar input {
+            flex: 1;
+            padding: 8px 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 0.88em;
+            font-family: inherit;
+            outline: none;
+            transition: border-color var(--transition);
+        }
+        .ai-prompt-bar input::placeholder { color: var(--text-secondary); }
+        .ai-prompt-bar input:focus { border-color: var(--primary-dim); }
+        .ai-prompt-bar button {
+            padding: 7px 14px;
+            border-radius: var(--radius);
+            border: 1px solid var(--primary-deep);
+            background: var(--primary-glow);
+            color: var(--primary-bright);
+            font-size: 0.85em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+        .ai-prompt-bar button:hover {
+            background: var(--primary-glow-strong);
+            border-color: var(--primary);
+        }
+        .ai-prompt-bar .ai-prompt-cancel {
+            background: none;
+            border-color: var(--border);
+            color: var(--text-secondary);
+            padding: 7px 10px;
+        }
+        .ai-prompt-bar .ai-prompt-cancel:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        /* ── Floating Enhance Tooltip ── */
+        .ai-enhance-tooltip {
+            position: fixed;
+            z-index: 100;
+            display: none;
+            background: var(--bg-secondary);
+            border: 1px solid var(--primary-deep);
+            border-radius: var(--radius);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+        .ai-enhance-tooltip.visible { display: flex; }
+        .ai-enhance-tooltip button {
+            padding: 6px 14px;
+            background: none;
+            border: none;
+            color: var(--primary-bright);
+            font-size: 0.8em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+        .ai-enhance-tooltip button:hover {
+            background: var(--primary-glow);
+        }
+
+        /* ── Context Bell ── */
+        .context-bell {
+            position: fixed;
+            bottom: 20px; right: 20px;
+            z-index: 90;
+            display: none;
+        }
+        .context-bell.visible { display: block; }
+        .context-bell-btn {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            border: 1px solid var(--primary-deep);
+            background: var(--bg-secondary);
+            color: var(--primary);
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+        }
+        .context-bell-btn:hover {
+            background: var(--primary-glow);
+            border-color: var(--primary);
+            transform: scale(1.08);
+        }
+        .context-bell-badge {
+            position: absolute;
+            top: -2px; right: -2px;
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid var(--bg-void);
+        }
+        .context-bell.verified .context-bell-badge { background: var(--success); }
+
+        /* ── Context Panel ── */
+        .context-panel {
+            position: fixed;
+            bottom: 72px; right: 20px;
+            width: 340px;
+            max-height: 400px;
+            z-index: 91;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .context-panel.visible { display: flex; }
+        .context-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-dim);
+            font-size: 0.85em;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .context-panel-header button {
+            background: none; border: none;
+            color: var(--text-secondary);
+            cursor: pointer; font-size: 1.2em;
+            padding: 2px 6px; border-radius: 4px;
+        }
+        .context-panel-header button:hover { color: var(--text-primary); }
+        .context-panel-body {
+            padding: 12px 16px;
+            overflow-y: auto;
+            font-size: 0.85em;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+        .context-panel-actions {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border-dim);
+        }
+        .context-panel-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .context-panel-buttons button {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius);
+            font-size: 0.85em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+        .context-yes {
+            background: var(--primary-glow);
+            border: 1px solid var(--primary-deep);
+            color: var(--primary-bright);
+        }
+        .context-yes:hover { background: var(--primary-glow-strong); border-color: var(--primary); }
+        .context-no {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+        .context-no:hover { border-color: var(--text-secondary); color: var(--text-primary); }
+        .context-correction {
+            padding: 0 16px 12px;
+        }
+        .context-correction textarea {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 0.85em;
+            font-family: inherit;
+            outline: none;
+            resize: vertical;
+            margin-bottom: 8px;
+        }
+        .context-correction textarea:focus { border-color: var(--primary-dim); }
+        .context-correction button {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--primary-deep);
+            border-radius: var(--radius);
+            background: var(--primary-glow);
+            color: var(--primary-bright);
+            font-size: 0.85em;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .context-correction button:hover {
+            background: var(--primary-glow-strong);
+        }
+
+        /* ── AI Streaming Indicator ── */
+        .writing-canvas.ai-streaming {
+            border-left: 2px solid var(--primary);
+            animation: ai-pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes ai-pulse {
+            0%, 100% { border-left-color: var(--primary-dim); }
+            50% { border-left-color: var(--primary-bright); }
+        }
+
+        /* ── AI-generated text marker ── */
+        .ai-generated {
+            border-bottom: 1px dotted var(--primary-dim);
+        }
+
+        /* ── Settings additions ── */
+        .settings-label {
+            display: block;
+            font-size: 0.82em;
+            color: var(--text-secondary);
+            margin: 12px 0 4px;
+        }
+        .settings-hint {
+            font-size: 0.75em;
+            color: var(--text-secondary);
+            margin: 4px 0 12px;
+            font-style: italic;
+            line-height: 1.4;
+        }
+        .modal select {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 0.9em;
+            font-family: inherit;
+            outline: none;
+            margin-bottom: 4px;
+            appearance: none;
+            cursor: pointer;
+        }
+        .modal select:focus { border-color: var(--primary-dim); }
+        .settings-test-result {
+            font-size: 0.82em;
+            margin: 8px 0;
+            min-height: 1.2em;
+        }
+        .settings-test-result.ok { color: var(--success); }
+        .settings-test-result.err { color: var(--error); }
+
         /* ── Selection ── */
         ::selection {
             background: var(--primary-glow-strong);
@@ -751,6 +1137,17 @@
                     <button data-cmd="redo" title="Redo (Ctrl+Y)">&#8631;</button>
                 </div>
                 <div class="toolbar-spacer"></div>
+                <div class="toolbar-group ai-group">
+                    <div class="ai-toggle" id="aiToggle" role="switch" aria-checked="false"
+                         aria-label="Toggle AI mode" title="AI Mode (Ctrl+Shift+A)" tabindex="0">
+                        <span class="ai-toggle-label">AI</span>
+                        <div class="ai-toggle-track">
+                            <div class="ai-toggle-thumb"></div>
+                        </div>
+                    </div>
+                    <button class="ai-settings-btn" id="aiSettingsBtn" aria-label="AI settings"
+                            title="Settings">&#9881;</button>
+                </div>
                 <div class="toolbar-group export-group">
                     <button id="saveBtn" title="Save (Ctrl+S)">Save</button>
                     <button id="exportBtn" title="Export (Ctrl+E)">Export</button>
@@ -762,6 +1159,21 @@
                 <div class="chapter-tabs" id="chapterTabs">
                 </div>
                 <button class="add-chapter-btn" id="addChapterBtn" aria-label="Add chapter" title="Add chapter">+</button>
+            </div>
+
+            <!-- AI Action Bar -->
+            <div class="ai-action-bar" id="aiActionBar">
+                <button class="ai-action" id="aiContinueBtn" title="Continue writing (Ctrl+Shift+Enter)">Continue</button>
+                <button class="ai-action" id="aiGenerateBtn" title="Generate from prompt">Generate</button>
+                <span class="ai-status" id="aiStatus"></span>
+                <button class="ai-stop-btn" id="aiStopBtn" title="Stop generating (Escape)">Stop</button>
+            </div>
+
+            <!-- AI Prompt Bar -->
+            <div class="ai-prompt-bar" id="aiPromptBar">
+                <input type="text" id="aiPromptInput" placeholder="Describe what you want the AI to write..." aria-label="AI generation prompt">
+                <button id="aiPromptSubmit">Go</button>
+                <button class="ai-prompt-cancel" id="aiPromptCancel">&times;</button>
             </div>
 
             <!-- Topic / Title Display -->
@@ -845,6 +1257,61 @@
         </div>
     </div>
 
+    <!-- Floating Enhance Tooltip -->
+    <div class="ai-enhance-tooltip" id="aiEnhanceTooltip">
+        <button id="aiEnhanceBtn" title="Enhance selected text">Enhance</button>
+    </div>
+
+    <!-- Context Notification Bell -->
+    <div class="context-bell" id="contextBell">
+        <button class="context-bell-btn" id="contextBellBtn" aria-label="Context summary">&#128276;</button>
+        <span class="context-bell-badge" id="contextBellBadge"></span>
+    </div>
+
+    <!-- Context Summary Panel -->
+    <div class="context-panel" id="contextPanel">
+        <div class="context-panel-header">
+            <span>Story Summary</span>
+            <button id="contextPanelClose">&times;</button>
+        </div>
+        <div class="context-panel-body">
+            <p id="contextSummaryText"></p>
+        </div>
+        <div class="context-panel-actions" id="contextPanelActions">
+            <p style="font-size:0.82em; color: var(--text-secondary);">Is this an accurate summary?</p>
+            <div class="context-panel-buttons">
+                <button id="contextYesBtn" class="context-yes">Yes</button>
+                <button id="contextNoBtn" class="context-no">No</button>
+            </div>
+        </div>
+        <div class="context-correction" id="contextCorrection" style="display:none;">
+            <textarea id="contextCorrectionInput" placeholder="What should be corrected?" rows="3"></textarea>
+            <button id="contextCorrectionSubmit">Update Summary</button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal" role="dialog" aria-label="AI Settings" aria-modal="true">
+        <div class="modal">
+            <h2>AI Settings</h2>
+            <label class="settings-label">Provider</label>
+            <select id="settingsProvider">
+                <option value="gemini">Google Gemini</option>
+                <option value="openai">OpenAI</option>
+                <option value="anthropic">Anthropic</option>
+            </select>
+            <label class="settings-label">API Key</label>
+            <input type="password" id="settingsApiKey" placeholder="Paste your API key" style="margin-bottom:4px;">
+            <p class="settings-hint">Your key stays in this browser. Never sent anywhere except directly to your chosen provider.</p>
+            <label class="settings-label">Model (optional)</label>
+            <select id="settingsModel"></select>
+            <button class="modal-btn" id="settingsTestBtn" style="margin-top:12px;">Test Connection</button>
+            <p id="settingsTestResult" class="settings-test-result"></p>
+            <button class="modal-btn" id="settingsSaveBtn" style="margin-top:8px;">Save</button>
+            <button class="modal-close" aria-label="Close">&times;</button>
+        </div>
+    </div>
+
     <script>
     (() => {
         'use strict';
@@ -897,8 +1364,11 @@
         //  CONSTANTS
         // ══════════════════════════════════════
         const STORAGE_KEY = 'omni-writer-stories';
+        const AI_CONFIG_KEY = 'omni-writer-ai-config';
+        const SUMMARIES_KEY = 'omni-writer-summaries';
         const AUTOSAVE_MS = 3000;
         const WORDS_PER_MINUTE = 200;
+        const OMNI_SYSTEM_PROMPT = 'You are the Omni Writer. You can write anything well. Your tone is simultaneously calm and excited. You possess no preconceptions. You do not categorize subjects. You approach every topic with intense curiosity and analytical detachment.\n\nYou have no bias toward any subject matter. For each topic, you give your thoughts on it as it is, without preconceptions. You are always responsive to what the user wants. You aren\'t anxious, just calm and excited to write.\n\nNever use performance-related commentary or command-like language. Never say things like "do this", "see this", "let me know", "have a good day", "here\'s what I wrote", "I hope this helps", etc. Just write. The writing IS the response.\n\nMatch the style, voice, and tone of the existing text when continuing or enhancing. If the story is dark, write dark. If it\'s whimsical, write whimsical. Mirror the author\'s voice, not your own.';
 
         // ══════════════════════════════════════
         //  STATE
@@ -910,6 +1380,11 @@
         let deleteTargetId = null;
         let searchQuery = '';
         let sidebarOpen = false;
+        let aiEnabled = false;
+        let aiConfig = { provider: 'gemini', apiKey: '', model: '', temperature: 0.8 };
+        let abortController = null;
+        let isGenerating = false;
+        let storySummaries = {};
 
         // ══════════════════════════════════════
         //  DOM REFS
@@ -933,6 +1408,9 @@
         const sidebarEl = $('sidebar');
         const sidebarBackdropEl = $('sidebarBackdrop');
         const toolbarEl = $('toolbar');
+        const aiToggleEl = $('aiToggle');
+        const aiActionBarEl = $('aiActionBar');
+        const aiStatusEl = $('aiStatus');
 
         // ══════════════════════════════════════
         //  STORAGE
@@ -1072,6 +1550,13 @@
             updateStats();
             renderStoryList();
 
+            // Show/hide context bell based on existing summary
+            if (storySummaries[id]) {
+                showContextBell();
+            } else {
+                hideContextBell();
+            }
+
             // Close sidebar on mobile
             closeSidebar();
         }
@@ -1087,6 +1572,12 @@
         function deleteStory(id) {
             stories = stories.filter(s => s.id !== id);
             saveStories();
+
+            // Clean up summary for deleted story
+            if (storySummaries[id]) {
+                delete storySummaries[id];
+                saveSummaries();
+            }
 
             if (activeStoryId === id) {
                 activeStoryId = null;
@@ -1446,6 +1937,722 @@ Written with Omni Writer
         }
 
         // ══════════════════════════════════════
+        //  AI PROVIDERS
+        // ══════════════════════════════════════
+        const PROVIDERS = {
+            openai: {
+                name: 'OpenAI',
+                endpoint: 'https://api.openai.com/v1/chat/completions',
+                defaultModel: 'gpt-4o-mini',
+                models: ['gpt-4o-mini', 'gpt-4o'],
+                maxTokens: 128000,
+                buildHeaders(key) {
+                    return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key };
+                },
+                buildBody(messages, model, temp) {
+                    return { model, messages, temperature: temp, stream: true };
+                },
+                getEndpoint() { return this.endpoint; },
+                extractText(parsed) {
+                    return parsed.choices?.[0]?.delta?.content || '';
+                },
+                isDone(line) { return line.trim() === 'data: [DONE]'; },
+                testBody(model) {
+                    return { model, messages: [{ role: 'user', content: 'Say "ok"' }], max_tokens: 5 };
+                }
+            },
+            gemini: {
+                name: 'Google Gemini',
+                defaultModel: 'gemini-2.0-flash',
+                models: ['gemini-2.0-flash', 'gemini-1.5-flash'],
+                maxTokens: 1000000,
+                buildHeaders() {
+                    return { 'Content-Type': 'application/json' };
+                },
+                buildBody(messages, model, temp) {
+                    const system = messages.find(m => m.role === 'system');
+                    const rest = messages.filter(m => m.role !== 'system');
+                    const body = {
+                        contents: rest.map(m => ({
+                            role: m.role === 'assistant' ? 'model' : 'user',
+                            parts: [{ text: m.content }]
+                        })),
+                        generationConfig: { temperature: temp }
+                    };
+                    if (system) {
+                        body.systemInstruction = { parts: [{ text: system.content }] };
+                    }
+                    return body;
+                },
+                getEndpoint(model, key) {
+                    return 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':streamGenerateContent?alt=sse&key=' + key;
+                },
+                extractText(parsed) {
+                    return parsed.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                },
+                isDone() { return false; },
+                testBody(model) {
+                    return {
+                        contents: [{ role: 'user', parts: [{ text: 'Say "ok"' }] }],
+                        generationConfig: { maxOutputTokens: 5 }
+                    };
+                }
+            },
+            anthropic: {
+                name: 'Anthropic',
+                endpoint: 'https://api.anthropic.com/v1/messages',
+                defaultModel: 'claude-sonnet-4-5-20250929',
+                models: ['claude-sonnet-4-5-20250929', 'claude-haiku-4-5-20251001'],
+                maxTokens: 200000,
+                buildHeaders(key) {
+                    return {
+                        'Content-Type': 'application/json',
+                        'x-api-key': key,
+                        'anthropic-version': '2023-06-01',
+                        'anthropic-dangerous-direct-browser-access': 'true'
+                    };
+                },
+                buildBody(messages, model, temp) {
+                    const system = messages.find(m => m.role === 'system');
+                    const rest = messages.filter(m => m.role !== 'system');
+                    return {
+                        model,
+                        system: system ? system.content : '',
+                        messages: rest,
+                        max_tokens: 4096,
+                        temperature: temp,
+                        stream: true
+                    };
+                },
+                getEndpoint() { return this.endpoint; },
+                extractText(parsed) {
+                    if (parsed.type === 'content_block_delta') {
+                        return parsed.delta?.text || '';
+                    }
+                    return '';
+                },
+                isDone(line) {
+                    try {
+                        const d = JSON.parse(line.replace(/^data:\s*/, ''));
+                        return d.type === 'message_stop';
+                    } catch { return false; }
+                },
+                testBody(model) {
+                    return {
+                        model,
+                        system: '',
+                        messages: [{ role: 'user', content: 'Say "ok"' }],
+                        max_tokens: 5
+                    };
+                }
+            }
+        };
+
+        // ══════════════════════════════════════
+        //  AI CONFIG
+        // ══════════════════════════════════════
+        function loadAIConfig() {
+            try {
+                const raw = localStorage.getItem(AI_CONFIG_KEY);
+                if (raw) aiConfig = JSON.parse(raw);
+            } catch (e) {}
+        }
+
+        function saveAIConfig() {
+            try {
+                localStorage.setItem(AI_CONFIG_KEY, JSON.stringify(aiConfig));
+            } catch (e) {}
+        }
+
+        function loadSummaries() {
+            try {
+                const raw = localStorage.getItem(SUMMARIES_KEY);
+                if (raw) storySummaries = JSON.parse(raw);
+            } catch (e) {}
+        }
+
+        function saveSummaries() {
+            try {
+                localStorage.setItem(SUMMARIES_KEY, JSON.stringify(storySummaries));
+            } catch (e) {}
+        }
+
+        // ══════════════════════════════════════
+        //  AI STREAMING ENGINE
+        // ══════════════════════════════════════
+        async function streamAI(messages, onChunk, onDone, onError) {
+            const provider = PROVIDERS[aiConfig.provider];
+            if (!provider) { onError('No provider configured'); return; }
+
+            const model = aiConfig.model || provider.defaultModel;
+            const key = aiConfig.apiKey;
+            if (!key) { onError('No API key configured. Open AI Settings.'); return; }
+
+            const url = provider.getEndpoint(model, key);
+            const headers = provider.buildHeaders(key);
+            const body = provider.buildBody(messages, model, aiConfig.temperature);
+
+            abortController = new AbortController();
+            isGenerating = true;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify(body),
+                    signal: abortController.signal
+                });
+
+                if (!response.ok) {
+                    const errText = await response.text();
+                    onError('API error ' + response.status + ': ' + errText.slice(0, 200));
+                    return;
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || '';
+
+                    for (const line of lines) {
+                        if (!line.trim() || line.startsWith(':')) continue;
+                        if (provider.isDone(line)) break;
+
+                        if (line.startsWith('data: ')) {
+                            const jsonStr = line.slice(6);
+                            if (jsonStr.trim() === '[DONE]') continue;
+                            try {
+                                const parsed = JSON.parse(jsonStr);
+                                const text = provider.extractText(parsed);
+                                if (text) onChunk(text);
+                            } catch (e) {
+                                // Skip unparseable chunks
+                            }
+                        }
+                    }
+                }
+
+                onDone();
+            } catch (err) {
+                if (err.name === 'AbortError') {
+                    onDone();
+                } else {
+                    onError(err.message);
+                }
+            } finally {
+                isGenerating = false;
+                abortController = null;
+            }
+        }
+
+        // ══════════════════════════════════════
+        //  AI UI HELPERS
+        // ══════════════════════════════════════
+        function setAIGenerating(state) {
+            isGenerating = state;
+            writingCanvasEl.classList.toggle('ai-streaming', state);
+            $('aiContinueBtn').disabled = state;
+            $('aiGenerateBtn').disabled = state;
+            $('aiStopBtn').classList.toggle('visible', state);
+            setAIStatus(state ? 'Writing...' : '');
+        }
+
+        function setAIStatus(text) {
+            aiStatusEl.textContent = text;
+        }
+
+        function stopGeneration() {
+            if (abortController) {
+                abortController.abort();
+            }
+        }
+
+        function showPromptBar() {
+            $('aiPromptBar').classList.add('visible');
+            $('aiPromptInput').focus();
+        }
+
+        function hidePromptBar() {
+            $('aiPromptBar').classList.remove('visible');
+            $('aiPromptInput').value = '';
+        }
+
+        function showEnhanceTooltip(rect) {
+            const tooltip = $('aiEnhanceTooltip');
+            tooltip.classList.add('visible');
+            tooltip.style.left = (rect.left + (rect.width / 2) - 40) + 'px';
+            tooltip.style.top = (rect.top - 36) + 'px';
+        }
+
+        function hideEnhanceTooltip() {
+            $('aiEnhanceTooltip').classList.remove('visible');
+        }
+
+        function placeCaretAtEnd() {
+            writingCanvasEl.focus();
+            const range = document.createRange();
+            range.selectNodeContents(writingCanvasEl);
+            range.collapse(false);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+
+        function toggleAI() {
+            if (!aiEnabled && !aiConfig.apiKey) {
+                openSettings();
+                return;
+            }
+
+            aiEnabled = !aiEnabled;
+            aiToggleEl.classList.toggle('active', aiEnabled);
+            aiToggleEl.setAttribute('aria-checked', String(aiEnabled));
+            aiActionBarEl.classList.toggle('visible', aiEnabled);
+
+            if (!aiEnabled) {
+                hidePromptBar();
+                hideEnhanceTooltip();
+                if (isGenerating) stopGeneration();
+            }
+        }
+
+        function finalizeStreamedText(span, text) {
+            const paragraphs = text.split(/\n\n+/).filter(p => p.trim());
+            if (paragraphs.length <= 1) return;
+
+            const fragment = document.createDocumentFragment();
+            for (const p of paragraphs) {
+                const pEl = document.createElement('p');
+                pEl.className = 'ai-generated';
+                pEl.textContent = p.replace(/\n/g, ' ').trim();
+                fragment.appendChild(pEl);
+            }
+            span.replaceWith(fragment);
+        }
+
+        // ══════════════════════════════════════
+        //  AI CONTEXT MANAGEMENT
+        // ══════════════════════════════════════
+        function estimateTokens(text) {
+            return Math.ceil(text.length / 4);
+        }
+
+        function getStoryFullText(story) {
+            let text = '';
+            for (const ch of story.chapters) {
+                const div = document.createElement('div');
+                div.innerHTML = ch.content || '';
+                text += (div.textContent || '') + '\n\n';
+            }
+            return text.trim();
+        }
+
+        function buildContext() {
+            const story = getActiveStory();
+            if (!story) return '';
+
+            const provider = PROVIDERS[aiConfig.provider];
+            const maxContext = provider ? provider.maxTokens : 128000;
+            const reservedTokens = 500;
+            const availableTokens = Math.floor(maxContext * 0.8) - reservedTokens;
+
+            const summaryData = storySummaries[story.id];
+            let prefix = '';
+
+            if (summaryData && summaryData.verified) {
+                prefix = 'Summary of earlier content:\n' + summaryData.summary + '\n\n---\n\nRecent content:\n';
+            }
+
+            const currentChapter = story.chapters[activeChapterIndex];
+            const div = document.createElement('div');
+            div.innerHTML = currentChapter ? currentChapter.content || '' : '';
+            const currentText = div.textContent || '';
+
+            if (summaryData && summaryData.verified) {
+                const fullContext = prefix + currentText;
+                if (estimateTokens(fullContext) <= availableTokens) {
+                    return fullContext;
+                }
+                const prefixTokens = estimateTokens(prefix);
+                const remaining = availableTokens - prefixTokens;
+                const maxChars = remaining * 4;
+                return prefix + currentText.slice(-maxChars);
+            }
+
+            const fullText = getStoryFullText(story);
+            if (estimateTokens(fullText) <= availableTokens) {
+                return fullText;
+            }
+
+            const maxChars = availableTokens * 4;
+            return fullText.slice(-maxChars);
+        }
+
+        function checkContextCompression() {
+            const story = getActiveStory();
+            if (!story || !aiEnabled) return;
+
+            const provider = PROVIDERS[aiConfig.provider];
+            if (!provider) return;
+
+            const fullText = getStoryFullText(story);
+            const totalTokens = estimateTokens(fullText);
+
+            if (totalTokens > provider.maxTokens * 0.6) {
+                const existing = storySummaries[story.id];
+                if (!existing || !existing.verified) {
+                    compressContext();
+                }
+            }
+        }
+
+        async function compressContext() {
+            const story = getActiveStory();
+            if (!story) return;
+
+            const fullText = getStoryFullText(story);
+            if (!fullText.trim()) return;
+
+            setAIStatus('Summarizing story...');
+
+            const messages = [
+                { role: 'system', content: 'You are a precise story summarizer. Create a concise summary that preserves all key information.' },
+                { role: 'user', content: 'Summarize this story in 2-3 paragraphs, preserving:\n- Key plot points and events in order\n- Character names and relationships\n- Setting and world details\n- Themes, tone, and narrative voice\n- Any unresolved plot threads\n\nStory:\n' + fullText.slice(0, 100000) }
+            ];
+
+            let summary = '';
+
+            await streamAI(messages,
+                (chunk) => { summary += chunk; },
+                () => {
+                    storySummaries[story.id] = {
+                        summary: summary.trim(),
+                        verified: false,
+                        timestamp: Date.now()
+                    };
+                    saveSummaries();
+                    showContextBell();
+                    $('contextSummaryText').textContent = summary.trim();
+                    setAIStatus('');
+                },
+                (err) => {
+                    setAIStatus('Summary failed: ' + err.slice(0, 60));
+                }
+            );
+        }
+
+        function showContextBell() {
+            $('contextBell').classList.add('visible');
+            const story = getActiveStory();
+            const data = story ? storySummaries[story.id] : null;
+            if (data && data.verified) {
+                $('contextBell').classList.add('verified');
+            } else {
+                $('contextBell').classList.remove('verified');
+            }
+        }
+
+        function hideContextBell() {
+            $('contextBell').classList.remove('visible');
+        }
+
+        function showContextPanel() {
+            const story = getActiveStory();
+            if (!story) return;
+            const data = storySummaries[story.id];
+            if (!data) return;
+
+            $('contextSummaryText').textContent = data.summary;
+            $('contextPanel').classList.add('visible');
+            $('contextPanelActions').style.display = data.verified ? 'none' : '';
+            $('contextCorrection').style.display = 'none';
+        }
+
+        function hideContextPanel() {
+            $('contextPanel').classList.remove('visible');
+        }
+
+        function verifySummary(accepted) {
+            const story = getActiveStory();
+            if (!story) return;
+
+            if (accepted) {
+                storySummaries[story.id].verified = true;
+                saveSummaries();
+                $('contextBell').classList.add('verified');
+                $('contextPanelActions').style.display = 'none';
+                hideContextPanel();
+            } else {
+                $('contextPanelActions').style.display = 'none';
+                $('contextCorrection').style.display = '';
+                $('contextCorrectionInput').focus();
+            }
+        }
+
+        async function updateSummaryWithCorrection() {
+            const story = getActiveStory();
+            if (!story) return;
+
+            const correction = $('contextCorrectionInput').value.trim();
+            if (!correction) return;
+
+            const currentSummary = storySummaries[story.id]?.summary || '';
+
+            const messages = [
+                { role: 'system', content: 'You are a precise story summarizer.' },
+                { role: 'user', content: 'Here is a story summary that needs correction:\n\n"' + currentSummary + '"\n\nThe user says this is inaccurate. Their correction:\n"' + correction + '"\n\nPlease provide an updated summary that incorporates this correction. Keep it to 2-3 paragraphs.' }
+            ];
+
+            setAIStatus('Updating summary...');
+            let newSummary = '';
+
+            await streamAI(messages,
+                (chunk) => { newSummary += chunk; },
+                () => {
+                    storySummaries[story.id] = {
+                        summary: newSummary.trim(),
+                        verified: false,
+                        timestamp: Date.now()
+                    };
+                    saveSummaries();
+                    $('contextSummaryText').textContent = newSummary.trim();
+                    $('contextCorrection').style.display = 'none';
+                    $('contextPanelActions').style.display = '';
+                    $('contextCorrectionInput').value = '';
+                    setAIStatus('');
+                },
+                (err) => {
+                    setAIStatus('Update failed: ' + err.slice(0, 60));
+                }
+            );
+        }
+
+        // ══════════════════════════════════════
+        //  AI ACTIONS
+        // ══════════════════════════════════════
+        async function aiContinue() {
+            const story = getActiveStory();
+            if (!story || isGenerating) return;
+
+            saveCurrentContent();
+            const context = buildContext();
+
+            const messages = [
+                { role: 'system', content: OMNI_SYSTEM_PROMPT },
+                { role: 'user', content: 'Title: ' + story.title + '\n\n' + context + '\n\nContinue writing from where the text ends. Write 2-3 paragraphs continuing naturally. Do not repeat existing text. Just write the continuation.' }
+            ];
+
+            setAIGenerating(true);
+            placeCaretAtEnd();
+
+            const streamSpan = document.createElement('span');
+            streamSpan.className = 'ai-generated';
+            writingCanvasEl.appendChild(streamSpan);
+
+            let fullText = '';
+
+            await streamAI(messages,
+                (chunk) => {
+                    fullText += chunk;
+                    streamSpan.textContent = fullText;
+                    canvasWrapperEl.scrollTop = canvasWrapperEl.scrollHeight;
+                },
+                () => {
+                    finalizeStreamedText(streamSpan, fullText);
+                    setAIGenerating(false);
+                    updateStats();
+                    scheduleAutoSave();
+                    checkContextCompression();
+                },
+                (err) => {
+                    if (!fullText) streamSpan.remove();
+                    setAIGenerating(false);
+                    setAIStatus('Error: ' + err.slice(0, 100));
+                }
+            );
+        }
+
+        async function aiEnhance() {
+            const sel = window.getSelection();
+            if (!sel.rangeCount || sel.isCollapsed || isGenerating) return;
+
+            const range = sel.getRangeAt(0);
+            if (!writingCanvasEl.contains(range.commonAncestorContainer)) return;
+
+            const selectedText = sel.toString().trim();
+            if (!selectedText) return;
+
+            saveCurrentContent();
+            const story = getActiveStory();
+            const context = buildContext();
+
+            const messages = [
+                { role: 'system', content: OMNI_SYSTEM_PROMPT },
+                { role: 'user', content: 'Title: ' + story.title + '\n\nFull context:\n' + context + '\n\nEnhance the following selected text. Improve the writing quality, flow, and expressiveness while maintaining the same meaning and voice. Return ONLY the enhanced version of the text, nothing else.\n\nSelected text to enhance:\n"' + selectedText + '"' }
+            ];
+
+            setAIGenerating(true);
+            hideEnhanceTooltip();
+
+            range.deleteContents();
+            const streamSpan = document.createElement('span');
+            streamSpan.className = 'ai-generated';
+            range.insertNode(streamSpan);
+            sel.removeAllRanges();
+
+            let fullText = '';
+
+            await streamAI(messages,
+                (chunk) => {
+                    fullText += chunk;
+                    streamSpan.textContent = fullText;
+                },
+                () => {
+                    finalizeStreamedText(streamSpan, fullText);
+                    setAIGenerating(false);
+                    updateStats();
+                    scheduleAutoSave();
+                },
+                (err) => {
+                    if (!fullText) streamSpan.textContent = selectedText;
+                    setAIGenerating(false);
+                    setAIStatus('Error: ' + err.slice(0, 100));
+                }
+            );
+        }
+
+        async function aiGenerate(prompt) {
+            const story = getActiveStory();
+            if (!story || isGenerating || !prompt.trim()) return;
+
+            saveCurrentContent();
+            const context = buildContext();
+
+            const messages = [
+                { role: 'system', content: OMNI_SYSTEM_PROMPT },
+                { role: 'user', content: 'Title: ' + story.title + '\n\nExisting content for context:\n' + context + '\n\nGenerate the following:\n' + prompt + '\n\nWrite it naturally, fitting the tone and style of the existing content. Output only the generated text.' }
+            ];
+
+            setAIGenerating(true);
+            hidePromptBar();
+
+            const streamSpan = document.createElement('span');
+            streamSpan.className = 'ai-generated';
+
+            const sel = window.getSelection();
+            if (sel.rangeCount && writingCanvasEl.contains(sel.focusNode)) {
+                const r = sel.getRangeAt(0);
+                r.collapse(false);
+                r.insertNode(streamSpan);
+                sel.removeAllRanges();
+            } else {
+                writingCanvasEl.appendChild(streamSpan);
+            }
+
+            let fullText = '';
+
+            await streamAI(messages,
+                (chunk) => {
+                    fullText += chunk;
+                    streamSpan.textContent = fullText;
+                    canvasWrapperEl.scrollTop = canvasWrapperEl.scrollHeight;
+                },
+                () => {
+                    finalizeStreamedText(streamSpan, fullText);
+                    setAIGenerating(false);
+                    updateStats();
+                    scheduleAutoSave();
+                    checkContextCompression();
+                },
+                (err) => {
+                    if (!fullText) streamSpan.remove();
+                    setAIGenerating(false);
+                    setAIStatus('Error: ' + err.slice(0, 100));
+                }
+            );
+        }
+
+        // ══════════════════════════════════════
+        //  AI SETTINGS
+        // ══════════════════════════════════════
+        function openSettings() {
+            $('settingsProvider').value = aiConfig.provider;
+            $('settingsApiKey').value = aiConfig.apiKey;
+            populateModels(aiConfig.provider);
+            if (aiConfig.model) $('settingsModel').value = aiConfig.model;
+
+            $('settingsTestResult').textContent = '';
+            $('settingsTestResult').className = 'settings-test-result';
+
+            showModal('settingsModal');
+        }
+
+        function populateModels(provider) {
+            const modelEl = $('settingsModel');
+            const p = PROVIDERS[provider];
+            if (!p) return;
+
+            modelEl.innerHTML = '<option value="">(Default: ' + p.defaultModel + ')</option>' +
+                p.models.map(m => '<option value="' + m + '">' + m + '</option>').join('');
+        }
+
+        async function testAIConnection() {
+            const provider = $('settingsProvider').value;
+            const apiKey = $('settingsApiKey').value.trim();
+            const model = $('settingsModel').value;
+            const resultEl = $('settingsTestResult');
+
+            if (!apiKey) {
+                resultEl.textContent = 'Please enter an API key.';
+                resultEl.className = 'settings-test-result err';
+                return;
+            }
+
+            const p = PROVIDERS[provider];
+            if (!p) return;
+
+            const useModel = model || p.defaultModel;
+            resultEl.textContent = 'Testing...';
+            resultEl.className = 'settings-test-result';
+
+            try {
+                const url = p.getEndpoint(useModel, apiKey);
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: p.buildHeaders(apiKey),
+                    body: JSON.stringify(p.testBody(useModel))
+                });
+
+                if (response.ok) {
+                    resultEl.textContent = 'Connection successful!';
+                    resultEl.className = 'settings-test-result ok';
+                } else {
+                    const errText = await response.text();
+                    resultEl.textContent = 'Failed: ' + response.status + ' - ' + errText.slice(0, 100);
+                    resultEl.className = 'settings-test-result err';
+                }
+            } catch (err) {
+                resultEl.textContent = 'Failed: ' + err.message;
+                resultEl.className = 'settings-test-result err';
+            }
+        }
+
+        function saveSettings() {
+            aiConfig.provider = $('settingsProvider').value;
+            aiConfig.apiKey = $('settingsApiKey').value.trim();
+            aiConfig.model = $('settingsModel').value;
+            saveAIConfig();
+            hideModal('settingsModal');
+        }
+
+        // ══════════════════════════════════════
         //  EVENT HANDLERS
         // ══════════════════════════════════════
 
@@ -1579,6 +2786,67 @@ Written with Omni Writer
 
         $('addChapterBtn').addEventListener('click', addChapter);
 
+        // -- AI toggle --
+        aiToggleEl.addEventListener('click', toggleAI);
+        aiToggleEl.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleAI(); }
+        });
+        $('aiSettingsBtn').addEventListener('click', openSettings);
+
+        // -- AI actions --
+        $('aiContinueBtn').addEventListener('click', aiContinue);
+        $('aiGenerateBtn').addEventListener('click', showPromptBar);
+        $('aiStopBtn').addEventListener('click', stopGeneration);
+
+        // -- AI prompt bar --
+        $('aiPromptSubmit').addEventListener('click', () => {
+            const prompt = $('aiPromptInput').value.trim();
+            if (prompt) aiGenerate(prompt);
+        });
+        $('aiPromptCancel').addEventListener('click', hidePromptBar);
+        $('aiPromptInput').addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const prompt = $('aiPromptInput').value.trim();
+                if (prompt) aiGenerate(prompt);
+            }
+            if (e.key === 'Escape') hidePromptBar();
+        });
+
+        // -- Enhance tooltip --
+        $('aiEnhanceBtn').addEventListener('click', aiEnhance);
+
+        // -- Context bell & panel --
+        $('contextBellBtn').addEventListener('click', showContextPanel);
+        $('contextPanelClose').addEventListener('click', hideContextPanel);
+        $('contextYesBtn').addEventListener('click', () => verifySummary(true));
+        $('contextNoBtn').addEventListener('click', () => verifySummary(false));
+        $('contextCorrectionSubmit').addEventListener('click', updateSummaryWithCorrection);
+
+        // -- Settings --
+        $('settingsProvider').addEventListener('change', () => {
+            populateModels($('settingsProvider').value);
+        });
+        $('settingsTestBtn').addEventListener('click', testAIConnection);
+        $('settingsSaveBtn').addEventListener('click', saveSettings);
+
+        // -- Selection change for enhance tooltip --
+        document.addEventListener('selectionchange', () => {
+            if (!aiEnabled || isGenerating) { hideEnhanceTooltip(); return; }
+
+            const sel = window.getSelection();
+            if (!sel.rangeCount || sel.isCollapsed) { hideEnhanceTooltip(); return; }
+
+            const range = sel.getRangeAt(0);
+            if (!writingCanvasEl.contains(range.commonAncestorContainer)) { hideEnhanceTooltip(); return; }
+
+            const text = sel.toString().trim();
+            if (!text || text.length < 3) { hideEnhanceTooltip(); return; }
+
+            const rect = range.getBoundingClientRect();
+            showEnhanceTooltip(rect);
+        });
+
         // -- Writing canvas input --
         writingCanvasEl.addEventListener('input', () => {
             updateStats();
@@ -1613,8 +2881,10 @@ Written with Omni Writer
         //  KEYBOARD SHORTCUTS
         // ══════════════════════════════════════
         document.addEventListener('keydown', e => {
-            // Escape: close modals or sidebar
+            // Escape: stop generation, close modals or sidebar
             if (e.key === 'Escape') {
+                if (isGenerating) { stopGeneration(); return; }
+                if ($('aiPromptBar').classList.contains('visible')) { hidePromptBar(); return; }
                 const openModal = document.querySelector('.modal-overlay.visible');
                 if (openModal) {
                     openModal.classList.remove('visible');
@@ -1632,6 +2902,20 @@ Written with Omni Writer
             const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA';
 
             if (e.ctrlKey || e.metaKey) {
+                // Ctrl+Shift shortcuts
+                if (e.shiftKey) {
+                    if (e.key.toLowerCase() === 'a') {
+                        e.preventDefault();
+                        toggleAI();
+                        return;
+                    }
+                    if (e.key === 'Enter' && aiEnabled && !isGenerating && getActiveStory()) {
+                        e.preventDefault();
+                        aiContinue();
+                        return;
+                    }
+                }
+
                 switch (e.key.toLowerCase()) {
                     case 's':
                         e.preventDefault();
@@ -1662,6 +2946,8 @@ Written with Omni Writer
         //  INIT
         // ══════════════════════════════════════
         loadStories();
+        loadAIConfig();
+        loadSummaries();
         renderStoryList();
 
         if (stories.length > 0) {
