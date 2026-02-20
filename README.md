@@ -51,13 +51,15 @@ See [`OvertaleRPG/OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md) f
 
 ### [OMNI INNOVATIONS](./OMNI%20INNOVATIONS/)
 
-Mathematics across universes. Tools and experiences that work with multiple mathematical structures -- not just the reals, but complex numbers, modular arithmetic, matrices, quaternions, boolean algebra, tropical semirings, dual numbers, and whatever else turns out to be interesting. Two parallel subdirectories:
+Mathematics across universes, and creative tools born from the same philosophy. Three parallel subdirectories:
 
 - **[Omniversal Mathematics](./OMNI%20INNOVATIONS/Omniversal%20Mathematics/)** -- the theoretical foundation. Omnidirectional Mathematics is a formal notation system for describing transformations across dimensional spaces, with twelve fundamental operations composing into expressions that describe movement between any two points in any dimensional space. The core axiom: Movement = Transformation Sequence.
 
 - **[Omniversal Calculator](./OMNI%20INNOVATIONS/Omniversal%20Calculator/)** (v1.3.0) -- the world's first Omniversal Calculator. Nine mathematical universes in a single browser-based interface, each with its own color identity, custom input layout, and genuine math engine. The Real universe features an expression-based engine with a recursive-descent parser, clickable cursor, and live result preview, styled after the Google/Android scientific calculator with pill-shaped buttons. Every button press inserts at the cursor position; implicit multiplication (e.g., 2π = 2×π), postfix operators (!, %), degree/radian toggle, inverse trig, factorial, logarithms, and smart parentheses are all supported. Eight conventional universes (real, complex, modular, matrix, quaternion, boolean, tropical, dual) plus the Omnidirectional universe -- a transformation sequence builder implementing the formal Omnidirectional Mathematics notation for describing movement across dimensional spaces. Includes an animated starfield background, Argand diagram visualization, live truth tables, automatic differentiation, and dimensional path visualization. Zero dependencies -- open the HTML file in any browser. 137 passing tests.
 
-See [`Omniversal Mathematics/MATHME.md`](./OMNI%20INNOVATIONS/Omniversal%20Mathematics/MATHME.md) for the section overview and formal notation specification, and [`Omniversal Calculator/CALCULATEME.md`](./OMNI%20INNOVATIONS/Omniversal%20Calculator/CALCULATEME.md) for the full project details and changelog.
+- **[Omni Writer](./OMNI%20INNOVATIONS/Omni%20Writer/)** (v1.0.0) -- a privacy-first creative writing tool born from the Omni Writer persona. Distraction-free rich text editing with story continuation, multi-chapter management, a localStorage story library, and export to plain text, markdown, and HTML. Material Design 3 dark indigo theme from the original Omni Writer.json agent config. Animated starfield, responsive design, full keyboard shortcuts. Zero dependencies -- open the HTML file in any browser.
+
+See [`Omniversal Mathematics/MATHME.md`](./OMNI%20INNOVATIONS/Omniversal%20Mathematics/MATHME.md) for the formal notation specification, [`Omniversal Calculator/CALCULATEME.md`](./OMNI%20INNOVATIONS/Omniversal%20Calculator/CALCULATEME.md) for the calculator guide, and [`Omni Writer/WRITEME.md`](./OMNI%20INNOVATIONS/Omni%20Writer/WRITEME.md) for the writer guide.
 
 ### [Audio Innovations](./Audio%20Innovations/)
 
@@ -78,7 +80,7 @@ All tests run through pytest and are wired into CI (GitHub Actions) and a top-le
 | **Original Projects** | Functional tests for verse_engine.py (word banks, voice configs, template integrity, all generation modes) and living_story.py (personality tracking, trait logic, story state, scenario playthroughs) | 48 | `make test-originals` |
 | **AutoMuse** | Unit + integration tests for the music theory engine -- notes, intervals, scales, chords, keys, rhythm, progressions, harmonic analysis, voicings, MIDI writer, and the Muse conversational interface | 197 | `make test-automuse` |
 | **Minecraft Studio** | Unit + integration tests for the mod data model and export engine -- blocks, items, recipes, loot tables, project serialization, Java codegen, Fabric/Forge/Data Pack export with generated Java source validation | 83 | `make test-mcstudio` |
-| **Omniversal Calculator** | Structural validation of the HTML file (all 9 universes, responsive tags, omni operators, math notation spec, no external deps) + reference math-engine tests for real, complex, modular, matrix, quaternion, boolean, tropical, dual, and omnidirectional transform arithmetic | 137 | `make test-omniversal` |
+| **Omniversal** | Structural validation + reference math-engine tests for the Omniversal Calculator (all 9 universes, responsive tags, omni operators, no external deps) and the Omni Writer (UI elements, accessibility, export formats, localStorage, word count, HTML-to-markdown conversion) | 137 + 64 | `make test-omniversal` |
 
 Run everything: `make test`
 
@@ -111,7 +113,7 @@ Two projects. [`GeoVox`](./Minecraft%20Innovations/GeoVox/) (v0.1.1) is a workin
 Fan games, revivals, and experiments in the Undertale universe. Current project: [`OvertaleRPG`](./Undertale%20Innovations/OvertaleRPG/) (abandoned fan game revival from a 2017 Google Drive archive, see [`OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md)).
 
 **Omni projects (OMNI INNOVATIONS):**
-Mathematical tools that span multiple number systems. Current project: [`Omniversal Calculator`](./OMNI%20INNOVATIONS/Omniversal%20Calculator/) -- open `omniversal-calculator.html` in any browser. Nine mathematical universes (real, complex, modular, matrix, quaternion, boolean, tropical, dual, omnidirectional) with a responsive dark-themed UI, animated starfield, and the Omnidirectional notation for transformation sequences. See [`CALCULATEME.md`](./OMNI%20INNOVATIONS/Omniversal%20Calculator/CALCULATEME.md) for the full guide and [`MATHME.md`](./OMNI%20INNOVATIONS/Omniversal%20Mathematics/MATHME.md) for the formal notation spec.
+Mathematical tools and creative writing across universes. [`Omniversal Calculator`](./OMNI%20INNOVATIONS/Omniversal%20Calculator/) -- open `omniversal-calculator.html` in any browser for nine mathematical universes (see [`CALCULATEME.md`](./OMNI%20INNOVATIONS/Omniversal%20Calculator/CALCULATEME.md)). [`Omni Writer`](./OMNI%20INNOVATIONS/Omni%20Writer/) -- open `omni-writer.html` in any browser for a local-first creative writing tool with story continuation and export (see [`WRITEME.md`](./OMNI%20INNOVATIONS/Omni%20Writer/WRITEME.md)). [`MATHME.md`](./OMNI%20INNOVATIONS/Omniversal%20Mathematics/MATHME.md) has the formal notation spec.
 
 **Audio projects (Audio Innovations):**
 New approaches to music and sound production. Current project: [`AutoMuse`](./Audio%20Innovations/AutoMuse/) (v0.1.0) -- `pip install -e .` then `automuse` or `python -m automuse` to start a session with the Muse (see [`MUSEME.md`](./Audio%20Innovations/AutoMuse/MUSEME.md)).
