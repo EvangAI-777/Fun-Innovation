@@ -1,6 +1,6 @@
 # Omni Writer
 
-Your unbiased writer for any topic, without limits. A privacy-first, local-only creative writing tool with story continuation, rich text editing, and export.
+Your unbiased writer for any topic, without limits. A creative writing tool with built-in AI Mode, story continuation, rich text editing, and export. Toggle AI on to continue, enhance, or generate text with streaming AI -- or keep it off for a distraction-free local writing experience.
 
 ## Quick Start
 
@@ -10,7 +10,7 @@ Open `omni-writer.html` in any modern browser. That's it. No install, no build, 
 
 The Omni Writer began as a concept in `Omni Writer.json` -- a node-graph AI agent pipeline where: (1) a user enters a topic, (2) the Omni Writer persona generates content with no bias toward the subject matter, and (3) the output renders as a premium HTML page. The persona is defined as calm, excited to write, and without limits -- legal, social, or otherwise.
 
-The HTML app implements this creative philosophy as a self-contained local writing tool. Instead of generating content for you, it gives you the writing space itself -- private, unrestricted, and designed to stay out of your way while you write about anything.
+The HTML app implements this creative philosophy as a self-contained writing tool. With AI Mode off, it's a private, unrestricted writing space designed to stay out of your way. With AI Mode on, the Omni Writer persona comes alive -- continuing your stories, enhancing your prose, and generating fresh content, all matching your voice and style. The AI is invisible by design: configure your provider once, then just toggle "AI" on or off.
 
 ## How It Works
 
@@ -129,7 +129,7 @@ This checkpoint happens unobtrusively in the corner, never interrupting your wri
 
 **Accessible.** Skip link, ARIA labels on all interactive elements, semantic HTML (aside, main, role attributes), full keyboard navigation, high-contrast text on dark backgrounds.
 
-**Privacy-first.** All data is stored in the browser's localStorage. Nothing leaves your machine. No analytics, no tracking, no cloud sync.
+**Privacy-first.** All data is stored in the browser's localStorage. With AI Mode off, nothing leaves your machine. With AI Mode on, your text is sent directly to the AI provider you configured (OpenAI, Gemini, or Anthropic) and nowhere else. No analytics, no tracking, no cloud sync.
 
 ## The JSON Config
 
