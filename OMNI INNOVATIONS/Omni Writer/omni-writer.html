@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omni Writer</title>
+    <meta name="description" content="Your unbiased AI writer for any topic, without limits. A privacy-first, local-only creative writing tool with story continuation, rich text editing, and export.">
+    <meta name="theme-color" content="#06060e">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-void: #06060e;
+            --bg-primary: #0a0a16;
+            --bg-secondary: #10102a;
+            --bg-panel: #161640;
+            --bg-input: #0e0e24;
+            --primary: #9aa5fd;
+            --primary-bright: #bcc2ff;
+            --primary-dim: #6570c4;
+            --primary-deep: #4c57a9;
+            --primary-glow: rgba(154, 165, 253, 0.15);
+            --primary-glow-strong: rgba(154, 165, 253, 0.35);
+            --secondary: #74758b;
+            --secondary-dim: #5b5d72;
+            --text-primary: #e4e1e6;
+            --text-secondary: #78767a;
+            --border: #303034;
+            --border-dim: #1b1b1f;
+            --error: #ff5449;
+            --error-dim: rgba(255, 84, 73, 0.15);
+            --success: #a3be8c;
+            --radius: 8px;
+            --radius-lg: 12px;
+            --transition: 0.25s ease;
+            --sidebar-width: 280px;
+            --toolbar-height: 48px;
+            --stats-height: 36px;
+        }
+
+        body {
+            background: var(--bg-void);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ── Starfield ── */
+        #starfield {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0; pointer-events: none;
+        }
+
+        /* ── Skip Link ── */
+        .skip-link {
+            position: absolute; top: -100%; left: 16px;
+            background: var(--primary); color: var(--bg-void);
+            padding: 8px 16px; border-radius: 0 0 6px 6px;
+            font-size: 0.85em; font-weight: 600;
+            text-decoration: none; z-index: 1000;
+        }
+        .skip-link:focus { top: 0; }
+
+        /* ── Home Link ── */
+        .home-btn {
+            position: fixed; top: 12px; left: 12px;
+            color: var(--text-secondary); text-decoration: none;
+            font-size: 0.8em; letter-spacing: 0.5px;
+            z-index: 100; padding: 4px 10px;
+            border-radius: var(--radius);
+            transition: all var(--transition);
+        }
+        .home-btn:hover { color: var(--primary); background: var(--primary-glow); }
+
+        /* ── App Layout ── */
+        .app {
+            position: relative; z-index: 1;
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: var(--sidebar-width);
+            min-width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            transition: transform var(--transition), opacity var(--transition);
+            z-index: 50;
+        }
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 16px 12px;
+            border-bottom: 1px solid var(--border-dim);
+        }
+        .app-title {
+            font-size: 0.9em;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .new-story-btn {
+            width: 32px; height: 32px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--bg-input);
+            color: var(--primary);
+            font-size: 1.2em;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all var(--transition);
+        }
+        .new-story-btn:hover {
+            background: var(--primary-glow);
+            border-color: var(--primary-dim);
+        }
+
+        /* ── Sidebar Search ── */
+        .sidebar-search {
+            padding: 8px 12px;
+        }
+        .sidebar-search input {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-dim);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 0.82em;
+            outline: none;
+            transition: border-color var(--transition);
+        }
+        .sidebar-search input::placeholder { color: var(--text-secondary); }
+        .sidebar-search input:focus { border-color: var(--primary-dim); }
+
+        /* ── Story List ── */
+        .story-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 4px 0;
+        }
+        .story-list::-webkit-scrollbar { width: 4px; }
+        .story-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        .story-item {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: background var(--transition);
+            border-left: 3px solid transparent;
+        }
+        .story-item:hover { background: rgba(154, 165, 253, 0.05); }
+        .story-item.active {
+            background: var(--primary-glow);
+            border-left-color: var(--primary);
+        }
+        .story-item-info { flex: 1; min-width: 0; }
+        .story-item-title {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .story-item.active .story-item-title { color: var(--primary-bright); }
+        .story-item-meta {
+            font-size: 0.7em;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+        .story-item-delete {
+            opacity: 0;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1em;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all var(--transition);
+            flex-shrink: 0;
+            margin-left: 8px;
+            margin-top: 2px;
+        }
+        .story-item:hover .story-item-delete { opacity: 1; }
+        .story-item-delete:hover { color: var(--error); background: var(--error-dim); }
+
+        .sidebar-empty {
+            padding: 24px 16px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.82em;
+            line-height: 1.6;
+        }
+
+        /* ── Editor Area ── */
+        .editor-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            height: 100vh;
+        }
+
+        /* ── Toolbar ── */
+        .toolbar {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            padding: 6px 12px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            min-height: var(--toolbar-height);
+            flex-wrap: wrap;
+        }
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 6px 8px;
+            border-radius: var(--radius);
+            transition: all var(--transition);
+            margin-right: 4px;
+        }
+        .sidebar-toggle:hover { color: var(--primary); background: var(--primary-glow); }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 1px;
+            padding: 0 4px;
+        }
+        .toolbar-group + .toolbar-group {
+            border-left: 1px solid var(--border-dim);
+            margin-left: 4px;
+            padding-left: 8px;
+        }
+        .toolbar-group button {
+            background: none;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 5px 8px;
+            border-radius: 4px;
+            font-size: 0.82em;
+            font-family: inherit;
+            transition: all var(--transition);
+            line-height: 1;
+        }
+        .toolbar-group button:hover {
+            color: var(--primary);
+            background: var(--primary-glow);
+            border-color: var(--primary-glow);
+        }
+        .toolbar-group button.active {
+            color: var(--primary-bright);
+            background: var(--primary-glow);
+        }
+        .toolbar-spacer { flex: 1; }
+
+        .toolbar-group.action-group button {
+            font-size: 1.1em;
+            padding: 4px 7px;
+        }
+        .toolbar-group.export-group button {
+            background: var(--bg-input);
+            border: 1px solid var(--border-dim);
+            color: var(--text-primary);
+            padding: 5px 12px;
+            font-weight: 500;
+        }
+        .toolbar-group.export-group button:hover {
+            border-color: var(--primary-dim);
+            color: var(--primary);
+        }
+
+        /* ── Chapter Bar ── */
+        .chapter-bar {
+            display: none;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 16px;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-dim);
+            overflow-x: auto;
+        }
+        .chapter-bar.visible { display: flex; }
+        .chapter-bar::-webkit-scrollbar { height: 3px; }
+        .chapter-bar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        .chapter-tabs {
+            display: flex;
+            gap: 4px;
+            flex: 1;
+            overflow-x: auto;
+        }
+        .chapter-tab {
+            padding: 5px 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-dim);
+            border-radius: var(--radius);
+            color: var(--text-secondary);
+            font-size: 0.78em;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .chapter-tab:hover {
+            border-color: var(--primary-dim);
+            color: var(--text-primary);
+        }
+        .chapter-tab.active {
+            background: var(--primary-glow);
+            border-color: var(--primary-dim);
+            color: var(--primary-bright);
+        }
+        .chapter-tab-close {
+            font-size: 0.9em;
+            opacity: 0;
+            cursor: pointer;
+            padding: 0 2px;
+            border-radius: 2px;
+            transition: all var(--transition);
+        }
+        .chapter-tab:hover .chapter-tab-close { opacity: 0.6; }
+        .chapter-tab-close:hover { opacity: 1; color: var(--error); }
+
+        .add-chapter-btn {
+            width: 28px; height: 28px;
+            border: 1px dashed var(--border);
+            border-radius: var(--radius);
+            background: none;
+            color: var(--text-secondary);
+            font-size: 1em;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            transition: all var(--transition);
+        }
+        .add-chapter-btn:hover {
+            border-color: var(--primary-dim);
+            color: var(--primary);
+            background: var(--primary-glow);
+        }
+
+        /* ── Topic Header ── */
+        .topic-header {
+            padding: 20px 48px 4px;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .story-title-input {
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.6em;
+            font-weight: 700;
+            font-family: inherit;
+            outline: none;
+            letter-spacing: 0.5px;
+        }
+        .story-title-input::placeholder { color: var(--secondary-dim); }
+        .story-title-input:focus::placeholder { color: var(--text-secondary); }
+
+        /* ── Canvas Wrapper ── */
+        .canvas-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+        }
+        .canvas-wrapper::-webkit-scrollbar { width: 6px; }
+        .canvas-wrapper::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        .canvas-wrapper::-webkit-scrollbar-thumb:hover { background: var(--secondary-dim); }
+
+        /* ── Writing Canvas ── */
+        .writing-canvas {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 12px 48px 80px;
+            min-height: 100%;
+            outline: none;
+            font-size: 1.05em;
+            line-height: 1.85;
+            color: var(--text-primary);
+            caret-color: var(--primary);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .writing-canvas:empty::before {
+            content: attr(data-placeholder);
+            color: var(--secondary-dim);
+            pointer-events: none;
+            font-style: italic;
+        }
+        .writing-canvas h1 {
+            font-size: 1.5em; font-weight: 700;
+            margin: 1em 0 0.5em; color: var(--primary-bright);
+        }
+        .writing-canvas h2 {
+            font-size: 1.25em; font-weight: 600;
+            margin: 0.8em 0 0.4em; color: var(--primary);
+        }
+        .writing-canvas h3 {
+            font-size: 1.1em; font-weight: 600;
+            margin: 0.6em 0 0.3em; color: var(--primary-dim);
+        }
+        .writing-canvas p { margin-bottom: 0.8em; }
+        .writing-canvas blockquote {
+            border-left: 3px solid var(--primary-dim);
+            padding-left: 16px;
+            margin: 0.8em 0;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        .writing-canvas ul, .writing-canvas ol {
+            margin: 0.5em 0 0.5em 1.5em;
+        }
+        .writing-canvas li { margin-bottom: 0.3em; }
+        .writing-canvas hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 1.5em 0;
+        }
+        .writing-canvas a { color: var(--primary); }
+
+        /* ── Empty State ── */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            padding: 40px;
+        }
+        .empty-state-icon {
+            font-size: 3em;
+            color: var(--primary-dim);
+            margin-bottom: 16px;
+            opacity: 0.6;
+        }
+        .empty-state-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        .empty-state-desc {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            max-width: 360px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        .empty-state-btn {
+            padding: 10px 24px;
+            background: var(--primary-glow);
+            border: 1px solid var(--primary-dim);
+            border-radius: var(--radius);
+            color: var(--primary-bright);
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .empty-state-btn:hover {
+            background: var(--primary-glow-strong);
+            border-color: var(--primary);
+        }
+
+        /* ── Stats Bar ── */
+        .stats-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 0 16px;
+            height: var(--stats-height);
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-dim);
+            font-size: 0.72em;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+        .stats-spacer { flex: 1; }
+        .stats-bar .save-status { color: var(--success); }
+        .stats-bar .save-status.error { color: var(--error); }
+
+        /* ── Modals ── */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(6, 6, 14, 0.85);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition);
+        }
+        .modal-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px 32px;
+            min-width: 340px;
+            max-width: 440px;
+            width: 90%;
+            position: relative;
+            transform: translateY(10px);
+            transition: transform var(--transition);
+        }
+        .modal-overlay.visible .modal { transform: translateY(0); }
+        .modal h2 {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+        .modal input[type="text"] {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 0.95em;
+            font-family: inherit;
+            outline: none;
+            margin-bottom: 16px;
+            transition: border-color var(--transition);
+        }
+        .modal input[type="text"]::placeholder { color: var(--text-secondary); }
+        .modal input[type="text"]:focus { border-color: var(--primary-dim); }
+
+        .modal-close {
+            position: absolute;
+            top: 12px; right: 16px;
+            background: none; border: none;
+            color: var(--text-secondary);
+            font-size: 1.4em;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: var(--radius);
+            transition: all var(--transition);
+        }
+        .modal-close:hover { color: var(--text-primary); background: var(--primary-glow); }
+
+        .modal-btn {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--primary-dim);
+            border-radius: var(--radius);
+            background: var(--primary-glow);
+            color: var(--primary-bright);
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .modal-btn:hover {
+            background: var(--primary-glow-strong);
+            border-color: var(--primary);
+        }
+
+        .export-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .export-options button {
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 0.9em;
+            cursor: pointer;
+            text-align: left;
+            transition: all var(--transition);
+        }
+        .export-options button:hover {
+            border-color: var(--primary-dim);
+            background: var(--primary-glow);
+            color: var(--primary-bright);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        .modal-actions button {
+            flex: 1;
+            padding: 10px;
+            border-radius: var(--radius);
+            font-size: 0.9em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .modal-actions .danger {
+            background: var(--error-dim);
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+        .modal-actions .danger:hover {
+            background: var(--error);
+            color: #fff;
+        }
+        .modal-actions .cancel {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+        .modal-actions .cancel:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        /* ── Chapter Rename Input ── */
+        .chapter-rename-input {
+            background: var(--bg-input);
+            border: 1px solid var(--primary-dim);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 0.78em;
+            padding: 4px 8px;
+            outline: none;
+            width: 120px;
+        }
+
+        /* ── Sidebar Overlay (mobile) ── */
+        .sidebar-backdrop {
+            display: none;
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(6, 6, 14, 0.6);
+            z-index: 40;
+        }
+        .sidebar-backdrop.visible { display: block; }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0; left: 0;
+                height: 100vh;
+                transform: translateX(-100%);
+                z-index: 50;
+            }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-toggle { display: flex; }
+            .home-btn { display: none; }
+            .topic-header { padding: 16px 20px 4px; }
+            .writing-canvas { padding: 12px 20px 60px; }
+        }
+
+        @media (max-width: 480px) {
+            .toolbar { padding: 4px 8px; }
+            .toolbar-group button { padding: 5px 6px; font-size: 0.78em; }
+            .toolbar-group.export-group button { padding: 5px 8px; font-size: 0.78em; }
+            .story-title-input { font-size: 1.3em; }
+            .writing-canvas { font-size: 0.95em; padding: 8px 16px 60px; }
+            .topic-header { padding: 12px 16px 4px; }
+            .stats-bar { gap: 10px; font-size: 0.68em; padding: 0 10px; }
+            .modal { padding: 20px 20px; min-width: 0; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { transition: none !important; }
+        }
+
+        /* ── Selection ── */
+        ::selection {
+            background: var(--primary-glow-strong);
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <a class="skip-link" href="#editor">Skip to editor</a>
+    <a class="home-btn" href="../../index.html" aria-label="Back to home">&larr; Home</a>
+    <canvas id="starfield" aria-hidden="true"></canvas>
+
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <div class="app" id="app">
+        <!-- Sidebar: Story Library -->
+        <aside class="sidebar" id="sidebar" aria-label="Story library">
+            <div class="sidebar-header">
+                <h1 class="app-title">OMNI WRITER</h1>
+                <button class="new-story-btn" id="newStoryBtn" aria-label="Create new story" title="New story">+</button>
+            </div>
+            <div class="sidebar-search">
+                <input type="text" id="searchInput" placeholder="Search stories..." aria-label="Search stories">
+            </div>
+            <div class="story-list" id="storyList" role="list">
+            </div>
+        </aside>
+
+        <!-- Main Editor Area -->
+        <main class="editor-area" id="editor">
+            <!-- Toolbar -->
+            <div class="toolbar" id="toolbar" role="toolbar" aria-label="Formatting toolbar">
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">&#9776;</button>
+                <div class="toolbar-group format-group">
+                    <button data-cmd="bold" title="Bold (Ctrl+B)"><b>B</b></button>
+                    <button data-cmd="italic" title="Italic (Ctrl+I)"><i>I</i></button>
+                    <button data-cmd="underline" title="Underline (Ctrl+U)"><u>U</u></button>
+                    <button data-cmd="strikeThrough" title="Strikethrough"><s>S</s></button>
+                </div>
+                <div class="toolbar-group heading-group">
+                    <button data-block="h1" title="Heading 1">H1</button>
+                    <button data-block="h2" title="Heading 2">H2</button>
+                    <button data-block="h3" title="Heading 3">H3</button>
+                    <button data-block="p" title="Paragraph">P</button>
+                </div>
+                <div class="toolbar-group list-group">
+                    <button data-cmd="insertUnorderedList" title="Bullet list">&#8226;</button>
+                    <button data-cmd="insertOrderedList" title="Numbered list">1.</button>
+                    <button data-cmd="formatBlock" data-val="blockquote" title="Blockquote">&ldquo;</button>
+                    <button data-cmd="insertHorizontalRule" title="Horizontal rule">&mdash;</button>
+                </div>
+                <div class="toolbar-group action-group">
+                    <button data-cmd="undo" title="Undo (Ctrl+Z)">&#8630;</button>
+                    <button data-cmd="redo" title="Redo (Ctrl+Y)">&#8631;</button>
+                </div>
+                <div class="toolbar-spacer"></div>
+                <div class="toolbar-group export-group">
+                    <button id="saveBtn" title="Save (Ctrl+S)">Save</button>
+                    <button id="exportBtn" title="Export (Ctrl+E)">Export</button>
+                </div>
+            </div>
+
+            <!-- Chapter Navigation -->
+            <div class="chapter-bar" id="chapterBar">
+                <div class="chapter-tabs" id="chapterTabs">
+                </div>
+                <button class="add-chapter-btn" id="addChapterBtn" aria-label="Add chapter" title="Add chapter">+</button>
+            </div>
+
+            <!-- Topic / Title Display -->
+            <div class="topic-header" id="topicHeader">
+                <input type="text" class="story-title-input" id="storyTitleInput"
+                       placeholder="Enter your topic or title..."
+                       aria-label="Story title">
+            </div>
+
+            <!-- Writing Canvas or Empty State -->
+            <div class="canvas-wrapper" id="canvasWrapper">
+                <div class="writing-canvas" id="writingCanvas"
+                     contenteditable="true"
+                     role="textbox"
+                     aria-multiline="true"
+                     aria-label="Writing area"
+                     data-placeholder="Start writing... Let your thoughts flow freely. No limits, no restrictions, just your words."
+                     spellcheck="true">
+                </div>
+            </div>
+
+            <!-- Empty State (shown when no story is open) -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-state-icon">&#9998;</div>
+                <div class="empty-state-title">Welcome to Omni Writer</div>
+                <div class="empty-state-desc">
+                    Your private, unlimited writing space. Create a new story to start writing about anything -- no restrictions, no cloud, just you and your words.
+                </div>
+                <button class="empty-state-btn" id="emptyStateBtn">Create Your First Story</button>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="stats-bar" id="statsBar">
+                <span id="wordCount">0 words</span>
+                <span id="charCount">0 characters</span>
+                <span id="paraCount">0 paragraphs</span>
+                <span id="readTime">~0 min read</span>
+                <span class="stats-spacer"></span>
+                <span id="lastSaved" class="save-status"></span>
+            </div>
+        </main>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal-overlay" id="exportModal" role="dialog" aria-label="Export story" aria-modal="true">
+        <div class="modal">
+            <h2>Export Story</h2>
+            <p style="font-size:0.82em; color: var(--text-secondary); margin-bottom: 16px;">
+                Export all chapters as a single file.
+            </p>
+            <div class="export-options">
+                <button data-export="txt">Plain Text (.txt)</button>
+                <button data-export="md">Markdown (.md)</button>
+                <button data-export="html">HTML Document (.html)</button>
+            </div>
+            <button class="modal-close" aria-label="Close">&times;</button>
+        </div>
+    </div>
+
+    <!-- New Story Modal -->
+    <div class="modal-overlay" id="newStoryModal" role="dialog" aria-label="Create new story" aria-modal="true">
+        <div class="modal">
+            <h2>New Story</h2>
+            <input type="text" id="newStoryTitle" placeholder="What do you want to write about?" aria-label="Story topic" maxlength="200">
+            <button class="modal-btn" id="createStoryBtn">Start Writing</button>
+            <button class="modal-close" aria-label="Close">&times;</button>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div class="modal-overlay" id="deleteModal" role="dialog" aria-label="Confirm deletion" aria-modal="true">
+        <div class="modal">
+            <h2>Delete Story?</h2>
+            <p id="deleteStoryName" style="font-size:0.9em; color: var(--text-secondary); margin-bottom: 4px;"></p>
+            <p style="font-size:0.82em; color: var(--text-secondary); margin-bottom: 8px;">This cannot be undone.</p>
+            <div class="modal-actions">
+                <button id="confirmDeleteBtn" class="danger">Delete</button>
+                <button id="cancelDeleteBtn" class="cancel">Cancel</button>
+            </div>
+            <button class="modal-close" aria-label="Close">&times;</button>
+        </div>
+    </div>
+
+    <script>
+    (() => {
+        'use strict';
+
+        // ══════════════════════════════════════
+        //  STARFIELD
+        // ══════════════════════════════════════
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        const prefersReducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function initStarfield() {
+            canvas.width = innerWidth;
+            canvas.height = innerHeight;
+            stars = [];
+            const count = Math.floor((canvas.width * canvas.height) / 8000);
+            for (let i = 0; i < count; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    r: Math.random() * 1.1 + 0.3,
+                    a: Math.random(),
+                    da: (Math.random() - 0.5) * 0.008
+                });
+            }
+        }
+
+        function drawStarfield() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (const s of stars) {
+                if (!prefersReducedMotion) {
+                    s.a += s.da;
+                    if (s.a > 1 || s.a < 0.1) s.da *= -1;
+                    s.a = Math.max(0.1, Math.min(1, s.a));
+                }
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(200,200,240,${s.a * 0.5})`;
+                ctx.fill();
+            }
+            requestAnimationFrame(drawStarfield);
+        }
+
+        initStarfield();
+        drawStarfield();
+        addEventListener('resize', initStarfield);
+
+        // ══════════════════════════════════════
+        //  CONSTANTS
+        // ══════════════════════════════════════
+        const STORAGE_KEY = 'omni-writer-stories';
+        const AUTOSAVE_MS = 3000;
+        const WORDS_PER_MINUTE = 200;
+
+        // ══════════════════════════════════════
+        //  STATE
+        // ══════════════════════════════════════
+        let stories = [];
+        let activeStoryId = null;
+        let activeChapterIndex = 0;
+        let autoSaveTimer = null;
+        let deleteTargetId = null;
+        let searchQuery = '';
+        let sidebarOpen = false;
+
+        // ══════════════════════════════════════
+        //  DOM REFS
+        // ══════════════════════════════════════
+        const $ = id => document.getElementById(id);
+        const storyListEl = $('storyList');
+        const searchInputEl = $('searchInput');
+        const writingCanvasEl = $('writingCanvas');
+        const canvasWrapperEl = $('canvasWrapper');
+        const storyTitleInputEl = $('storyTitleInput');
+        const chapterBarEl = $('chapterBar');
+        const chapterTabsEl = $('chapterTabs');
+        const topicHeaderEl = $('topicHeader');
+        const emptyStateEl = $('emptyState');
+        const statsBarEl = $('statsBar');
+        const wordCountEl = $('wordCount');
+        const charCountEl = $('charCount');
+        const paraCountEl = $('paraCount');
+        const readTimeEl = $('readTime');
+        const lastSavedEl = $('lastSaved');
+        const sidebarEl = $('sidebar');
+        const sidebarBackdropEl = $('sidebarBackdrop');
+        const toolbarEl = $('toolbar');
+
+        // ══════════════════════════════════════
+        //  STORAGE
+        // ══════════════════════════════════════
+        function loadStories() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                stories = raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                stories = [];
+            }
+        }
+
+        function saveStories() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(stories));
+                return true;
+            } catch (e) {
+                lastSavedEl.textContent = 'Storage full!';
+                lastSavedEl.className = 'save-status error';
+                return false;
+            }
+        }
+
+        // ══════════════════════════════════════
+        //  UTILITY
+        // ══════════════════════════════════════
+        function generateId() {
+            if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+                return crypto.randomUUID();
+            }
+            return Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+        }
+
+        function timeAgo(timestamp) {
+            const seconds = Math.floor((Date.now() - timestamp) / 1000);
+            if (seconds < 10) return 'just now';
+            if (seconds < 60) return seconds + 's ago';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return minutes + 'm ago';
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return hours + 'h ago';
+            const days = Math.floor(hours / 24);
+            if (days < 7) return days + 'd ago';
+            return new Date(timestamp).toLocaleDateString();
+        }
+
+        function countWords(text) {
+            const trimmed = text.trim();
+            if (!trimmed) return 0;
+            return trimmed.split(/\s+/).filter(w => w.length > 0).length;
+        }
+
+        function storyWordCount(story) {
+            let total = 0;
+            for (const ch of story.chapters) {
+                const div = document.createElement('div');
+                div.innerHTML = ch.content || '';
+                total += countWords(div.textContent || '');
+            }
+            return total;
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ══════════════════════════════════════
+        //  STORY LIBRARY
+        // ══════════════════════════════════════
+        function getActiveStory() {
+            return stories.find(s => s.id === activeStoryId) || null;
+        }
+
+        function renderStoryList() {
+            const query = searchQuery.toLowerCase().trim();
+            const filtered = query
+                ? stories.filter(s => s.title.toLowerCase().includes(query))
+                : stories;
+
+            if (filtered.length === 0) {
+                storyListEl.innerHTML = stories.length === 0
+                    ? '<div class="sidebar-empty">No stories yet.<br>Click + to create one.</div>'
+                    : '<div class="sidebar-empty">No matching stories.</div>';
+                return;
+            }
+
+            // Sort by most recently updated
+            const sorted = [...filtered].sort((a, b) => b.updatedAt - a.updatedAt);
+
+            storyListEl.innerHTML = sorted.map(story => {
+                const wc = storyWordCount(story);
+                const isActive = story.id === activeStoryId;
+                return `<div class="story-item ${isActive ? 'active' : ''}" data-id="${story.id}" role="listitem">
+                    <div class="story-item-info">
+                        <div class="story-item-title">${escapeHtml(story.title || 'Untitled')}</div>
+                        <div class="story-item-meta">${wc} word${wc !== 1 ? 's' : ''} &middot; ${timeAgo(story.updatedAt)}</div>
+                    </div>
+                    <button class="story-item-delete" data-delete-id="${story.id}" aria-label="Delete ${escapeHtml(story.title)}" title="Delete">&times;</button>
+                </div>`;
+            }).join('');
+        }
+
+        function createStory(title) {
+            const story = {
+                id: generateId(),
+                title: title || 'Untitled',
+                chapters: [{ title: 'Chapter 1', content: '' }],
+                createdAt: Date.now(),
+                updatedAt: Date.now()
+            };
+            stories.push(story);
+            saveStories();
+            openStory(story.id);
+            renderStoryList();
+        }
+
+        function openStory(id) {
+            // Save current story before switching
+            saveCurrentContent();
+
+            activeStoryId = id;
+            activeChapterIndex = 0;
+
+            const story = getActiveStory();
+            if (!story) {
+                showEmptyState();
+                return;
+            }
+
+            showEditor();
+            storyTitleInputEl.value = story.title;
+            renderChapterTabs();
+            loadChapterContent();
+            updateStats();
+            renderStoryList();
+
+            // Close sidebar on mobile
+            closeSidebar();
+        }
+
+        function promptDeleteStory(id) {
+            const story = stories.find(s => s.id === id);
+            if (!story) return;
+            deleteTargetId = id;
+            $('deleteStoryName').textContent = `"${story.title}"`;
+            showModal('deleteModal');
+        }
+
+        function deleteStory(id) {
+            stories = stories.filter(s => s.id !== id);
+            saveStories();
+
+            if (activeStoryId === id) {
+                activeStoryId = null;
+                activeChapterIndex = 0;
+                if (stories.length > 0) {
+                    const sorted = [...stories].sort((a, b) => b.updatedAt - a.updatedAt);
+                    openStory(sorted[0].id);
+                } else {
+                    showEmptyState();
+                }
+            }
+            renderStoryList();
+        }
+
+        // ══════════════════════════════════════
+        //  CHAPTER MANAGEMENT
+        // ══════════════════════════════════════
+        function renderChapterTabs() {
+            const story = getActiveStory();
+            if (!story) return;
+
+            // Show chapter bar only when there is more than 1 chapter
+            if (story.chapters.length > 1) {
+                chapterBarEl.classList.add('visible');
+            } else {
+                chapterBarEl.classList.remove('visible');
+            }
+
+            chapterTabsEl.innerHTML = story.chapters.map((ch, i) => {
+                const isActive = i === activeChapterIndex;
+                return `<div class="chapter-tab ${isActive ? 'active' : ''}" data-chapter="${i}">
+                    <span class="chapter-tab-name">${escapeHtml(ch.title)}</span>
+                    ${story.chapters.length > 1 ? `<span class="chapter-tab-close" data-close-chapter="${i}" title="Remove chapter">&times;</span>` : ''}
+                </div>`;
+            }).join('');
+        }
+
+        function addChapter() {
+            const story = getActiveStory();
+            if (!story) return;
+
+            saveCurrentContent();
+            const num = story.chapters.length + 1;
+            story.chapters.push({ title: `Chapter ${num}`, content: '' });
+            activeChapterIndex = story.chapters.length - 1;
+            story.updatedAt = Date.now();
+            saveStories();
+            renderChapterTabs();
+            loadChapterContent();
+            writingCanvasEl.focus();
+        }
+
+        function switchChapter(index) {
+            const story = getActiveStory();
+            if (!story || index < 0 || index >= story.chapters.length) return;
+            if (index === activeChapterIndex) return;
+
+            saveCurrentContent();
+            activeChapterIndex = index;
+            renderChapterTabs();
+            loadChapterContent();
+            updateStats();
+        }
+
+        function deleteChapter(index) {
+            const story = getActiveStory();
+            if (!story || story.chapters.length <= 1) return;
+
+            story.chapters.splice(index, 1);
+            if (activeChapterIndex >= story.chapters.length) {
+                activeChapterIndex = story.chapters.length - 1;
+            } else if (activeChapterIndex > index) {
+                activeChapterIndex--;
+            } else if (activeChapterIndex === index) {
+                activeChapterIndex = Math.min(index, story.chapters.length - 1);
+            }
+
+            story.updatedAt = Date.now();
+            saveStories();
+            renderChapterTabs();
+            loadChapterContent();
+            updateStats();
+        }
+
+        function renameChapter(index, newName) {
+            const story = getActiveStory();
+            if (!story || index < 0 || index >= story.chapters.length) return;
+            story.chapters[index].title = newName || `Chapter ${index + 1}`;
+            story.updatedAt = Date.now();
+            saveStories();
+            renderChapterTabs();
+        }
+
+        // ══════════════════════════════════════
+        //  EDITOR
+        // ══════════════════════════════════════
+        function loadChapterContent() {
+            const story = getActiveStory();
+            if (!story) return;
+            const chapter = story.chapters[activeChapterIndex];
+            writingCanvasEl.innerHTML = chapter ? chapter.content : '';
+        }
+
+        function saveCurrentContent() {
+            const story = getActiveStory();
+            if (!story) return;
+            const chapter = story.chapters[activeChapterIndex];
+            if (!chapter) return;
+
+            chapter.content = writingCanvasEl.innerHTML;
+
+            // Update title from input
+            const newTitle = storyTitleInputEl.value.trim();
+            if (newTitle && newTitle !== story.title) {
+                story.title = newTitle;
+            }
+
+            story.updatedAt = Date.now();
+            if (saveStories()) {
+                lastSavedEl.textContent = 'Saved ' + timeAgo(Date.now());
+                lastSavedEl.className = 'save-status';
+            }
+            renderStoryList();
+        }
+
+        function showEditor() {
+            topicHeaderEl.style.display = '';
+            canvasWrapperEl.style.display = '';
+            emptyStateEl.style.display = 'none';
+            statsBarEl.style.display = '';
+            toolbarEl.style.display = '';
+        }
+
+        function showEmptyState() {
+            topicHeaderEl.style.display = 'none';
+            canvasWrapperEl.style.display = 'none';
+            emptyStateEl.style.display = 'flex';
+            chapterBarEl.classList.remove('visible');
+            statsBarEl.style.display = 'none';
+            // Keep toolbar visible for the sidebar toggle on mobile
+        }
+
+        // ══════════════════════════════════════
+        //  TOOLBAR (execCommand)
+        // ══════════════════════════════════════
+        function execFormatCommand(cmd, value) {
+            writingCanvasEl.focus();
+            document.execCommand(cmd, false, value || null);
+            updateStats();
+        }
+
+        function execBlockCommand(tag) {
+            writingCanvasEl.focus();
+            document.execCommand('formatBlock', false, '<' + tag + '>');
+            updateStats();
+        }
+
+        // ══════════════════════════════════════
+        //  STATISTICS
+        // ══════════════════════════════════════
+        function updateStats() {
+            const text = writingCanvasEl.textContent || '';
+            const words = countWords(text);
+            const chars = text.length;
+            const blocks = writingCanvasEl.querySelectorAll('p, h1, h2, h3, li, blockquote, div');
+            const paras = blocks.length || (text.trim() ? 1 : 0);
+            const readMin = Math.max(1, Math.ceil(words / WORDS_PER_MINUTE));
+
+            wordCountEl.textContent = `${words} word${words !== 1 ? 's' : ''}`;
+            charCountEl.textContent = `${chars} character${chars !== 1 ? 's' : ''}`;
+            paraCountEl.textContent = `${paras} paragraph${paras !== 1 ? 's' : ''}`;
+            readTimeEl.textContent = words > 0 ? `~${readMin} min read` : '~0 min read';
+        }
+
+        // ══════════════════════════════════════
+        //  EXPORT
+        // ══════════════════════════════════════
+        function htmlToMarkdown(html) {
+            const div = document.createElement('div');
+            div.innerHTML = html;
+            return nodeToMarkdown(div).trim();
+        }
+
+        function nodeToMarkdown(node) {
+            let result = '';
+            for (const child of node.childNodes) {
+                if (child.nodeType === Node.TEXT_NODE) {
+                    result += child.textContent;
+                } else if (child.nodeType === Node.ELEMENT_NODE) {
+                    const tag = child.tagName.toLowerCase();
+                    const inner = nodeToMarkdown(child);
+
+                    switch (tag) {
+                        case 'h1': result += '\n# ' + inner.trim() + '\n\n'; break;
+                        case 'h2': result += '\n## ' + inner.trim() + '\n\n'; break;
+                        case 'h3': result += '\n### ' + inner.trim() + '\n\n'; break;
+                        case 'p': result += inner.trim() + '\n\n'; break;
+                        case 'div': result += inner.trim() + '\n\n'; break;
+                        case 'br': result += '\n'; break;
+                        case 'hr': result += '\n---\n\n'; break;
+                        case 'strong': case 'b': result += '**' + inner + '**'; break;
+                        case 'em': case 'i': result += '*' + inner + '*'; break;
+                        case 'u': result += '<u>' + inner + '</u>'; break;
+                        case 's': case 'strike': case 'del': result += '~~' + inner + '~~'; break;
+                        case 'blockquote': result += '\n> ' + inner.trim().replace(/\n/g, '\n> ') + '\n\n'; break;
+                        case 'ul':
+                            for (const li of child.children) {
+                                if (li.tagName === 'LI') result += '- ' + nodeToMarkdown(li).trim() + '\n';
+                            }
+                            result += '\n';
+                            break;
+                        case 'ol':
+                            let num = 1;
+                            for (const li of child.children) {
+                                if (li.tagName === 'LI') result += (num++) + '. ' + nodeToMarkdown(li).trim() + '\n';
+                            }
+                            result += '\n';
+                            break;
+                        case 'li': result += inner; break;
+                        case 'a': result += '[' + inner + '](' + (child.href || '') + ')'; break;
+                        default: result += inner; break;
+                    }
+                }
+            }
+            return result;
+        }
+
+        function exportAs(format) {
+            const story = getActiveStory();
+            if (!story) return;
+
+            // Save current content first
+            saveCurrentContent();
+
+            const safeTitle = (story.title || 'Untitled').replace(/[^a-zA-Z0-9_\- ]/g, '').trim() || 'story';
+
+            if (format === 'txt') {
+                let text = story.title + '\n' + '='.repeat(story.title.length) + '\n\n';
+                for (const ch of story.chapters) {
+                    if (story.chapters.length > 1) {
+                        text += ch.title + '\n' + '-'.repeat(ch.title.length) + '\n\n';
+                    }
+                    const div = document.createElement('div');
+                    div.innerHTML = ch.content || '';
+                    text += (div.textContent || '').trim() + '\n\n';
+                }
+                download(text.trim(), safeTitle + '.txt', 'text/plain');
+            } else if (format === 'md') {
+                let md = '# ' + story.title + '\n\n';
+                for (const ch of story.chapters) {
+                    if (story.chapters.length > 1) {
+                        md += '## ' + ch.title + '\n\n';
+                    }
+                    md += htmlToMarkdown(ch.content || '') + '\n\n';
+                }
+                download(md.trim(), safeTitle + '.md', 'text/markdown');
+            } else if (format === 'html') {
+                let body = '';
+                for (const ch of story.chapters) {
+                    if (story.chapters.length > 1) {
+                        body += '<h2 style="color:#bcc2ff;margin:1.5em 0 0.5em;">' + escapeHtml(ch.title) + '</h2>\n';
+                    }
+                    body += (ch.content || '') + '\n';
+                }
+                const htmlDoc = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escapeHtml(story.title)}</title>
+<style>
+body{background:#06060e;color:#e4e1e6;font-family:'Segoe UI',system-ui,sans-serif;max-width:720px;margin:0 auto;padding:40px 24px 80px;line-height:1.85;font-size:1.05em;}
+h1{color:#bcc2ff;font-size:1.8em;margin-bottom:0.5em;border-bottom:1px solid #303034;padding-bottom:0.3em;}
+h2{color:#9aa5fd;font-size:1.3em;margin:1.2em 0 0.4em;}
+h3{color:#6570c4;font-size:1.1em;margin:0.8em 0 0.3em;}
+p{margin-bottom:0.8em;}
+blockquote{border-left:3px solid #6570c4;padding-left:16px;color:#78767a;font-style:italic;margin:0.8em 0;}
+hr{border:none;border-top:1px solid #303034;margin:1.5em 0;}
+a{color:#9aa5fd;}
+ul,ol{margin:0.5em 0 0.5em 1.5em;}
+li{margin-bottom:0.3em;}
+</style>
+</head>
+<body>
+<h1>${escapeHtml(story.title)}</h1>
+${body}
+<footer style="margin-top:3em;padding-top:1em;border-top:1px solid #303034;font-size:0.75em;color:#78767a;text-align:center;">
+Written with Omni Writer
+</footer>
+</body>
+</html>`;
+                download(htmlDoc, safeTitle + '.html', 'text/html');
+            }
+
+            hideModal('exportModal');
+        }
+
+        function download(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType + ';charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // ══════════════════════════════════════
+        //  MODALS
+        // ══════════════════════════════════════
+        function showModal(id) {
+            const overlay = $(id);
+            overlay.classList.add('visible');
+            // Focus the first input or button in the modal
+            const focusTarget = overlay.querySelector('input, button:not(.modal-close)');
+            if (focusTarget) setTimeout(() => focusTarget.focus(), 100);
+        }
+
+        function hideModal(id) {
+            $(id).classList.remove('visible');
+        }
+
+        function hideAllModals() {
+            document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('visible'));
+        }
+
+        // ══════════════════════════════════════
+        //  SIDEBAR TOGGLE
+        // ══════════════════════════════════════
+        function openSidebar() {
+            sidebarEl.classList.add('open');
+            sidebarBackdropEl.classList.add('visible');
+            sidebarOpen = true;
+        }
+
+        function closeSidebar() {
+            sidebarEl.classList.remove('open');
+            sidebarBackdropEl.classList.remove('visible');
+            sidebarOpen = false;
+        }
+
+        function toggleSidebar() {
+            if (sidebarOpen) closeSidebar();
+            else openSidebar();
+        }
+
+        // ══════════════════════════════════════
+        //  AUTO-SAVE
+        // ══════════════════════════════════════
+        function scheduleAutoSave() {
+            clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(() => {
+                saveCurrentContent();
+            }, AUTOSAVE_MS);
+        }
+
+        // ══════════════════════════════════════
+        //  EVENT HANDLERS
+        // ══════════════════════════════════════
+
+        // -- Toolbar formatting buttons --
+        toolbarEl.addEventListener('click', e => {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+
+            const cmd = btn.dataset.cmd;
+            const block = btn.dataset.block;
+            const val = btn.dataset.val;
+
+            if (cmd === 'formatBlock' && val) {
+                execFormatCommand(cmd, '<' + val + '>');
+            } else if (cmd) {
+                execFormatCommand(cmd);
+            } else if (block) {
+                execBlockCommand(block);
+            }
+        });
+
+        // -- Save & Export buttons --
+        $('saveBtn').addEventListener('click', () => {
+            saveCurrentContent();
+            lastSavedEl.textContent = 'Saved just now';
+            lastSavedEl.className = 'save-status';
+        });
+
+        $('exportBtn').addEventListener('click', () => {
+            if (!getActiveStory()) return;
+            showModal('exportModal');
+        });
+
+        // -- Export format buttons --
+        $('exportModal').addEventListener('click', e => {
+            const btn = e.target.closest('[data-export]');
+            if (btn) exportAs(btn.dataset.export);
+        });
+
+        // -- New story --
+        $('newStoryBtn').addEventListener('click', () => showModal('newStoryModal'));
+        $('emptyStateBtn').addEventListener('click', () => showModal('newStoryModal'));
+
+        $('createStoryBtn').addEventListener('click', () => {
+            const title = $('newStoryTitle').value.trim();
+            createStory(title || 'Untitled');
+            $('newStoryTitle').value = '';
+            hideModal('newStoryModal');
+        });
+
+        $('newStoryTitle').addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                $('createStoryBtn').click();
+            }
+        });
+
+        // -- Delete story --
+        $('confirmDeleteBtn').addEventListener('click', () => {
+            if (deleteTargetId) {
+                deleteStory(deleteTargetId);
+                deleteTargetId = null;
+            }
+            hideModal('deleteModal');
+        });
+        $('cancelDeleteBtn').addEventListener('click', () => {
+            deleteTargetId = null;
+            hideModal('deleteModal');
+        });
+
+        // -- Story list clicks --
+        storyListEl.addEventListener('click', e => {
+            const deleteBtn = e.target.closest('[data-delete-id]');
+            if (deleteBtn) {
+                e.stopPropagation();
+                promptDeleteStory(deleteBtn.dataset.deleteId);
+                return;
+            }
+            const item = e.target.closest('.story-item');
+            if (item) openStory(item.dataset.id);
+        });
+
+        // -- Search --
+        searchInputEl.addEventListener('input', () => {
+            searchQuery = searchInputEl.value;
+            renderStoryList();
+        });
+
+        // -- Chapter tabs --
+        chapterTabsEl.addEventListener('click', e => {
+            const closeBtn = e.target.closest('[data-close-chapter]');
+            if (closeBtn) {
+                e.stopPropagation();
+                deleteChapter(parseInt(closeBtn.dataset.closeChapter, 10));
+                return;
+            }
+            const tab = e.target.closest('.chapter-tab');
+            if (tab) switchChapter(parseInt(tab.dataset.chapter, 10));
+        });
+
+        // -- Chapter tab double-click to rename --
+        chapterTabsEl.addEventListener('dblclick', e => {
+            const nameSpan = e.target.closest('.chapter-tab-name');
+            if (!nameSpan) return;
+            const tab = nameSpan.closest('.chapter-tab');
+            if (!tab) return;
+            const index = parseInt(tab.dataset.chapter, 10);
+            const story = getActiveStory();
+            if (!story) return;
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'chapter-rename-input';
+            input.value = story.chapters[index].title;
+            input.maxLength = 100;
+
+            nameSpan.replaceWith(input);
+            input.focus();
+            input.select();
+
+            function finishRename() {
+                const newName = input.value.trim();
+                renameChapter(index, newName);
+            }
+            input.addEventListener('blur', finishRename);
+            input.addEventListener('keydown', e2 => {
+                if (e2.key === 'Enter') { e2.preventDefault(); input.blur(); }
+                if (e2.key === 'Escape') { input.value = story.chapters[index].title; input.blur(); }
+            });
+        });
+
+        $('addChapterBtn').addEventListener('click', addChapter);
+
+        // -- Writing canvas input --
+        writingCanvasEl.addEventListener('input', () => {
+            updateStats();
+            scheduleAutoSave();
+        });
+
+        // -- Title input --
+        storyTitleInputEl.addEventListener('input', () => {
+            scheduleAutoSave();
+        });
+
+        // -- Sidebar toggle --
+        $('sidebarToggle').addEventListener('click', toggleSidebar);
+        sidebarBackdropEl.addEventListener('click', closeSidebar);
+
+        // -- Modal close buttons --
+        document.querySelectorAll('.modal-close').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const overlay = btn.closest('.modal-overlay');
+                if (overlay) overlay.classList.remove('visible');
+            });
+        });
+
+        // -- Modal overlay click to close --
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', e => {
+                if (e.target === overlay) overlay.classList.remove('visible');
+            });
+        });
+
+        // ══════════════════════════════════════
+        //  KEYBOARD SHORTCUTS
+        // ══════════════════════════════════════
+        document.addEventListener('keydown', e => {
+            // Escape: close modals or sidebar
+            if (e.key === 'Escape') {
+                const openModal = document.querySelector('.modal-overlay.visible');
+                if (openModal) {
+                    openModal.classList.remove('visible');
+                    return;
+                }
+                if (sidebarOpen) {
+                    closeSidebar();
+                    return;
+                }
+            }
+
+            // Don't intercept shortcuts when typing in inputs (except the writing canvas)
+            const target = e.target;
+            const isCanvas = target === writingCanvasEl;
+            const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA';
+
+            if (e.ctrlKey || e.metaKey) {
+                switch (e.key.toLowerCase()) {
+                    case 's':
+                        e.preventDefault();
+                        saveCurrentContent();
+                        lastSavedEl.textContent = 'Saved just now';
+                        lastSavedEl.className = 'save-status';
+                        break;
+                    case 'e':
+                        if (!isInput || isCanvas) {
+                            e.preventDefault();
+                            if (getActiveStory()) showModal('exportModal');
+                        }
+                        break;
+                    case 'b':
+                        if (isCanvas) { e.preventDefault(); execFormatCommand('bold'); }
+                        break;
+                    case 'i':
+                        if (isCanvas) { e.preventDefault(); execFormatCommand('italic'); }
+                        break;
+                    case 'u':
+                        if (isCanvas) { e.preventDefault(); execFormatCommand('underline'); }
+                        break;
+                }
+            }
+        });
+
+        // ══════════════════════════════════════
+        //  INIT
+        // ══════════════════════════════════════
+        loadStories();
+        renderStoryList();
+
+        if (stories.length > 0) {
+            const sorted = [...stories].sort((a, b) => b.updatedAt - a.updatedAt);
+            openStory(sorted[0].id);
+        } else {
+            showEmptyState();
+        }
+    })();
+    </script>
+</body>
+</html>
