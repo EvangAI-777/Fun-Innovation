@@ -7,12 +7,14 @@ from .recipe import (
 )
 from .loot import LootTable, LootPool, LootEntry, LootCondition, LootFunction
 from .entity import EntityType, EntityBase, AIGoal, AIGoalType, EntityAttribute, SpawnRules, MobCategory
+from .worldgen import Biome, PlacedFeature, PlacementConfig, FeatureType, HeightRangeType
 
 __all__ = [
     "ModProject",
     "Block", "BlockMaterial", "BlockDrop",
     "Item", "FoodProperties", "ToolProperties", "ToolTier", "CreativeTab",
     "EntityType", "EntityBase", "AIGoal", "AIGoalType", "EntityAttribute", "SpawnRules", "MobCategory",
+    "Biome", "PlacedFeature", "PlacementConfig", "FeatureType", "HeightRangeType",
     "ShapedRecipe", "ShapelessRecipe", "SmeltingRecipe", "BlastingRecipe",
     "SmokingRecipe", "StonecuttingRecipe", "SmithingRecipe",
     "LootTable", "LootPool", "LootEntry", "LootCondition", "LootFunction",

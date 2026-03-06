@@ -17,6 +17,7 @@ from mcstudio.model.loot import LootTable, LootPool, LootEntry, LootCondition, L
 from mcstudio.model.entity import (
     EntityType, EntityBase, AIGoal, AIGoalType, EntityAttribute, SpawnRules, MobCategory,
 )
+from mcstudio.model.worldgen import Biome, PlacedFeature, PlacementConfig, FeatureType, HeightRangeType
 
 
 # --- ModProject ---
@@ -522,3 +523,116 @@ class TestProjectEntities:
         assert len(loaded.entities) == 1
         assert loaded.entities[0].entity_id == "test_mob"
         assert loaded.entities[0].attributes[0].value == 30.0
+
+
+# --- World Gen ---
+
+class TestBiome:
+    def test_defaults(self):
+        b = Biome(biome_id="crystal_fields")
+        assert b.temperature == 0.5
+        assert b.humidity == 0.5
+        assert b.sky_color == "#78A7FF"
+        assert len(b.features) == 0
+
+    def test_custom_biome(self):
+        b = Biome(
+            biome_id="volcanic_wastes",
+            temperature=2.0,
+            humidity=0.0,
+            sky_color="#FF4400",
+            fog_color="#AA2200",
+            grass_color="#553300",
+            features=[
+                PlacedFeature(
+                    feature_id="magma_ore",
+                    feature_type=FeatureType.ORE,
+                    block="minecraft:magma_block",
+                    size=12,
+                    placement=PlacementConfig(count=15, height_min=0, height_max=64),
+                ),
+            ],
+        )
+        assert b.temperature == 2.0
+        assert len(b.features) == 1
+        assert b.features[0].size == 12
+
+    def test_invalid_biome_id(self):
+        with pytest.raises(ValueError, match="Invalid biome ID"):
+            Biome(biome_id="Bad Biome!")
+
+    def test_serialization(self):
+        b = Biome(
+            biome_id="test_biome",
+            temperature=1.5,
+            grass_color="#00FF00",
+            features=[
+                PlacedFeature(
+                    feature_id="test_ore",
+                    feature_type=FeatureType.ORE,
+                    block="mymod:test_ore",
+                    placement=PlacementConfig(count=4, rarity=3),
+                ),
+            ],
+        )
+        d = b.to_dict()
+        assert d["grass_color"] == "#00FF00"
+        loaded = Biome.from_dict(d)
+        assert loaded.biome_id == "test_biome"
+        assert loaded.temperature == 1.5
+        assert loaded.grass_color == "#00FF00"
+        assert len(loaded.features) == 1
+        assert loaded.features[0].placement.rarity == 3
+
+    def test_all_feature_types(self):
+        for ft in FeatureType:
+            f = PlacedFeature(feature_id="test", feature_type=ft)
+            d = f.to_dict()
+            loaded = PlacedFeature.from_dict(d)
+            assert loaded.feature_type == ft
+
+    def test_placement_config_roundtrip(self):
+        pc = PlacementConfig(
+            count=20,
+            height_min=-32,
+            height_max=128,
+            height_range_type=HeightRangeType.TRIANGLE,
+            rarity=5,
+        )
+        d = pc.to_dict()
+        loaded = PlacementConfig.from_dict(d)
+        assert loaded.count == 20
+        assert loaded.height_range_type == HeightRangeType.TRIANGLE
+        assert loaded.rarity == 5
+
+
+class TestProjectBiomes:
+    def test_add_biome(self):
+        p = ModProject(mod_id="mymod", name="My Mod")
+        b = p.add_biome(Biome(biome_id="crystal_fields"))
+        assert len(p.biomes) == 1
+        assert p.get_biome("crystal_fields") is b
+
+    def test_duplicate_biome(self):
+        p = ModProject(mod_id="mymod", name="My Mod")
+        p.add_biome(Biome(biome_id="crystal_fields"))
+        with pytest.raises(ValueError, match="Duplicate biome"):
+            p.add_biome(Biome(biome_id="crystal_fields"))
+
+    def test_biome_serialization_roundtrip(self):
+        p = ModProject(mod_id="testmod", name="Test")
+        p.add_biome(Biome(
+            biome_id="test_biome",
+            temperature=1.2,
+            features=[PlacedFeature(feature_id="test_ore")],
+        ))
+        d = p.to_dict()
+        assert len(d["biomes"]) == 1
+
+        import tempfile
+        with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as f:
+            p.save(f.name)
+            loaded = ModProject.load(f.name)
+        assert len(loaded.biomes) == 1
+        assert loaded.biomes[0].biome_id == "test_biome"
+        assert loaded.biomes[0].temperature == 1.2

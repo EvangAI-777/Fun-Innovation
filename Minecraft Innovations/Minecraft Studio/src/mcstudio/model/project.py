@@ -12,6 +12,7 @@ from .item import Item
 from .recipe import Recipe
 from .loot import LootTable
 from .entity import EntityType
+from .worldgen import Biome
 
 
 def _validate_mod_id(mod_id: str) -> str:
@@ -39,6 +40,7 @@ class ModProject:
     blocks: list[Block] = field(default_factory=list)
     items: list[Item] = field(default_factory=list)
     entities: list[EntityType] = field(default_factory=list)
+    biomes: list[Biome] = field(default_factory=list)
     recipes: list[Recipe] = field(default_factory=list)
     loot_tables: list[LootTable] = field(default_factory=list)
 
@@ -69,6 +71,18 @@ class ModProject:
         for e in self.entities:
             if e.entity_id == entity_id:
                 return e
+        return None
+
+    def add_biome(self, biome: Biome) -> Biome:
+        if any(b.biome_id == biome.biome_id for b in self.biomes):
+            raise ValueError(f"Duplicate biome ID: {biome.biome_id!r}")
+        self.biomes.append(biome)
+        return biome
+
+    def get_biome(self, biome_id: str) -> Biome | None:
+        for b in self.biomes:
+            if b.biome_id == biome_id:
+                return b
         return None
 
     def add_recipe(self, recipe: Recipe) -> Recipe:
@@ -124,6 +138,7 @@ class ModProject:
             "blocks": [b.to_dict() for b in self.blocks],
             "items": [i.to_dict() for i in self.items],
             "entities": [e.to_dict() for e in self.entities],
+            "biomes": [b.to_dict() for b in self.biomes],
             "recipes": [r.to_dict() for r in self.recipes],
             "loot_tables": [lt.to_dict() for lt in self.loot_tables],
         }
@@ -154,6 +169,8 @@ class ModProject:
             project.add_item(Item.from_dict(id_))
         for ed in data.get("entities", []):
             project.add_entity(EntityType.from_dict(ed))
+        for bd in data.get("biomes", []):
+            project.add_biome(Biome.from_dict(bd))
         from .recipe import recipe_from_dict
         for rd in data.get("recipes", []):
             project.add_recipe(recipe_from_dict(rd))
