@@ -1,4 +1,4 @@
-"""Forge mod project exporter -- generates a complete Forge Gradle project."""
+"""NeoForge mod project exporter -- generates a complete NeoForge Gradle project."""
 
 from __future__ import annotations
 
@@ -8,29 +8,28 @@ from mcstudio.model.project import ModProject
 from mcstudio.codegen.java import JavaWriter, to_java_string, to_pascal_case
 from .base import Exporter, _register
 
-# Forge version mappings per Minecraft version
-_FORGE_VERSIONS = {
-    "1.21.4": {"forge": "54.1.0", "loader_range": "[54,)", "gradle": "[6.0.24,6.2)"},
-    "1.21.3": {"forge": "53.0.0", "loader_range": "[53,)", "gradle": "[6.0.24,6.2)"},
-    "1.20.4": {"forge": "49.0.0", "loader_range": "[49,)", "gradle": "[6.0.24,6.2)"},
-    "1.20.1": {"forge": "47.3.0", "loader_range": "[47,)", "gradle": "[6.0,6.2)"},
+# NeoForge version mappings per Minecraft version
+_NEOFORGE_VERSIONS = {
+    "1.21.4": {"neoforge": "21.4.0-beta", "loader_range": "[4,)", "neogradle": "7.0.163"},
+    "1.21.3": {"neoforge": "21.3.0-beta", "loader_range": "[4,)", "neogradle": "7.0.163"},
+    "1.20.4": {"neoforge": "20.4.237", "loader_range": "[2,)", "neogradle": "7.0.145"},
 }
-_DEFAULT_FORGE = {"forge": "54.1.0", "loader_range": "[54,)", "gradle": "[6.0.24,6.2)"}
+_DEFAULT_NEOFORGE = {"neoforge": "21.4.0-beta", "loader_range": "[4,)", "neogradle": "7.0.163"}
 
 
 @_register
-class ForgeExporter(Exporter):
+class NeoForgeExporter(Exporter):
     def loader_name(self) -> str:
-        return "forge"
+        return "neoforge"
 
     def export(self, project: ModProject, output_dir: Path) -> Path:
-        root = output_dir / f"{project.mod_id}-forge"
-        versions = _FORGE_VERSIONS.get(project.mc_version, _DEFAULT_FORGE)
+        root = output_dir / f"{project.mod_id}-neoforge"
+        versions = _NEOFORGE_VERSIONS.get(project.mc_version, _DEFAULT_NEOFORGE)
 
         self._write_build_gradle(root, project, versions)
-        self._write_gradle_properties(root, project)
-        self._write_settings_gradle(root, project)
-        self._write_mods_toml(root, project, versions)
+        self._write_gradle_properties(root, project, versions)
+        self._write_settings_gradle(root, project, versions)
+        self._write_neoforge_mods_toml(root, project, versions)
         self._write_pack_mcmeta(root, project)
         self._write_mod_class(root, project)
         self._write_block_registry(root, project)
@@ -45,67 +44,48 @@ class ForgeExporter(Exporter):
         content = f"""plugins {{
     id 'eclipse'
     id 'idea'
-    id 'net.minecraftforge.gradle' version '{versions["gradle"]}'
+    id 'net.neoforged.gradle.userdev' version '{versions["neogradle"]}'
 }}
 
 version = '{project.version}'
 group = 'com.{project.mod_id}'
-archivesBaseName = '{project.mod_id}'
+
+base {{
+    archivesName = '{project.mod_id}'
+}}
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 minecraft {{
-    mappings channel: 'official', version: '{project.mc_version}'
-    runs {{
-        client {{
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            mods {{
-                {project.mod_id} {{
-                    source sourceSets.main
-                }}
-            }}
-        }}
-        server {{
-            workingDirectory project.file('run')
-            property 'forge.logging.console.level', 'debug'
-            mods {{
-                {project.mod_id} {{
-                    source sourceSets.main
-                }}
-            }}
-        }}
+    accessTransformers {{
+        file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
+    }}
+}}
+
+runs {{
+    client {{
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
+        systemProperty 'forge.logging.console.level', 'debug'
+    }}
+    server {{
+        systemProperty 'forge.logging.console.level', 'debug'
     }}
 }}
 
 dependencies {{
-    minecraft 'net.minecraftforge:forge:{project.mc_version}-{versions["forge"]}'
-}}
-
-jar {{
-    manifest {{
-        attributes([
-            "Specification-Title"     : "{project.mod_id}",
-            "Specification-Vendor"    : "{', '.join(project.authors) or project.mod_id}",
-            "Specification-Version"   : "1",
-            "Implementation-Title"    : project.name,
-            "Implementation-Version"  : project.version,
-            "Implementation-Vendor"   : "{', '.join(project.authors) or project.mod_id}",
-        ])
-    }}
+    implementation "net.neoforged:neoforge:{versions["neoforge"]}"
 }}
 """
         self._write_file(root / "build.gradle", content)
 
-    def _write_gradle_properties(self, root: Path, project: ModProject) -> None:
+    def _write_gradle_properties(self, root: Path, project: ModProject, versions: dict) -> None:
         self._write_file(root / "gradle.properties", "org.gradle.jvmargs=-Xmx3G\n")
 
-    def _write_settings_gradle(self, root: Path, project: ModProject) -> None:
+    def _write_settings_gradle(self, root: Path, project: ModProject, versions: dict) -> None:
         self._write_file(root / "settings.gradle", f"""pluginManagement {{
     repositories {{
         gradlePluginPortal()
-        maven {{ url = 'https://maven.minecraftforge.net/' }}
+        maven {{ url = 'https://maven.neoforged.net/releases' }}
     }}
 }}
 
@@ -114,7 +94,7 @@ plugins {{
 }}
 """)
 
-    def _write_mods_toml(self, root: Path, project: ModProject, versions: dict) -> None:
+    def _write_neoforge_mods_toml(self, root: Path, project: ModProject, versions: dict) -> None:
         authors_str = ", ".join(project.authors) if project.authors else ""
         loader_range = versions["loader_range"]
         content = f"""modLoader="javafml"
@@ -129,21 +109,21 @@ description='''{project.description}'''
 authors="{authors_str}"
 
 [[dependencies.{project.mod_id}]]
-modId="forge"
-mandatory=true
+modId="neoforge"
+type="required"
 versionRange="{loader_range}"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.{project.mod_id}]]
 modId="minecraft"
-mandatory=true
+type="required"
 versionRange="[{project.mc_version}]"
 ordering="NONE"
 side="BOTH"
 """
         meta_dir = root / "src" / "main" / "resources" / "META-INF"
-        self._write_file(meta_dir / "mods.toml", content)
+        self._write_file(meta_dir / "neoforge.mods.toml", content)
 
     def _write_pack_mcmeta(self, root: Path, project: ModProject) -> None:
         self._write_json(
@@ -157,9 +137,8 @@ side="BOTH"
         w = JavaWriter()
         w.set_package(pkg)
         w.add_import(
-            "net.minecraftforge.fml.common.Mod",
-            "net.minecraftforge.eventbus.api.IEventBus",
-            "net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext",
+            "net.neoforged.bus.api.IEventBus",
+            "net.neoforged.fml.common.Mod",
             "org.slf4j.Logger",
             "com.mojang.logging.LogUtils",
         )
@@ -169,8 +148,7 @@ side="BOTH"
         w.field("public static final", "String", "MOD_ID", to_java_string(project.mod_id))
         w.field("private static final", "Logger", "LOGGER", "LogUtils.getLogger()")
         w.line()
-        w.open_block(f"public {cls_name}()")
-        w.line("IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();")
+        w.open_block(f"public {cls_name}(IEventBus modEventBus)")
         if project.blocks:
             w.line(f"{cls_name}Blocks.register(modEventBus);")
         if project.items:
@@ -190,24 +168,25 @@ side="BOTH"
         w = JavaWriter()
         w.set_package(pkg)
         w.add_import(
+            "net.minecraft.core.registries.Registries",
             "net.minecraft.world.level.block.Block",
             "net.minecraft.world.level.block.state.BlockBehaviour",
             "net.minecraft.world.item.BlockItem",
             "net.minecraft.world.item.Item",
-            "net.minecraftforge.eventbus.api.IEventBus",
-            "net.minecraftforge.registries.DeferredRegister",
-            "net.minecraftforge.registries.ForgeRegistries",
-            "net.minecraftforge.registries.RegistryObject",
+            "net.neoforged.bus.api.IEventBus",
+            "net.neoforged.neoforge.registries.DeferredBlock",
+            "net.neoforged.neoforge.registries.DeferredItem",
+            "net.neoforged.neoforge.registries.DeferredRegister",
         )
         w.line()
         w.open_block(f"public class {cls_name}Blocks")
         w.field(
-            "public static final", "DeferredRegister<Block>", "BLOCKS",
-            f"DeferredRegister.create(ForgeRegistries.BLOCKS, {cls_name}.MOD_ID)",
+            "public static final", "DeferredRegister.Blocks", "BLOCKS",
+            f"DeferredRegister.createBlocks({cls_name}.MOD_ID)",
         )
         w.field(
-            "public static final", "DeferredRegister<Item>", "BLOCK_ITEMS",
-            f"DeferredRegister.create(ForgeRegistries.ITEMS, {cls_name}.MOD_ID)",
+            "public static final", "DeferredRegister.Items", "BLOCK_ITEMS",
+            f"DeferredRegister.createItems({cls_name}.MOD_ID)",
         )
         w.line()
         for block in project.blocks:
@@ -219,12 +198,12 @@ side="BOTH"
             if block.requires_tool:
                 props += ".requiresCorrectToolForDrops()"
             w.field(
-                "public static final", "RegistryObject<Block>", block.java_constant,
+                "public static final", "DeferredBlock<Block>", block.java_constant,
                 f'BLOCKS.register("{block.block_id}", () -> new Block({props}))',
             )
             if block.has_block_item:
                 w.field(
-                    "public static final", "RegistryObject<Item>",
+                    "public static final", "DeferredItem<BlockItem>",
                     f"{block.java_constant}_ITEM",
                     f'BLOCK_ITEMS.register("{block.block_id}", () -> new BlockItem({block.java_constant}.get(), new Item.Properties()))',
                 )
@@ -247,18 +226,17 @@ side="BOTH"
         w.set_package(pkg)
         w.add_import(
             "net.minecraft.world.item.Item",
-            "net.minecraftforge.eventbus.api.IEventBus",
-            "net.minecraftforge.registries.DeferredRegister",
-            "net.minecraftforge.registries.ForgeRegistries",
-            "net.minecraftforge.registries.RegistryObject",
+            "net.neoforged.bus.api.IEventBus",
+            "net.neoforged.neoforge.registries.DeferredItem",
+            "net.neoforged.neoforge.registries.DeferredRegister",
         )
         if any(i.is_food for i in project.items):
             w.add_import("net.minecraft.world.food.FoodProperties")
         w.line()
         w.open_block(f"public class {cls_name}Items")
         w.field(
-            "public static final", "DeferredRegister<Item>", "ITEMS",
-            f"DeferredRegister.create(ForgeRegistries.ITEMS, {cls_name}.MOD_ID)",
+            "public static final", "DeferredRegister.Items", "ITEMS",
+            f"DeferredRegister.createItems({cls_name}.MOD_ID)",
         )
         w.line()
         for item in project.items:
@@ -271,16 +249,16 @@ side="BOTH"
                 food = item.food
                 food_builder = (
                     f"new FoodProperties.Builder()"
-                    f".nutrition({food.nutrition}).saturationMod({food.saturation}f)"
+                    f".nutrition({food.nutrition}).saturationModifier({food.saturation}f)"
                 )
                 if food.is_meat:
                     food_builder += ".meat()"
                 if food.can_always_eat:
-                    food_builder += ".alwaysEat()"
+                    food_builder += ".alwaysEdible()"
                 food_builder += ".build()"
                 settings += f".food({food_builder})"
             w.field(
-                "public static final", "RegistryObject<Item>", item.java_constant,
+                "public static final", "DeferredItem<Item>", item.java_constant,
                 f'ITEMS.register("{item.item_id}", () -> new Item({settings}))',
             )
         w.line()
@@ -296,7 +274,7 @@ side="BOTH"
         for recipe in project.recipes:
             data_path = (
                 root / "src" / "main" / "resources" / "data"
-                / project.mod_id / "recipes" / f"{recipe.recipe_id}.json"
+                / project.mod_id / "recipe" / f"{recipe.recipe_id}.json"
             )
             self._write_json(data_path, self._recipe_to_json(recipe))
 
@@ -304,7 +282,7 @@ side="BOTH"
         for lt in project.loot_tables:
             data_path = (
                 root / "src" / "main" / "resources" / "data"
-                / project.mod_id / "loot_tables" / f"{lt.table_id}.json"
+                / project.mod_id / "loot_table" / f"{lt.table_id}.json"
             )
             self._write_json(data_path, self._loot_table_to_json(lt, project.mod_id))
 

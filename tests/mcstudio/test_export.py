@@ -14,6 +14,7 @@ from mcstudio.model.loot import LootTable, LootPool, LootEntry, LootCondition
 from mcstudio.export.base import export_project, EXPORTERS
 from mcstudio.export.fabric import FabricExporter
 from mcstudio.export.forge import ForgeExporter
+from mcstudio.export.neoforge import NeoForgeExporter
 from mcstudio.export.datapack import DataPackExporter
 
 
@@ -59,6 +60,7 @@ class TestExporterRegistry:
     def test_available_loaders(self):
         assert "fabric" in EXPORTERS
         assert "forge" in EXPORTERS
+        assert "neoforge" in EXPORTERS
         assert "datapack" in EXPORTERS
 
     def test_unknown_loader(self):
@@ -239,6 +241,61 @@ class TestForgeExport:
             assert recipe_path.exists()
 
 
+class TestNeoForgeExport:
+    def test_generates_project(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            assert root.exists()
+            assert (root / "build.gradle").exists()
+            assert (root / "settings.gradle").exists()
+
+    def test_neoforge_mods_toml(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            toml_path = root / "src" / "main" / "resources" / "META-INF" / "neoforge.mods.toml"
+            assert toml_path.exists()
+            content = toml_path.read_text()
+            assert 'modId="testmod"' in content
+            assert 'modId="neoforge"' in content
+
+    def test_mod_class(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            mod_java = root / "src" / "main" / "java" / "com" / "testmod" / "testmod" / "Testmod.java"
+            content = mod_java.read_text()
+            assert "net.neoforged.fml.common.Mod" in content
+            assert "IEventBus modEventBus" in content
+
+    def test_block_registry_uses_deferred_block(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            blocks_java = root / "src" / "main" / "java" / "com" / "testmod" / "testmod" / "TestmodBlocks.java"
+            content = blocks_java.read_text()
+            assert "DeferredRegister.Blocks" in content or "DeferredBlock" in content
+            assert "createBlocks" in content
+            assert "MAGIC_ORE" in content
+
+    def test_item_registry(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            items_java = root / "src" / "main" / "java" / "com" / "testmod" / "testmod" / "TestmodItems.java"
+            content = items_java.read_text()
+            assert "DeferredRegister.Items" in content or "DeferredItem" in content
+            assert "createItems" in content
+
+    def test_recipe_json(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            recipe_path = root / "src" / "main" / "resources" / "data" / "testmod" / "recipe" / "magic_ore_from_gems.json"
+            assert recipe_path.exists()
+
+
 class TestDataPackExport:
     def test_generates_pack(self):
         p = _make_project()
@@ -284,6 +341,12 @@ class TestExportDispatch:
             root = export_project(p, "forge", td)
             assert "forge" in root.name
 
+    def test_neoforge_dispatch(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "neoforge", td)
+            assert "neoforge" in root.name
+
     def test_datapack_dispatch(self):
         p = _make_project()
         with tempfile.TemporaryDirectory() as td:
@@ -311,6 +374,14 @@ class TestEmptyProject:
         p = ModProject(mod_id="emptymod", name="Empty Mod")
         with tempfile.TemporaryDirectory() as td:
             root = ForgeExporter().export(p, Path(td))
+            mod_java = root / "src" / "main" / "java" / "com" / "emptymod" / "emptymod" / "Emptymod.java"
+            content = mod_java.read_text()
+            assert "EmptymodBlocks" not in content
+
+    def test_neoforge_no_blocks(self):
+        p = ModProject(mod_id="emptymod", name="Empty Mod")
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
             mod_java = root / "src" / "main" / "java" / "com" / "emptymod" / "emptymod" / "Emptymod.java"
             content = mod_java.read_text()
             assert "EmptymodBlocks" not in content
