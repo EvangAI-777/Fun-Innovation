@@ -26,6 +26,11 @@ class Exporter(ABC):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(data, indent=2) + "\n")
 
+    def _write_textures(self, assets_dir: Path, project: ModProject) -> None:
+        """Generate placeholder textures for all blocks and items."""
+        from mcstudio.texgen import generate_project_textures
+        generate_project_textures(project, assets_dir)
+
     def _recipe_to_json(self, recipe) -> dict:
         """Convert a recipe model to vanilla Minecraft recipe JSON."""
         from mcstudio.model.recipe import (

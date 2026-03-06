@@ -180,6 +180,19 @@ class TestFabricExport:
             assert (assets / "models" / "item" / "magic_ore.json").exists()
             assert (assets / "models" / "item" / "magic_gem.json").exists()
 
+    def test_placeholder_textures(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            assets = root / "src" / "main" / "resources" / "assets" / "testmod"
+            block_tex = assets / "textures" / "block" / "magic_ore.png"
+            item_tex = assets / "textures" / "item" / "magic_gem.png"
+            assert block_tex.exists()
+            assert item_tex.exists()
+            # Verify it's a valid PNG (starts with PNG signature)
+            assert block_tex.read_bytes()[:4] == b"\x89PNG"
+            assert item_tex.read_bytes()[:4] == b"\x89PNG"
+
 
 class TestForgeExport:
     def test_generates_project(self):

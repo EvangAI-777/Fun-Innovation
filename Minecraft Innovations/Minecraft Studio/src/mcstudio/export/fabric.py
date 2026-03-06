@@ -36,6 +36,9 @@ class FabricExporter(Exporter):
         self._write_recipes(root, project)
         self._write_loot_tables(root, project)
         self._write_blockstate_models(root, project)
+        self._write_textures(
+            root / "src" / "main" / "resources" / "assets" / project.mod_id, project,
+        )
 
         return root
 
