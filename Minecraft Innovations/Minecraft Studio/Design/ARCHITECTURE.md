@@ -261,6 +261,46 @@ studio_project.db
   |-- export_configs      (target, settings, last_export_time)
 ```
 
+## Implementation Status
+
+This architecture document describes the full vision. The project is being built in layers, with each layer fully functional before the next begins.
+
+### Layer 1: Data Model + Export Engine (v0.2.0 -- complete)
+
+The Python prototype implements the **Project Model** and **Export Engine** subsystems from the diagram above. This is the foundation that proves the cross-loader abstraction works before investing in the full IDE shell.
+
+| Architecture Component | Implementation | Status |
+|----------------------|----------------|--------|
+| Project Model -- Block registry | `mcstudio.model.block` -- 14 materials, full property set | Done |
+| Project Model -- Item registry | `mcstudio.model.item` -- food, tool, creative tab support | Done |
+| Project Model -- Recipe registry | `mcstudio.model.recipe` -- all 7 vanilla types | Done |
+| Project Model -- Loot table registry | `mcstudio.model.loot` -- pools, conditions, functions | Done |
+| Project Model -- Entity registry | `mcstudio.model.entity` -- 8 base classes, 15 AI goals, spawn rules | Done (model only) |
+| Project Model -- World gen registry | `mcstudio.model.worldgen` -- biomes, features, placement | Done (model only) |
+| Project Model -- Serialization | JSON save/load with full round-trip | Done |
+| Export Engine -- Fabric | Complete Fabric Loom project generation | Done |
+| Export Engine -- Forge | Complete Forge Gradle project generation | Done |
+| Export Engine -- NeoForge | Complete NeoForge Gradle project generation | Done |
+| Export Engine -- Data Pack | Vanilla data pack generation | Done |
+| Export Engine -- Quilt | Quilt Loom project generation | Not started |
+| Export Engine -- Resource Pack | Standalone resource pack generation | Not started |
+| Export Engine -- Multiloader | Architectury project generation | Not started |
+| Code Generation | `mcstudio.codegen.java` -- JavaWriter with formatting | Done |
+| Texture Generation | `mcstudio.texgen` -- placeholder PNGs from stdlib | Done |
+| CLI | 6 commands: new, add-block, add-item, export, info, loaders | Done |
+| Explorer Panel | -- | Not started (Layer 4) |
+| 3D Viewport | -- | Not started (Layer 7) |
+| Code Editor | -- | Not started (Layer 5) |
+| Visual Editors | -- | Not started (Layers 3+6) |
+| Testing Environment | -- | Not started (Layer 8) |
+| IDE Shell | -- | Not started (Layer 4) |
+
+**What "model only" means:** Entity and world gen types have complete data models with serialization, validation, and test coverage, but the exporters don't yet generate Java entity classes or biome JSON for specific loaders. The model is ready; the code generation for these types is the next step.
+
+**What Layer 1 proves:** A mod can be defined once as a structured data model and exported to three different modloaders (Fabric, Forge, NeoForge) plus vanilla data packs, producing correct, buildable Gradle projects with idiomatic registration patterns. The abstraction works.
+
+118 passing tests. Zero external dependencies.
+
 ---
 
 *Full concept details in [`../MCME.md`](../MCME.md)*

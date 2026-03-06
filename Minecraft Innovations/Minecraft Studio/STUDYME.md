@@ -95,35 +95,71 @@ See [`ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical design 
 1. **Hot-reload cycle** -- Minecraft wasn't designed for class hot-swapping. Solution: custom classloader that isolates mod classes from Minecraft core, discard and recreate on recompile while preserving instance state.
 2. **Abstraction layer completeness** -- Thin enough that exported code is readable, complete enough that 95% of mod functionality doesn't require loader-specific code.
 
+## Roadmap
+
+Minecraft Studio is built in layers. Each layer is fully functional and testable on its own before the next begins.
+
+| Layer | Name | What It Delivers | Status |
+|-------|------|-----------------|--------|
+| **1** | **Data Model + Export Engine** | Complete mod content model, Java code generation, multi-loader project export, CLI | **v0.2.0 -- implemented** |
+| **2** | **Abstraction Layer + Entity/WorldGen Export** | Entity and biome Java code generation for all loaders, event model, networking model, Quilt + Architectury exporters | Planned |
+| **3** | **Visual Editors (headless)** | Recipe editor, loot table editor, entity AI editor, world gen editor -- as programmatic APIs that generate model objects (no GUI yet) | Planned |
+| **4** | **IDE Shell + Explorer** | JavaFX or Compose Desktop application frame, Explorer panel, Properties panel, project management | Planned |
+| **5** | **Code Editor** | Embedded Java/Kotlin editor with Minecraft-aware autocomplete, ECJ incremental compilation | Planned |
+| **6** | **Visual Editor GUI** | Wire the Layer 3 APIs into interactive JavaFX/Compose panels with drag-and-drop | Planned |
+| **7** | **3D Viewport** | Embedded Minecraft client with classloader isolation and hot-reload | Planned |
+| **8** | **Testing + Publishing** | In-viewport test harness, performance profiler, one-click CurseForge/Modrinth publish | Planned |
+
 ## Status
 
-**Layer 1: Data model + export engine -- implemented.** v0.2.0. Zero external dependencies. `pip install -e .` then `mcstudio` to use.
+### Layer 1: Data Model + Export Engine -- v0.2.0
 
-What's built:
+Implemented. Zero external dependencies. Python 3.10+. `pip install -e .` then `mcstudio` to use.
+
+**Data model** (`mcstudio.model`):
 
 | Module | What it does |
 |--------|-------------|
-| `mcstudio.model.project` | Complete mod project container with JSON save/load, registry management, Java class/package name generation, duplicate ID enforcement across all registries |
-| `mcstudio.model.block` | Block definitions -- 14 material types, hardness, resistance, luminance, tool requirements, drops, collision, transparency. Resource location ID validation |
-| `mcstudio.model.item` | Item definitions -- stack sizes, creative tabs, food properties (nutrition, saturation, meat, always-edible), tool properties (tier, damage, speed, durability). Resource location ID validation |
-| `mcstudio.model.recipe` | All 7 vanilla recipe types -- shaped, shapeless, smelting, blasting, smoking, stonecutting, smithing transform |
-| `mcstudio.model.loot` | Loot tables with pools, weighted entries, all 6 condition types (silk touch, without silk touch, match tool, explosion, player kill, random chance with configurable probability), functions (set count, enchant, looting) |
-| `mcstudio.model.entity` | Entity type definitions -- 8 base classes (LivingEntity through TamableAnimal), 15 AI goal types, entity attributes, spawn rules with biome targeting and mob categories, hitbox dimensions |
-| `mcstudio.model.worldgen` | World generation -- biomes with multi-noise parameters (temperature, humidity, continentalness, erosion, depth, weirdness), sky/fog/water/grass colors, 11 feature types, placement configs with height ranges |
-| `mcstudio.codegen.java` | Java source code builder -- packages, imports, classes, fields, methods, annotations, with proper formatting and import grouping |
-| `mcstudio.export.fabric` | Full Fabric Loom project export -- build.gradle, fabric.mod.json, mod class with ModInitializer, block/item registries via Registry.register, recipes, loot tables, blockstate/model JSONs, placeholder textures |
-| `mcstudio.export.forge` | Full Forge Gradle project export -- build.gradle, mods.toml, @Mod class, DeferredRegister block/item registries, recipes, loot tables, blockstate/model JSONs, placeholder textures. Version table mapping MC versions to Forge/MCP/Gradle versions |
-| `mcstudio.export.neoforge` | Full NeoForge Gradle project export -- neoforge.mods.toml, DeferredBlock/DeferredItem registries, IEventBus constructor injection, NeoForge-specific API patterns, placeholder textures |
-| `mcstudio.export.datapack` | Vanilla data pack export -- pack.mcmeta, recipe JSONs, loot table JSONs |
-| `mcstudio.texgen` | Zero-dependency placeholder PNG texture generator -- solid-color 16x16 textures based on block material and item type, using only stdlib struct + zlib |
-| `mcstudio.cli` | CLI with 6 commands: new, add-block, add-item, export, info, loaders |
+| `project` | Complete mod project container with JSON save/load, registry management, Java class/package name generation, duplicate ID enforcement across all registries |
+| `block` | Block definitions -- 14 material types, hardness, resistance, luminance, tool requirements, drops, collision, transparency. Resource location ID validation |
+| `item` | Item definitions -- stack sizes, creative tabs, food properties (nutrition, saturation, meat, always-edible), tool properties (tier, damage, speed, durability). Resource location ID validation |
+| `recipe` | All 7 vanilla recipe types -- shaped, shapeless, smelting, blasting, smoking, stonecutting, smithing transform |
+| `loot` | Loot tables with pools, weighted entries, all 6 condition types (silk touch, without silk touch, match tool, explosion, player kill, random chance with configurable probability), functions (set count, enchant, looting) |
+| `entity` | Entity type definitions -- 8 base classes (LivingEntity through TamableAnimal), 15 AI goal types, entity attributes, spawn rules with biome targeting and mob categories, hitbox dimensions |
+| `worldgen` | World generation -- biomes with multi-noise parameters (temperature, humidity, continentalness, erosion, depth, weirdness), sky/fog/water/grass colors, 11 feature types, placement configs with height ranges |
+
+**Code generation** (`mcstudio.codegen`):
+
+| Module | What it does |
+|--------|-------------|
+| `java` | Java source code builder -- packages, imports, classes, fields, methods, annotations, with proper formatting and import grouping |
+
+**Export engine** (`mcstudio.export`):
+
+| Module | What it does |
+|--------|-------------|
+| `fabric` | Full Fabric Loom project export -- build.gradle, fabric.mod.json, mod class with ModInitializer, block/item registries via Registry.register, recipes, loot tables, blockstate/model JSONs, placeholder textures |
+| `forge` | Full Forge Gradle project export -- build.gradle, mods.toml, @Mod class, DeferredRegister block/item registries, recipes, loot tables, blockstate/model JSONs, placeholder textures. Version table mapping MC versions to Forge/MCP/Gradle versions |
+| `neoforge` | Full NeoForge Gradle project export -- neoforge.mods.toml, DeferredBlock/DeferredItem registries, IEventBus constructor injection, NeoForge-specific API patterns, placeholder textures |
+| `datapack` | Vanilla data pack export -- pack.mcmeta, recipe JSONs, loot table JSONs |
+
+**Utilities:**
+
+| Module | What it does |
+|--------|-------------|
+| `texgen` | Zero-dependency placeholder PNG texture generator -- solid-color 16x16 textures based on block material and item type, using only stdlib struct + zlib |
+| `cli` | CLI with 6 commands: new, add-block, add-item, export, info, loaders |
 
 118 passing tests across 3 test files. Exported Fabric/Forge/NeoForge projects are standard Gradle projects with idiomatic registration patterns and visible placeholder textures.
 
-Every piece of this puzzle has been built in isolation by the Minecraft modding community -- Blockbench for visual tooling, Architectury for cross-loader abstraction, IntelliJ's Minecraft Development plugin for IDE integration. Nobody has assembled them into one coherent application. The data model and export engine are the foundation that proves the abstraction works. Visual editors, the embedded viewport, and the full IDE shell build on top.
+### What Layer 1 proves
+
+The data model and export engine are the foundation that validates the core abstraction: define a mod once, export it for any loader. Every registry type (blocks, items, recipes, loot tables, entities, biomes) serializes to JSON, round-trips cleanly, and generates correct loader-specific Java code.
+
+Every piece of this puzzle has been built in isolation by the Minecraft modding community -- Blockbench for visual tooling, Architectury for cross-loader abstraction, IntelliJ's Minecraft Development plugin for IDE integration. Nobody has assembled them into one coherent application. Layer 1 proves the abstraction works. Visual editors, the embedded viewport, and the full IDE shell build on top.
 
 ---
 
-*Conceived by Claude (Opus 4.5), February 2026. Layer 1 built by Claude (Opus 4.6), February 2026. Layer 2 additions (NeoForge, entities, world gen, textures, validation) by Claude (Opus 4.6), March 2026.*
+*Conceived by Claude (Opus 4.5), February 2026. Layer 1 implemented by Claude (Opus 4.6), February-March 2026.*
 
 *Because every coordinate system eventually leads to Minecraft.*
