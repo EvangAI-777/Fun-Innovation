@@ -11,6 +11,8 @@ from .block import Block
 from .item import Item
 from .recipe import Recipe
 from .loot import LootTable
+from .entity import EntityType
+from .worldgen import Biome
 
 
 def _validate_mod_id(mod_id: str) -> str:
@@ -37,6 +39,8 @@ class ModProject:
 
     blocks: list[Block] = field(default_factory=list)
     items: list[Item] = field(default_factory=list)
+    entities: list[EntityType] = field(default_factory=list)
+    biomes: list[Biome] = field(default_factory=list)
     recipes: list[Recipe] = field(default_factory=list)
     loot_tables: list[LootTable] = field(default_factory=list)
 
@@ -57,7 +61,33 @@ class ModProject:
         self.items.append(item)
         return item
 
+    def add_entity(self, entity: EntityType) -> EntityType:
+        if any(e.entity_id == entity.entity_id for e in self.entities):
+            raise ValueError(f"Duplicate entity ID: {entity.entity_id!r}")
+        self.entities.append(entity)
+        return entity
+
+    def get_entity(self, entity_id: str) -> EntityType | None:
+        for e in self.entities:
+            if e.entity_id == entity_id:
+                return e
+        return None
+
+    def add_biome(self, biome: Biome) -> Biome:
+        if any(b.biome_id == biome.biome_id for b in self.biomes):
+            raise ValueError(f"Duplicate biome ID: {biome.biome_id!r}")
+        self.biomes.append(biome)
+        return biome
+
+    def get_biome(self, biome_id: str) -> Biome | None:
+        for b in self.biomes:
+            if b.biome_id == biome_id:
+                return b
+        return None
+
     def add_recipe(self, recipe: Recipe) -> Recipe:
+        if any(r.recipe_id == recipe.recipe_id for r in self.recipes):
+            raise ValueError(f"Duplicate recipe ID: {recipe.recipe_id!r}")
         self.recipes.append(recipe)
         return recipe
 
@@ -91,7 +121,8 @@ class ModProject:
     @property
     def java_class_name(self) -> str:
         """Main mod class name (PascalCase from mod ID)."""
-        return "".join(word.capitalize() for word in self.mod_id.split("_"))
+        from mcstudio.codegen.java import to_pascal_case
+        return to_pascal_case(self.mod_id)
 
     # --- Serialization ---
 
@@ -106,6 +137,8 @@ class ModProject:
             "license": self.license,
             "blocks": [b.to_dict() for b in self.blocks],
             "items": [i.to_dict() for i in self.items],
+            "entities": [e.to_dict() for e in self.entities],
+            "biomes": [b.to_dict() for b in self.biomes],
             "recipes": [r.to_dict() for r in self.recipes],
             "loot_tables": [lt.to_dict() for lt in self.loot_tables],
         }
@@ -134,8 +167,12 @@ class ModProject:
             project.add_block(Block.from_dict(bd))
         for id_ in data.get("items", []):
             project.add_item(Item.from_dict(id_))
+        for ed in data.get("entities", []):
+            project.add_entity(EntityType.from_dict(ed))
+        for bd in data.get("biomes", []):
+            project.add_biome(Biome.from_dict(bd))
+        from .recipe import recipe_from_dict
         for rd in data.get("recipes", []):
-            from .recipe import recipe_from_dict
             project.add_recipe(recipe_from_dict(rd))
         for ld in data.get("loot_tables", []):
             project.add_loot_table(LootTable.from_dict(ld))
@@ -144,5 +181,6 @@ class ModProject:
     def __repr__(self) -> str:
         return (
             f"ModProject({self.mod_id!r}, blocks={len(self.blocks)}, "
-            f"items={len(self.items)}, recipes={len(self.recipes)})"
+            f"items={len(self.items)}, entities={len(self.entities)}, "
+            f"recipes={len(self.recipes)})"
         )

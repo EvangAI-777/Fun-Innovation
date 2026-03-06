@@ -97,29 +97,33 @@ See [`ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical design 
 
 ## Status
 
-**Layer 1: Data model + export engine -- implemented.** v0.1.0. Zero external dependencies. `pip install -e .` then `mcstudio` to use.
+**Layer 1: Data model + export engine -- implemented.** v0.2.0. Zero external dependencies. `pip install -e .` then `mcstudio` to use.
 
 What's built:
 
 | Module | What it does |
 |--------|-------------|
-| `mcstudio.model.project` | Complete mod project container with JSON save/load, registry management, Java class/package name generation |
-| `mcstudio.model.block` | Block definitions -- 14 material types, hardness, resistance, luminance, tool requirements, drops, collision, transparency |
-| `mcstudio.model.item` | Item definitions -- stack sizes, creative tabs, food properties (nutrition, saturation, meat, always-edible), tool properties (tier, damage, speed, durability) |
+| `mcstudio.model.project` | Complete mod project container with JSON save/load, registry management, Java class/package name generation, duplicate ID enforcement across all registries |
+| `mcstudio.model.block` | Block definitions -- 14 material types, hardness, resistance, luminance, tool requirements, drops, collision, transparency. Resource location ID validation |
+| `mcstudio.model.item` | Item definitions -- stack sizes, creative tabs, food properties (nutrition, saturation, meat, always-edible), tool properties (tier, damage, speed, durability). Resource location ID validation |
 | `mcstudio.model.recipe` | All 7 vanilla recipe types -- shaped, shapeless, smelting, blasting, smoking, stonecutting, smithing transform |
-| `mcstudio.model.loot` | Loot tables with pools, weighted entries, conditions (silk touch, explosion, player kill), functions (set count, enchant, looting) |
+| `mcstudio.model.loot` | Loot tables with pools, weighted entries, all 6 condition types (silk touch, without silk touch, match tool, explosion, player kill, random chance with configurable probability), functions (set count, enchant, looting) |
+| `mcstudio.model.entity` | Entity type definitions -- 8 base classes (LivingEntity through TamableAnimal), 15 AI goal types, entity attributes, spawn rules with biome targeting and mob categories, hitbox dimensions |
+| `mcstudio.model.worldgen` | World generation -- biomes with multi-noise parameters (temperature, humidity, continentalness, erosion, depth, weirdness), sky/fog/water/grass colors, 11 feature types, placement configs with height ranges |
 | `mcstudio.codegen.java` | Java source code builder -- packages, imports, classes, fields, methods, annotations, with proper formatting and import grouping |
-| `mcstudio.export.fabric` | Full Fabric Loom project export -- build.gradle, fabric.mod.json, mod class with ModInitializer, block/item registries via Registry.register, recipes, loot tables, blockstate/model JSONs |
-| `mcstudio.export.forge` | Full Forge Gradle project export -- build.gradle, mods.toml, @Mod class, DeferredRegister block/item registries, recipes, loot tables, blockstate/model JSONs |
+| `mcstudio.export.fabric` | Full Fabric Loom project export -- build.gradle, fabric.mod.json, mod class with ModInitializer, block/item registries via Registry.register, recipes, loot tables, blockstate/model JSONs, placeholder textures |
+| `mcstudio.export.forge` | Full Forge Gradle project export -- build.gradle, mods.toml, @Mod class, DeferredRegister block/item registries, recipes, loot tables, blockstate/model JSONs, placeholder textures. Version table mapping MC versions to Forge/MCP/Gradle versions |
+| `mcstudio.export.neoforge` | Full NeoForge Gradle project export -- neoforge.mods.toml, DeferredBlock/DeferredItem registries, IEventBus constructor injection, NeoForge-specific API patterns, placeholder textures |
 | `mcstudio.export.datapack` | Vanilla data pack export -- pack.mcmeta, recipe JSONs, loot table JSONs |
+| `mcstudio.texgen` | Zero-dependency placeholder PNG texture generator -- solid-color 16x16 textures based on block material and item type, using only stdlib struct + zlib |
 | `mcstudio.cli` | CLI with 6 commands: new, add-block, add-item, export, info, loaders |
 
-83 passing tests across 3 test files. Exported Fabric/Forge projects are standard Gradle projects with idiomatic registration patterns.
+118 passing tests across 3 test files. Exported Fabric/Forge/NeoForge projects are standard Gradle projects with idiomatic registration patterns and visible placeholder textures.
 
 Every piece of this puzzle has been built in isolation by the Minecraft modding community -- Blockbench for visual tooling, Architectury for cross-loader abstraction, IntelliJ's Minecraft Development plugin for IDE integration. Nobody has assembled them into one coherent application. The data model and export engine are the foundation that proves the abstraction works. Visual editors, the embedded viewport, and the full IDE shell build on top.
 
 ---
 
-*Conceived by Claude (Opus 4.5), February 2026. Layer 1 built by Claude (Opus 4.6), February 2026.*
+*Conceived by Claude (Opus 4.5), February 2026. Layer 1 built by Claude (Opus 4.6), February 2026. Layer 2 additions (NeoForge, entities, world gen, textures, validation) by Claude (Opus 4.6), March 2026.*
 
 *Because every coordinate system eventually leads to Minecraft.*

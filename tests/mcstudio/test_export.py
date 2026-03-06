@@ -10,10 +10,11 @@ from mcstudio.model.project import ModProject
 from mcstudio.model.block import Block, BlockMaterial
 from mcstudio.model.item import Item, FoodProperties
 from mcstudio.model.recipe import ShapedRecipe, ShapelessRecipe, SmeltingRecipe
-from mcstudio.model.loot import LootTable
+from mcstudio.model.loot import LootTable, LootPool, LootEntry, LootCondition
 from mcstudio.export.base import export_project, EXPORTERS
 from mcstudio.export.fabric import FabricExporter
 from mcstudio.export.forge import ForgeExporter
+from mcstudio.export.neoforge import NeoForgeExporter
 from mcstudio.export.datapack import DataPackExporter
 
 
@@ -59,6 +60,7 @@ class TestExporterRegistry:
     def test_available_loaders(self):
         assert "fabric" in EXPORTERS
         assert "forge" in EXPORTERS
+        assert "neoforge" in EXPORTERS
         assert "datapack" in EXPORTERS
 
     def test_unknown_loader(self):
@@ -143,6 +145,31 @@ class TestFabricExport:
             data = json.loads(loot_path.read_text())
             assert data["type"] == "minecraft:block"
 
+    def test_loot_condition_params(self):
+        """Test that condition_params flow through to exported loot JSON."""
+        p = ModProject(mod_id="testmod", name="Test")
+        lt = LootTable(table_id="blocks/ore", table_type="block")
+        pool = lt.add_pool()
+        pool.add_entry(LootEntry(
+            item_id="diamond",
+            conditions=[LootCondition.RANDOM_CHANCE, LootCondition.WITHOUT_SILK_TOUCH],
+            condition_params={"random_chance": {"chance": 0.3}},
+        ))
+        p.add_loot_table(lt)
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            loot_path = root / "src" / "main" / "resources" / "data" / "testmod" / "loot_table" / "blocks" / "ore.json"
+            data = json.loads(loot_path.read_text())
+            conditions = data["pools"][0]["entries"][0]["conditions"]
+            # random_chance with custom value
+            rc = [c for c in conditions if c.get("condition") == "minecraft:random_chance"]
+            assert len(rc) == 1
+            assert rc[0]["chance"] == 0.3
+            # without_silk_touch as inverted condition
+            inv = [c for c in conditions if c.get("condition") == "minecraft:inverted"]
+            assert len(inv) == 1
+            assert inv[0]["term"]["condition"] == "minecraft:match_tool"
+
     def test_blockstate_and_models(self):
         p = _make_project()
         with tempfile.TemporaryDirectory() as td:
@@ -152,6 +179,19 @@ class TestFabricExport:
             assert (assets / "models" / "block" / "magic_ore.json").exists()
             assert (assets / "models" / "item" / "magic_ore.json").exists()
             assert (assets / "models" / "item" / "magic_gem.json").exists()
+
+    def test_placeholder_textures(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            assets = root / "src" / "main" / "resources" / "assets" / "testmod"
+            block_tex = assets / "textures" / "block" / "magic_ore.png"
+            item_tex = assets / "textures" / "item" / "magic_gem.png"
+            assert block_tex.exists()
+            assert item_tex.exists()
+            # Verify it's a valid PNG (starts with PNG signature)
+            assert block_tex.read_bytes()[:4] == b"\x89PNG"
+            assert item_tex.read_bytes()[:4] == b"\x89PNG"
 
 
 class TestForgeExport:
@@ -214,6 +254,61 @@ class TestForgeExport:
             assert recipe_path.exists()
 
 
+class TestNeoForgeExport:
+    def test_generates_project(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            assert root.exists()
+            assert (root / "build.gradle").exists()
+            assert (root / "settings.gradle").exists()
+
+    def test_neoforge_mods_toml(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            toml_path = root / "src" / "main" / "resources" / "META-INF" / "neoforge.mods.toml"
+            assert toml_path.exists()
+            content = toml_path.read_text()
+            assert 'modId="testmod"' in content
+            assert 'modId="neoforge"' in content
+
+    def test_mod_class(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            mod_java = root / "src" / "main" / "java" / "com" / "testmod" / "testmod" / "Testmod.java"
+            content = mod_java.read_text()
+            assert "net.neoforged.fml.common.Mod" in content
+            assert "IEventBus modEventBus" in content
+
+    def test_block_registry_uses_deferred_block(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            blocks_java = root / "src" / "main" / "java" / "com" / "testmod" / "testmod" / "TestmodBlocks.java"
+            content = blocks_java.read_text()
+            assert "DeferredRegister.Blocks" in content or "DeferredBlock" in content
+            assert "createBlocks" in content
+            assert "MAGIC_ORE" in content
+
+    def test_item_registry(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            items_java = root / "src" / "main" / "java" / "com" / "testmod" / "testmod" / "TestmodItems.java"
+            content = items_java.read_text()
+            assert "DeferredRegister.Items" in content or "DeferredItem" in content
+            assert "createItems" in content
+
+    def test_recipe_json(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            recipe_path = root / "src" / "main" / "resources" / "data" / "testmod" / "recipe" / "magic_ore_from_gems.json"
+            assert recipe_path.exists()
+
+
 class TestDataPackExport:
     def test_generates_pack(self):
         p = _make_project()
@@ -259,6 +354,12 @@ class TestExportDispatch:
             root = export_project(p, "forge", td)
             assert "forge" in root.name
 
+    def test_neoforge_dispatch(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "neoforge", td)
+            assert "neoforge" in root.name
+
     def test_datapack_dispatch(self):
         p = _make_project()
         with tempfile.TemporaryDirectory() as td:
@@ -286,6 +387,14 @@ class TestEmptyProject:
         p = ModProject(mod_id="emptymod", name="Empty Mod")
         with tempfile.TemporaryDirectory() as td:
             root = ForgeExporter().export(p, Path(td))
+            mod_java = root / "src" / "main" / "java" / "com" / "emptymod" / "emptymod" / "Emptymod.java"
+            content = mod_java.read_text()
+            assert "EmptymodBlocks" not in content
+
+    def test_neoforge_no_blocks(self):
+        p = ModProject(mod_id="emptymod", name="Empty Mod")
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
             mod_java = root / "src" / "main" / "java" / "com" / "emptymod" / "emptymod" / "Emptymod.java"
             content = mod_java.read_text()
             assert "EmptymodBlocks" not in content

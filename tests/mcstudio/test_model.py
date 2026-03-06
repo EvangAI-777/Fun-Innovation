@@ -14,6 +14,10 @@ from mcstudio.model.recipe import (
     SmokingRecipe, StonecuttingRecipe, SmithingRecipe, recipe_from_dict,
 )
 from mcstudio.model.loot import LootTable, LootPool, LootEntry, LootCondition, LootFunction
+from mcstudio.model.entity import (
+    EntityType, EntityBase, AIGoal, AIGoalType, EntityAttribute, SpawnRules, MobCategory,
+)
+from mcstudio.model.worldgen import Biome, PlacedFeature, PlacementConfig, FeatureType, HeightRangeType
 
 
 # --- ModProject ---
@@ -69,6 +73,12 @@ class TestModProject:
         p.add_item(Item(item_id="gem"))
         with pytest.raises(ValueError, match="Duplicate"):
             p.add_item(Item(item_id="gem"))
+
+    def test_duplicate_recipe(self):
+        p = ModProject(mod_id="mymod", name="My Mod")
+        p.add_recipe(SmeltingRecipe(recipe_id="smelt_gem", ingredient="mymod:ore", result="mymod:gem"))
+        with pytest.raises(ValueError, match="Duplicate recipe"):
+            p.add_recipe(SmeltingRecipe(recipe_id="smelt_gem", ingredient="mymod:ore", result="mymod:gem"))
 
     def test_get_missing(self):
         p = ModProject(mod_id="mymod", name="My Mod")
@@ -143,6 +153,14 @@ class TestBlock:
         assert b.luminance == 12
         assert b.requires_tool is True
 
+    def test_invalid_block_id(self):
+        with pytest.raises(ValueError, match="Invalid block ID"):
+            Block(block_id="Bad Block!")
+        with pytest.raises(ValueError, match="Invalid block ID"):
+            Block(block_id="UPPER")
+        with pytest.raises(ValueError, match="Invalid block ID"):
+            Block(block_id="1starts_with_number")
+
     def test_invalid_luminance(self):
         with pytest.raises(ValueError):
             Block(block_id="bad", luminance=16)
@@ -199,6 +217,12 @@ class TestItem:
         i = Item(item_id="pick", tool=tool, max_stack_size=1)
         assert i.is_tool
         assert i.tool.tier == ToolTier.DIAMOND
+
+    def test_invalid_item_id(self):
+        with pytest.raises(ValueError, match="Invalid item ID"):
+            Item(item_id="Bad Item!")
+        with pytest.raises(ValueError, match="Invalid item ID"):
+            Item(item_id="UPPER")
 
     def test_invalid_stack_size(self):
         with pytest.raises(ValueError):
@@ -355,6 +379,23 @@ class TestLootTables:
         assert LootCondition.SURVIVES_EXPLOSION in entry.conditions
         assert LootFunction.SET_COUNT in entry.functions
 
+    def test_condition_params(self):
+        entry = LootEntry(
+            item_id="diamond",
+            conditions=[LootCondition.RANDOM_CHANCE],
+            condition_params={"random_chance": {"chance": 0.3}},
+        )
+        assert entry.condition_params["random_chance"]["chance"] == 0.3
+        d = entry.to_dict()
+        assert "condition_params" in d
+        loaded = LootEntry.from_dict(d)
+        assert loaded.condition_params["random_chance"]["chance"] == 0.3
+
+    def test_condition_params_empty_omitted(self):
+        entry = LootEntry(item_id="coal")
+        d = entry.to_dict()
+        assert "condition_params" not in d
+
     def test_serialization(self):
         lt = LootTable.block_self_drop("ore")
         d = lt.to_dict()
@@ -362,3 +403,236 @@ class TestLootTables:
         assert loaded.table_id == "blocks/ore"
         assert len(loaded.pools) == 1
         assert loaded.pools[0].entries[0].item_id == "ore"
+
+
+# --- Entities ---
+
+class TestEntityType:
+    def test_defaults(self):
+        e = EntityType(entity_id="custom_mob")
+        assert e.base_class == EntityBase.MOB
+        assert e.width == 0.6
+        assert e.height == 1.8
+        assert e.can_swim is True
+
+    def test_custom_entity(self):
+        e = EntityType(
+            entity_id="fire_elemental",
+            base_class=EntityBase.MONSTER,
+            width=1.2,
+            height=2.4,
+            fireproof=True,
+            attributes=[
+                EntityAttribute("max_health", 40.0),
+                EntityAttribute("attack_damage", 8.0),
+            ],
+            goals=[
+                AIGoal(AIGoalType.FLOAT_SWIM, priority=0),
+                AIGoal(AIGoalType.MELEE_ATTACK, priority=1, params={"speed": 1.2}),
+                AIGoal(AIGoalType.WANDER_RANDOMLY, priority=5),
+            ],
+            spawn_rules=SpawnRules(
+                category=MobCategory.MONSTER,
+                weight=5,
+                min_group=1,
+                max_group=2,
+                biomes=["minecraft:nether_wastes"],
+            ),
+            loot_table_id="entities/fire_elemental",
+        )
+        assert e.base_class == EntityBase.MONSTER
+        assert e.fireproof is True
+        assert len(e.attributes) == 2
+        assert len(e.goals) == 3
+        assert e.spawn_rules.category == MobCategory.MONSTER
+        assert e.loot_table_id == "entities/fire_elemental"
+
+    def test_invalid_entity_id(self):
+        with pytest.raises(ValueError, match="Invalid entity ID"):
+            EntityType(entity_id="Bad Entity!")
+
+    def test_invalid_dimensions(self):
+        with pytest.raises(ValueError, match="Width must be > 0"):
+            EntityType(entity_id="bad_mob", width=0)
+        with pytest.raises(ValueError, match="Height must be > 0"):
+            EntityType(entity_id="bad_mob", height=-1)
+
+    def test_java_names(self):
+        e = EntityType(entity_id="fire_elemental")
+        assert e.java_class_name == "FireElementalEntity"
+        assert e.java_constant == "FIRE_ELEMENTAL"
+
+    def test_serialization(self):
+        e = EntityType(
+            entity_id="test_mob",
+            base_class=EntityBase.ANIMAL,
+            attributes=[EntityAttribute("max_health", 20.0)],
+            goals=[AIGoal(AIGoalType.WANDER_RANDOMLY, priority=5)],
+            spawn_rules=SpawnRules(weight=8, biomes=["minecraft:plains"]),
+        )
+        d = e.to_dict()
+        loaded = EntityType.from_dict(d)
+        assert loaded.entity_id == "test_mob"
+        assert loaded.base_class == EntityBase.ANIMAL
+        assert len(loaded.attributes) == 1
+        assert loaded.attributes[0].value == 20.0
+        assert len(loaded.goals) == 1
+        assert loaded.goals[0].goal_type == AIGoalType.WANDER_RANDOMLY
+        assert loaded.spawn_rules.biomes == ["minecraft:plains"]
+
+    def test_all_base_classes(self):
+        for base in EntityBase:
+            e = EntityType(entity_id="test", base_class=base)
+            assert e.base_class == base
+
+    def test_all_goal_types(self):
+        for gt in AIGoalType:
+            goal = AIGoal(goal_type=gt, priority=0)
+            d = goal.to_dict()
+            loaded = AIGoal.from_dict(d)
+            assert loaded.goal_type == gt
+
+
+class TestProjectEntities:
+    def test_add_entity(self):
+        p = ModProject(mod_id="mymod", name="My Mod")
+        e = p.add_entity(EntityType(entity_id="custom_mob"))
+        assert len(p.entities) == 1
+        assert p.get_entity("custom_mob") is e
+
+    def test_duplicate_entity(self):
+        p = ModProject(mod_id="mymod", name="My Mod")
+        p.add_entity(EntityType(entity_id="custom_mob"))
+        with pytest.raises(ValueError, match="Duplicate entity"):
+            p.add_entity(EntityType(entity_id="custom_mob"))
+
+    def test_entity_serialization_roundtrip(self):
+        p = ModProject(mod_id="testmod", name="Test")
+        p.add_entity(EntityType(
+            entity_id="test_mob",
+            attributes=[EntityAttribute("max_health", 30.0)],
+            goals=[AIGoal(AIGoalType.MELEE_ATTACK, priority=1)],
+        ))
+        d = p.to_dict()
+        assert len(d["entities"]) == 1
+
+        import tempfile
+        with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as f:
+            p.save(f.name)
+            loaded = ModProject.load(f.name)
+        assert len(loaded.entities) == 1
+        assert loaded.entities[0].entity_id == "test_mob"
+        assert loaded.entities[0].attributes[0].value == 30.0
+
+
+# --- World Gen ---
+
+class TestBiome:
+    def test_defaults(self):
+        b = Biome(biome_id="crystal_fields")
+        assert b.temperature == 0.5
+        assert b.humidity == 0.5
+        assert b.sky_color == "#78A7FF"
+        assert len(b.features) == 0
+
+    def test_custom_biome(self):
+        b = Biome(
+            biome_id="volcanic_wastes",
+            temperature=2.0,
+            humidity=0.0,
+            sky_color="#FF4400",
+            fog_color="#AA2200",
+            grass_color="#553300",
+            features=[
+                PlacedFeature(
+                    feature_id="magma_ore",
+                    feature_type=FeatureType.ORE,
+                    block="minecraft:magma_block",
+                    size=12,
+                    placement=PlacementConfig(count=15, height_min=0, height_max=64),
+                ),
+            ],
+        )
+        assert b.temperature == 2.0
+        assert len(b.features) == 1
+        assert b.features[0].size == 12
+
+    def test_invalid_biome_id(self):
+        with pytest.raises(ValueError, match="Invalid biome ID"):
+            Biome(biome_id="Bad Biome!")
+
+    def test_serialization(self):
+        b = Biome(
+            biome_id="test_biome",
+            temperature=1.5,
+            grass_color="#00FF00",
+            features=[
+                PlacedFeature(
+                    feature_id="test_ore",
+                    feature_type=FeatureType.ORE,
+                    block="mymod:test_ore",
+                    placement=PlacementConfig(count=4, rarity=3),
+                ),
+            ],
+        )
+        d = b.to_dict()
+        assert d["grass_color"] == "#00FF00"
+        loaded = Biome.from_dict(d)
+        assert loaded.biome_id == "test_biome"
+        assert loaded.temperature == 1.5
+        assert loaded.grass_color == "#00FF00"
+        assert len(loaded.features) == 1
+        assert loaded.features[0].placement.rarity == 3
+
+    def test_all_feature_types(self):
+        for ft in FeatureType:
+            f = PlacedFeature(feature_id="test", feature_type=ft)
+            d = f.to_dict()
+            loaded = PlacedFeature.from_dict(d)
+            assert loaded.feature_type == ft
+
+    def test_placement_config_roundtrip(self):
+        pc = PlacementConfig(
+            count=20,
+            height_min=-32,
+            height_max=128,
+            height_range_type=HeightRangeType.TRIANGLE,
+            rarity=5,
+        )
+        d = pc.to_dict()
+        loaded = PlacementConfig.from_dict(d)
+        assert loaded.count == 20
+        assert loaded.height_range_type == HeightRangeType.TRIANGLE
+        assert loaded.rarity == 5
+
+
+class TestProjectBiomes:
+    def test_add_biome(self):
+        p = ModProject(mod_id="mymod", name="My Mod")
+        b = p.add_biome(Biome(biome_id="crystal_fields"))
+        assert len(p.biomes) == 1
+        assert p.get_biome("crystal_fields") is b
+
+    def test_duplicate_biome(self):
+        p = ModProject(mod_id="mymod", name="My Mod")
+        p.add_biome(Biome(biome_id="crystal_fields"))
+        with pytest.raises(ValueError, match="Duplicate biome"):
+            p.add_biome(Biome(biome_id="crystal_fields"))
+
+    def test_biome_serialization_roundtrip(self):
+        p = ModProject(mod_id="testmod", name="Test")
+        p.add_biome(Biome(
+            biome_id="test_biome",
+            temperature=1.2,
+            features=[PlacedFeature(feature_id="test_ore")],
+        ))
+        d = p.to_dict()
+        assert len(d["biomes"]) == 1
+
+        import tempfile
+        with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as f:
+            p.save(f.name)
+            loaded = ModProject.load(f.name)
+        assert len(loaded.biomes) == 1
+        assert loaded.biomes[0].biome_id == "test_biome"
+        assert loaded.biomes[0].temperature == 1.2
