@@ -9,7 +9,7 @@ Two concepts so far. One turns real-world data into playable worlds. The other t
 | Concept | Directory | Focus | Language | Status |
 |---------|-----------|-------|----------|--------|
 | GeoVox | `GeoVox/` | Real-world 3D data → Minecraft worlds | Python | v0.1.1 |
-| Minecraft Studio | `Minecraft Studio/` | Roblox Studio-style IDE for Minecraft modding | Java / Kotlin | Concept |
+| Minecraft Studio | `Minecraft Studio/` | Roblox Studio-style IDE for Minecraft modding | Python (Layer 1) / Java + Kotlin (future) | v0.2.0 -- Layer 1 complete |
 
 Each concept has its own subdirectory with architecture documents. See [`GeoVox/VOXELME.md`](./GeoVox/VOXELME.md) and [`Minecraft Studio/STUDYME.md`](./Minecraft%20Studio/STUDYME.md) for project overviews.
 
