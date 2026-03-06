@@ -11,6 +11,7 @@ from .block import Block
 from .item import Item
 from .recipe import Recipe
 from .loot import LootTable
+from .entity import EntityType
 
 
 def _validate_mod_id(mod_id: str) -> str:
@@ -37,6 +38,7 @@ class ModProject:
 
     blocks: list[Block] = field(default_factory=list)
     items: list[Item] = field(default_factory=list)
+    entities: list[EntityType] = field(default_factory=list)
     recipes: list[Recipe] = field(default_factory=list)
     loot_tables: list[LootTable] = field(default_factory=list)
 
@@ -56,6 +58,18 @@ class ModProject:
             raise ValueError(f"Duplicate item ID: {item.item_id!r}")
         self.items.append(item)
         return item
+
+    def add_entity(self, entity: EntityType) -> EntityType:
+        if any(e.entity_id == entity.entity_id for e in self.entities):
+            raise ValueError(f"Duplicate entity ID: {entity.entity_id!r}")
+        self.entities.append(entity)
+        return entity
+
+    def get_entity(self, entity_id: str) -> EntityType | None:
+        for e in self.entities:
+            if e.entity_id == entity_id:
+                return e
+        return None
 
     def add_recipe(self, recipe: Recipe) -> Recipe:
         if any(r.recipe_id == recipe.recipe_id for r in self.recipes):
@@ -109,6 +123,7 @@ class ModProject:
             "license": self.license,
             "blocks": [b.to_dict() for b in self.blocks],
             "items": [i.to_dict() for i in self.items],
+            "entities": [e.to_dict() for e in self.entities],
             "recipes": [r.to_dict() for r in self.recipes],
             "loot_tables": [lt.to_dict() for lt in self.loot_tables],
         }
@@ -137,6 +152,8 @@ class ModProject:
             project.add_block(Block.from_dict(bd))
         for id_ in data.get("items", []):
             project.add_item(Item.from_dict(id_))
+        for ed in data.get("entities", []):
+            project.add_entity(EntityType.from_dict(ed))
         from .recipe import recipe_from_dict
         for rd in data.get("recipes", []):
             project.add_recipe(recipe_from_dict(rd))
@@ -147,5 +164,6 @@ class ModProject:
     def __repr__(self) -> str:
         return (
             f"ModProject({self.mod_id!r}, blocks={len(self.blocks)}, "
-            f"items={len(self.items)}, recipes={len(self.recipes)})"
+            f"items={len(self.items)}, entities={len(self.entities)}, "
+            f"recipes={len(self.recipes)})"
         )
