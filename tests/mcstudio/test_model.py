@@ -70,6 +70,12 @@ class TestModProject:
         with pytest.raises(ValueError, match="Duplicate"):
             p.add_item(Item(item_id="gem"))
 
+    def test_duplicate_recipe(self):
+        p = ModProject(mod_id="mymod", name="My Mod")
+        p.add_recipe(SmeltingRecipe(recipe_id="smelt_gem", ingredient="mymod:ore", result="mymod:gem"))
+        with pytest.raises(ValueError, match="Duplicate recipe"):
+            p.add_recipe(SmeltingRecipe(recipe_id="smelt_gem", ingredient="mymod:ore", result="mymod:gem"))
+
     def test_get_missing(self):
         p = ModProject(mod_id="mymod", name="My Mod")
         assert p.get_block("nope") is None
@@ -143,6 +149,14 @@ class TestBlock:
         assert b.luminance == 12
         assert b.requires_tool is True
 
+    def test_invalid_block_id(self):
+        with pytest.raises(ValueError, match="Invalid block ID"):
+            Block(block_id="Bad Block!")
+        with pytest.raises(ValueError, match="Invalid block ID"):
+            Block(block_id="UPPER")
+        with pytest.raises(ValueError, match="Invalid block ID"):
+            Block(block_id="1starts_with_number")
+
     def test_invalid_luminance(self):
         with pytest.raises(ValueError):
             Block(block_id="bad", luminance=16)
@@ -199,6 +213,12 @@ class TestItem:
         i = Item(item_id="pick", tool=tool, max_stack_size=1)
         assert i.is_tool
         assert i.tool.tier == ToolTier.DIAMOND
+
+    def test_invalid_item_id(self):
+        with pytest.raises(ValueError, match="Invalid item ID"):
+            Item(item_id="Bad Item!")
+        with pytest.raises(ValueError, match="Invalid item ID"):
+            Item(item_id="UPPER")
 
     def test_invalid_stack_size(self):
         with pytest.raises(ValueError):

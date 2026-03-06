@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from enum import Enum
+
+_ITEM_ID_RE = re.compile(r"^[a-z][a-z0-9_./-]{0,63}$")
 
 
 class CreativeTab(Enum):
@@ -91,6 +94,11 @@ class Item:
     glint: bool = False
 
     def __post_init__(self) -> None:
+        if not _ITEM_ID_RE.match(self.item_id):
+            raise ValueError(
+                f"Invalid item ID: {self.item_id!r}. Must be lowercase, start with "
+                "a letter, and contain only a-z, 0-9, underscore, dot, slash, or hyphen."
+            )
         if not (1 <= self.max_stack_size <= 64):
             raise ValueError(f"Max stack size must be 1-64, got {self.max_stack_size}")
 

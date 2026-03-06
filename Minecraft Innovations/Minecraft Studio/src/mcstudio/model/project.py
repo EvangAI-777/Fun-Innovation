@@ -58,6 +58,8 @@ class ModProject:
         return item
 
     def add_recipe(self, recipe: Recipe) -> Recipe:
+        if any(r.recipe_id == recipe.recipe_id for r in self.recipes):
+            raise ValueError(f"Duplicate recipe ID: {recipe.recipe_id!r}")
         self.recipes.append(recipe)
         return recipe
 
@@ -91,7 +93,8 @@ class ModProject:
     @property
     def java_class_name(self) -> str:
         """Main mod class name (PascalCase from mod ID)."""
-        return "".join(word.capitalize() for word in self.mod_id.split("_"))
+        from mcstudio.codegen.java import to_pascal_case
+        return to_pascal_case(self.mod_id)
 
     # --- Serialization ---
 
@@ -134,8 +137,8 @@ class ModProject:
             project.add_block(Block.from_dict(bd))
         for id_ in data.get("items", []):
             project.add_item(Item.from_dict(id_))
+        from .recipe import recipe_from_dict
         for rd in data.get("recipes", []):
-            from .recipe import recipe_from_dict
             project.add_recipe(recipe_from_dict(rd))
         for ld in data.get("loot_tables", []):
             project.add_loot_table(LootTable.from_dict(ld))

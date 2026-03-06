@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from enum import Enum
+
+_BLOCK_ID_RE = re.compile(r"^[a-z][a-z0-9_./-]{0,63}$")
 
 
 class BlockMaterial(Enum):
@@ -61,6 +64,11 @@ class Block:
     has_block_item: bool = True
 
     def __post_init__(self) -> None:
+        if not _BLOCK_ID_RE.match(self.block_id):
+            raise ValueError(
+                f"Invalid block ID: {self.block_id!r}. Must be lowercase, start with "
+                "a letter, and contain only a-z, 0-9, underscore, dot, slash, or hyphen."
+            )
         if self.hardness < -1.0:
             raise ValueError(f"Hardness must be >= -1.0, got {self.hardness}")
         if self.resistance < 0:
@@ -70,7 +78,8 @@ class Block:
 
     @property
     def java_class_name(self) -> str:
-        return "".join(word.capitalize() for word in self.block_id.split("_")) + "Block"
+        from mcstudio.codegen.java import to_pascal_case
+        return to_pascal_case(self.block_id) + "Block"
 
     @property
     def java_constant(self) -> str:
