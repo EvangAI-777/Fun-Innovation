@@ -375,6 +375,23 @@ class TestLootTables:
         assert LootCondition.SURVIVES_EXPLOSION in entry.conditions
         assert LootFunction.SET_COUNT in entry.functions
 
+    def test_condition_params(self):
+        entry = LootEntry(
+            item_id="diamond",
+            conditions=[LootCondition.RANDOM_CHANCE],
+            condition_params={"random_chance": {"chance": 0.3}},
+        )
+        assert entry.condition_params["random_chance"]["chance"] == 0.3
+        d = entry.to_dict()
+        assert "condition_params" in d
+        loaded = LootEntry.from_dict(d)
+        assert loaded.condition_params["random_chance"]["chance"] == 0.3
+
+    def test_condition_params_empty_omitted(self):
+        entry = LootEntry(item_id="coal")
+        d = entry.to_dict()
+        assert "condition_params" not in d
+
     def test_serialization(self):
         lt = LootTable.block_self_drop("ore")
         d = lt.to_dict()

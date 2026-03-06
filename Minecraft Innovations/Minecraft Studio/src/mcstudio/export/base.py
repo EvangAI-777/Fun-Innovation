@@ -74,17 +74,44 @@ class Exporter(ABC):
             }
         raise ValueError(f"Unknown recipe type: {type(recipe)}")
 
-    def _loot_table_to_json(self, loot_table, mod_id: str) -> dict:
-        """Convert a loot table model to vanilla Minecraft loot table JSON."""
-        condition_map = {
-            "survives_explosion": {"condition": "minecraft:survives_explosion"},
-            "killed_by_player": {"condition": "minecraft:killed_by_player"},
-            "random_chance": {"condition": "minecraft:random_chance", "chance": 0.5},
-            "silk_touch": {
+    def _condition_to_json(self, condition, params: dict | None = None) -> dict:
+        """Convert a single loot condition to Minecraft JSON."""
+        val = condition.value
+        if val == "survives_explosion":
+            return {"condition": "minecraft:survives_explosion"}
+        if val == "killed_by_player":
+            return {"condition": "minecraft:killed_by_player"}
+        if val == "random_chance":
+            chance = (params or {}).get("chance", 0.5)
+            return {"condition": "minecraft:random_chance", "chance": chance}
+        if val == "silk_touch":
+            return {
                 "condition": "minecraft:match_tool",
                 "predicate": {"enchantments": [{"enchantment": "minecraft:silk_touch", "levels": {"min": 1}}]},
-            },
-        }
+            }
+        if val == "without_silk_touch":
+            return {
+                "condition": "minecraft:inverted",
+                "term": {
+                    "condition": "minecraft:match_tool",
+                    "predicate": {"enchantments": [{"enchantment": "minecraft:silk_touch", "levels": {"min": 1}}]},
+                },
+            }
+        if val == "match_tool":
+            items = (params or {}).get("items", [])
+            return {
+                "condition": "minecraft:match_tool",
+                "predicate": {"items": items} if items else {},
+            }
+        return {"condition": f"minecraft:{val}"}
+
+    def _build_conditions(self, conditions, condition_params: dict | None = None) -> list[dict]:
+        """Convert a list of LootCondition enums to Minecraft JSON conditions."""
+        params = condition_params or {}
+        return [self._condition_to_json(c, params.get(c.value)) for c in conditions]
+
+    def _loot_table_to_json(self, loot_table, mod_id: str) -> dict:
+        """Convert a loot table model to vanilla Minecraft loot table JSON."""
         pools = []
         for pool in loot_table.pools:
             entries = []
@@ -101,10 +128,9 @@ class Exporter(ABC):
                         "count": {"min": entry.count_min, "max": entry.count_max},
                     }]
                 if entry.conditions:
-                    e["conditions"] = [
-                        condition_map.get(c.value, {"condition": f"minecraft:{c.value}"})
-                        for c in entry.conditions
-                    ]
+                    e["conditions"] = self._build_conditions(
+                        entry.conditions, entry.condition_params,
+                    )
                 entries.append(e)
             p: dict = {
                 "rolls": pool.rolls_min if pool.rolls_min == pool.rolls_max else {
@@ -115,10 +141,9 @@ class Exporter(ABC):
             if pool.bonus_rolls:
                 p["bonus_rolls"] = pool.bonus_rolls
             if pool.conditions:
-                p["conditions"] = [
-                    condition_map.get(c.value, {"condition": f"minecraft:{c.value}"})
-                    for c in pool.conditions
-                ]
+                p["conditions"] = self._build_conditions(
+                    pool.conditions, pool.condition_params,
+                )
             pools.append(p)
         return {
             "type": f"minecraft:{loot_table.table_type}",

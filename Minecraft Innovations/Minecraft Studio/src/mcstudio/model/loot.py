@@ -29,16 +29,22 @@ class LootFunction(Enum):
 
 @dataclass
 class LootEntry:
-    """A single entry in a loot pool."""
+    """A single entry in a loot pool.
+
+    ``condition_params`` maps condition enum values to parameter dicts.
+    For example: ``{"random_chance": {"chance": 0.3}}`` or
+    ``{"match_tool": {"items": ["minecraft:shears"]}}``.
+    """
     item_id: str
     weight: int = 1
     count_min: int = 1
     count_max: int = 1
     conditions: list[LootCondition] = field(default_factory=list)
     functions: list[LootFunction] = field(default_factory=list)
+    condition_params: dict[str, dict] = field(default_factory=dict)
 
     def to_dict(self) -> dict:
-        return {
+        d: dict = {
             "item_id": self.item_id,
             "weight": self.weight,
             "count_min": self.count_min,
@@ -46,6 +52,9 @@ class LootEntry:
             "conditions": [c.value for c in self.conditions],
             "functions": [f.value for f in self.functions],
         }
+        if self.condition_params:
+            d["condition_params"] = self.condition_params
+        return d
 
     @classmethod
     def from_dict(cls, data: dict) -> LootEntry:
@@ -56,6 +65,7 @@ class LootEntry:
             count_max=data.get("count_max", 1),
             conditions=[LootCondition(c) for c in data.get("conditions", [])],
             functions=[LootFunction(f) for f in data.get("functions", [])],
+            condition_params=data.get("condition_params", {}),
         )
 
 
@@ -67,19 +77,23 @@ class LootPool:
     bonus_rolls: float = 0.0
     entries: list[LootEntry] = field(default_factory=list)
     conditions: list[LootCondition] = field(default_factory=list)
+    condition_params: dict[str, dict] = field(default_factory=dict)
 
     def add_entry(self, entry: LootEntry) -> LootEntry:
         self.entries.append(entry)
         return entry
 
     def to_dict(self) -> dict:
-        return {
+        d: dict = {
             "rolls_min": self.rolls_min,
             "rolls_max": self.rolls_max,
             "bonus_rolls": self.bonus_rolls,
             "entries": [e.to_dict() for e in self.entries],
             "conditions": [c.value for c in self.conditions],
         }
+        if self.condition_params:
+            d["condition_params"] = self.condition_params
+        return d
 
     @classmethod
     def from_dict(cls, data: dict) -> LootPool:
@@ -89,6 +103,7 @@ class LootPool:
             bonus_rolls=data.get("bonus_rolls", 0.0),
             entries=[LootEntry.from_dict(e) for e in data.get("entries", [])],
             conditions=[LootCondition(c) for c in data.get("conditions", [])],
+            condition_params=data.get("condition_params", {}),
         )
 
 

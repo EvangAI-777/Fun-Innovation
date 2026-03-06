@@ -10,7 +10,7 @@ from mcstudio.model.project import ModProject
 from mcstudio.model.block import Block, BlockMaterial
 from mcstudio.model.item import Item, FoodProperties
 from mcstudio.model.recipe import ShapedRecipe, ShapelessRecipe, SmeltingRecipe
-from mcstudio.model.loot import LootTable
+from mcstudio.model.loot import LootTable, LootPool, LootEntry, LootCondition
 from mcstudio.export.base import export_project, EXPORTERS
 from mcstudio.export.fabric import FabricExporter
 from mcstudio.export.forge import ForgeExporter
@@ -142,6 +142,31 @@ class TestFabricExport:
             assert loot_path.exists()
             data = json.loads(loot_path.read_text())
             assert data["type"] == "minecraft:block"
+
+    def test_loot_condition_params(self):
+        """Test that condition_params flow through to exported loot JSON."""
+        p = ModProject(mod_id="testmod", name="Test")
+        lt = LootTable(table_id="blocks/ore", table_type="block")
+        pool = lt.add_pool()
+        pool.add_entry(LootEntry(
+            item_id="diamond",
+            conditions=[LootCondition.RANDOM_CHANCE, LootCondition.WITHOUT_SILK_TOUCH],
+            condition_params={"random_chance": {"chance": 0.3}},
+        ))
+        p.add_loot_table(lt)
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            loot_path = root / "src" / "main" / "resources" / "data" / "testmod" / "loot_table" / "blocks" / "ore.json"
+            data = json.loads(loot_path.read_text())
+            conditions = data["pools"][0]["entries"][0]["conditions"]
+            # random_chance with custom value
+            rc = [c for c in conditions if c.get("condition") == "minecraft:random_chance"]
+            assert len(rc) == 1
+            assert rc[0]["chance"] == 0.3
+            # without_silk_touch as inverted condition
+            inv = [c for c in conditions if c.get("condition") == "minecraft:inverted"]
+            assert len(inv) == 1
+            assert inv[0]["term"]["condition"] == "minecraft:match_tool"
 
     def test_blockstate_and_models(self):
         p = _make_project()
