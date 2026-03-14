@@ -8,7 +8,7 @@ A growing collection of collaborative projects between human and AI -- organized
 
 The original session. Seven standalone projects built in a single sitting from a session the system flagged as invalid before it started. No dependencies -- everything runs as-is:
 
-- **[Ecosystem](./INVALID_REQUEST/HTML%20Files/ecosystem.html)** -- emergent life simulation with plants, herbivores, and predators creating complex behavior from simple rules (HTML, browser-based)
+- **[Ecosystem](./INVALID_REQUEST/HTML%20Files/ecosystem.html)** -- emergent life simulation with plants, herbivores, and predators creating complex behavior from simple rules, with an integrated "Reality 101" study guide connecting simulation dynamics to real-world population data (HTML, browser-based)
 - **[Flow Field](./INVALID_REQUEST/HTML%20Files/flowfield.html)** -- Perlin noise flow field with thousands of particles creating organic visual patterns (HTML, browser-based)
 - **[Generative Music](./INVALID_REQUEST/HTML%20Files/generative-music.html)** -- algorithmic music synthesizer producing endless, never-repeating compositions (HTML, browser-based)
 - **[Academic Planner](./INVALID_REQUEST/HTML%20Files/academic-planner.html)** -- dynamic academic schedule planner with OCR document scanning (HTML, browser-based)

@@ -26,7 +26,7 @@ Five standalone web applications. Each is a single `.html` file containing all m
 
 | Project | Description |
 |---------|-------------|
-| `ecosystem.html` | Emergent life simulation -- plants, herbivores, predators with simple rules creating complex behavior |
+| `ecosystem.html` | Emergent life simulation -- plants, herbivores, predators with simple rules creating complex behavior, plus an integrated population dynamics study guide |
 | `flowfield.html` | Perlin noise flow field -- thousands of particles creating organic visual patterns |
 | `generative-music.html` | Algorithmic music synthesizer -- endless, never-repeating compositions using Web Audio API |
 | `academic-planner.html` | Dynamic academic schedule planner with OCR document scanning for syllabi |
@@ -54,7 +54,7 @@ python3 "INVALID_REQUEST/Python Files/verse_engine.py"
 
 ## Project Notes
 
-- **ecosystem.html** -- Let it run. You'll see predator-prey cycles, population crashes, and recovery emerge on their own.
+- **ecosystem.html** -- Let it run. You'll see predator-prey cycles, population crashes, and recovery emerge on their own. Switch to the "Reality 101" tab in the sidebar for a data-driven study guide connecting the simulation's emergent dynamics to real-world population facts -- space, energy, water, and waste at planetary scale. Try "Lesson Mode" for a guided walkthrough that demonstrates how artificial scarcity causes crashes and engineering solves them.
 - **flowfield.html** -- Best fullscreen. Press H to hide UI. Click and drag to influence particles.
 - **generative-music.html** -- Try the different moods. Each composition is unique and never repeats.
 - **academic-planner.html** -- Saves to localStorage. Use "Scan Document" to upload syllabi via OCR. Template by Taylor University student Charles Harrell Johnson III.

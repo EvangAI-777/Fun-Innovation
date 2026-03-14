@@ -162,6 +162,24 @@
         .log-entry:last-child {
             border-bottom: none;
         }
+        .sidebar-tabs { display:flex;gap:4px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #2a2a2a; }
+        .sidebar-tab { font-family:inherit;font-size:0.8em;background:#21262d;border:1px solid #3a3a3a;border-radius:4px;color:#8b949e;cursor:pointer;padding:8px 14px;flex:1;text-align:center;transition:background 0.2s; }
+        .sidebar-tab.active { background:#58a6ff;color:#0a0a0f;border-color:#58a6ff;font-weight:bold; }
+        .sidebar-tab:hover:not(.active) { background:#30363d; }
+        .sidebar-tab:focus-visible { outline:2px solid #58a6ff;outline-offset:2px; }
+        .thesis-box { background:#1a2332;border:1px solid #58a6ff;border-radius:4px;padding:14px;margin-bottom:16px;text-align:center; }
+        .thesis-text { font-size:0.95em;color:#58a6ff;font-weight:bold;line-height:1.4; }
+        .guide-intro { font-size:0.8em;color:#8b949e;line-height:1.5;margin-bottom:16px; }
+        .fact-card { background:#0d1117;border:1px solid #2a2a2a;border-radius:4px;padding:12px;margin-bottom:8px; }
+        .fact-number { font-size:1.3em;font-weight:bold;color:#58a6ff;display:block;margin-bottom:4px; }
+        .fact-context { font-size:0.78em;color:#8b949e;line-height:1.4; }
+        .sim-connection { background:#1a2332;border-left:3px solid #58a6ff;padding:10px;margin-top:8px;margin-bottom:6px;font-size:0.78em;color:#b0c4de;border-radius:0 4px 4px 0;line-height:1.4; }
+        .sim-connection-label { font-size:0.7em;text-transform:uppercase;letter-spacing:1px;color:#58a6ff;margin-bottom:4px; }
+        .try-btn { display:inline-block;margin-top:6px;padding:4px 10px;background:#21262d;color:#58a6ff;border:1px solid #58a6ff;border-radius:3px;cursor:pointer;font-family:inherit;font-size:0.85em;transition:background 0.2s; }
+        .try-btn:hover { background:#58a6ff;color:#0a0a0f; }
+        .lesson-btn { width:100%;padding:12px;margin-top:12px;background:#238636;color:#fff;border:1px solid #238636;border-radius:4px;cursor:pointer;font-family:inherit;font-size:0.85em;font-weight:bold;transition:background 0.2s; }
+        .lesson-btn:hover { background:#2ea043; }
+        .lesson-btn:disabled { background:#21262d;border-color:#3a3a3a;color:#666;cursor:not-allowed; }
         .skip-link { position:absolute;top:-100%;left:16px;background:#58a6ff;color:#0a0a0f;padding:8px 16px;border-radius:0 0 6px 6px;font-size:0.85em;font-weight:600;text-decoration:none;z-index:10000; }
         .skip-link:focus { top:0; }
         .home-btn { position:fixed;top:14px;left:14px;z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:10px 18px;min-height:44px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;color:#aaa;text-decoration:none;font-family:'Segoe UI',system-ui,sans-serif;font-size:0.85em;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:background 0.2s,color 0.2s; }
@@ -186,6 +204,12 @@
         <h1>Emergent Ecosystem</h1>
         <p class="subtitle">Simple rules → Complex behavior</p>
 
+        <div class="sidebar-tabs">
+            <button class="sidebar-tab active" id="tab-sim" onclick="switchTab('sim')">Simulation</button>
+            <button class="sidebar-tab" id="tab-reality" onclick="switchTab('reality')">Reality 101</button>
+        </div>
+
+        <div id="panel-sim" class="tab-panel">
         <div class="section">
             <div class="section-title">Population</div>
             <div class="stat-row">
@@ -277,6 +301,95 @@
         <div id="message-log">
             <div class="log-entry">World initialized...</div>
         </div>
+        </div><!-- end panel-sim -->
+
+        <div id="panel-reality" class="tab-panel" style="display:none">
+            <div class="thesis-box">
+                <div class="thesis-text">Engineering Over Fear</div>
+                <div class="fact-context" style="margin-top:6px;">Scarcity is a distribution problem, not a planetary one.</div>
+            </div>
+            <p class="guide-intro">This simulation shows how populations self-regulate, crash, and recover through systemic dynamics — not absolute limits. The real world works the same way. Every "limit" below is a tunable parameter — in the sim and on Earth.</p>
+
+            <div class="section">
+                <div class="section-title">1. The Space Factor</div>
+                <div class="fact-card">
+                    <span class="fact-number">8.2B in Texas</span>
+                    <span class="fact-context">At NYC density (~27k/sq mi), all 8.2 billion humans fit inside the borders of Texas.</span>
+                </div>
+                <div class="fact-card">
+                    <span class="fact-number">55% of US land</span>
+                    <span class="fact-context">At comfortable suburban density (houses and yards), all 8.2B fit in the US using 55% of the land — leaving 45% as pristine wilderness.</span>
+                </div>
+                <div class="fact-card">
+                    <span class="fact-number">1 acre per family</span>
+                    <span class="fact-context">Every family of 4 on Earth gets a 1-acre homestead within US borders, with 400 million acres left over for national parks.</span>
+                </div>
+                <div class="sim-connection">
+                    <div class="sim-connection-label">Sim Connection</div>
+                    The maxEntities caps in this simulation look like hard limits — but increase plant growth rate and the whole food chain stabilizes. The constraint isn't space. It's resource flow.
+                    <br><button class="try-btn" onclick="tryPlantGrowth()">Try it</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">2. The Energy Spine</div>
+                <div class="fact-card">
+                    <span class="fact-number">1 Texas of solar</span>
+                    <span class="fact-context">A solar farm the size of Texas generates 100% of the energy needed for 8.2 billion people living a high-level American lifestyle.</span>
+                </div>
+                <div class="fact-card">
+                    <span class="fact-number">~11,600 reactors</span>
+                    <span class="fact-context">Modern nuclear reactors occupying less than 1% of US land provide complete carbon-free, constant power for the entire species.</span>
+                </div>
+                <div class="sim-connection">
+                    <div class="sim-connection-label">Sim Connection</div>
+                    Plant growth rate is the energy backbone of this ecosystem. Crank it up and the whole food chain stabilizes. The sun delivers 10,000x what civilization uses — the bottleneck is capture, not supply.
+                    <br><button class="try-btn" onclick="tryPlantGrowth()">Try it</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">3. The Water Myth</div>
+                <div class="fact-card">
+                    <span class="fact-number">1T+ gal/day wasted</span>
+                    <span class="fact-context">The US alone discards over 1 trillion gallons of freshwater into the ocean every day via the Mississippi, Columbia, and other major rivers.</span>
+                </div>
+                <div class="fact-card">
+                    <span class="fact-number">672B gal/day needed</span>
+                    <span class="fact-context">Total global domestic water need at US standards is ~672 billion gallons/day. We naturally let double that amount flow into the sea unused.</span>
+                </div>
+                <div class="sim-connection">
+                    <div class="sim-connection-label">Sim Connection</div>
+                    When plants drop below 5, this sim seeds new ones automatically — that's not magic, it's engineering a recovery pathway. Desalination, capture, and distribution are the real-world equivalent. The water exists; the pipes don't.
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">4. The Waste Loop</div>
+                <div class="fact-card">
+                    <span class="fact-number">14,000 °C</span>
+                    <span class="fact-context">Plasma gasification at 14,000 °C converts any waste stream into clean syngas (energy) and inert slag (construction material). Zero landfill.</span>
+                </div>
+                <div class="fact-card">
+                    <span class="fact-number">Misplaced resources</span>
+                    <span class="fact-context">Trash is just misplaced resources. Every output becomes an input in a closed-loop system — moving from panic to engineering solves the loop.</span>
+                </div>
+                <div class="sim-connection">
+                    <div class="sim-connection-label">Sim Connection</div>
+                    Dead entities in the simulation disappear — energy lost forever. A real ecosystem recycles everything. Plasma gasification closes the loop for civilization the same way decomposition does for biology.
+                </div>
+            </div>
+
+            <div class="section" style="border-bottom:none;">
+                <div class="thesis-box">
+                    <div class="thesis-text">Bottom Line</div>
+                    <div class="fact-context" style="margin-top:6px;">If we can fit everyone in one country with a yard, power them with one state's sun, and turn their trash into energy — overpopulation is a choice, not a fate. We have a broken system, not a broken planet.</div>
+                </div>
+                <p class="guide-intro" style="text-align:center;margin-bottom:0;">Every "limit" in this sim is a tunable parameter.<br>So is every real-world constraint — if you engineer it.</p>
+            </div>
+
+            <button class="lesson-btn" id="lesson-btn" onclick="runLessonMode()">Start Lesson Mode</button>
+        </div><!-- end panel-reality -->
     </div>
 
     <script>
@@ -677,8 +790,11 @@
                     log('Herbivores extinct! Predators starving...');
                 } else if (predators.length === 0 && herbivores.length > 0) {
                     log('Predators extinct! Herbivore boom incoming...');
+                    if (realityTabViewed) log('INSIGHT: Predator collapse = unchecked growth. Systems need balance, not fear of numbers.');
                 } else if (plants.length < 10) {
                     log('Plants critically low!');
+                } else if (realityTabViewed && plants.length >= CONFIG.maxEntities.plants - 5) {
+                    log('INSIGHT: Carrying capacity reached — this cap is artificial. See THE SPACE FACTOR.');
                 }
                 lastLogTime = generation;
             }
@@ -689,6 +805,7 @@
                     plants.push(new Plant(Math.random() * canvas.width, Math.random() * canvas.height));
                 }
                 log('Emergency plant seeding...');
+                if (realityTabViewed) log('INSIGHT: Auto-recovery = engineering a solution. Desalination and nuclear work the same way.');
             }
 
             updateStats();
@@ -792,6 +909,66 @@
                 plants.push(new Plant(x, y));
             }
         });
+
+        // === REALITY 101 TAB SYSTEM ===
+        let realityTabViewed = false;
+        let lessonActive = false;
+
+        function switchTab(tab) {
+            document.getElementById('panel-sim').style.display = tab === 'sim' ? 'block' : 'none';
+            document.getElementById('panel-reality').style.display = tab === 'reality' ? 'block' : 'none';
+            document.getElementById('tab-sim').classList.toggle('active', tab === 'sim');
+            document.getElementById('tab-reality').classList.toggle('active', tab === 'reality');
+            if (tab === 'reality') realityTabViewed = true;
+        }
+
+        function tryPlantGrowth() {
+            CONFIG.plantGrowthRate = 0.1;
+            document.getElementById('plant-rate').value = 0.1;
+            document.getElementById('plant-rate-val').textContent = '0.1';
+            switchTab('sim');
+            log('REALITY 101: Plant growth maxed — watch the ecosystem stabilize.');
+        }
+
+        function runLessonMode() {
+            if (lessonActive) return;
+            lessonActive = true;
+            const btn = document.getElementById('lesson-btn');
+            btn.textContent = 'Lesson Running...';
+            btn.disabled = true;
+            if (paused) {
+                paused = false;
+                document.getElementById('pause-btn').textContent = 'Pause';
+            }
+            switchTab('sim');
+
+            const savedPlantRate = CONFIG.plantGrowthRate;
+            const savedMaxPlants = CONFIG.maxEntities.plants;
+
+            // Step 1: Max plant growth
+            CONFIG.plantGrowthRate = 0.1;
+            document.getElementById('plant-rate').value = 0.1;
+            document.getElementById('plant-rate-val').textContent = '0.1';
+            log('LESSON: Abundant energy (high plant growth) stabilizes everything.');
+
+            // Step 2: After 4s, artificially cap plants
+            setTimeout(() => {
+                CONFIG.maxEntities.plants = 30;
+                log('LESSON: Artificial scarcity (capped resources at 30) causes crashes — even with plenty of space.');
+            }, 4000);
+
+            // Step 3: After 8s, restore cap
+            setTimeout(() => {
+                CONFIG.maxEntities.plants = savedMaxPlants;
+                CONFIG.plantGrowthRate = savedPlantRate;
+                document.getElementById('plant-rate').value = savedPlantRate;
+                document.getElementById('plant-rate-val').textContent = savedPlantRate;
+                log('LESSON: Cap removed — system recovers. The limit was policy, not physics.');
+                btn.textContent = 'Start Lesson Mode';
+                btn.disabled = false;
+                lessonActive = false;
+            }, 8000);
+        }
 
         // === START ===
         initWorld();
