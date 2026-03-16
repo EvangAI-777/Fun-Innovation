@@ -47,7 +47,7 @@ Projects that take the Undertale universe seriously -- fan games, revivals, tool
 
 - **[OvertaleRPG](./Undertale%20Innovations/OvertaleRPG/)** -- revival of an abandoned Undertale fan game whose dev team released their entire production folder to the public in 2017. Artwork, music, playable builds, and six design documents. `Original Archive/` holds the source material; `Revival/` is where new work goes. **On hold** -- the structure and five-phase revival plan are in place, ready to be picked back up and remade into something really cool.
 
-See [`OvertaleRPG/OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md) for the full project story and revival plan.
+See [`Undertale Innovations/UNDERME.md`](./Undertale%20Innovations/UNDERME.md) for the theme overview and [`OvertaleRPG/OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md) for the full project story and revival plan.
 
 ### [OMNI INNOVATIONS](./OMNI%20INNOVATIONS/)
 
@@ -67,7 +67,7 @@ New and creative approaches to audio -- production tools, compositional systems,
 
 - **[AutoMuse](./Audio%20Innovations/AutoMuse/)** (v0.1.0) -- a conversational DAW where the primary interface is a dialogue with a music AI persona. Covers all genres, scales, modes, time signatures, key signatures, and tempos. The AI collaborates on composition, arrangement, and production, with export to MIDI, MusicXML, audio stems, and project files for other DAWs. Three scaling layers: conversation (text + MIDI export), canvas (visual arrangement + notation), and full studio (real-time audio, plugin hosting, mixing). Layer 1 (The Conversation) is implemented: music theory engine with notes, intervals, scales, chords, keys, rhythm, progressions, harmonic analysis, voicings, MIDI export, and the Muse conversational interface. 197 passing tests.
 
-See [`AutoMuse/MUSEME.md`](./Audio%20Innovations/AutoMuse/MUSEME.md) for the full project concept.
+See [`Audio Innovations/HEARME.md`](./Audio%20Innovations/HEARME.md) for the theme overview and [`AutoMuse/MUSEME.md`](./Audio%20Innovations/AutoMuse/MUSEME.md) for the full project concept.
 
 ## Testing
 
@@ -110,13 +110,13 @@ All seven projects are fully built -- reimaginings of INVALID_REQUEST projects f
 Two projects. [`GeoVox`](./Minecraft%20Innovations/GeoVox/) (v0.1.1) is a working Python pipeline -- `pip install -e .` then `geovox heightmap.png out.mcfunction` (see [`VOXELME.md`](./Minecraft%20Innovations/GeoVox/VOXELME.md)). [`Minecraft Studio`](./Minecraft%20Innovations/Minecraft%20Studio/) (v0.2.0) -- `pip install -e .` then `mcstudio new my_mod && mcstudio add-block my_mod.json custom_ore && mcstudio export my_mod.json fabric` to create and export a mod project (see [`STUDYME.md`](./Minecraft%20Innovations/Minecraft%20Studio/STUDYME.md)). The original concept document is [`Minecraft Innovations/MCME.md`](./Minecraft%20Innovations/MCME.md).
 
 **Undertale projects (Undertale Innovations):**
-Fan games, revivals, and experiments in the Undertale universe. Current project: [`OvertaleRPG`](./Undertale%20Innovations/OvertaleRPG/) (abandoned fan game revival from a 2017 Google Drive archive, see [`OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md)).
+Fan games, revivals, and experiments in the Undertale universe. Current project: [`OvertaleRPG`](./Undertale%20Innovations/OvertaleRPG/) (abandoned fan game revival from a 2017 Google Drive archive, see [`OVERME.md`](./Undertale%20Innovations/OvertaleRPG/OVERME.md)). The theme overview is [`Undertale Innovations/UNDERME.md`](./Undertale%20Innovations/UNDERME.md).
 
 **Omni projects (OMNI INNOVATIONS):**
 Mathematical tools and creative writing across universes. [`Omniversal Calculator`](./OMNI%20INNOVATIONS/Omniversal%20Calculator/) -- open `omniversal-calculator.html` in any browser for nine mathematical universes (see [`CALCULATEME.md`](./OMNI%20INNOVATIONS/Omniversal%20Calculator/CALCULATEME.md)). [`Omni Writer`](./OMNI%20INNOVATIONS/Omni%20Writer/) -- open `omni-writer.html` in any browser for a creative writing tool with built-in AI Mode (toggle AI on, configure your API key once, then continue/enhance/generate with streaming AI). See [`WRITEME.md`](./OMNI%20INNOVATIONS/Omni%20Writer/WRITEME.md). [`MATHME.md`](./OMNI%20INNOVATIONS/Omniversal%20Mathematics/MATHME.md) has the formal notation spec.
 
 **Audio projects (Audio Innovations):**
-New approaches to music and sound production. Current project: [`AutoMuse`](./Audio%20Innovations/AutoMuse/) (v0.1.0) -- `pip install -e .` then `automuse` or `python -m automuse` to start a session with the Muse (see [`MUSEME.md`](./Audio%20Innovations/AutoMuse/MUSEME.md)).
+New approaches to music and sound production. Current project: [`AutoMuse`](./Audio%20Innovations/AutoMuse/) (v0.1.0) -- `pip install -e .` then `automuse` or `python -m automuse` to start a session with the Muse (see [`MUSEME.md`](./Audio%20Innovations/AutoMuse/MUSEME.md)). The theme overview is [`Audio Innovations/HEARME.md`](./Audio%20Innovations/HEARME.md).
 
 ---
 
