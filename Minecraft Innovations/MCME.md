@@ -4,6 +4,24 @@ Concept designs for tools that don't exist yet in the Minecraft ecosystem. Not m
 
 Two concepts so far. One turns real-world data into playable worlds. The other turns Minecraft modding into something that doesn't require a computer science degree.
 
+## What Belongs Here
+
+Anything that improves the Minecraft creation ecosystem at the infrastructure level:
+
+- **Data pipelines** -- tools that move real-world data, 3D models, or other external formats into Minecraft worlds (and back out)
+- **Development environments** -- IDEs, editors, and toolchains that make mod creation, datapack authoring, or map building more accessible
+- **Format tools** -- converters, exporters, importers for Minecraft's file formats (.nbt, .mca, .mcfunction, schematics, resource packs)
+- **Modding utilities** -- libraries, frameworks, and helpers that reduce boilerplate and bridge modloader differences
+- **World generation** -- tools and systems for procedural terrain, structure generation, biome design, and seed analysis
+- **Server tooling** -- administration, monitoring, configuration, and deployment tools for Minecraft servers
+- **Creative tools** -- texture editors, model builders, sound design tools, and anything else that helps content creators produce Minecraft assets
+
+The common thread: these are tools *for* Minecraft, not mods *in* Minecraft. The audience is builders and creators, not players.
+
+## What Doesn't Belong Here
+
+Gameplay mods, texture packs, or server plugins. Those are content. This folder is for the tools that make content possible. If a player would install it to change their game experience, it belongs in a different kind of project. If a creator would install it to make things faster, better, or possible at all -- it belongs here.
+
 ## Concepts
 
 | Concept | Directory | Focus | Language | Status |
@@ -325,6 +343,22 @@ The second hardest problem is the abstraction layer. Each modloader has differen
 | Publishing | Manual upload to CurseForge/Modrinth | One-click publish to both |
 
 Every row in the "Existing Tool" column is either a separate application, a manual text-editing process, or doesn't exist at all. Minecraft Studio collapses it into one window.
+
+## Adding a Project
+
+1. Create a subdirectory with a clear project name
+2. Add a markdown file inside it describing the project concept, architecture, current status, and how to run or build it (follow the `*ME.md` naming pattern -- `VOXELME.md`, `STUDYME.md`, `BUILDME.md`, whatever fits)
+3. Add a row to the Concepts table above
+4. Add a Concept Details section in this file with the project's design overview
+5. Update the root `README.md` with a bullet point under the Minecraft Innovations section
+
+Projects at any stage are welcome -- from a design document with no code to a fully tested pipeline. Just be honest about what's built and what's planned.
+
+## The Minecraft Standard
+
+Minecraft's modding community has collectively built every piece of tooling it needs -- but in isolation, in incompatible formats, with documentation scattered across wikis, Discord servers, and abandoned GitHub repos. The standard for this folder is: build the tool you wish existed, make it composable, and document it like someone who's never seen your code will need to use it tomorrow.
+
+The deeper principle: Minecraft is the most popular game ever made, and its creation tools are decades behind what smaller platforms offer. Every project here should narrow that gap.
 
 ## Notes
 
