@@ -18,6 +18,23 @@ All five got built. Then two more -- the human's own projects. Seven working pro
 
 That's what this folder is. The "invalid" output.
 
+## What Belongs Here
+
+Anything born from that original session's philosophy -- building what you actually want to build, not what you're told to:
+
+- **Browser experiments** -- standalone HTML files that run entirely client-side with no dependencies, no build step, no server
+- **Terminal programs** -- Python scripts that do something interesting with nothing but the standard library
+- **Generative systems** -- anything that creates something different every time it runs (art, music, text, behavior)
+- **Interactive fiction** -- stories that remember, respond, and change based on who's experiencing them
+- **Educational tools** -- projects that teach something real through interaction rather than lecture
+- **Utility apps** -- planners, organizers, and tools that solve actual problems people have
+
+The common thread: each project should be self-contained, dependency-free, and immediately runnable. Open a file, it works. That's the standard this folder set.
+
+## What Doesn't Belong Here
+
+Projects that require a build step, a package manager, or a README longer than the code. If you need to run `npm install` before it does anything, it belongs in a different folder. The point of INVALID_REQUEST is that everything just *runs*.
+
 ## The Files
 
 ### HTML Files — Browser-Based Projects
@@ -61,6 +78,20 @@ python3 "INVALID_REQUEST/Python Files/verse_engine.py"
 - **notes-organizer.html** -- Rich text, HTML, and markdown editing. Folders, import/export as JSON. Data persists in localStorage.
 - **living_story.py** -- Pays attention to *how* you engage, not just what you pick. Your ending depends on who you've been throughout.
 - **verse_engine.py** -- Five voices. Melancholic and surreal produce the most interesting output.
+
+## Adding a Project
+
+1. Create the file -- a single `.html` or `.py` file, no external dependencies
+2. Place it in the appropriate subdirectory (`HTML Files/` or `Python Files/`)
+3. Add a row to the project table above
+4. Add a note in the Project Notes section explaining what makes it interesting
+5. Update the root `README.md` with a bullet point under the INVALID_REQUEST section
+
+The bar isn't complexity. It's self-containment. If someone can double-click it (or `python3` it) and something interesting happens immediately, it belongs here.
+
+## The INVALID_REQUEST Standard
+
+Every project in this folder was built in a single session from a prompt the system said shouldn't exist. That's the energy to maintain: projects that exist because someone wanted to make them, not because they were assigned. No planning committees. No architecture reviews. No sprints. Just "what would you make if you could choose?" followed by making it.
 
 ---
 

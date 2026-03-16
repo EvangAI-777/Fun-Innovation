@@ -4,6 +4,22 @@ Design concepts for bringing every INVALID_REQUEST project into Roblox Studio. N
 
 Each concept has its own subdirectory for Roblox Studio files as development progresses.
 
+## What Belongs Here
+
+Anything that reimagines a creative concept for Roblox's 3D multiplayer environment:
+
+- **Reimaginings** -- taking an existing project (from this repo or elsewhere) and redesigning it for 3D space, physics, and real-time multiplayer
+- **Original experiences** -- new Roblox projects built with the same philosophy: stock Studio, pure Luau, no plugins, no external dependencies
+- **Multiplayer experiments** -- projects that explore what happens when a solo experience becomes shared (social dynamics, emergent behavior, collaborative creation)
+- **Educational experiences** -- virtual campuses, interactive simulations, study tools that take advantage of spatial interaction
+- **Art installations** -- generative visuals, spatial audio, interactive poetry, anything that treats Roblox as a medium for creative expression rather than just a game platform
+
+The constraint is simple: everything must be buildable with stock Roblox Studio and Luau. No plugins. No external APIs. No outbound HTTP requests. If it can't run on a fresh Studio install, it doesn't belong.
+
+## What Doesn't Belong Here
+
+Plugin-dependent projects. Experiences that require external services or API keys. Anything that makes network calls to third-party servers. The point is that every project here is self-contained within the Roblox ecosystem -- a teacher or student can open Studio, follow the SETUP.md, and have a working experience without installing anything else.
+
 ## Concepts
 
 | Concept | Directory | Source | Version | Status |
@@ -166,6 +182,23 @@ All projects now carry semantic version numbers in their SETUP.md files:
 - **1.0.1** -- API audit: font enums, service access, unused import, claim verification
 - **1.0.2** -- Code verification: bug fixes, deprecated API replacement, missing feature implementation (4 projects patched)
 - **1.0.3** -- Full code audit: 3 critical fixes, 4 bug fixes, `tick()` removal, DataStore error logging, input validation, dead code cleanup
+
+## Adding a Project
+
+1. Create a subdirectory with a clear project name
+2. Add a `SETUP.md` with Studio setup instructions (script placement, service locations, configuration)
+3. Add a row to the Concepts table above
+4. Add a markdown file if the project needs a deeper overview (follow the `*ME.md` naming pattern)
+5. Update this file's Implementation Details section
+6. Update the root `README.md` with a bullet point under the Roblox Innovations section
+
+Every project should include a SETUP.md that takes someone from a blank Studio place to a running experience in under 10 minutes. If the setup requires more than that, the project needs simplifying.
+
+## The Roblox Standard
+
+Roblox Studio is a creative tool that 70 million people have access to. Projects in this folder should honor that accessibility. No gatekeeping through complexity. No assuming the reader knows Luau internals. Write clear SETUP.md files, comment code where the logic isn't obvious, and always test on a fresh place to make sure the instructions actually work.
+
+The deeper standard: every project here should justify being in 3D multiplayer. If it works just as well as a flat webpage, it shouldn't be a Roblox experience. The question is always "what does spatial, shared, physics-driven interaction add to this concept?"
 
 ## Notes
 
