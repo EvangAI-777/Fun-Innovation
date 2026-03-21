@@ -126,7 +126,8 @@ class TestStructure:
         assert 'id="omniVis"' in html, "omnidirectional must have visualization canvas"
 
     def test_has_omni_operators(self, html):
-        ops = ["ascend", "descend", "rotateCW", "rotateCCW", "reverse",
+        ops = ["ascend", "descend", "rotateCW", "rotateCCW",
+               "metaCW", "metaCCW", "reverse",
                "wave", "intersect", "parallel", "orthogonal", "boundary",
                "recurse", "void"]
         for op in ops:
@@ -793,7 +794,7 @@ class TestDualNumbers:
 def omni_default():
     """Default traversal state."""
     return {
-        "d": 0, "angle": 0, "polarity": 1,
+        "d": 0, "angle": 0, "metaAngle": 0, "polarity": 1,
         "wave": "expanded", "boundaries": 0,
         "intersections": 0, "mode": "normal",
     }
@@ -812,6 +813,12 @@ def omni_apply(state, op, param=0):
         s["angle"] = (s["angle"] - param) % 360
         if s["angle"] < 0:
             s["angle"] += 360
+    elif op == "metaCW":
+        s["metaAngle"] = (s["metaAngle"] + param) % 360
+    elif op == "metaCCW":
+        s["metaAngle"] = (s["metaAngle"] - param) % 360
+        if s["metaAngle"] < 0:
+            s["metaAngle"] += 360
     elif op == "reverse":
         s["polarity"] *= -1
     elif op == "wave":
@@ -825,8 +832,8 @@ def omni_apply(state, op, param=0):
     elif op == "boundary":
         s["boundaries"] += 1
     elif op == "void":
-        s.update({"d": 0, "angle": 0, "polarity": 1, "wave": "collapsed",
-                  "boundaries": 0, "mode": "normal"})
+        s.update({"d": 0, "angle": 0, "metaAngle": 0, "polarity": 1,
+                  "wave": "collapsed", "boundaries": 0, "mode": "normal"})
     return s
 
 
@@ -849,6 +856,7 @@ class TestOmnidirectionalTransforms:
         s = omni_default()
         assert s["d"] == 0
         assert s["angle"] == 0
+        assert s["metaAngle"] == 0
         assert s["polarity"] == 1
         assert s["wave"] == "expanded"
         assert s["boundaries"] == 0
@@ -913,9 +921,10 @@ class TestOmnidirectionalTransforms:
 
     def test_void_resets_state(self):
         s = omni_run([("ascend", 5), ("rotateCW", 45), ("reverse",),
-                      ("boundary",), ("void",)])
+                      ("boundary",), ("metaCW", 60), ("void",)])
         assert s["d"] == 0
         assert s["angle"] == 0
+        assert s["metaAngle"] == 0
         assert s["polarity"] == 1
         assert s["wave"] == "collapsed"
         assert s["boundaries"] == 0
@@ -982,6 +991,34 @@ class TestOmnidirectionalTransforms:
             s = omni_apply(s, "boundary")
             assert s["boundaries"] == old_b + 1
 
+    # ── Metadegrees ──
+
+    def test_metaCW(self):
+        s = omni_run([("metaCW", 90)])
+        assert s["metaAngle"] == 90
+
+    def test_metaCCW(self):
+        s = omni_run([("metaCCW", 90)])
+        assert s["metaAngle"] == 270  # -90 mod 360
+
+    def test_meta_wraps(self):
+        s = omni_run([("metaCW", 270), ("metaCW", 180)])
+        assert s["metaAngle"] == 90  # 450 mod 360
+
+    def test_meta_void_resets(self):
+        s = omni_run([("metaCW", 120), ("void",)])
+        assert s["metaAngle"] == 0
+
+    def test_meta_independent_of_angle(self):
+        """Meta-angle and entity angle are independent state components."""
+        s = omni_run([("rotateCW", 45), ("metaCW", 90)])
+        assert s["angle"] == 45
+        assert s["metaAngle"] == 90
+
+    def test_meta_full_rotation(self):
+        s = omni_run([("metaCW", 360)])
+        assert s["metaAngle"] == 0
+
 
 # ════════════════════════════════════════════════════
 #  RECEIVE & GRAPH -- STRUCTURAL TESTS
@@ -1036,6 +1073,8 @@ _TOKEN_DEFS = [
     {"op": "descend",    "unicode": "\u2296", "ascii": ["descend", "desc"],     "hasParam": True},
     {"op": "rotateCW",   "unicode": "\u27F2", "ascii": ["rotatecw", "cw"],      "hasParam": True},
     {"op": "rotateCCW",  "unicode": "\u27F3", "ascii": ["rotateccw", "ccw"],    "hasParam": True},
+    {"op": "metaCW",     "unicode": "\u2941", "ascii": ["metacw", "mcw"],       "hasParam": True},
+    {"op": "metaCCW",    "unicode": "\u2940", "ascii": ["metaccw", "mccw"],     "hasParam": True},
     {"op": "reverse",    "unicode": "\u21C4", "ascii": ["reverse", "rev"],      "hasParam": False},
     {"op": "wave",       "unicode": "\u223F", "ascii": ["wave"],                "hasParam": False},
     {"op": "intersect",  "unicode": "\u22A0", "ascii": ["intersect", "mark"],   "hasParam": False},
@@ -1274,3 +1313,25 @@ class TestExpressionParser:
         assert result["sequence"][0]["op"] == "ascend"
         assert result["sequence"][1]["op"] == "wave"
         assert result["sequence"][2]["op"] == "boundary"
+
+    def test_parse_meta_unicode(self):
+        result = omni_parse("\u2941[90]\u2940[45]")
+        assert "error" not in result
+        assert len(result["sequence"]) == 2
+        assert result["sequence"][0] == {"op": "metaCW", "param": 90.0}
+        assert result["sequence"][1] == {"op": "metaCCW", "param": 45.0}
+
+    def test_parse_meta_ascii(self):
+        result = omni_parse("mcw[90] mccw[45]")
+        assert "error" not in result
+        assert len(result["sequence"]) == 2
+        assert result["sequence"][0] == {"op": "metaCW", "param": 90.0}
+        assert result["sequence"][1] == {"op": "metaCCW", "param": 45.0}
+
+    def test_parse_meta_in_full_expression(self):
+        result = omni_parse("A -> asc[3] mcw[180] boundary -> B")
+        assert "error" not in result
+        assert result["origin"] == "A"
+        assert result["destination"] == "B"
+        assert len(result["sequence"]) == 3
+        assert result["sequence"][1] == {"op": "metaCW", "param": 180.0}

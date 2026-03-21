@@ -1227,6 +1227,8 @@
                         <button class="calc-btn action" data-omniop="descend">&ominus; Descend</button>
                         <button class="calc-btn action" data-omniop="rotateCW">&#10226; CW</button>
                         <button class="calc-btn action" data-omniop="rotateCCW">&#10227; CCW</button>
+                        <button class="calc-btn action" data-omniop="metaCW">&#10561; Meta CW</button>
+                        <button class="calc-btn action" data-omniop="metaCCW">&#10560; Meta CCW</button>
                         <button class="calc-btn op" data-omniop="reverse">&harr; Reverse</button>
                         <button class="calc-btn op" data-omniop="wave">&sim; Wave</button>
                         <button class="calc-btn op" data-omniop="intersect">&boxtimes; Intersect</button>
@@ -1256,6 +1258,7 @@
                 <div class="omni-state-grid" id="omniStateGrid">
                     <div class="omni-state-item"><div class="omni-state-label">Dimension</div><div class="omni-state-value" id="osD">0</div></div>
                     <div class="omni-state-item"><div class="omni-state-label">Angle</div><div class="omni-state-value" id="osA">0&deg;</div></div>
+                    <div class="omni-state-item"><div class="omni-state-label">Meta-Angle</div><div class="omni-state-value" id="osMA">0&deg;</div></div>
                     <div class="omni-state-item"><div class="omni-state-label">Polarity</div><div class="omni-state-value" id="osP">+1</div></div>
                     <div class="omni-state-item"><div class="omni-state-label">Wave</div><div class="omni-state-value" id="osW">expanded</div></div>
                     <div class="omni-state-item"><div class="omni-state-label">Boundaries</div><div class="omni-state-value" id="osB">0</div></div>
@@ -2392,7 +2395,7 @@
         const omniSequence = [];  // array of { op, param, symbol }
 
         function omniDefaultState() {
-            return { d: 0, angle: 0, polarity: 1, wave: 'expanded', boundaries: 0, intersections: 0, mode: 'normal', isVoid: false };
+            return { d: 0, angle: 0, metaAngle: 0, polarity: 1, wave: 'expanded', boundaries: 0, intersections: 0, mode: 'normal', isVoid: false };
         }
 
         function omniApply(state, op, param) {
@@ -2402,6 +2405,8 @@
                 case 'descend': s.d -= param; break;
                 case 'rotateCW':  s.angle = ((s.angle + param) % 360 + 360) % 360; break;
                 case 'rotateCCW': s.angle = ((s.angle - param) % 360 + 360) % 360; break;
+                case 'metaCW':   s.metaAngle = ((s.metaAngle + param) % 360 + 360) % 360; break;
+                case 'metaCCW':  s.metaAngle = ((s.metaAngle - param) % 360 + 360) % 360; break;
                 case 'reverse':  s.polarity *= -1; break;
                 case 'wave':     s.wave = s.wave === 'expanded' ? 'collapsed' : 'expanded'; break;
                 case 'intersect': s.intersections++; break;
@@ -2409,7 +2414,7 @@
                 case 'orthogonal': s.mode = 'orthogonal'; break;
                 case 'boundary':  s.boundaries++; break;
                 case 'recurse':   break; // marker only
-                case 'void':     Object.assign(s, { d: 0, angle: 0, polarity: 1, wave: 'collapsed', boundaries: 0, mode: 'normal', isVoid: true }); break;
+                case 'void':     Object.assign(s, { d: 0, angle: 0, metaAngle: 0, polarity: 1, wave: 'collapsed', boundaries: 0, mode: 'normal', isVoid: true }); break;
             }
             return s;
         }
@@ -2427,6 +2432,8 @@
             descend:    (p) => `\u2296[${p}]`,
             rotateCW:   (p) => `\u27F2[${p}\u00B0]`,
             rotateCCW:  (p) => `\u27F3[${p}\u00B0]`,
+            metaCW:     (p) => `\u2941[${p}\u00B0]`,
+            metaCCW:    (p) => `\u2940[${p}\u00B0]`,
             reverse:    ()  => '\u21C4',
             wave:       ()  => '\u223F',
             intersect:  ()  => '\u22A0',
@@ -2443,6 +2450,8 @@
             { op: 'descend',    unicode: '\u2296', ascii: ['descend','desc'],     hasParam: true,  desc: 'Descend dimensions' },
             { op: 'rotateCW',   unicode: '\u27F2', ascii: ['rotateCW','cw'],      hasParam: true,  desc: 'Rotate clockwise' },
             { op: 'rotateCCW',  unicode: '\u27F3', ascii: ['rotateCCW','ccw'],    hasParam: true,  desc: 'Rotate counter-clockwise' },
+            { op: 'metaCW',     unicode: '\u2941', ascii: ['metaCW','mcw'],       hasParam: true,  desc: 'Metarotate space CW' },
+            { op: 'metaCCW',    unicode: '\u2940', ascii: ['metaCCW','mccw'],     hasParam: true,  desc: 'Metarotate space CCW' },
             { op: 'reverse',    unicode: '\u21C4', ascii: ['reverse','rev'],      hasParam: false, desc: 'Polarity reversal' },
             { op: 'wave',       unicode: '\u223F', ascii: ['wave'],               hasParam: false, desc: 'Wave collapse/expansion' },
             { op: 'intersect',  unicode: '\u22A0', ascii: ['intersect','mark'],   hasParam: false, desc: 'Mark intersection' },
@@ -2730,6 +2739,7 @@
             const s = states[states.length - 1];
             document.getElementById('osD').textContent = s.d;
             document.getElementById('osA').innerHTML = s.angle + '\u00B0';
+            document.getElementById('osMA').innerHTML = s.metaAngle + '\u00B0';
             document.getElementById('osP').textContent = s.polarity > 0 ? '+1' : '\u22121';
             document.getElementById('osW').textContent = s.wave;
             document.getElementById('osB').textContent = s.boundaries;
@@ -2833,7 +2843,7 @@
                 ctx.fillStyle = color;
                 ctx.fill();
 
-                // Angle indicator (small line from point showing rotation)
+                // Angle indicator (small line from point showing entity rotation)
                 if (s.angle !== 0) {
                     const rad = (s.angle * Math.PI) / 180;
                     ctx.strokeStyle = color + '88';
@@ -2842,6 +2852,18 @@
                     ctx.moveTo(pt.x, pt.y);
                     ctx.lineTo(pt.x + Math.cos(rad) * 12, pt.y - Math.sin(rad) * 12);
                     ctx.stroke();
+                }
+
+                // Meta-angle indicator (dashed arc showing space rotation)
+                if (s.metaAngle !== 0) {
+                    const metaRad = (s.metaAngle * Math.PI) / 180;
+                    ctx.strokeStyle = '#ebcb8b88';
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([2, 2]);
+                    ctx.beginPath();
+                    ctx.arc(pt.x, pt.y, radius + 10, 0, metaRad, s.metaAngle < 0);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
                 }
 
                 // Intersection marker
@@ -2894,7 +2916,7 @@
             }
 
             const param = parseFloat(document.getElementById('omniParam').value) || 1;
-            const needsParam = ['ascend', 'descend', 'rotateCW', 'rotateCCW'].includes(op);
+            const needsParam = ['ascend', 'descend', 'rotateCW', 'rotateCCW', 'metaCW', 'metaCCW'].includes(op);
             omniSequence.push({ op, param: needsParam ? param : 0 });
             omniRenderExpr();
             omniRenderState();
