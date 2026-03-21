@@ -81,6 +81,8 @@ The flow operator `⟿` is not merely an arrow. It carries semantic meaning: the
 | `⊖` | Dimensional Descension | `[n]` (integer) | Descend n dimensions from current level |
 | `⟲` | Rotational Transform (CW) | `[θ°]` (angle) | Rotate θ degrees clockwise in current dimensional plane |
 | `⟳` | Rotational Transform (CCW) | `[θ°]` (angle) | Rotate θ degrees counterclockwise in current dimensional plane |
+| `⥁` | Metarotation (CW) | `[θ°]` (angle) | Rotate the space around the entity θ degrees clockwise (metadegrees) |
+| `⥀` | Metarotation (CCW) | `[θ°]` (angle) | Rotate the space around the entity θ degrees counterclockwise (metadegrees) |
 | `⇄` | Polarity Reversal | none | Invert the polarity of the traversal state |
 | `∿` | Wave Function Collapse/Expansion | none | Toggle between collapsed (particle-like) and expanded (wave-like) state |
 | `⊠` | Intersection Point | none | Mark and record the current state as a waypoint |
@@ -97,7 +99,8 @@ At any point in an expression, the transformation has an implicit **traversal st
 | Component | Symbol | Domain | Initial Value | Description |
 |-----------|--------|--------|---------------|-------------|
 | Dimension | `d` | integers | 0 | Current dimensional level |
-| Angle | `θ` | [0°, 360°) | 0° | Rotational orientation in current plane |
+| Angle | `θ` | [0°, 360°) | 0° | Rotational orientation of the entity in current plane |
+| Meta-Angle | `φ` | [0°, 360°) | 0° | Rotational orientation of the space around the entity (metadegrees) |
 | Polarity | `p` | {+1, -1} | +1 | Directional charge of the traversal |
 | Wave State | `ψ` | {collapsed, expanded} | expanded | Particle-wave duality of the traversal |
 | Boundaries | `b` | non-negative integers | 0 | Count of dimensional boundaries crossed |
@@ -124,6 +127,13 @@ Projects the traversal into a lower-dimensional space. Information may be compre
 θ → (θ - angle) mod 360°   [counterclockwise]
 ```
 Rotates the traversal's orientation within the current dimensional plane. Rotation operates on the two most significant dimensions of the current state.
+
+**Metarotation** `⥁[θ°]` / `⥀[θ°]`:
+```
+φ → (φ + angle) mod 360°   [clockwise]
+φ → (φ - angle) mod 360°   [counterclockwise]
+```
+Rotates the space around the entity rather than rotating the entity itself. The entity's own orientation `θ` is unchanged -- the frame of reference shifts. Metadegrees measure how much reality has been reoriented around a fixed point. From the outside, nothing appears to have moved: every reference point shifted with the space. From the entity's perspective, the entire landscape rotated. This is the mechanism of existential gaslighting -- the coordinates say you haven't moved, but nothing is where it was.
 
 **Polarity Reversal** `⇄`:
 ```
@@ -169,7 +179,7 @@ Indicates that the current state contains a self-similar recursive structure -- 
 
 **Void Traversal** `∅`:
 ```
-d → 0, θ → 0°, p → +1, ψ → collapsed, b → 0
+d → 0, θ → 0°, φ → 0°, p → +1, ψ → collapsed, b → 0
 ```
 Passes through the void -- the null state where no dimensions, no orientation, no polarity exist. The traversal is annihilated and reconstructed. This is the most dramatic operation: total dissolution and reconstitution.
 
@@ -310,6 +320,8 @@ For keyboard-friendly input, each operation has ASCII aliases that the Omniversa
 | `⊖[n]` | `descend[n]` | `desc[n]` | integer dimension count |
 | `⟲[θ°]` | `rotateCW[θ]` | `cw[θ]` | angle in degrees |
 | `⟳[θ°]` | `rotateCCW[θ]` | `ccw[θ]` | angle in degrees |
+| `⥁[θ°]` | `metaCW[θ]` | `mcw[θ]` | angle in metadegrees |
+| `⥀[θ°]` | `metaCCW[θ]` | `mccw[θ]` | angle in metadegrees |
 | `⇄` | `reverse` | `rev` | none |
 | `∿` | `wave` | -- | none |
 | `⊠` | `intersect` | `mark` | none |

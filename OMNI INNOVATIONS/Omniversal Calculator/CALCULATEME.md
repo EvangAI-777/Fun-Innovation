@@ -60,9 +60,9 @@ Both modes share the state grid (dimension level, angle, polarity, wave state, b
 
 ## Testing
 
-162 tests in `tests/omniversal/test_omniversal_calculator.py`:
+171 tests in `tests/omniversal/test_omniversal_calculator.py`:
 
-- **24 structural tests** -- validate the HTML file has all 9 universes, UI elements, responsive tags, omni operator buttons, notation file, no external dependencies, and dark theme
+- **24 structural tests** -- validate the HTML file has all 9 universes, UI elements, responsive tags, omni operator buttons (including metaCW/metaCCW), notation file, no external dependencies, and dark theme
 - **14 real arithmetic tests** -- trig, powers, roots, logarithms
 - **10 complex arithmetic tests** -- all operations plus modulus, argument, conjugate
 - **10 modular arithmetic tests** -- mod operations, Fermat's little theorem, extended Euclidean algorithm
@@ -71,9 +71,9 @@ Both modes share the state grid (dimension level, angle, polarity, wave state, b
 - **10 boolean tests** -- all gates plus De Morgan's laws
 - **9 tropical tests** -- both conventions, distributive law, associativity
 - **12 dual number tests** -- epsilon^2=0, autodiff for sin/cos/exp/ln, chain rule, product rule
-- **25 omnidirectional tests** -- all 12 operators, void annihilation, the Earth-to-Celestial example, property verification (double reversal, boundary accumulation, rotation commutativity)
+- **31 omnidirectional tests** -- all 14 operators (including metaCW/metaCCW), metadegrees wrapping, meta-angle independence from entity angle, void annihilation (including metaAngle reset), the Earth-to-Celestial example, property verification (double reversal, boundary accumulation, rotation commutativity)
 - **11 receive & graph structural tests** -- tab bar, textarea, parse button, autocomplete, parser function, token definitions
-- **14 expression parser tests** -- Unicode parsing, ASCII parsing, mixed notation, operations-only, void sequences, all parameterless ops, error handling, case insensitivity, default parameters
+- **17 expression parser tests** -- Unicode parsing, ASCII parsing, mixed notation, operations-only, void sequences, all parameterless ops, metadegrees (Unicode and ASCII), error handling, case insensitivity, default parameters
 
 Run with: `make test-omniversal`
 
@@ -102,9 +102,10 @@ All notable changes to the Omniversal Calculator are documented here.
 ### Added
 - **Receive & Graph mode** -- The original vision for the Omnidirectional universe. Type or paste omniversal coordinates as text and the calculator parses the expression and graphs the transformation path. Accepts formal Unicode notation (`⊕[3]⟲[90°]◬⊠∿`), ASCII shorthand (`ascend[3] cw[90] boundary intersect wave`), or any mix of both. Flow operators support both `⟿` and `->` / `-->`.
 - **Tab toggle** -- The Omega universe now has Build and Receive & Graph tabs. Both share the state grid and visualization canvas.
-- **Expression parser** -- Tokenizes omnidirectional expressions supporting all 12 operations with Unicode symbols, full-name ASCII aliases, and short aliases. Parameters in `[n]` brackets, with degree signs optional. Parameterized ops without brackets default to 1.
+- **Expression parser** -- Tokenizes omnidirectional expressions supporting all 14 operations with Unicode symbols, full-name ASCII aliases, and short aliases. Parameters in `[n]` brackets, with degree signs optional. Parameterized ops without brackets default to 1.
 - **Contextual autocomplete** -- As you type in the Receive & Graph textarea, matching operations appear in a dropdown. Arrow keys navigate, Enter/Tab inserts the Unicode symbol. Works for both Unicode and ASCII input.
-- **25 new tests** -- 11 structural tests for the new UI elements, 14 parser reference tests covering Unicode, ASCII, mixed notation, error handling, and edge cases.
+- **Metadegrees** -- Two new fundamental operations: Metarotation CW (`⥁`) and Metarotation CCW (`⥀`). Metadegrees measure the rotation of space around an entity, not the entity itself. The entity's own angle `θ` is unchanged -- the frame of reference shifts. ASCII aliases: `metaCW`/`mcw`, `metaCCW`/`mccw`. Adds Meta-Angle (`φ`) to the traversal state grid.
+- **34 new tests** -- 11 structural tests for the new UI elements, 17 parser reference tests covering Unicode, ASCII, mixed notation, metadegrees, error handling, and edge cases, 6 metadegrees engine tests.
 
 ## [v1.3.0] - 2026-02-10
 
@@ -131,9 +132,9 @@ All notable changes to the Omniversal Calculator are documented here.
 ## [v1.1.0] - 2026-02-10
 
 ### Added
-- **Omnidirectional Transforms** -- Ninth mathematical universe implementing the formal Omnidirectional Mathematics notation. Twelve fundamental operators (ascend, descend, rotate CW/CCW, polarity reversal, wave collapse/expansion, intersection, parallel, orthogonal, boundary crossing, infinite recursion, void traversal). Expression builder with real-time notation display, traversal state grid, and dimensional path visualization canvas.
+- **Omnidirectional Transforms** -- Ninth mathematical universe implementing the formal Omnidirectional Mathematics notation. Fourteen fundamental operators (ascend, descend, rotate CW/CCW, metarotate CW/CCW, polarity reversal, wave collapse/expansion, intersection, parallel, orthogonal, boundary crossing, infinite recursion, void traversal). Expression builder with real-time notation display, traversal state grid, and dimensional path visualization canvas.
 - **Formal notation specification** -- `MATHME.md` defines the Omnidirectional Mathematics system: core axiom, operation semantics, state model, and examples.
-- **25 omnidirectional tests** -- Covering all 12 operators, void annihilation, the Earth-to-Celestial example, and property verification.
+- **25 omnidirectional tests** -- Covering all 14 operators (including metaCW/metaCCW), void annihilation, the Earth-to-Celestial example, and property verification.
 
 ## [v1.0.0] - 2026-02-10
 
