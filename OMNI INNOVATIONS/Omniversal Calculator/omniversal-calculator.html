@@ -2597,14 +2597,13 @@
 
             const states = omniComputeStates();
             const final_s = states[states.length - 1];
-            msg.textContent = `Parsed ${result.sequence.length} operation${result.sequence.length !== 1 ? 's' : ''} \u2014 d=${final_s.d} \u03B8=${final_s.angle}\u00B0 p=${final_s.polarity > 0 ? '+' : '\u2212'}1 \u03C8=${final_s.wave}`;
+            msg.textContent = `Parsed ${result.sequence.length} operation${result.sequence.length !== 1 ? 's' : ''} \u2014 dim ${final_s.d}`;
             msg.className = 'omni-parse-msg success';
 
             // Also add to history
             const origin = result.origin || '\u03B1';
             const dest = result.destination || '\u03C9';
-            const exprStr = origin + ' \u27FF ' + omniSequence.map(s => omniSymbols[s.op](s.param)).join('') + ' \u27FF ' + dest;
-            addHistory('omni', exprStr, `d=${final_s.d} \u03B8=${final_s.angle}\u00B0 p=${final_s.polarity > 0 ? '+' : '\u2212'}1`);
+            addHistory('omni', origin + ' \u27FF ' + dest, 'dim ' + final_s.d);
         });
 
         // ── Autocomplete ──
@@ -2737,15 +2736,12 @@
             document.getElementById('osB').textContent = s.boundaries;
             document.getElementById('osI').textContent = s.intersections;
 
-            // Build display result
-            const origin = document.getElementById('omniOrigin').value || '\u03B1';
-            const dest = document.getElementById('omniDest').value || '\u03C9';
-            const exprStr = origin + ' \u27FF ' + omniSequence.map(s => omniSymbols[s.op](s.param)).join('') + ' \u27FF ' + dest;
-            const stateStr = `d=${s.d} \u03B8=${s.angle}\u00B0 p=${s.polarity > 0 ? '+' : '\u2212'}1 \u03C8=${s.wave} b=${s.boundaries}`;
-
+            // Build display result — show the last operation name, dimension as the main result
             if (omniSequence.length > 0) {
-                displayExpr.textContent = exprStr;
-                displayResult.textContent = stateStr;
+                const lastStep = omniSequence[omniSequence.length - 1];
+                const lastSym = omniSymbols[lastStep.op](lastStep.param);
+                displayExpr.textContent = omniSequence.length + (omniSequence.length === 1 ? ' operation' : ' operations');
+                displayResult.textContent = 'dim ' + s.d;
                 displayResult.classList.add('fresh');
                 setTimeout(() => displayResult.classList.remove('fresh'), 400);
             }
@@ -2906,13 +2902,11 @@
             omniRenderState();
             drawOmniVis();
 
-            // Add to history when sequence has steps
-            const origin = document.getElementById('omniOrigin').value || '\u03B1';
-            const dest = document.getElementById('omniDest').value || '\u03C9';
-            const exprStr = origin + ' \u27FF ' + omniSequence.map(s => omniSymbols[s.op](s.param)).join('') + ' \u27FF ' + dest;
+            // Add to history
             const states = omniComputeStates();
             const final_s = states[states.length - 1];
-            addHistory('omni', exprStr, `d=${final_s.d} \u03B8=${final_s.angle}\u00B0 p=${final_s.polarity > 0 ? '+' : '\u2212'}1`);
+            const lastSym = omniSymbols[op](needsParam ? param : 0);
+            addHistory('omni', lastSym, 'dim ' + final_s.d);
         });
 
         // Update expression when origin/dest names change
