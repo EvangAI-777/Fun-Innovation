@@ -2,6 +2,16 @@
 
 The world's first Omniversal Calculator. Nine mathematical universes, one interface, zero dependencies.
 
+## Why This Exists
+
+Most calculators assume you're working in one number system. This one assumes nothing—you pick your universe and the entire interface transforms to match. But the real point is the Omnidirectional universe.
+
+Omnidirectional Mathematics is a notation system for describing movement between points in any dimensional space. Dimensionality isn't a box you're trapped in—it's a variable you move through. The expression `⊕[3]⟲[90°]◬⊠∿` isn't abstract. It's five operations producing a real traversal state: dimension 3, rotated 90°, one boundary crossed, one intersection marked, wave collapsed. A path from Earth to Celestial_Realm.
+
+The Receive & Graph mode is the original idea made real: give the calculator coordinates of an omniversal place, and it shows you the path there. Type the formal Unicode notation, or plain ASCII, or any mix—the parser understands all of it. This is a coordinate system for places that don't have coordinate systems yet.
+
+Built by a human and an AI pushing into territory neither would reach alone.
+
 ## Quick Start
 
 Open `omniversal-calculator.html` in any modern browser. That's it. No install, no build, no server.
