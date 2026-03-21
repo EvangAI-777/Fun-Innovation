@@ -6,7 +6,7 @@ Mathematics isn't one thing. It's a landscape of interconnected systems, each wi
 
 ### [Omniversal Calculator](../Omniversal%20Calculator/)
 
-The world's first Omniversal Calculator (v1.3.0). Nine mathematical universes in a single browser-based interface, each with its own color identity, custom input layout, and genuine math engine. The Real universe features an expression-based engine with a recursive-descent parser, clickable cursor, and live result preview. No dependencies, no build step -- open the HTML file and start calculating.
+The world's first Omniversal Calculator (v1.4.0). Nine mathematical universes in a single browser-based interface, each with its own color identity, custom input layout, and genuine math engine. The Real universe features an expression-based engine with a recursive-descent parser, clickable cursor, and live result preview. No dependencies, no build step -- open the HTML file and start calculating.
 
 **The Universes:**
 

@@ -25,7 +25,7 @@ Projects that require package managers, build steps, external services, or API k
 | Project | Directory | Version | Status | Description |
 |---------|-----------|---------|--------|-------------|
 | Omniversal Mathematics | `Omniversal Mathematics/` | -- | Specification complete | Formal notation system for transformations across dimensional spaces -- 12 fundamental operations, traversal state model, expression grammar |
-| Omniversal Calculator | `Omniversal Calculator/` | v1.3.0 | Built | Nine mathematical universes in a single browser-based interface -- real, complex, modular, matrix, quaternion, boolean, tropical, dual, and omnidirectional. 137 tests |
+| Omniversal Calculator | `Omniversal Calculator/` | v1.4.0 | Built | Nine mathematical universes in a single browser-based interface -- real, complex, modular, matrix, quaternion, boolean, tropical, dual, and omnidirectional. 162 tests |
 | Omni Writer | `Omni Writer/` | v2.0.0 | Built | Creative writing tool with AI Mode -- rich text editing, multi-chapter management, story library, export to .txt/.md/.html, optional AI continuation/enhancement/generation. 84 tests |
 
 ## Adding a Project
