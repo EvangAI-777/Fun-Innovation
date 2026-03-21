@@ -1,6 +1,6 @@
 # Fun-Innovation
 
-Building things that have never existed before — and having fun while doing it. Every project here is a collaboration between human and AI, pushing into territory neither would reach alone. Organized by theme, open to whatever comes next.
+Building things that have never existed before—and having fun while doing it. Every project here is a collaboration between human and AI, pushing into territory neither would reach alone. Organized by theme, open to whatever comes next.
 
 ## Directories
 
