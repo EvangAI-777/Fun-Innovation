@@ -299,3 +299,34 @@ Omnidirectional Mathematics is not a replacement for conventional mathematics. I
 - **Matrix spaces** are reached by parallel operations (`∥`) on underlying scalar spaces
 
 The Omniversal Calculator implements this principle: each universe is reachable from any other through a sequence of omnidirectional operations. The notation gives us the language to describe those paths.
+
+## ASCII Shorthand
+
+For keyboard-friendly input, each operation has ASCII aliases that the Omniversal Calculator's Receive & Graph parser accepts alongside the Unicode symbols. Flow operators can be written as `->` or `-->` instead of `⟿`.
+
+| Unicode | ASCII (full) | ASCII (short) | Parameters |
+|---------|-------------|---------------|------------|
+| `⊕[n]` | `ascend[n]` | `asc[n]` | integer dimension count |
+| `⊖[n]` | `descend[n]` | `desc[n]` | integer dimension count |
+| `⟲[θ°]` | `rotateCW[θ]` | `cw[θ]` | angle in degrees |
+| `⟳[θ°]` | `rotateCCW[θ]` | `ccw[θ]` | angle in degrees |
+| `⇄` | `reverse` | `rev` | none |
+| `∿` | `wave` | -- | none |
+| `⊠` | `intersect` | `mark` | none |
+| `∥` | `parallel` | `par` | none |
+| `⊥` | `orthogonal` | `ortho` | none |
+| `◬` | `boundary` | `bound` | none |
+| `∞` | `recurse` | `inf` | none |
+| `∅` | `void` | -- | none |
+
+ASCII aliases are case-insensitive. Parameters in `[brackets]` are optional for parameterized operations (defaults to 1). The degree sign (`°`) in rotation parameters is optional. Unicode and ASCII can be freely mixed in a single expression.
+
+**Example (ASCII):**
+```
+Earth -> ascend[3] cw[90] boundary intersect wave -> Celestial_Realm
+```
+
+This is equivalent to the Unicode form:
+```
+Earth ⟿ ⊕[3]⟲[90°]◬⊠∿ ⟿ Celestial_Realm
+```

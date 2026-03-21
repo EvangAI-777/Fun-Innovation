@@ -30,7 +30,13 @@ Every universe has a genuine math engine behind it. These aren't toy implementat
 
 **Dual Numbers (D)** -- Enter dual numbers z1 = a + b*epsilon where epsilon^2 = 0. Supports arithmetic (+, -, x, /) and functions (sin, cos, exp, ln). The key trick: set b = 1 to perform automatic differentiation. sin(3 + 1*epsilon) returns sin(3) + cos(3)*epsilon -- the value AND the derivative in one pass. Composes via chain rule automatically.
 
-**Omnidirectional Transforms (Omega)** -- The meta-universe. Build transformation sequences across dimensional spaces using the formal Omnidirectional Mathematics notation. Name an origin and destination, then compose operations: dimensional ascension/descension, clockwise/counterclockwise rotation, polarity reversal, wave collapse/expansion, intersection marking, parallel/orthogonal modes, boundary crossing, infinite recursion marking, and void traversal. The expression builder shows the full notation in real time, the state grid tracks dimension level, angle, polarity, wave state, and boundary count, and the visualization canvas plots the transformation path through dimensional space. See [MATHME.md](../Omniversal%20Mathematics/MATHME.md) for the formal specification.
+**Omnidirectional Transforms (Omega)** -- The meta-universe. Two modes: **Build** and **Receive & Graph**.
+
+In **Build** mode, construct transformation sequences step by step. Name an origin and destination, then compose operations: dimensional ascension/descension, clockwise/counterclockwise rotation, polarity reversal, wave collapse/expansion, intersection marking, parallel/orthogonal modes, boundary crossing, infinite recursion marking, and void traversal. The expression builder shows the full notation in real time.
+
+In **Receive & Graph** mode, type or paste an omnidirectional expression and the calculator parses it and graphs the transformation path. Accepts both the formal Unicode notation (`Earth ⟿ ⊕[3]⟲[90°]◬⊠∿ ⟿ Celestial_Realm`) and ASCII shorthand (`Earth -> ascend[3] cw[90] boundary intersect wave -> Celestial_Realm`). Mixed Unicode and ASCII in the same expression is supported. Contextual autocomplete suggests operations as you type -- arrow keys to navigate, Enter/Tab to insert. Ctrl+Enter parses the expression.
+
+Both modes share the state grid (dimension level, angle, polarity, wave state, boundary count) and the visualization canvas that plots the transformation path through dimensional space. See [MATHME.md](../Omniversal%20Mathematics/MATHME.md) for the formal specification.
 
 ## Design
 
@@ -44,7 +50,7 @@ Every universe has a genuine math engine behind it. These aren't toy implementat
 
 ## Testing
 
-137 tests in `tests/omniversal/test_omniversal_calculator.py`:
+162 tests in `tests/omniversal/test_omniversal_calculator.py`:
 
 - **24 structural tests** -- validate the HTML file has all 9 universes, UI elements, responsive tags, omni operator buttons, notation file, no external dependencies, and dark theme
 - **14 real arithmetic tests** -- trig, powers, roots, logarithms
@@ -56,6 +62,8 @@ Every universe has a genuine math engine behind it. These aren't toy implementat
 - **9 tropical tests** -- both conventions, distributive law, associativity
 - **12 dual number tests** -- epsilon^2=0, autodiff for sin/cos/exp/ln, chain rule, product rule
 - **25 omnidirectional tests** -- all 12 operators, void annihilation, the Earth-to-Celestial example, property verification (double reversal, boundary accumulation, rotation commutativity)
+- **11 receive & graph structural tests** -- tab bar, textarea, parse button, autocomplete, parser function, token definitions
+- **14 expression parser tests** -- Unicode parsing, ASCII parsing, mixed notation, operations-only, void sequences, all parameterless ops, error handling, case insensitivity, default parameters
 
 Run with: `make test-omniversal`
 
@@ -78,6 +86,15 @@ Run with: `make test-omniversal`
 # Changelog
 
 All notable changes to the Omniversal Calculator are documented here.
+
+## [v1.4.0] - 2026-03-21
+
+### Added
+- **Receive & Graph mode** -- The original vision for the Omnidirectional universe. Type or paste omniversal coordinates as text and the calculator parses the expression and graphs the transformation path. Accepts formal Unicode notation (`⊕[3]⟲[90°]◬⊠∿`), ASCII shorthand (`ascend[3] cw[90] boundary intersect wave`), or any mix of both. Flow operators support both `⟿` and `->` / `-->`.
+- **Tab toggle** -- The Omega universe now has Build and Receive & Graph tabs. Both share the state grid and visualization canvas.
+- **Expression parser** -- Tokenizes omnidirectional expressions supporting all 12 operations with Unicode symbols, full-name ASCII aliases, and short aliases. Parameters in `[n]` brackets, with degree signs optional. Parameterized ops without brackets default to 1.
+- **Contextual autocomplete** -- As you type in the Receive & Graph textarea, matching operations appear in a dropdown. Arrow keys navigate, Enter/Tab inserts the Unicode symbol. Works for both Unicode and ASCII input.
+- **25 new tests** -- 11 structural tests for the new UI elements, 14 parser reference tests covering Unicode, ASCII, mixed notation, error handling, and edge cases.
 
 ## [v1.3.0] - 2026-02-10
 
