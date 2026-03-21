@@ -2595,15 +2595,14 @@
             omniRenderState();
             drawOmniVis();
 
-            const states = omniComputeStates();
-            const final_s = states[states.length - 1];
-            msg.textContent = `Parsed ${result.sequence.length} operation${result.sequence.length !== 1 ? 's' : ''} \u2014 dim ${final_s.d}`;
+            const n = result.sequence.length;
+            msg.textContent = `Parsed ${n} transformation${n !== 1 ? 's' : ''}`;
             msg.className = 'omni-parse-msg success';
 
             // Also add to history
             const origin = result.origin || '\u03B1';
             const dest = result.destination || '\u03C9';
-            addHistory('omni', origin + ' \u27FF ' + dest, 'dim ' + final_s.d);
+            addHistory('omni', origin + ' \u27FF ' + dest, n + (n === 1 ? ' transformation' : ' transformations'));
         });
 
         // ── Autocomplete ──
@@ -2736,12 +2735,11 @@
             document.getElementById('osB').textContent = s.boundaries;
             document.getElementById('osI').textContent = s.intersections;
 
-            // Build display result — show the last operation name, dimension as the main result
-            if (omniSequence.length > 0) {
-                const lastStep = omniSequence[omniSequence.length - 1];
-                const lastSym = omniSymbols[lastStep.op](lastStep.param);
-                displayExpr.textContent = omniSequence.length + (omniSequence.length === 1 ? ' operation' : ' operations');
-                displayResult.textContent = 'dim ' + s.d;
+            // Live transformation counter in main display
+            const n = omniSequence.length;
+            displayExpr.textContent = '';
+            displayResult.textContent = n + (n === 1 ? ' transformation' : ' transformations');
+            if (n > 0) {
                 displayResult.classList.add('fresh');
                 setTimeout(() => displayResult.classList.remove('fresh'), 400);
             }
@@ -2880,7 +2878,7 @@
                 omniRenderState();
                 drawOmniVis();
                 displayExpr.textContent = '';
-                displayResult.textContent = '0';
+                displayResult.textContent = '0 transformations';
                 return;
             }
             if (op === 'undo') {
@@ -2890,7 +2888,7 @@
                 drawOmniVis();
                 if (omniSequence.length === 0) {
                     displayExpr.textContent = '';
-                    displayResult.textContent = '0';
+                    displayResult.textContent = '0 transformations';
                 }
                 return;
             }
@@ -2903,10 +2901,8 @@
             drawOmniVis();
 
             // Add to history
-            const states = omniComputeStates();
-            const final_s = states[states.length - 1];
             const lastSym = omniSymbols[op](needsParam ? param : 0);
-            addHistory('omni', lastSym, 'dim ' + final_s.d);
+            addHistory('omni', lastSym, omniSequence.length + (omniSequence.length === 1 ? ' transformation' : ' transformations'));
         });
 
         // Update expression when origin/dest names change
