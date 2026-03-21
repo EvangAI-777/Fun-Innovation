@@ -179,6 +179,106 @@
             background: var(--bg-void);
             margin-top: 8px;
         }
+        .omni-tab-bar {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+        .omni-tab {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            font-size: 0.82em;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .omni-tab:hover { background: var(--accent-dim); color: var(--text-primary); }
+        .omni-tab.active {
+            background: var(--accent-dim);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .omni-tab-content { display: none; }
+        .omni-tab-content.active { display: block; }
+        .omni-receive-input {
+            width: 100%;
+            min-height: 72px;
+            padding: 12px 14px;
+            background: var(--bg-void);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            color: var(--accent);
+            resize: vertical;
+            line-height: 1.6;
+            letter-spacing: 0.5px;
+            box-sizing: border-box;
+        }
+        .omni-receive-input::placeholder { color: var(--text-secondary); opacity: 0.5; }
+        .omni-receive-input:focus { outline: none; border-color: var(--accent); }
+        .omni-autocomplete {
+            position: absolute;
+            left: 0; right: 0;
+            background: var(--bg-input);
+            border: 1px solid var(--accent);
+            border-radius: var(--radius);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 20;
+            display: none;
+        }
+        .omni-autocomplete.visible { display: block; }
+        .omni-ac-item {
+            padding: 7px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.82em;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border);
+        }
+        .omni-ac-item:last-child { border-bottom: none; }
+        .omni-ac-item:hover, .omni-ac-item.selected {
+            background: var(--accent-dim);
+        }
+        .omni-ac-symbol { color: var(--accent); font-size: 1.2em; min-width: 22px; text-align: center; }
+        .omni-ac-name { font-weight: 600; }
+        .omni-ac-desc { color: var(--text-secondary); font-size: 0.9em; }
+        .omni-parse-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .omni-parse-btn {
+            padding: 8px 18px;
+            background: var(--accent-dim);
+            border: 1px solid var(--accent);
+            border-radius: var(--radius);
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        .omni-parse-btn:hover { background: var(--accent-glow); }
+        .omni-parse-msg {
+            font-size: 0.8em;
+            flex: 1;
+            min-height: 1.2em;
+        }
+        .omni-parse-msg.error { color: #bf616a; }
+        .omni-parse-msg.success { color: #a3be8c; }
 
         /* ── Calculator Container ── */
         .calc-container {
@@ -1092,46 +1192,66 @@
 
             <!-- ═══ OMNIDIRECTIONAL ═══ -->
             <div class="universe-panel" id="panel-omnidirectional">
-                <div class="field-group">
-                    <div class="field-row">
-                        <div style="flex:1">
-                            <div class="field-label">Origin (&alpha;)</div>
-                            <input class="field-input" id="omniOrigin" type="text" placeholder="Earth" value="Earth" aria-label="Origin point">
-                        </div>
-                        <div style="flex:1">
-                            <div class="field-label">Destination (&omega;)</div>
-                            <input class="field-input" id="omniDest" type="text" placeholder="Celestial_Realm" value="Celestial_Realm" aria-label="Destination point">
+                <div class="omni-tab-bar">
+                    <div class="omni-tab active" data-omnitab="build">Build</div>
+                    <div class="omni-tab" data-omnitab="receive">Receive &amp; Graph</div>
+                </div>
+                <!-- Build tab (existing constructor) -->
+                <div class="omni-tab-content active" id="omniTabBuild">
+                    <div class="field-group">
+                        <div class="field-row">
+                            <div style="flex:1">
+                                <div class="field-label">Origin (&alpha;)</div>
+                                <input class="field-input" id="omniOrigin" type="text" placeholder="Earth" value="Earth" aria-label="Origin point">
+                            </div>
+                            <div style="flex:1">
+                                <div class="field-label">Destination (&omega;)</div>
+                                <input class="field-input" id="omniDest" type="text" placeholder="Celestial_Realm" value="Celestial_Realm" aria-label="Destination point">
+                            </div>
                         </div>
                     </div>
+                    <div class="field-group">
+                        <div class="field-label">Parameter (for &oplus; &ominus; &#10226; &#10227;)</div>
+                        <input class="field-input" id="omniParam" type="number" value="1" min="0" step="any" style="max-width:120px" aria-label="Operation parameter">
+                    </div>
+                    <div class="field-label">Expression</div>
+                    <div class="omni-expression" id="omniExpr">
+                        <span class="omni-origin" id="omniExprOrigin">Earth</span>
+                        <span class="omni-flow">&#10239;</span>
+                        <span id="omniExprOps"></span>
+                        <span class="omni-flow">&#10239;</span>
+                        <span class="omni-origin" id="omniExprDest">Celestial_Realm</span>
+                    </div>
+                    <div class="btn-grid cols-4">
+                        <button class="calc-btn action" data-omniop="ascend">&oplus; Ascend</button>
+                        <button class="calc-btn action" data-omniop="descend">&ominus; Descend</button>
+                        <button class="calc-btn action" data-omniop="rotateCW">&#10226; CW</button>
+                        <button class="calc-btn action" data-omniop="rotateCCW">&#10227; CCW</button>
+                        <button class="calc-btn op" data-omniop="reverse">&harr; Reverse</button>
+                        <button class="calc-btn op" data-omniop="wave">&sim; Wave</button>
+                        <button class="calc-btn op" data-omniop="intersect">&boxtimes; Intersect</button>
+                        <button class="calc-btn op" data-omniop="parallel">&parallel; Parallel</button>
+                        <button class="calc-btn op" data-omniop="orthogonal">&perp; Ortho</button>
+                        <button class="calc-btn op" data-omniop="boundary">&#9708; Boundary</button>
+                        <button class="calc-btn op" data-omniop="recurse">&infin; Recurse</button>
+                        <button class="calc-btn op" data-omniop="void">&empty; Void</button>
+                        <button class="calc-btn danger wide" data-omniop="undo">&larr; Undo</button>
+                        <button class="calc-btn danger wide" data-omniop="clear">Clear Sequence</button>
+                    </div>
                 </div>
-                <div class="field-group">
-                    <div class="field-label">Parameter (for &oplus; &ominus; &#10226; &#10227;)</div>
-                    <input class="field-input" id="omniParam" type="number" value="1" min="0" step="any" style="max-width:120px" aria-label="Operation parameter">
+                <!-- Receive & Graph tab -->
+                <div class="omni-tab-content" id="omniTabReceive">
+                    <div class="field-label">Enter Omnidirectional Expression</div>
+                    <div style="position:relative">
+                        <textarea class="omni-receive-input" id="omniReceiveInput" placeholder="Earth &#10239; &#8853;[3]&#10226;[90&deg;]&#9708;&#8864;&#8767; &#10239; Celestial_Realm&#10;&#10;Unicode: &#8853;[n] &#8854;[n] &#10226;[&theta;] &#10227;[&theta;] &#8644; &#8767; &#8864; &#8741; &#8869; &#9708; &#8734; &#8709;&#10;ASCII:  ascend[n] descend[n] cw[&theta;] ccw[&theta;] reverse wave intersect parallel ortho boundary recurse void" aria-label="Omnidirectional expression input"></textarea>
+                        <div class="omni-autocomplete" id="omniAutocomplete"></div>
+                    </div>
+                    <div class="omni-parse-row">
+                        <button class="omni-parse-btn" id="omniParseBtn">Parse &amp; Graph</button>
+                        <div class="omni-parse-msg" id="omniParseMsg"></div>
+                    </div>
                 </div>
-                <div class="field-label">Expression</div>
-                <div class="omni-expression" id="omniExpr">
-                    <span class="omni-origin" id="omniExprOrigin">Earth</span>
-                    <span class="omni-flow">&#10239;</span>
-                    <span id="omniExprOps"></span>
-                    <span class="omni-flow">&#10239;</span>
-                    <span class="omni-origin" id="omniExprDest">Celestial_Realm</span>
-                </div>
-                <div class="btn-grid cols-4">
-                    <button class="calc-btn action" data-omniop="ascend">&oplus; Ascend</button>
-                    <button class="calc-btn action" data-omniop="descend">&ominus; Descend</button>
-                    <button class="calc-btn action" data-omniop="rotateCW">&#10226; CW</button>
-                    <button class="calc-btn action" data-omniop="rotateCCW">&#10227; CCW</button>
-                    <button class="calc-btn op" data-omniop="reverse">&harr; Reverse</button>
-                    <button class="calc-btn op" data-omniop="wave">&sim; Wave</button>
-                    <button class="calc-btn op" data-omniop="intersect">&boxtimes; Intersect</button>
-                    <button class="calc-btn op" data-omniop="parallel">&parallel; Parallel</button>
-                    <button class="calc-btn op" data-omniop="orthogonal">&perp; Ortho</button>
-                    <button class="calc-btn op" data-omniop="boundary">&#9708; Boundary</button>
-                    <button class="calc-btn op" data-omniop="recurse">&infin; Recurse</button>
-                    <button class="calc-btn op" data-omniop="void">&empty; Void</button>
-                    <button class="calc-btn danger wide" data-omniop="undo">&larr; Undo</button>
-                    <button class="calc-btn danger wide" data-omniop="clear">Clear Sequence</button>
-                </div>
+                <!-- Shared: state grid + visualization -->
                 <div class="field-label" style="margin-top:14px">Traversal State</div>
                 <div class="omni-state-grid" id="omniStateGrid">
                     <div class="omni-state-item"><div class="omni-state-label">Dimension</div><div class="omni-state-value" id="osD">0</div></div>
@@ -2316,6 +2436,282 @@
             recurse:    ()  => '\u221E',
             void:       ()  => '\u2205'
         };
+
+        // ── Token definitions for parser + autocomplete ──
+        const omniTokenDefs = [
+            { op: 'ascend',     unicode: '\u2295', ascii: ['ascend','asc'],      hasParam: true,  desc: 'Ascend dimensions' },
+            { op: 'descend',    unicode: '\u2296', ascii: ['descend','desc'],     hasParam: true,  desc: 'Descend dimensions' },
+            { op: 'rotateCW',   unicode: '\u27F2', ascii: ['rotateCW','cw'],      hasParam: true,  desc: 'Rotate clockwise' },
+            { op: 'rotateCCW',  unicode: '\u27F3', ascii: ['rotateCCW','ccw'],    hasParam: true,  desc: 'Rotate counter-clockwise' },
+            { op: 'reverse',    unicode: '\u21C4', ascii: ['reverse','rev'],      hasParam: false, desc: 'Polarity reversal' },
+            { op: 'wave',       unicode: '\u223F', ascii: ['wave'],               hasParam: false, desc: 'Wave collapse/expansion' },
+            { op: 'intersect',  unicode: '\u22A0', ascii: ['intersect','mark'],   hasParam: false, desc: 'Mark intersection' },
+            { op: 'parallel',   unicode: '\u2225', ascii: ['parallel','par'],     hasParam: false, desc: 'Parallel mode' },
+            { op: 'orthogonal', unicode: '\u22A5', ascii: ['orthogonal','ortho'], hasParam: false, desc: 'Orthogonal mode' },
+            { op: 'boundary',   unicode: '\u25EC', ascii: ['boundary','bound'],   hasParam: false, desc: 'Cross boundary' },
+            { op: 'recurse',    unicode: '\u221E', ascii: ['recurse','inf'],      hasParam: false, desc: 'Infinite recursion' },
+            { op: 'void',       unicode: '\u2205', ascii: ['void'],               hasParam: false, desc: 'Void traversal' }
+        ];
+
+        // ── Expression parser ──
+        function omniParseExpression(input) {
+            let text = input.trim();
+            if (!text) return { error: 'Empty expression' };
+
+            let origin = null, destination = null, opsText = text;
+
+            // Try to extract α ⟿ [ops] ⟿ ω  (Unicode flow operator)
+            const flowUni = '\u27FF';  // ⟿
+            if (text.includes(flowUni)) {
+                const parts = text.split(flowUni).map(s => s.trim());
+                if (parts.length >= 3) {
+                    origin = parts[0] || null;
+                    destination = parts[parts.length - 1] || null;
+                    opsText = parts.slice(1, -1).join(' ');
+                } else if (parts.length === 2) {
+                    origin = parts[0] || null;
+                    opsText = parts[1];
+                }
+            }
+            // Try ASCII flow operators -> or -->
+            else if (/->/.test(text)) {
+                const parts = text.split(/\s*-+>\s*/);
+                if (parts.length >= 3) {
+                    origin = parts[0] || null;
+                    destination = parts[parts.length - 1] || null;
+                    opsText = parts.slice(1, -1).join(' ');
+                } else if (parts.length === 2) {
+                    origin = parts[0] || null;
+                    opsText = parts[1];
+                }
+            }
+
+            // Tokenize operations
+            const sequence = [];
+            let pos = 0;
+            opsText = opsText.trim();
+
+            while (pos < opsText.length) {
+                // Skip whitespace
+                if (/\s/.test(opsText[pos])) { pos++; continue; }
+
+                let matched = false;
+
+                // Try Unicode symbols
+                for (const def of omniTokenDefs) {
+                    if (opsText[pos] === def.unicode) {
+                        pos++;
+                        let param = 0;
+                        if (def.hasParam && pos < opsText.length && opsText[pos] === '[') {
+                            const close = opsText.indexOf(']', pos);
+                            if (close === -1) return { error: `Unclosed bracket after ${def.unicode}` };
+                            const paramStr = opsText.slice(pos + 1, close).replace(/°/g, '');
+                            param = parseFloat(paramStr);
+                            if (isNaN(param)) return { error: `Invalid parameter "${opsText.slice(pos + 1, close)}" for ${def.op}` };
+                            pos = close + 1;
+                        } else if (def.hasParam) {
+                            param = 1; // default
+                        }
+                        sequence.push({ op: def.op, param });
+                        matched = true;
+                        break;
+                    }
+                }
+                if (matched) continue;
+
+                // Try ASCII keywords (longest match first)
+                const remaining = opsText.slice(pos);
+                let bestMatch = null;
+                for (const def of omniTokenDefs) {
+                    for (const alias of def.ascii) {
+                        if (remaining.toLowerCase().startsWith(alias.toLowerCase())) {
+                            const afterAlias = pos + alias.length;
+                            // Ensure word boundary (not followed by alphanumeric)
+                            if (afterAlias < opsText.length && /[a-zA-Z0-9]/.test(opsText[afterAlias]) && opsText[afterAlias] !== '[') continue;
+                            if (!bestMatch || alias.length > bestMatch.alias.length) {
+                                bestMatch = { def, alias, afterAlias };
+                            }
+                        }
+                    }
+                }
+
+                if (bestMatch) {
+                    pos = bestMatch.afterAlias;
+                    let param = 0;
+                    if (bestMatch.def.hasParam && pos < opsText.length && opsText[pos] === '[') {
+                        const close = opsText.indexOf(']', pos);
+                        if (close === -1) return { error: `Unclosed bracket after ${bestMatch.alias}` };
+                        const paramStr = opsText.slice(pos + 1, close).replace(/°/g, '');
+                        param = parseFloat(paramStr);
+                        if (isNaN(param)) return { error: `Invalid parameter for ${bestMatch.alias}` };
+                        pos = close + 1;
+                    } else if (bestMatch.def.hasParam) {
+                        param = 1;
+                    }
+                    sequence.push({ op: bestMatch.def.op, param });
+                    continue;
+                }
+
+                // Unknown character
+                return { error: `Unexpected token at position ${pos}: "${opsText[pos]}"` };
+            }
+
+            if (sequence.length === 0) return { error: 'No operations found in expression' };
+            return { origin, destination, sequence };
+        }
+
+        // ── Tab switching ──
+        function omniSwitchTab(tabName) {
+            document.querySelectorAll('.omni-tab').forEach(t => t.classList.toggle('active', t.dataset.omnitab === tabName));
+            document.getElementById('omniTabBuild').classList.toggle('active', tabName === 'build');
+            document.getElementById('omniTabReceive').classList.toggle('active', tabName === 'receive');
+        }
+
+        document.querySelector('.omni-tab-bar').addEventListener('click', e => {
+            const tab = e.target.closest('.omni-tab');
+            if (tab) omniSwitchTab(tab.dataset.omnitab);
+        });
+
+        // ── Parse & Graph button ──
+        document.getElementById('omniParseBtn').addEventListener('click', () => {
+            const input = document.getElementById('omniReceiveInput').value;
+            const msg = document.getElementById('omniParseMsg');
+            const result = omniParseExpression(input);
+
+            if (result.error) {
+                msg.textContent = result.error;
+                msg.className = 'omni-parse-msg error';
+                return;
+            }
+
+            // Apply parsed result to the shared engine
+            omniSequence.length = 0;
+            result.sequence.forEach(s => omniSequence.push(s));
+
+            if (result.origin) document.getElementById('omniOrigin').value = result.origin;
+            if (result.destination) document.getElementById('omniDest').value = result.destination;
+
+            omniRenderExpr();
+            omniRenderState();
+            drawOmniVis();
+
+            const states = omniComputeStates();
+            const final_s = states[states.length - 1];
+            msg.textContent = `Parsed ${result.sequence.length} operation${result.sequence.length !== 1 ? 's' : ''} \u2014 d=${final_s.d} \u03B8=${final_s.angle}\u00B0 p=${final_s.polarity > 0 ? '+' : '\u2212'}1 \u03C8=${final_s.wave}`;
+            msg.className = 'omni-parse-msg success';
+
+            // Also add to history
+            const origin = result.origin || '\u03B1';
+            const dest = result.destination || '\u03C9';
+            const exprStr = origin + ' \u27FF ' + omniSequence.map(s => omniSymbols[s.op](s.param)).join('') + ' \u27FF ' + dest;
+            addHistory('omni', exprStr, `d=${final_s.d} \u03B8=${final_s.angle}\u00B0 p=${final_s.polarity > 0 ? '+' : '\u2212'}1`);
+        });
+
+        // ── Autocomplete ──
+        const acEl = document.getElementById('omniAutocomplete');
+        const acInput = document.getElementById('omniReceiveInput');
+        let acIndex = -1;
+
+        function acGetCurrentWord() {
+            const val = acInput.value;
+            const cursor = acInput.selectionStart;
+            // Find word start: scan back from cursor past alphanumeric chars
+            let start = cursor;
+            while (start > 0 && /[a-zA-Z0-9]/.test(val[start - 1])) start--;
+            return { word: val.slice(start, cursor).toLowerCase(), start, end: cursor };
+        }
+
+        function acBuildItems(word) {
+            if (!word || word.length < 1) return [];
+            const items = [];
+            for (const def of omniTokenDefs) {
+                const matches = def.ascii.some(a => a.toLowerCase().startsWith(word));
+                const uniMatch = def.unicode === word;
+                if (matches || uniMatch) {
+                    items.push(def);
+                }
+            }
+            return items;
+        }
+
+        function acRender(items) {
+            if (items.length === 0) { acEl.classList.remove('visible'); return; }
+            acEl.innerHTML = items.map((def, i) =>
+                `<div class="omni-ac-item${i === acIndex ? ' selected' : ''}" data-idx="${i}">` +
+                `<span class="omni-ac-symbol">${def.unicode}</span>` +
+                `<span class="omni-ac-name">${def.ascii[0]}</span>` +
+                `<span class="omni-ac-desc">${def.desc}</span>` +
+                `</div>`
+            ).join('');
+            acEl.classList.add('visible');
+        }
+
+        function acInsert(def) {
+            const { start, end } = acGetCurrentWord();
+            const val = acInput.value;
+            const insert = def.hasParam ? def.unicode + '[' : def.unicode;
+            acInput.value = val.slice(0, start) + insert + val.slice(end);
+            const newPos = start + insert.length;
+            acInput.setSelectionRange(newPos, newPos);
+            acInput.focus();
+            acEl.classList.remove('visible');
+            acIndex = -1;
+        }
+
+        acInput.addEventListener('input', () => {
+            const { word } = acGetCurrentWord();
+            const items = acBuildItems(word);
+            acIndex = items.length > 0 ? 0 : -1;
+            acRender(items);
+        });
+
+        acInput.addEventListener('keydown', e => {
+            if (!acEl.classList.contains('visible')) return;
+            const items = acBuildItems(acGetCurrentWord().word);
+            if (items.length === 0) return;
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                acIndex = (acIndex + 1) % items.length;
+                acRender(items);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                acIndex = (acIndex - 1 + items.length) % items.length;
+                acRender(items);
+            } else if (e.key === 'Enter' || e.key === 'Tab') {
+                if (acIndex >= 0 && acIndex < items.length) {
+                    e.preventDefault();
+                    acInsert(items[acIndex]);
+                }
+            } else if (e.key === 'Escape') {
+                acEl.classList.remove('visible');
+                acIndex = -1;
+            }
+        });
+
+        acEl.addEventListener('click', e => {
+            const item = e.target.closest('.omni-ac-item');
+            if (!item) return;
+            const idx = parseInt(item.dataset.idx);
+            const items = acBuildItems(acGetCurrentWord().word);
+            if (idx >= 0 && idx < items.length) acInsert(items[idx]);
+        });
+
+        // Dismiss autocomplete on outside click
+        document.addEventListener('click', e => {
+            if (!e.target.closest('#omniTabReceive')) {
+                acEl.classList.remove('visible');
+                acIndex = -1;
+            }
+        });
+
+        // Allow Ctrl+Enter to parse
+        acInput.addEventListener('keydown', e => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('omniParseBtn').click();
+            }
+        });
 
         function omniRenderExpr() {
             document.getElementById('omniExprOrigin').textContent = document.getElementById('omniOrigin').value || '\u03B1';

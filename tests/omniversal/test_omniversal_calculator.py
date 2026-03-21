@@ -981,3 +981,296 @@ class TestOmnidirectionalTransforms:
             old_b = s["boundaries"]
             s = omni_apply(s, "boundary")
             assert s["boundaries"] == old_b + 1
+
+
+# ════════════════════════════════════════════════════
+#  RECEIVE & GRAPH -- STRUCTURAL TESTS
+# ════════════════════════════════════════════════════
+
+
+class TestReceiveAndGraphStructure:
+    """Validate the Receive & Graph tab HTML elements exist."""
+
+    def test_has_tab_bar(self, html):
+        assert 'omni-tab-bar' in html, "must have tab bar for Build/Receive modes"
+
+    def test_has_build_tab(self, html):
+        assert 'data-omnitab="build"' in html, "must have Build tab"
+
+    def test_has_receive_tab(self, html):
+        assert 'data-omnitab="receive"' in html, "must have Receive & Graph tab"
+
+    def test_has_build_tab_content(self, html):
+        assert 'id="omniTabBuild"' in html, "must have Build tab content div"
+
+    def test_has_receive_tab_content(self, html):
+        assert 'id="omniTabReceive"' in html, "must have Receive tab content div"
+
+    def test_has_receive_textarea(self, html):
+        assert 'id="omniReceiveInput"' in html, "must have textarea for expression input"
+
+    def test_has_parse_button(self, html):
+        assert 'id="omniParseBtn"' in html, "must have Parse & Graph button"
+
+    def test_has_autocomplete_container(self, html):
+        assert 'id="omniAutocomplete"' in html, "must have autocomplete dropdown"
+
+    def test_has_parse_message_area(self, html):
+        assert 'id="omniParseMsg"' in html, "must have parse status message area"
+
+    def test_has_parser_function(self, html):
+        assert 'omniParseExpression' in html, "must have expression parser function"
+
+    def test_has_token_defs(self, html):
+        assert 'omniTokenDefs' in html, "must have token definitions for parser"
+
+
+# ════════════════════════════════════════════════════
+#  RECEIVE & GRAPH -- PARSER REFERENCE TESTS
+# ════════════════════════════════════════════════════
+
+
+# Python mirror of the JS parser for reference testing
+_TOKEN_DEFS = [
+    {"op": "ascend",     "unicode": "\u2295", "ascii": ["ascend", "asc"],      "hasParam": True},
+    {"op": "descend",    "unicode": "\u2296", "ascii": ["descend", "desc"],     "hasParam": True},
+    {"op": "rotateCW",   "unicode": "\u27F2", "ascii": ["rotatecw", "cw"],      "hasParam": True},
+    {"op": "rotateCCW",  "unicode": "\u27F3", "ascii": ["rotateccw", "ccw"],    "hasParam": True},
+    {"op": "reverse",    "unicode": "\u21C4", "ascii": ["reverse", "rev"],      "hasParam": False},
+    {"op": "wave",       "unicode": "\u223F", "ascii": ["wave"],                "hasParam": False},
+    {"op": "intersect",  "unicode": "\u22A0", "ascii": ["intersect", "mark"],   "hasParam": False},
+    {"op": "parallel",   "unicode": "\u2225", "ascii": ["parallel", "par"],     "hasParam": False},
+    {"op": "orthogonal", "unicode": "\u22A5", "ascii": ["orthogonal", "ortho"], "hasParam": False},
+    {"op": "boundary",   "unicode": "\u25EC", "ascii": ["boundary", "bound"],   "hasParam": False},
+    {"op": "recurse",    "unicode": "\u221E", "ascii": ["recurse", "inf"],      "hasParam": False},
+    {"op": "void",       "unicode": "\u2205", "ascii": ["void"],                "hasParam": False},
+]
+
+
+def omni_parse(text):
+    """Python mirror of the JS omniParseExpression function."""
+    text = text.strip()
+    if not text:
+        return {"error": "Empty expression"}
+
+    origin = None
+    destination = None
+    ops_text = text
+
+    # Try Unicode flow operator ⟿
+    flow_uni = "\u27FF"
+    if flow_uni in text:
+        parts = [p.strip() for p in text.split(flow_uni)]
+        if len(parts) >= 3:
+            origin = parts[0] or None
+            destination = parts[-1] or None
+            ops_text = " ".join(parts[1:-1])
+        elif len(parts) == 2:
+            origin = parts[0] or None
+            ops_text = parts[1]
+    elif "->" in text:
+        parts = re.split(r"\s*-+>\s*", text)
+        if len(parts) >= 3:
+            origin = parts[0] or None
+            destination = parts[-1] or None
+            ops_text = " ".join(parts[1:-1])
+        elif len(parts) == 2:
+            origin = parts[0] or None
+            ops_text = parts[1]
+
+    # Tokenize
+    sequence = []
+    pos = 0
+    ops_text = ops_text.strip()
+
+    while pos < len(ops_text):
+        if ops_text[pos].isspace():
+            pos += 1
+            continue
+
+        matched = False
+
+        # Try Unicode symbols
+        for defn in _TOKEN_DEFS:
+            if ops_text[pos] == defn["unicode"]:
+                pos += 1
+                param = 0
+                if defn["hasParam"] and pos < len(ops_text) and ops_text[pos] == "[":
+                    close = ops_text.find("]", pos)
+                    if close == -1:
+                        return {"error": f"Unclosed bracket after {defn['unicode']}"}
+                    param_str = ops_text[pos + 1:close].replace("°", "")
+                    try:
+                        param = float(param_str)
+                    except ValueError:
+                        return {"error": f"Invalid parameter for {defn['op']}"}
+                    pos = close + 1
+                elif defn["hasParam"]:
+                    param = 1
+                sequence.append({"op": defn["op"], "param": param})
+                matched = True
+                break
+
+        if matched:
+            continue
+
+        # Try ASCII keywords
+        remaining = ops_text[pos:]
+        best_match = None
+        for defn in _TOKEN_DEFS:
+            for alias in defn["ascii"]:
+                if remaining.lower().startswith(alias):
+                    after = pos + len(alias)
+                    if after < len(ops_text) and ops_text[after].isalnum() and ops_text[after] != "[":
+                        continue
+                    if best_match is None or len(alias) > len(best_match[1]):
+                        best_match = (defn, alias, after)
+
+        if best_match:
+            defn, alias, after = best_match
+            pos = after
+            param = 0
+            if defn["hasParam"] and pos < len(ops_text) and ops_text[pos] == "[":
+                close = ops_text.find("]", pos)
+                if close == -1:
+                    return {"error": f"Unclosed bracket after {alias}"}
+                param_str = ops_text[pos + 1:close].replace("°", "")
+                try:
+                    param = float(param_str)
+                except ValueError:
+                    return {"error": f"Invalid parameter for {alias}"}
+                pos = close + 1
+            elif defn["hasParam"]:
+                param = 1
+            sequence.append({"op": defn["op"], "param": param})
+            continue
+
+        return {"error": f"Unexpected token at position {pos}"}
+
+    if not sequence:
+        return {"error": "No operations found in expression"}
+    return {"origin": origin, "destination": destination, "sequence": sequence}
+
+
+class TestExpressionParser:
+    """Reference tests for the omnidirectional expression parser."""
+
+    def test_parse_unicode_full_expression(self):
+        """Earth ⟿ ⊕[3]⟲[90°]◬⊠∿ ⟿ Celestial_Realm"""
+        result = omni_parse("Earth \u27FF \u2295[3]\u27F2[90\u00B0]\u25EC\u22A0\u223F \u27FF Celestial_Realm")
+        assert "error" not in result
+        assert result["origin"] == "Earth"
+        assert result["destination"] == "Celestial_Realm"
+        assert len(result["sequence"]) == 5
+        assert result["sequence"][0] == {"op": "ascend", "param": 3.0}
+        assert result["sequence"][1] == {"op": "rotateCW", "param": 90.0}
+        assert result["sequence"][2] == {"op": "boundary", "param": 0}
+        assert result["sequence"][3] == {"op": "intersect", "param": 0}
+        assert result["sequence"][4] == {"op": "wave", "param": 0}
+
+    def test_parse_unicode_produces_correct_state(self):
+        """Verify the parsed sequence produces the expected traversal state."""
+        result = omni_parse("Earth \u27FF \u2295[3]\u27F2[90\u00B0]\u25EC\u22A0\u223F \u27FF Celestial_Realm")
+        ops = [(s["op"], s["param"]) if s["param"] else (s["op"],) for s in result["sequence"]]
+        state = omni_run(ops)
+        assert state["d"] == 3
+        assert state["angle"] == 90
+        assert state["polarity"] == 1
+        assert state["wave"] == "collapsed"
+        assert state["boundaries"] == 1
+        assert state["intersections"] == 1
+
+    def test_parse_ascii_full_expression(self):
+        result = omni_parse("Earth -> ascend[3] cw[90] boundary intersect wave -> Celestial_Realm")
+        assert "error" not in result
+        assert result["origin"] == "Earth"
+        assert result["destination"] == "Celestial_Realm"
+        assert len(result["sequence"]) == 5
+        assert result["sequence"][0] == {"op": "ascend", "param": 3.0}
+        assert result["sequence"][1] == {"op": "rotateCW", "param": 90.0}
+
+    def test_parse_ascii_shorthand(self):
+        result = omni_parse("A -> asc[2] rev wave -> B")
+        assert "error" not in result
+        assert result["origin"] == "A"
+        assert result["destination"] == "B"
+        assert len(result["sequence"]) == 3
+        assert result["sequence"][0] == {"op": "ascend", "param": 2.0}
+        assert result["sequence"][1] == {"op": "reverse", "param": 0}
+        assert result["sequence"][2] == {"op": "wave", "param": 0}
+
+    def test_parse_mixed_unicode_and_ascii(self):
+        result = omni_parse("Earth \u27FF \u2295[3] cw[90] \u25EC mark \u223F \u27FF Celestial_Realm")
+        assert "error" not in result
+        assert len(result["sequence"]) == 5
+        assert result["sequence"][0]["op"] == "ascend"
+        assert result["sequence"][1]["op"] == "rotateCW"
+        assert result["sequence"][2]["op"] == "boundary"
+        assert result["sequence"][3]["op"] == "intersect"
+        assert result["sequence"][4]["op"] == "wave"
+
+    def test_parse_ops_only_no_origin_dest(self):
+        result = omni_parse("\u2295[2]\u27F2[45\u00B0]")
+        assert "error" not in result
+        assert result["origin"] is None
+        assert result["destination"] is None
+        assert len(result["sequence"]) == 2
+        assert result["sequence"][0] == {"op": "ascend", "param": 2.0}
+        assert result["sequence"][1] == {"op": "rotateCW", "param": 45.0}
+
+    def test_parse_void_sequence(self):
+        result = omni_parse("\u2205\u2295[5]\u223F")
+        assert "error" not in result
+        assert len(result["sequence"]) == 3
+        assert result["sequence"][0]["op"] == "void"
+        assert result["sequence"][1] == {"op": "ascend", "param": 5.0}
+        assert result["sequence"][2]["op"] == "wave"
+        # Verify state: void resets, then ascend 5, then wave toggle
+        ops = [(s["op"], s["param"]) if s["param"] else (s["op"],) for s in result["sequence"]]
+        state = omni_run(ops)
+        assert state["d"] == 5
+        assert state["wave"] == "expanded"  # void sets collapsed, wave toggles to expanded
+
+    def test_parse_all_parameterless_ops(self):
+        result = omni_parse("\u21C4\u223F\u22A0\u2225\u22A5\u25EC\u221E\u2205")
+        assert "error" not in result
+        assert len(result["sequence"]) == 8
+        ops = [s["op"] for s in result["sequence"]]
+        assert ops == ["reverse", "wave", "intersect", "parallel",
+                       "orthogonal", "boundary", "recurse", "void"]
+
+    def test_parse_error_invalid_token(self):
+        result = omni_parse("Earth \u27FF !@# \u27FF Dest")
+        assert "error" in result
+
+    def test_parse_error_unclosed_bracket(self):
+        result = omni_parse("\u2295[3")
+        assert "error" in result
+
+    def test_parse_error_empty(self):
+        result = omni_parse("")
+        assert "error" in result
+
+    def test_parse_ascii_arrow_variants(self):
+        """Both -> and --> should work as flow operators."""
+        r1 = omni_parse("A -> ascend[1] -> B")
+        r2 = omni_parse("A --> ascend[1] --> B")
+        assert "error" not in r1
+        assert "error" not in r2
+        assert r1["origin"] == r2["origin"] == "A"
+        assert r1["destination"] == r2["destination"] == "B"
+
+    def test_parse_default_param_for_parameterized_ops(self):
+        """Parameterized ops without brackets default to param=1."""
+        result = omni_parse("\u2295\u2296")
+        assert "error" not in result
+        assert result["sequence"][0] == {"op": "ascend", "param": 1}
+        assert result["sequence"][1] == {"op": "descend", "param": 1}
+
+    def test_parse_ascii_case_insensitive(self):
+        result = omni_parse("Ascend[5] WAVE Boundary")
+        assert "error" not in result
+        assert len(result["sequence"]) == 3
+        assert result["sequence"][0]["op"] == "ascend"
+        assert result["sequence"][1]["op"] == "wave"
+        assert result["sequence"][2]["op"] == "boundary"
