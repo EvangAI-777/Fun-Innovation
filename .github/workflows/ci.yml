@@ -61,3 +61,33 @@ jobs:
         run: pip install pytest
       - name: Run omniversal tests
         run: pytest tests/omniversal/ -v
+
+  automuse:
+    name: AutoMuse Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        working-directory: Audio Innovations/AutoMuse
+        run: pip install -e . pytest
+      - name: Run tests
+        working-directory: Audio Innovations/AutoMuse
+        run: python -m pytest ../../tests/automuse/ -v
+
+  mcstudio:
+    name: Minecraft Studio Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        working-directory: Minecraft Innovations/Minecraft Studio
+        run: pip install -e . pytest
+      - name: Run tests
+        working-directory: Minecraft Innovations/Minecraft Studio
+        run: python -m pytest ../../tests/mcstudio/ -v
