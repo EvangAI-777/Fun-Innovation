@@ -45,3 +45,14 @@ make clean            # Remove __pycache__, *.egg-info, dist/, build/
 - **Roblox project pattern** — Every Roblox project uses a 4-script modular architecture (Server, Client, Config, Shared) documented in its `SETUP.md`.
 - **Python packages** — GeoVox, AutoMuse, and Minecraft Studio are installable packages with CLI entry points (`geovox`, `automuse`, `mcstudio`).
 - **Tests live in `tests/`** — All test files are in the top-level `tests/` directory, organized by project. AutoMuse and Minecraft Studio tests must run from their package directory (see Makefile).
+
+## CI & Deployment
+
+- **CI** (`.github/workflows/ci.yml`) runs on push to main/master and on PRs. Jobs: GeoVox (Python 3.10 + 3.12), Roblox, Originals, Omniversal, AutoMuse, Minecraft Studio.
+- **GitHub Pages** (`.github/workflows/pages.yml`) deploys the repo as a static site on push to main/master. Browser-based projects (Omniversal Calculator, Omni Writer, OvertaleRPG) are accessible via Pages.
+
+## Style Notes
+
+- No linter, formatter, or type checker is configured. Don't add one unless asked.
+- Respect the experimental, creative tone. Don't impose enterprise patterns.
+- Projects are organized by creative theme — keep it that way.
