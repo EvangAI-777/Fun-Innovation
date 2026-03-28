@@ -51,6 +51,16 @@ make clean            # Remove __pycache__, *.egg-info, dist/, build/
 - **CI** (`.github/workflows/ci.yml`) runs on push to main/master and on PRs. Jobs: GeoVox (Python 3.10 + 3.12), Roblox, Originals, Omniversal, AutoMuse, Minecraft Studio.
 - **GitHub Pages** (`.github/workflows/pages.yml`) deploys the repo as a static site on push to main/master. Browser-based projects (Omniversal Calculator, Omni Writer, OvertaleRPG) are accessible via Pages.
 
+## Commit & Push Strategy
+
+**CRITICAL: Commit and push small, logical units — never batch large-scale file revisions into a single massive commit.**
+
+- **Small logical commits** — After completing each logical section of work (e.g., one file updated, one feature added, one bug fixed), commit and push immediately. Do not accumulate dozens of file changes before committing.
+- **Why this matters** — Large-scale commits risk hitting push failures, context window limits, and network timeouts. When a large push fails partway through, the entire session stalls — wasting time, tokens, and money while Claude retries or the user has to intervene. Small pushes succeed reliably and make progress incremental and recoverable.
+- **The cost of batching** — Trying to stage and push 10+ file changes at once often leads to: git errors that require manual cleanup, exceeded context from reviewing too many diffs at once, and wasted API credits from Claude spinning on retry loops or re-reading the same files. A failed large push can burn significant credits with zero progress to show for it.
+- **The right workflow** — Edit a logical unit of files, commit with a clear message describing that unit, push, then move to the next unit. Each push should be small enough that if it fails, retrying is trivial. This keeps the session productive and the user's costs low.
+- **Example** — If updating 5 Roblox projects, commit and push each project separately rather than editing all 5 and trying to push everything at the end.
+
 ## Style Notes
 
 - No linter, formatter, or type checker is configured. Don't add one unless asked.
