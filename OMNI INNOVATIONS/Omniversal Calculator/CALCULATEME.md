@@ -24,7 +24,7 @@ Every universe has a genuine math engine behind it. These aren't toy implementat
 
 ### Universe Guide
 
-**Real Numbers (R)** -- A full expression-based scientific calculator styled after the Google/Android scientific calculator. Dark theme with four distinct button categories: light blue-gray scientific functions, cyan AC button, dark charcoal number pad, medium gray operators, and a lavender equals button. The display is fully modular -- every button press inserts into the expression at the cursor position rather than replacing it, and a blinking cursor shows where input goes. Click anywhere in the expression to reposition the cursor. Arrow keys (Left/Right/Home/End) navigate the cursor; Delete removes the character after it. Live result preview appears above the expression as you type. A recursive-descent parser evaluates expressions with proper operator precedence (parentheses > functions > exponents > multiply/divide > add/subtract), implicit multiplication (e.g., 2pi = 2*pi), and postfix operators (! for factorial, % for percentage). Features: trig functions (with Deg/Rad toggle and Inv mode for asin/acos/atan), factorial, powers, roots, logarithms, constants (pi, e), percentage, and smart parentheses. Keys: 0-9, +, -, *, /, ^, !, %, (, ), Arrow keys, Enter, Backspace, Delete, Escape.
+**Real Numbers (R)** -- A full expression-based scientific calculator with pill-shaped buttons in the unified site-wide palette. Five button categories: deep purple scientific functions, purple-glow AC button, void-dark number pad, surface-dark operators, and a bright purple equals button. The display is fully modular -- every button press inserts into the expression at the cursor position rather than replacing it, and a blinking cursor shows where input goes. Click anywhere in the expression to reposition the cursor. Arrow keys (Left/Right/Home/End) navigate the cursor; Delete removes the character after it. Live result preview appears above the expression as you type. A recursive-descent parser evaluates expressions with proper operator precedence (parentheses > functions > exponents > multiply/divide > add/subtract), implicit multiplication (e.g., 2pi = 2*pi), and postfix operators (! for factorial, % for percentage). Features: trig functions (with Deg/Rad toggle and Inv mode for asin/acos/atan), factorial, powers, roots, logarithms, constants (pi, e), percentage, and smart parentheses. Keys: 0-9, +, -, *, /, ^, !, %, (, ), Arrow keys, Enter, Backspace, Delete, Escape.
 
 **Complex Numbers (C)** -- Enter two complex numbers z1 and z2 as real + imaginary parts. Supports addition, subtraction, multiplication, division, modulus, argument, conjugate, and squaring. Includes a live Argand diagram that plots z1 and the result on the complex plane with a dashed line from the origin.
 
@@ -52,7 +52,7 @@ Both modes share the state grid (dimension level, angle, polarity, wave state, b
 
 **Single file.** Everything -- HTML structure, CSS styles, JavaScript engines, starfield animation -- lives in one `.html` file. No dependencies, no build tools, no frameworks.
 
-**Dark theme.** Deep space aesthetic with a twinkling starfield background. Each universe has its own accent color that tints the entire interface when selected. The Real universe features a Google/Android scientific calculator-inspired design with pill-shaped buttons in four color categories: light blue-gray for scientific functions, cyan for AC, dark charcoal for the number pad, medium gray for operators, and lavender for the equals button.
+**Dark theme.** Deep space aesthetic with a twinkling starfield background. Each universe has its own accent color that tints the entire interface when selected. The Real universe features pill-shaped buttons in the unified site-wide palette: deep purple for scientific functions, purple-glow for AC, void-dark for the number pad, surface-dark for operators, and bright purple for the equals button.
 
 **Responsive.** Flexbox and CSS Grid with media queries at 600px and 380px breakpoints. The calculator works on phones, tablets, and desktops. Universe orbs shrink, button grids reorganize, matrix inputs compact.
 
@@ -101,6 +101,7 @@ All notable changes to the Omniversal Calculator are documented here.
 
 ### Changed
 - **Unified default accent** -- Default and Real universe accent color changed from #58a6ff (blue) to #c084fc (purple) to match the site-wide unified palette. Per-universe accent colors for the other 8 mathematical universes are preserved.
+- **Unified Real universe button panel** -- Real calculator button colors replaced from Google/Android Material Design palette to the site-wide unified palette. Number pad (#161640), scientific functions (#252550), operators (#10102a), AC (purple glow), and equals (#c084fc) now match the rest of the site.
 
 ## [v1.4.0] - 2026-03-21
 
