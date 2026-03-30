@@ -25,7 +25,7 @@ All data stays in your browser. Nothing is sent to any server -- except when AI 
 
 ### Writing Canvas
 
-A `contentEditable` rich text surface with comfortable line spacing (1.85), a maximum content width of 800px for readable line lengths, and a blinking indigo cursor. Headings render in the primary palette colors (H1 in bright, H2 in primary, H3 in dim). Blockquotes get an indigo left border and italic styling. The placeholder text disappears as soon as you start typing.
+A `contentEditable` rich text surface with comfortable line spacing (1.85), a maximum content width of 800px for readable line lengths, and a blinking purple cursor. Headings render in the primary palette colors (H1 in bright, H2 in primary, H3 in dim). Blockquotes get a purple left border and italic styling. The placeholder text disappears as soon as you start typing.
 
 ### Rich Text Formatting
 
@@ -64,7 +64,7 @@ Export your entire story (all chapters) as a single file in three formats:
 
 - **Plain Text (.txt)** -- Extracts the raw text content. Multi-chapter stories get chapter headings separated by dividers.
 - **Markdown (.md)** -- Converts the rich text to markdown syntax. Bold becomes `**bold**`, italic becomes `*italic*`, headings become `#` markers, lists become `- ` or `1. ` prefixes, blockquotes become `> ` lines.
-- **HTML (.html)** -- Generates a self-contained HTML document with the same dark indigo theme, inline styles, and a "Written with Omni Writer" footer. Open it in any browser for a polished reading experience.
+- **HTML (.html)** -- Generates a self-contained HTML document with the same dark purple theme, inline styles, and a "Written with Omni Writer" footer. Open it in any browser for a polished reading experience.
 
 ### Writing Statistics
 
@@ -123,7 +123,7 @@ This checkpoint happens unobtrusively in the corner, never interrupting your wri
 
 **Single file.** Everything -- HTML structure, CSS styles, JavaScript logic, starfield animation -- lives in one `.html` file. No dependencies, no build tools, no frameworks, no CDN imports.
 
-**Dark indigo theme.** Material Design 3 palette from the original `Omni Writer.json` config. Deep void backgrounds (#06060e, #0a0a16) with indigo/blue-violet accents (#9aa5fd primary, #bcc2ff bright, #6570c4 dim). The color scheme creates a focused, immersive writing environment.
+**Dark purple theme.** Unified site-wide palette with deep void backgrounds (#06060e, #0a0a16) and bright purple accents (#c084fc primary, #d4a8ff bright, #9a6abf dim). The color scheme creates a focused, immersive writing environment consistent with the rest of the Fun-Innovation site.
 
 **Responsive.** Flexbox layout with media queries at 768px (sidebar collapses to an overlay toggle) and 480px (toolbar and canvas adapt to narrow screens). The writing experience works on phones, tablets, and desktops.
 
@@ -145,25 +145,30 @@ The HTML app implements the same creative philosophy -- write about anything, wi
 
 | Element | Hex | Source |
 |---------|-----|--------|
-| Void background | #06060e | Repo convention |
-| Surface | #0a0a16 | Repo convention |
-| Surface variant | #10102a | Repo convention (indigo tint) |
-| Primary | #9aa5fd | JSON primary-70 |
-| Primary bright | #bcc2ff | JSON primary-80 |
-| Primary dim | #6570c4 | JSON primary-50 |
-| Primary deep | #4c57a9 | JSON primary-40 |
-| Secondary | #74758b | JSON secondary-50 |
-| Error | #ff5449 | JSON error-60 |
-| Success | #a3be8c | Repo convention |
-| Text primary | #e4e1e6 | JSON neutral-90 |
-| Text secondary | #78767a | JSON neutral-50 |
-| Border | #303034 | JSON neutral-20 |
+| Void background | #06060e | Site-wide palette |
+| Surface | #0a0a16 | Site-wide palette |
+| Surface variant | #10102a | Site-wide palette (purple tint) |
+| Primary | #c084fc | Site-wide unified accent |
+| Primary bright | #d4a8ff | Accent hover variant |
+| Primary dim | #9a6abf | Accent subdued variant |
+| Primary deep | #7a4fa0 | Accent deep variant |
+| Secondary | #9898b8 | Site-wide secondary text |
+| Error | #ff5449 | Semantic (unchanged) |
+| Success | #a3be8c | Semantic (unchanged) |
+| Text primary | #e0e0f0 | Site-wide text |
+| Text secondary | #7878a0 | Site-wide muted text |
+| Border | #252550 | Site-wide border |
 
 ---
 
 # Changelog
 
 All notable changes to the Omni Writer are documented here.
+
+## [v2.0.1] - 2026-03-30
+
+### Changed
+- **Unified color scheme** -- Accent color changed from periwinkle (#9aa5fd) to bright purple (#c084fc) to match the site-wide palette. All color variants (bright, dim, deep, glow), borders (#252550), and text colors (#e0e0f0, #7878a0) aligned with the Fun-Innovation unified theme. Export HTML template colors updated to match.
 
 ## [v2.0.0] - 2026-02-20
 
@@ -185,10 +190,10 @@ All notable changes to the Omni Writer are documented here.
 - **Story continuation** -- multi-chapter support with tabbed navigation, add/remove/rename chapters, automatic save on chapter switch.
 - **Topic system** -- editable title/topic input per story, matching the Omni Writer persona's "always asking the user what they want" philosophy.
 - **Auto-save** -- debounced 3-second auto-save on every input event, with save status indicator.
-- **Export** -- download stories as plain text (.txt), markdown (.md), or self-contained HTML (.html) with the dark indigo theme.
+- **Export** -- download stories as plain text (.txt), markdown (.md), or self-contained HTML (.html) with the dark purple theme.
 - **Writing statistics** -- real-time word count, character count, paragraph count, and estimated reading time.
 - **Keyboard shortcuts** -- Ctrl+B/I/U for formatting, Ctrl+S to save, Ctrl+E for export, Escape to close modals.
-- **Dark indigo theme** -- Material Design 3 palette from the original Omni Writer.json config.
+- **Dark purple theme** -- unified site-wide palette with bright purple (#c084fc) accent.
 - **Animated starfield** -- twinkling background matching the repo's visual aesthetic.
 - **Responsive design** -- breakpoints at 768px (sidebar overlay) and 480px (compact layout).
 - **Accessible** -- skip link, ARIA labels, semantic HTML, keyboard navigation.
