@@ -81,7 +81,7 @@ Run with: `make test-omniversal`
 
 | Universe | Accent |
 |----------|--------|
-| Real | #58a6ff (blue) |
+| Real | #c084fc (purple) |
 | Complex | #b48ead (purple) |
 | Modular | #a3be8c (green) |
 | Matrix | #88c0d0 (cyan) |
@@ -96,6 +96,11 @@ Run with: `make test-omniversal`
 # Changelog
 
 All notable changes to the Omniversal Calculator are documented here.
+
+## [v1.4.1] - 2026-03-30
+
+### Changed
+- **Unified default accent** -- Default and Real universe accent color changed from #58a6ff (blue) to #c084fc (purple) to match the site-wide unified palette. Per-universe accent colors for the other 8 mathematical universes are preserved.
 
 ## [v1.4.0] - 2026-03-21
 
