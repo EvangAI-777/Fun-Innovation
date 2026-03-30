@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Academic Schedule Planner</title>
     <meta name="description" content="Dynamic academic schedule planner with OCR document scanning for automatic assignment extraction.">
-    <meta name="theme-color" content="#1a1a1a">
+    <meta name="theme-color" content="#06060e">
     <!-- Tesseract.js for OCR -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <!-- PDF.js for PDF rendering -->
@@ -18,8 +18,8 @@
         }
 
         body {
-            background: #1a1a1a;
-            color: #e0e0e0;
+            background: #06060e;
+            color: #e0e0f0;
             font-family: 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             padding: 20px;
@@ -33,7 +33,7 @@
         h1 {
             text-align: center;
             margin-bottom: 20px;
-            color: #fff;
+            color: #e0e0f0;
             font-weight: 400;
         }
 
@@ -46,10 +46,10 @@
 
         .toolbar button {
             padding: 10px 20px;
-            background: #2d4a3e;
+            background: #161640;
             border: none;
             border-radius: 4px;
-            color: #fff;
+            color: #e0e0f0;
             cursor: pointer;
             font-family: inherit;
             font-size: 0.9em;
@@ -57,30 +57,30 @@
         }
 
         .toolbar button:hover {
-            background: #3d5a4e;
+            background: #1e1e50;
         }
 
         .toolbar button.danger {
-            background: #4a2d2d;
+            background: #4a1a1a;
         }
 
         .toolbar button.danger:hover {
-            background: #5a3d3d;
+            background: #5a2a2a;
         }
 
         .toolbar button.ocr-btn {
-            background: #4a3d6e;
+            background: rgba(192,132,252,0.2);
         }
 
         .toolbar button.ocr-btn:hover {
-            background: #5a4d7e;
+            background: rgba(192,132,252,0.3);
         }
 
         .save-status {
             margin-left: auto;
             display: flex;
             align-items: center;
-            color: #888;
+            color: #9898b8;
             font-size: 0.85em;
         }
 
@@ -90,7 +90,7 @@
 
         .table-container {
             overflow-x: auto;
-            border: 1px solid #333;
+            border: 1px solid #252550;
             border-radius: 4px;
         }
 
@@ -101,15 +101,15 @@
         }
 
         thead {
-            background: #2a4a5a;
+            background: #161640;
         }
 
         th {
             padding: 12px 15px;
             text-align: left;
             font-weight: 500;
-            color: #fff;
-            border-bottom: 2px solid #444;
+            color: #e0e0f0;
+            border-bottom: 2px solid #252550;
             white-space: nowrap;
         }
 
@@ -121,25 +121,25 @@
         th.col-actions { width: 80px; text-align: center; }
 
         tbody tr {
-            background: #252525;
-            border-bottom: 1px solid #333;
+            background: #0a0a16;
+            border-bottom: 1px solid #252550;
         }
 
         tbody tr:nth-child(even) {
-            background: #2a2a2a;
+            background: #10102a;
         }
 
         tbody tr:hover {
-            background: #303030;
+            background: #161640;
         }
 
         tbody tr.selected {
-            background: #2d3a4a;
+            background: #10102a;
         }
 
         td {
             padding: 8px 10px;
-            border-right: 1px solid #333;
+            border-right: 1px solid #252550;
         }
 
         td:last-child {
@@ -152,19 +152,19 @@
             background: transparent;
             border: 1px solid transparent;
             border-radius: 3px;
-            color: #e0e0e0;
+            color: #e0e0f0;
             font-family: inherit;
             font-size: 0.95em;
         }
 
         td input:focus {
-            background: #1a1a1a;
-            border-color: #4a6a8a;
+            background: #06060e;
+            border-color: #c084fc;
             outline: none;
         }
 
         td input::placeholder {
-            color: #555;
+            color: #7878a0;
         }
 
         .actions-cell {
@@ -174,7 +174,7 @@
         .delete-btn {
             background: transparent;
             border: none;
-            color: #666;
+            color: #7878a0;
             cursor: pointer;
             padding: 5px 10px;
             font-size: 1.2em;
@@ -183,26 +183,26 @@
         }
 
         .delete-btn:hover {
-            background: #4a2d2d;
+            background: #4a1a1a;
             color: #e55;
         }
 
         .row-handle {
             cursor: grab;
-            color: #555;
+            color: #7878a0;
             padding: 5px;
         }
 
         .row-handle:hover {
-            color: #888;
+            color: #9898b8;
         }
 
         .credit {
             text-align: center;
             margin-top: 20px;
             padding-top: 15px;
-            border-top: 1px solid #333;
-            color: #666;
+            border-top: 1px solid #252550;
+            color: #444468;
             font-style: italic;
             font-size: 0.85em;
         }
@@ -210,12 +210,12 @@
         .empty-message {
             text-align: center;
             padding: 40px;
-            color: #555;
+            color: #7878a0;
         }
 
         /* Row number column */
         .row-num {
-            color: #555;
+            color: #7878a0;
             text-align: center;
             width: 40px;
             font-size: 0.85em;
@@ -230,7 +230,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
+            background: rgba(6,6,14,0.85);
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -241,7 +241,7 @@
         }
 
         .modal-content {
-            background: #252525;
+            background: #0a0a16;
             padding: 25px;
             border-radius: 8px;
             max-width: 600px;
@@ -252,16 +252,16 @@
 
         .modal-content h2 {
             margin-bottom: 15px;
-            color: #fff;
+            color: #e0e0f0;
         }
 
         .modal-content textarea {
             width: 100%;
             height: 200px;
-            background: #1a1a1a;
-            border: 1px solid #444;
+            background: #06060e;
+            border: 1px solid #252550;
             border-radius: 4px;
-            color: #e0e0e0;
+            color: #e0e0f0;
             padding: 10px;
             font-family: monospace;
             font-size: 0.85em;
@@ -284,18 +284,18 @@
         }
 
         .modal-buttons .cancel {
-            background: #444;
-            color: #fff;
+            background: #252550;
+            color: #e0e0f0;
         }
 
         .modal-buttons .confirm {
-            background: #2d4a3e;
-            color: #fff;
+            background: #161640;
+            color: #e0e0f0;
         }
 
         /* OCR Upload styles */
         .upload-area {
-            border: 2px dashed #444;
+            border: 2px dashed #252550;
             border-radius: 8px;
             padding: 40px 20px;
             text-align: center;
@@ -305,13 +305,13 @@
         }
 
         .upload-area:hover {
-            border-color: #6a5d8e;
-            background: rgba(106, 93, 142, 0.1);
+            border-color: #c084fc;
+            background: rgba(192, 132, 252, 0.1);
         }
 
         .upload-area.dragover {
-            border-color: #8a7dae;
-            background: rgba(106, 93, 142, 0.2);
+            border-color: #d4a8ff;
+            background: rgba(192, 132, 252, 0.2);
         }
 
         .upload-area input {
@@ -324,26 +324,26 @@
         }
 
         .upload-text {
-            color: #888;
+            color: #9898b8;
             margin-bottom: 5px;
         }
 
         .upload-hint {
-            color: #555;
+            color: #7878a0;
             font-size: 0.85em;
         }
 
         .ocr-note {
-            background: #2a3a4a;
-            border-left: 3px solid #4a6a8a;
+            background: #10102a;
+            border-left: 3px solid #c084fc;
             padding: 12px 15px;
             margin-bottom: 20px;
             font-size: 0.85em;
-            color: #aaa;
+            color: #9898b8;
         }
 
         .ocr-note strong {
-            color: #8ab;
+            color: #c084fc;
         }
 
         .progress-container {
@@ -357,7 +357,7 @@
 
         .progress-bar {
             height: 8px;
-            background: #333;
+            background: #252550;
             border-radius: 4px;
             overflow: hidden;
             margin-bottom: 10px;
@@ -365,13 +365,13 @@
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #4a3d6e, #6a5d8e);
+            background: linear-gradient(90deg, #c084fc, #d4a8ff);
             width: 0%;
             transition: width 0.3s;
         }
 
         .progress-text {
-            color: #888;
+            color: #9898b8;
             font-size: 0.85em;
             text-align: center;
         }
@@ -386,14 +386,14 @@
         }
 
         .ocr-preview h3 {
-            color: #fff;
+            color: #e0e0f0;
             margin-bottom: 10px;
             font-size: 0.95em;
         }
 
         .ocr-preview-content {
-            background: #1a1a1a;
-            border: 1px solid #333;
+            background: #06060e;
+            border: 1px solid #252550;
             border-radius: 4px;
             padding: 15px;
             max-height: 200px;
@@ -401,7 +401,7 @@
             font-family: monospace;
             font-size: 0.8em;
             white-space: pre-wrap;
-            color: #aaa;
+            color: #9898b8;
         }
 
         .extracted-items {
@@ -409,8 +409,8 @@
         }
 
         .extracted-item {
-            background: #1a1a1a;
-            border: 1px solid #333;
+            background: #06060e;
+            border: 1px solid #252550;
             border-radius: 4px;
             padding: 10px;
             margin-bottom: 8px;
@@ -430,14 +430,14 @@
         }
 
         .extracted-item-field {
-            color: #888;
+            color: #9898b8;
         }
-        .skip-link { position:absolute;top:-100%;left:16px;background:#58a6ff;color:#1a1a1a;padding:8px 16px;border-radius:0 0 6px 6px;font-size:0.85em;font-weight:600;text-decoration:none;z-index:10000; }
+        .skip-link { position:absolute;top:-100%;left:16px;background:#c084fc;color:#06060e;padding:8px 16px;border-radius:0 0 6px 6px;font-size:0.85em;font-weight:600;text-decoration:none;z-index:10000; }
         .skip-link:focus { top:0; }
         .home-btn { position:fixed;top:14px;left:14px;z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:10px 18px;min-height:44px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;color:#aaa;text-decoration:none;font-family:'Segoe UI',system-ui,sans-serif;font-size:0.85em;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:background 0.2s,color 0.2s; }
         .home-btn:hover,.home-btn:focus-visible { background:rgba(255,255,255,0.14);color:#fff; }
         .home-btn:focus-visible { outline:2px solid #fff;outline-offset:2px; }
-        button:focus-visible, select:focus-visible, input:focus-visible { outline:2px solid #58a6ff;outline-offset:2px; }
+        button:focus-visible, select:focus-visible, input:focus-visible { outline:2px solid #c084fc;outline-offset:2px; }
         @media (max-width:768px) {
             .toolbar { flex-direction:column; }
             .table-container { font-size:0.85em; }
