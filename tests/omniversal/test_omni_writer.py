@@ -198,8 +198,8 @@ class TestStructure:
         assert "skip-link" in html, "must have skip link for accessibility"
 
     def test_has_material_design_palette(self, html):
-        # At least the primary accent from the JSON palette
-        assert "#9aa5fd" in html, "must use primary-70 from JSON palette"
+        # At least the primary accent from the unified palette
+        assert "#c084fc" in html, "must use primary accent from unified palette"
 
     def test_has_autosave(self, html):
         assert "autoSave" in html.replace("-", "").replace("_", ""), \
