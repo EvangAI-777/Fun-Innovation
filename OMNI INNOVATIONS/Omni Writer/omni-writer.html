@@ -15,18 +15,18 @@
             --bg-secondary: #10102a;
             --bg-panel: #161640;
             --bg-input: #0e0e24;
-            --primary: #9aa5fd;
-            --primary-bright: #bcc2ff;
-            --primary-dim: #6570c4;
-            --primary-deep: #4c57a9;
-            --primary-glow: rgba(154, 165, 253, 0.15);
-            --primary-glow-strong: rgba(154, 165, 253, 0.35);
-            --secondary: #74758b;
-            --secondary-dim: #5b5d72;
-            --text-primary: #e4e1e6;
-            --text-secondary: #78767a;
-            --border: #303034;
-            --border-dim: #1b1b1f;
+            --primary: #c084fc;
+            --primary-bright: #d4a8ff;
+            --primary-dim: #9a6abf;
+            --primary-deep: #7a4fa0;
+            --primary-glow: rgba(192, 132, 252, 0.15);
+            --primary-glow-strong: rgba(192, 132, 252, 0.35);
+            --secondary: #9898b8;
+            --secondary-dim: #7878a0;
+            --text-primary: #e0e0f0;
+            --text-secondary: #7878a0;
+            --border: #252550;
+            --border-dim: #1a1a3a;
             --error: #ff5449;
             --error-dim: rgba(255, 84, 73, 0.15);
             --success: #a3be8c;
@@ -1838,7 +1838,7 @@
                 let body = '';
                 for (const ch of story.chapters) {
                     if (story.chapters.length > 1) {
-                        body += '<h2 style="color:#bcc2ff;margin:1.5em 0 0.5em;">' + escapeHtml(ch.title) + '</h2>\n';
+                        body += '<h2 style="color:#d4a8ff;margin:1.5em 0 0.5em;">' + escapeHtml(ch.title) + '</h2>\n';
                     }
                     body += (ch.content || '') + '\n';
                 }
@@ -1849,14 +1849,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${escapeHtml(story.title)}</title>
 <style>
-body{background:#06060e;color:#e4e1e6;font-family:'Segoe UI',system-ui,sans-serif;max-width:720px;margin:0 auto;padding:40px 24px 80px;line-height:1.85;font-size:1.05em;}
-h1{color:#bcc2ff;font-size:1.8em;margin-bottom:0.5em;border-bottom:1px solid #303034;padding-bottom:0.3em;}
-h2{color:#9aa5fd;font-size:1.3em;margin:1.2em 0 0.4em;}
-h3{color:#6570c4;font-size:1.1em;margin:0.8em 0 0.3em;}
+body{background:#06060e;color:#e0e0f0;font-family:'Segoe UI',system-ui,sans-serif;max-width:720px;margin:0 auto;padding:40px 24px 80px;line-height:1.85;font-size:1.05em;}
+h1{color:#d4a8ff;font-size:1.8em;margin-bottom:0.5em;border-bottom:1px solid #252550;padding-bottom:0.3em;}
+h2{color:#c084fc;font-size:1.3em;margin:1.2em 0 0.4em;}
+h3{color:#9a6abf;font-size:1.1em;margin:0.8em 0 0.3em;}
 p{margin-bottom:0.8em;}
-blockquote{border-left:3px solid #6570c4;padding-left:16px;color:#78767a;font-style:italic;margin:0.8em 0;}
-hr{border:none;border-top:1px solid #303034;margin:1.5em 0;}
-a{color:#9aa5fd;}
+blockquote{border-left:3px solid #9a6abf;padding-left:16px;color:#7878a0;font-style:italic;margin:0.8em 0;}
+hr{border:none;border-top:1px solid #252550;margin:1.5em 0;}
+a{color:#c084fc;}
 ul,ol{margin:0.5em 0 0.5em 1.5em;}
 li{margin-bottom:0.3em;}
 </style>
@@ -1864,7 +1864,7 @@ li{margin-bottom:0.3em;}
 <body>
 <h1>${escapeHtml(story.title)}</h1>
 ${body}
-<footer style="margin-top:3em;padding-top:1em;border-top:1px solid #303034;font-size:0.75em;color:#78767a;text-align:center;">
+<footer style="margin-top:3em;padding-top:1em;border-top:1px solid #252550;font-size:0.75em;color:#7878a0;text-align:center;">
 Written with Omni Writer
 </footer>
 </body>
