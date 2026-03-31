@@ -1177,6 +1177,35 @@
         .ai-generated {
             border-bottom: 1px dotted var(--primary-dim);
         }
+        .ai-para-wrapper {
+            position: relative;
+        }
+        .ai-para-wrapper:hover .ai-para-ratings {
+            opacity: 1;
+        }
+        .ai-para-ratings {
+            position: absolute;
+            right: -36px;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+        .ai-rate-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-secondary);
+            font-size: 0.75em;
+            padding: 2px 4px;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .ai-rate-btn:hover { color: var(--text-primary); border-color: var(--primary-dim); }
+        .ai-rate-btn.rated-up { color: var(--success); border-color: var(--success); }
+        .ai-rate-btn.rated-down { color: var(--error); border-color: var(--error); }
 
         /* ── Settings additions ── */
         .settings-label {
@@ -2491,18 +2520,50 @@ Written with Omni Writer
             }
         }
 
+        function addRatingButtons(wrapper) {
+            const ratings = document.createElement('div');
+            ratings.className = 'ai-para-ratings';
+            ratings.innerHTML = '<button class="ai-rate-btn" data-rate="up" title="Good">&#9650;</button>' +
+                '<button class="ai-rate-btn" data-rate="down" title="Needs work">&#9660;</button>';
+            ratings.querySelectorAll('.ai-rate-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const rate = btn.dataset.rate;
+                    ratings.querySelectorAll('.ai-rate-btn').forEach(b => {
+                        b.classList.remove('rated-up', 'rated-down');
+                    });
+                    btn.classList.add('rated-' + rate);
+                });
+            });
+            wrapper.appendChild(ratings);
+        }
+
         function finalizeStreamedText(span, text) {
             const paragraphs = text.split(/\n\n+/).filter(p => p.trim());
-            if (paragraphs.length <= 1) return [span];
+            if (paragraphs.length <= 1) {
+                if (span.textContent.trim()) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'ai-para-wrapper';
+                    span.parentNode.insertBefore(wrapper, span);
+                    wrapper.appendChild(span);
+                    addRatingButtons(wrapper);
+                    return [wrapper];
+                }
+                return [span];
+            }
 
             const nodes = [];
             const fragment = document.createDocumentFragment();
             for (const p of paragraphs) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'ai-para-wrapper';
                 const pEl = document.createElement('p');
                 pEl.className = 'ai-generated';
                 pEl.textContent = p.replace(/\n/g, ' ').trim();
-                fragment.appendChild(pEl);
-                nodes.push(pEl);
+                wrapper.appendChild(pEl);
+                addRatingButtons(wrapper);
+                fragment.appendChild(wrapper);
+                nodes.push(wrapper);
             }
             span.replaceWith(fragment);
             return nodes;
