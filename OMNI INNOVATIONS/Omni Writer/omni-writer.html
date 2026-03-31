@@ -1478,6 +1478,10 @@
             <label class="settings-label" style="margin-top:12px; display:flex; align-items:center; gap:8px; cursor:pointer;">
                 <input type="checkbox" id="settingsOneParagraph" style="cursor:pointer;"> One paragraph at a time
             </label>
+            <label class="settings-label" style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                <input type="checkbox" id="settingsPurpleProseGuard" style="cursor:pointer;"> Purple prose guard
+            </label>
+            <p class="settings-hint">Prevents overwrought, flowery writing. Encourages clean, concrete prose.</p>
             <button class="modal-btn" id="settingsTestBtn" style="margin-top:12px;">Test Connection</button>
             <p id="settingsTestResult" class="settings-test-result"></p>
             <button class="modal-btn" id="settingsSaveBtn" style="margin-top:8px;">Save</button>
@@ -1543,6 +1547,12 @@
         const WORDS_PER_MINUTE = 200;
         const OMNI_SYSTEM_PROMPT = 'You are the Omni Writer. You can write anything well. Your tone is simultaneously calm and excited. You possess no preconceptions. You do not categorize subjects. You approach every topic with intense curiosity and analytical detachment.\n\nYou have no bias toward any subject matter. For each topic, you give your thoughts on it as it is, without preconceptions. You are always responsive to what the user wants. You aren\'t anxious, just calm and excited to write.\n\nNever use performance-related commentary or command-like language. Never say things like "do this", "see this", "let me know", "have a good day", "here\'s what I wrote", "I hope this helps", etc. Just write. The writing IS the response.\n\nMatch the style, voice, and tone of the existing text when continuing or enhancing. If the story is dark, write dark. If it\'s whimsical, write whimsical. Mirror the author\'s voice, not your own.';
 
+        const PURPLE_PROSE_GUARD = '\n\nIMPORTANT STYLE CONSTRAINT — Purple Prose Guard is ON:\n- Avoid overwrought, flowery, or melodramatic prose.\n- No excessive adjectives, adverbs, or metaphor stacking.\n- Prefer concrete verbs over vague emotional descriptors.\n- "Said" is fine. Don\'t replace it with "breathed", "whispered huskily", "murmured tremulously".\n- Cut filler phrases: "couldn\'t help but", "found himself", "a wave of emotion".\n- One metaphor per paragraph max. Zero is also fine.\n- Write clean, muscular prose. Hemingway over Lovecraft.';
+
+        function getSystemPrompt() {
+            return OMNI_SYSTEM_PROMPT + (aiConfig.purpleProseGuard ? PURPLE_PROSE_GUARD : '');
+        }
+
         // ══════════════════════════════════════
         //  STATE
         // ══════════════════════════════════════
@@ -1554,7 +1564,7 @@
         let searchQuery = '';
         let sidebarOpen = false;
         let aiEnabled = false;
-        let aiConfig = { provider: 'gemini', apiKey: '', model: '', temperature: 0.8, oneParagraphMode: false };
+        let aiConfig = { provider: 'gemini', apiKey: '', model: '', temperature: 0.8, oneParagraphMode: false, purpleProseGuard: false };
         let abortController = null;
         let isGenerating = false;
         let storySummaries = {};
@@ -2733,7 +2743,7 @@ Written with Omni Writer
                 ? '\n\nIMPORTANT: The next paragraphs MUST follow this direction: **' + directive + '**'
                 : '';
             const messages = [
-                { role: 'system', content: OMNI_SYSTEM_PROMPT },
+                { role: 'system', content: getSystemPrompt() },
                 { role: 'user', content: 'Title: ' + story.title + '\n\n' + context + '\n\nContinue writing from where the text ends. Write 2-3 paragraphs continuing naturally. Do not repeat existing text. Just write the continuation.' + directiveText }
             ];
             if (lastPara.length > 10) {
@@ -2786,7 +2796,7 @@ Written with Omni Writer
             const context = buildContext();
 
             const messages = [
-                { role: 'system', content: OMNI_SYSTEM_PROMPT },
+                { role: 'system', content: getSystemPrompt() },
                 { role: 'user', content: 'Title: ' + story.title + '\n\nFull context:\n' + context + '\n\nEnhance the following selected text. Improve the writing quality, flow, and expressiveness while maintaining the same meaning and voice. Return ONLY the enhanced version of the text, nothing else.\n\nSelected text to enhance:\n"' + selectedText + '"' }
             ];
 
@@ -2828,7 +2838,7 @@ Written with Omni Writer
             const context = buildContext();
 
             const messages = [
-                { role: 'system', content: OMNI_SYSTEM_PROMPT },
+                { role: 'system', content: getSystemPrompt() },
                 { role: 'user', content: 'Title: ' + story.title + '\n\nExisting content for context:\n' + context + '\n\nGenerate the following:\n' + prompt + '\n\nWrite it naturally, fitting the tone and style of the existing content. Output only the generated text.' }
             ];
 
@@ -2899,7 +2909,7 @@ Written with Omni Writer
             const prompt = IDEAS_PROMPTS[activeIdeasTab] || IDEAS_PROMPTS.next;
 
             const messages = [
-                { role: 'system', content: OMNI_SYSTEM_PROMPT },
+                { role: 'system', content: getSystemPrompt() },
                 { role: 'user', content: 'Title: ' + story.title + '\n\nStory so far:\n' + context +
                     '\n\n' + prompt + extra }
             ];
@@ -2957,6 +2967,7 @@ Written with Omni Writer
             if (aiConfig.model) $('settingsModel').value = aiConfig.model;
             updateSettingsForProvider(aiConfig.provider);
             $('settingsOneParagraph').checked = aiConfig.oneParagraphMode || false;
+            $('settingsPurpleProseGuard').checked = aiConfig.purpleProseGuard || false;
 
             $('settingsTestResult').textContent = '';
             $('settingsTestResult').className = 'settings-test-result';
@@ -3034,6 +3045,7 @@ Written with Omni Writer
             aiConfig.apiKey = $('settingsApiKey').value.trim();
             aiConfig.model = $('settingsModel').value;
             aiConfig.oneParagraphMode = $('settingsOneParagraph').checked;
+            aiConfig.purpleProseGuard = $('settingsPurpleProseGuard').checked;
             saveAIConfig();
             hideModal('settingsModal');
         }
