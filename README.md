@@ -80,7 +80,7 @@ All tests run through pytest and are wired into CI (GitHub Actions) and a top-le
 | **Original Projects** | Functional tests for verse_engine.py (word banks, voice configs, template integrity, all generation modes) and living_story.py (personality tracking, trait logic, story state, scenario playthroughs) | 48 | `make test-originals` |
 | **AutoMuse** | Unit + integration tests for the music theory engine -- notes, intervals, scales, chords, keys, rhythm, progressions, harmonic analysis, voicings, MIDI writer, and the Muse conversational interface | 197 | `make test-automuse` |
 | **Minecraft Studio** | Unit + integration tests for the mod data model and export engine -- blocks, items, entities, biomes, recipes, loot tables, project serialization, Java codegen, Fabric/Forge/NeoForge/Data Pack export with generated Java source validation, placeholder texture generation | 118 | `make test-mcstudio` |
-| **Omniversal** | Structural validation + reference math-engine tests for the Omniversal Calculator (all 9 universes, Receive & Graph UI, expression parser, metadegrees, responsive tags, omni operators, no external deps) and the Omni Writer (UI elements, AI Mode infrastructure, accessibility, export formats, localStorage, word count, HTML-to-markdown conversion) | 171 + 84 | `make test-omniversal` |
+| **Omniversal** | Structural validation + reference math-engine tests for the Omniversal Calculator (all 9 universes, Receive & Graph UI, expression parser, metadegrees, responsive tags, omni operators, no external deps) and the Omni Writer (UI elements, AI Mode infrastructure, accessibility, export formats, localStorage, word count, HTML-to-markdown conversion) | 171 + 122 | `make test-omniversal` |
 
 Run everything: `make test`
 
