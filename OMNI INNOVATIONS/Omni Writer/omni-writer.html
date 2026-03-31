@@ -2518,10 +2518,16 @@ Written with Omni Writer
             saveCurrentContent();
             const context = buildContext();
 
+            // startWith technique: feed last paragraph as assistant message
+            // so the AI continues coherently without repeating
+            const lastPara = context.trim().split(/\n\n+/).slice(-1)[0] || '';
             const messages = [
                 { role: 'system', content: OMNI_SYSTEM_PROMPT },
                 { role: 'user', content: 'Title: ' + story.title + '\n\n' + context + '\n\nContinue writing from where the text ends. Write 2-3 paragraphs continuing naturally. Do not repeat existing text. Just write the continuation.' }
             ];
+            if (lastPara.length > 10) {
+                messages.push({ role: 'assistant', content: lastPara + '\n\n' });
+            }
 
             setAIGenerating(true);
             placeCaretAtEnd();
