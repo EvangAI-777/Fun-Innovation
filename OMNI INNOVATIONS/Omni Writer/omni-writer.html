@@ -1492,14 +1492,14 @@
                 <option value="gemini">Google Gemini</option>
                 <option value="openai">OpenAI</option>
                 <option value="anthropic">Anthropic</option>
-                <option value="perchance">Perchance (Free)</option>
+                <option value="perchance">Perchance (perchance.org only)</option>
             </select>
             <div id="settingsApiKeyGroup">
                 <label class="settings-label">API Key</label>
                 <input type="password" id="settingsApiKey" placeholder="Paste your API key" style="margin-bottom:4px;">
                 <p class="settings-hint" id="settingsHint">Your key stays in this browser. Never sent anywhere except directly to your chosen provider.</p>
             </div>
-            <p class="settings-hint" id="settingsPerchanceHint" style="display:none;">Perchance is free — no API key needed. Requests route through Perchance's servers.</p>
+            <p class="settings-hint" id="settingsPerchanceHint" style="display:none;">Perchance is free — no API key needed. <strong>Only works when hosted on perchance.org.</strong> The AI plugin is restricted to their domain.</p>
             <div id="settingsModelGroup">
                 <label class="settings-label">Model (optional)</label>
                 <select id="settingsModel"></select>
@@ -2259,7 +2259,7 @@ Written with Omni Writer
                 }
             },
             perchance: {
-                name: 'Perchance (Free)',
+                name: 'Perchance (perchance.org only)',
                 requiresKey: false,
                 defaultModel: 'default',
                 models: ['default'],
