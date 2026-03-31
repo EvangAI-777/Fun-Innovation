@@ -1299,12 +1299,18 @@
                 <option value="gemini">Google Gemini</option>
                 <option value="openai">OpenAI</option>
                 <option value="anthropic">Anthropic</option>
+                <option value="perchance">Perchance (Free)</option>
             </select>
-            <label class="settings-label">API Key</label>
-            <input type="password" id="settingsApiKey" placeholder="Paste your API key" style="margin-bottom:4px;">
-            <p class="settings-hint">Your key stays in this browser. Never sent anywhere except directly to your chosen provider.</p>
-            <label class="settings-label">Model (optional)</label>
-            <select id="settingsModel"></select>
+            <div id="settingsApiKeyGroup">
+                <label class="settings-label">API Key</label>
+                <input type="password" id="settingsApiKey" placeholder="Paste your API key" style="margin-bottom:4px;">
+                <p class="settings-hint" id="settingsHint">Your key stays in this browser. Never sent anywhere except directly to your chosen provider.</p>
+            </div>
+            <p class="settings-hint" id="settingsPerchanceHint" style="display:none;">Perchance is free — no API key needed. Requests route through Perchance's servers.</p>
+            <div id="settingsModelGroup">
+                <label class="settings-label">Model (optional)</label>
+                <select id="settingsModel"></select>
+            </div>
             <button class="modal-btn" id="settingsTestBtn" style="margin-top:12px;">Test Connection</button>
             <p id="settingsTestResult" class="settings-test-result"></p>
             <button class="modal-btn" id="settingsSaveBtn" style="margin-top:8px;">Save</button>
@@ -2045,8 +2051,48 @@ Written with Omni Writer
                         max_tokens: 5
                     };
                 }
+            },
+            perchance: {
+                name: 'Perchance (Free)',
+                requiresKey: false,
+                defaultModel: 'default',
+                models: ['default'],
+                maxTokens: 100000
             }
         };
+
+        // ══════════════════════════════════════
+        //  PERCHANCE PLUGIN (lazy-loaded)
+        // ══════════════════════════════════════
+        let perchancePlugin = null;
+        let perchanceLoadPromise = null;
+
+        function loadPerchancePlugin() {
+            if (perchancePlugin) return Promise.resolve(perchancePlugin);
+            if (perchanceLoadPromise) return perchanceLoadPromise;
+
+            perchanceLoadPromise = new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://perchance.org/api/getPlugin?name=ai-text-plugin';
+                script.onload = () => {
+                    if (typeof window.ai === 'function' || typeof window.perchanceAI === 'function') {
+                        perchancePlugin = window.ai || window.perchanceAI;
+                        resolve(perchancePlugin);
+                    } else {
+                        // The plugin may export differently — try the global scope
+                        perchancePlugin = (...args) => window.ai?.(...args);
+                        resolve(perchancePlugin);
+                    }
+                };
+                script.onerror = () => {
+                    perchanceLoadPromise = null;
+                    reject(new Error('Failed to load Perchance AI plugin. Check your internet connection.'));
+                };
+                document.head.appendChild(script);
+            });
+
+            return perchanceLoadPromise;
+        }
 
         // ══════════════════════════════════════
         //  AI CONFIG
@@ -2083,6 +2129,34 @@ Written with Omni Writer
         async function streamAI(messages, onChunk, onDone, onError) {
             const provider = PROVIDERS[aiConfig.provider];
             if (!provider) { onError('No provider configured'); return; }
+
+            // Perchance uses callback-based API, not fetch SSE
+            if (aiConfig.provider === 'perchance') {
+                try {
+                    const ai = await loadPerchancePlugin();
+                    isGenerating = true;
+
+                    const systemMsg = messages.find(m => m.role === 'system');
+                    const userMsgs = messages.filter(m => m.role !== 'system');
+                    const fullContext = userMsgs.map(m => m.content).join('\n\n');
+                    const lastPara = fullContext.trim().split('\n\n').slice(-1)[0] || '';
+
+                    const streamObj = ai({
+                        instruction: (systemMsg ? systemMsg.content + '\n\n' : '') + fullContext,
+                        startWith: lastPara + (lastPara ? '\n\n' : ''),
+                        stopSequences: aiConfig.oneParagraphMode ? ['\n\n'] : [],
+                        onChunk: (data) => {
+                            if (!data.isFromStartWith) onChunk(data.textChunk);
+                        },
+                        onFinish: () => { isGenerating = false; abortController = null; onDone(); },
+                    });
+                    abortController = { abort() { streamObj.stop(); isGenerating = false; abortController = null; } };
+                } catch (err) {
+                    isGenerating = false;
+                    onError(err.message || 'Perchance plugin error');
+                }
+                return;
+            }
 
             const model = aiConfig.model || provider.defaultModel;
             const key = aiConfig.apiKey;
@@ -2582,11 +2656,19 @@ Written with Omni Writer
         // ══════════════════════════════════════
         //  AI SETTINGS
         // ══════════════════════════════════════
+        function updateSettingsForProvider(provider) {
+            const isPerchance = provider === 'perchance';
+            $('settingsApiKeyGroup').style.display = isPerchance ? 'none' : '';
+            $('settingsPerchanceHint').style.display = isPerchance ? '' : 'none';
+            $('settingsModelGroup').style.display = isPerchance ? 'none' : '';
+        }
+
         function openSettings() {
             $('settingsProvider').value = aiConfig.provider;
             $('settingsApiKey').value = aiConfig.apiKey;
             populateModels(aiConfig.provider);
             if (aiConfig.model) $('settingsModel').value = aiConfig.model;
+            updateSettingsForProvider(aiConfig.provider);
 
             $('settingsTestResult').textContent = '';
             $('settingsTestResult').className = 'settings-test-result';
@@ -2605,18 +2687,33 @@ Written with Omni Writer
 
         async function testAIConnection() {
             const provider = $('settingsProvider').value;
+            const resultEl = $('settingsTestResult');
+            const p = PROVIDERS[provider];
+            if (!p) return;
+
+            // Perchance: test by loading the plugin (no API key needed)
+            if (provider === 'perchance') {
+                resultEl.textContent = 'Loading Perchance plugin...';
+                resultEl.className = 'settings-test-result';
+                try {
+                    await loadPerchancePlugin();
+                    resultEl.textContent = 'Perchance plugin loaded successfully!';
+                    resultEl.className = 'settings-test-result ok';
+                } catch (err) {
+                    resultEl.textContent = 'Failed: ' + err.message;
+                    resultEl.className = 'settings-test-result err';
+                }
+                return;
+            }
+
             const apiKey = $('settingsApiKey').value.trim();
             const model = $('settingsModel').value;
-            const resultEl = $('settingsTestResult');
 
             if (!apiKey) {
                 resultEl.textContent = 'Please enter an API key.';
                 resultEl.className = 'settings-test-result err';
                 return;
             }
-
-            const p = PROVIDERS[provider];
-            if (!p) return;
 
             const useModel = model || p.defaultModel;
             resultEl.textContent = 'Testing...';
@@ -2825,7 +2922,9 @@ Written with Omni Writer
 
         // -- Settings --
         $('settingsProvider').addEventListener('change', () => {
-            populateModels($('settingsProvider').value);
+            const prov = $('settingsProvider').value;
+            populateModels(prov);
+            updateSettingsForProvider(prov);
         });
         $('settingsTestBtn').addEventListener('click', testAIConnection);
         $('settingsSaveBtn').addEventListener('click', saveSettings);
