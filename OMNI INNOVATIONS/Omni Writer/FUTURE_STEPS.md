@@ -25,7 +25,10 @@ Both `.md` files are **Perchance.org generator configs** — not standard markdo
 
 | Feature | Omni Writer | Generators |
 |---------|-------------|------------|
-| AI streaming | Yes (3 providers) | Yes (Perchance AI plugin) |
+| AI streaming | Yes (3 providers, fetch-based SSE) | Yes (Perchance AI plugin, callback-based) |
+| Free AI (no key) | No (all providers require API key) | Yes (Perchance plugin is free) |
+| Token counting | No (character-based heuristic) | Yes (plugin's `countTokens`) |
+| `startWith` prefix | No | Yes (forces AI to continue from last paragraph) |
 | Continue story | Yes (Ctrl+Shift+Enter) | Yes (▶️ button) |
 | Enhance text | Yes (selection-based) | No |
 | Generate from prompt | Yes (prompt bar) | Partial (via "what happens next" fields) |
@@ -65,7 +68,92 @@ Both `.md` files are **Perchance.org generator configs** — not standard markdo
 
 ### Tier 4 — Perchance Plugin Integration:
 
-**8. Perchance AI text plugin** — Investigate integrating the `ai-text-plugin` from Perchance as an additional AI provider option alongside OpenAI, Gemini, and Anthropic. This would give users access to Perchance's free AI model without needing their own API key. Implementation: add a `perchance` entry to the `PROVIDERS` object in `omni-writer.html` that imports and interfaces with the plugin's `ai()` function, adapting its streaming `onChunk`/`onFinish` callbacks to Omni Writer's `streamAI()` pattern.
+**8. Perchance AI text plugin as a provider** — Add Perchance's `ai-text-plugin` as a fourth AI provider alongside OpenAI, Gemini, and Anthropic. This is the engine powering both generator configs and offers a unique value proposition: **free AI generation with no API key required**.
+
+**How the plugin works (from the generator configs):**
+
+The generators import the plugin via Perchance's module system (`ai = {import:ai-text-plugin}`) and call it with a rich options object:
+
+```javascript
+let streamObj = ai({
+  instruction: "...",          // System prompt / writing instructions
+  startWith: "...",            // Text the AI should "continue from" (injected as prefix)
+  stopSequences: ["\n\n"],     // Stop generation at paragraph boundaries
+  onStart: (data) => {},       // Called when generation begins
+  onChunk: (data) => {         // Called per token — data.textChunk, data.isFromStartWith
+    storySoFarEl.value += data.textChunk;
+  },
+  onFinish: (data) => {        // Called when generation completes — data.stopReason
+    // cleanup, save to localStorage
+  },
+});
+streamObj.stop();              // Abort generation
+streamObj.submitUserRating({score, reason}); // Rate the output
+```
+
+The plugin also exposes metadata via `ai({getMetaObject:true})` which returns `{ countTokens, idealMaxContextTokens }` — used by the hierarchical summary system to decide when context compression is needed.
+
+**Key plugin capabilities relevant to Omni Writer:**
+- **Streaming with `onChunk`/`onFinish` callbacks** — maps directly to Omni Writer's `streamAI()` pattern but uses callbacks instead of `ReadableStream`. The adapter would need to bridge these two models.
+- **`startWith` parameter** — forces the AI to begin its response with specific text (the last paragraph of the story). This is how the generators maintain coherent continuation without repeating context. Omni Writer could use this to improve continuation quality.
+- **`stopSequences`** — native support for one-paragraph-at-a-time mode. Omni Writer currently has no stop sequence support; adding it via the Perchance plugin would be trivial, and the same concept could be added for other providers.
+- **`countTokens` / `idealMaxContextTokens`** — token counting without external libraries. Could enhance Omni Writer's smart context system with accurate token counts instead of character-based heuristics.
+- **`submitUserRating`** — built-in rating submission that improves Perchance's AI. Maps directly to the Tier 3 paragraph rating feature.
+
+**Integration approach:**
+
+1. **Load the plugin** — The `ai-text-plugin` is hosted at `perchance.org/ai-text-plugin`. Since Omni Writer is a standalone HTML file with zero dependencies, loading an external script is a design decision that needs consideration. Two options:
+   - **Dynamic import**: Only load the plugin script when the user selects "Perchance" as their provider in settings. This keeps the zero-dependency promise intact for users who don't use it.
+   - **Iframe bridge**: Load a hidden Perchance generator page in an iframe and communicate via `postMessage`. More isolated but more complex.
+
+2. **Add to PROVIDERS registry** — Create a `perchance` entry in the existing `PROVIDERS` object (`omni-writer.html:~2050`):
+   ```javascript
+   perchance: {
+     name: 'Perchance',
+     requiresKey: false,  // Key differentiator — no API key needed
+     defaultModel: 'default',
+     models: ['default'],
+     getEndpoint: () => null,  // Not HTTP-based
+     // Custom streaming via plugin callbacks instead of fetch()
+   }
+   ```
+
+3. **Adapt `streamAI()` function** — The existing `streamAI()` at line 2083 assumes a fetch-based SSE streaming model. For Perchance, create an alternate code path that uses the plugin's callback API:
+   ```javascript
+   if (aiConfig.provider === 'perchance') {
+     const streamObj = perchanceAI({
+       instruction: messages.map(m => m.content).join('\n'),
+       startWith: lastParagraph,
+       stopSequences: oneParagraphMode ? ['\n\n'] : [],
+       onChunk: (data) => { if (!data.isFromStartWith) onChunk(data.textChunk); },
+       onFinish: () => onDone(),
+     });
+     abortController = { abort: () => streamObj.stop() };  // Shim abort interface
+     return;
+   }
+   ```
+
+4. **Leverage `startWith` for all providers** — The `startWith` pattern (feeding the last paragraph as a forced prefix) is a genuinely good prompt engineering technique. Consider adopting it for OpenAI/Gemini/Anthropic too, by prepending the last paragraph as an `assistant` message in the messages array.
+
+5. **Token counting** — If the Perchance plugin is loaded, use its `countTokens` function to improve Omni Writer's smart context management (currently character-based at `omni-writer.html:~2400`). This would make summary checkpoints more accurate.
+
+**Considerations:**
+- **Privacy**: The Perchance plugin routes requests through Perchance's servers. Document this clearly in the AI Settings modal so users understand the data flow.
+- **Availability**: The plugin requires an internet connection to `perchance.org`. If the CDN is down, the provider should gracefully degrade with a clear error.
+- **Zero-dependency philosophy**: Loading an external script technically breaks the "no CDN, no external imports" promise. The dynamic-import approach mitigates this — the plugin is only loaded on demand, and the app remains fully functional without it.
+- **Rate limits**: Perchance's free tier may have rate limits or usage caps. Handle `429` or equivalent errors gracefully.
+
+**9. Hierarchical summary system (from Perchance plugin)** — The generators implement a sophisticated multi-level summarization system (`getMessagesWithSummaryReplacements()` + `injectSummariesAndComputeNextSummariesInBackgroundIfNeeded()`) that's more advanced than Omni Writer's current single-checkpoint approach. Key differences:
+
+| Aspect | Omni Writer (current) | Generator approach |
+|--------|----------------------|-------------------|
+| Trigger | Single checkpoint when context exceeded | Continuous background summarization |
+| Levels | 1 (flat summary) | Hierarchical (`SUMMARY^1`, `SUMMARY^2`, ...) |
+| Visibility | Notification bell, user confirms | Inline markers in text, user can edit |
+| Token counting | Character-based heuristic | Plugin's `countTokens` function |
+| Summary quality | User-verified | Auto-generated, sometimes re-summarized |
+
+The hierarchical approach could be adapted for Omni Writer as an enhancement to the existing smart context system. Instead of one summary checkpoint, maintain a tree of summaries at increasing levels of abstraction. When context is exceeded, swap in higher-level summaries for older content while keeping recent paragraphs verbatim. This would allow much longer stories without degradation.
 
 ## What NOT to Merge
 
@@ -85,10 +173,12 @@ All changes go into the existing `omni-writer.html` single file. No new files ex
 
 **Sequencing (small commits):**
 1. Add "what happens next" directive input + wire into AI Continue prompt
-2. Add one-paragraph-at-a-time toggle
+2. Add one-paragraph-at-a-time toggle (with `stopSequences` support)
 3. Add AI idea suggestions panel (💡 button + dropdown)
 4. Add brainstorm/critique tabs to suggestions
 5. Add paragraph-level undo for AI generations
 6. Add purple prose guard (optional toggle)
-7. Investigate Perchance plugin integration as a provider
-8. Version bump to v2.1.0 + doc updates
+7. Add Perchance as fourth AI provider (dynamic script load, callback-to-stream adapter, no-API-key flow)
+8. Add `startWith` continuation technique (adopt for all providers)
+9. Upgrade smart context with plugin's `countTokens` + hierarchical summary system
+10. Version bump to v2.1.0 + doc updates
