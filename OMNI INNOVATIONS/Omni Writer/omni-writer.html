@@ -862,6 +862,46 @@
             color: var(--text-primary);
         }
 
+        /* ── AI Directive Bar (What Happens Next) ── */
+        .ai-directive-bar {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-dim);
+            flex-shrink: 0;
+        }
+        .ai-directive-bar.visible { display: flex; }
+        .ai-directive-bar input {
+            flex: 1;
+            padding: 6px 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 0.82em;
+            font-family: inherit;
+            outline: none;
+            transition: border-color var(--transition);
+        }
+        .ai-directive-bar input::placeholder { color: var(--text-secondary); }
+        .ai-directive-bar input:focus { border-color: var(--primary-dim); }
+        .ai-directive-clear {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 5px 8px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all var(--transition);
+        }
+        .ai-directive-clear:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
         /* ── Floating Enhance Tooltip ── */
         .ai-enhance-tooltip {
             position: fixed;
@@ -1174,6 +1214,15 @@
                 <input type="text" id="aiPromptInput" placeholder="Describe what you want the AI to write..." aria-label="AI generation prompt">
                 <button id="aiPromptSubmit">Go</button>
                 <button class="ai-prompt-cancel" id="aiPromptCancel">&times;</button>
+            </div>
+
+            <!-- AI Directive Bar (What Happens Next) -->
+            <div class="ai-directive-bar" id="aiDirectiveBar">
+                <input type="text" id="aiDirectiveInput"
+                       placeholder="What should happen next? (optional — guides the AI)"
+                       aria-label="Story direction hint"
+                       oninput="localStorage.setItem('omni-writer-directive', this.value)">
+                <button class="ai-directive-clear" id="aiDirectiveClear" title="Clear directive">&times;</button>
             </div>
 
             <!-- Topic / Title Display -->
@@ -2280,7 +2329,7 @@ Written with Omni Writer
         }
 
         function toggleAI() {
-            if (!aiEnabled && !aiConfig.apiKey) {
+            if (!aiEnabled && !aiConfig.apiKey && aiConfig.provider !== 'perchance') {
                 openSettings();
                 return;
             }
@@ -2289,6 +2338,7 @@ Written with Omni Writer
             aiToggleEl.classList.toggle('active', aiEnabled);
             aiToggleEl.setAttribute('aria-checked', String(aiEnabled));
             aiActionBarEl.classList.toggle('visible', aiEnabled);
+            $('aiDirectiveBar').classList.toggle('visible', aiEnabled);
 
             if (!aiEnabled) {
                 hidePromptBar();
@@ -2521,9 +2571,13 @@ Written with Omni Writer
             // startWith technique: feed last paragraph as assistant message
             // so the AI continues coherently without repeating
             const lastPara = context.trim().split(/\n\n+/).slice(-1)[0] || '';
+            const directive = $('aiDirectiveInput').value.trim();
+            const directiveText = directive
+                ? '\n\nIMPORTANT: The next paragraphs MUST follow this direction: **' + directive + '**'
+                : '';
             const messages = [
                 { role: 'system', content: OMNI_SYSTEM_PROMPT },
-                { role: 'user', content: 'Title: ' + story.title + '\n\n' + context + '\n\nContinue writing from where the text ends. Write 2-3 paragraphs continuing naturally. Do not repeat existing text. Just write the continuation.' }
+                { role: 'user', content: 'Title: ' + story.title + '\n\n' + context + '\n\nContinue writing from where the text ends. Write 2-3 paragraphs continuing naturally. Do not repeat existing text. Just write the continuation.' + directiveText }
             ];
             if (lastPara.length > 10) {
                 messages.push({ role: 'assistant', content: lastPara + '\n\n' });
@@ -2907,6 +2961,10 @@ Written with Omni Writer
             if (prompt) aiGenerate(prompt);
         });
         $('aiPromptCancel').addEventListener('click', hidePromptBar);
+        $('aiDirectiveClear').addEventListener('click', () => {
+            $('aiDirectiveInput').value = '';
+            localStorage.removeItem('omni-writer-directive');
+        });
         $('aiPromptInput').addEventListener('keydown', e => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -3053,6 +3111,9 @@ Written with Omni Writer
         loadStories();
         loadAIConfig();
         loadSummaries();
+        // Restore directive from localStorage
+        const savedDirective = localStorage.getItem('omni-writer-directive');
+        if (savedDirective) $('aiDirectiveInput').value = savedDirective;
         renderStoryList();
 
         if (stories.length > 0) {
