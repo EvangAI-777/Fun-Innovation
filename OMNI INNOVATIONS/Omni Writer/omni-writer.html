@@ -920,6 +920,18 @@
             border-bottom: 1px solid var(--border-dim);
         }
         .ai-ideas-title { font-size: 0.82em; font-weight: 600; color: var(--primary); }
+        .ai-ideas-tabs { display: flex; gap: 4px; }
+        .ai-ideas-tab {
+            padding: 3px 12px; border-radius: var(--radius);
+            border: 1px solid var(--border); background: transparent;
+            color: var(--text-secondary); font-size: 0.78em;
+            cursor: pointer; font-family: inherit;
+        }
+        .ai-ideas-tab:hover { color: var(--text-primary); border-color: var(--primary-dim); }
+        .ai-ideas-tab.active {
+            background: var(--primary-glow); color: var(--primary-bright);
+            border-color: var(--primary-deep);
+        }
         .ai-ideas-close {
             background: none; border: none; color: var(--text-secondary);
             font-size: 1.1em; cursor: pointer; padding: 2px 6px;
@@ -1302,11 +1314,15 @@
             <!-- AI Ideas Panel -->
             <div class="ai-ideas-panel" id="aiIdeasPanel">
                 <div class="ai-ideas-header">
-                    <span class="ai-ideas-title">Story Ideas</span>
+                    <div class="ai-ideas-tabs">
+                        <button class="ai-ideas-tab active" data-tab="next">Next</button>
+                        <button class="ai-ideas-tab" data-tab="style">Style</button>
+                        <button class="ai-ideas-tab" data-tab="critique">Critique</button>
+                    </div>
                     <button class="ai-ideas-close" id="aiIdeasClose">&times;</button>
                 </div>
                 <div class="ai-ideas-list" id="aiIdeasList">
-                    <p class="ai-ideas-placeholder">Click "Ideas" to generate suggestions...</p>
+                    <p class="ai-ideas-placeholder">Click a tab to generate suggestions...</p>
                 </div>
                 <div class="ai-ideas-footer">
                     <input type="text" id="aiIdeasRegenInput" placeholder="(Optional) Regen instructions...">
@@ -2833,6 +2849,14 @@ Written with Omni Writer
         // ══════════════════════════════════════
         //  AI IDEA SUGGESTIONS
         // ══════════════════════════════════════
+        let activeIdeasTab = 'next';
+
+        const IDEAS_PROMPTS = {
+            next: 'Suggest exactly 3 possible directions for what happens next. Each should be a single sentence, numbered 1-3. Be creative and varied — offer different tones (dramatic, surprising, tender, humorous). Do NOT write the actual story text, just the idea summary.',
+            style: 'Suggest 3 specific ways to improve the writing style, dialogue, or tone. Consider: vocabulary choices, sentence rhythm, character voice, genre conventions, and narrative perspective. Each suggestion should be a single sentence, numbered 1-3. Do NOT continue the story.',
+            critique: 'Provide up to 5 constructive critiques of this story so far. Cover pacing, character development, plot holes, dialogue quality, and prose clarity. Each point should be a single sentence, numbered. Be honest but constructive. Do NOT continue the story.'
+        };
+
         async function generateIdeas(customInstructions) {
             const story = getActiveStory();
             if (!story || isGenerating) return;
@@ -2846,10 +2870,12 @@ Written with Omni Writer
                 ? '\n\nAdditional instructions: ' + customInstructions
                 : '';
 
+            const prompt = IDEAS_PROMPTS[activeIdeasTab] || IDEAS_PROMPTS.next;
+
             const messages = [
                 { role: 'system', content: OMNI_SYSTEM_PROMPT },
                 { role: 'user', content: 'Title: ' + story.title + '\n\nStory so far:\n' + context +
-                    '\n\nSuggest exactly 3 possible directions for what happens next. Each should be a single sentence, numbered 1-3. Be creative and varied — offer different tones (dramatic, surprising, tender, humorous). Do NOT write the actual story text, just the idea summary.' + extra }
+                    '\n\n' + prompt + extra }
             ];
 
             let fullText = '';
@@ -3156,6 +3182,14 @@ Written with Omni Writer
         $('aiIdeasRegenBtn').addEventListener('click', () => {
             const extra = $('aiIdeasRegenInput').value.trim();
             generateIdeas(extra || undefined);
+        });
+        document.querySelectorAll('.ai-ideas-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.ai-ideas-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                activeIdeasTab = tab.dataset.tab;
+                generateIdeas();
+            });
         });
 
         $('aiPromptInput').addEventListener('keydown', e => {
