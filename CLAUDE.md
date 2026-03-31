@@ -16,7 +16,7 @@ Audio Innovations/
   AutoMuse/               — Music composition engine (Python, v0.1.0)
 OMNI INNOVATIONS/
   Omniversal Calculator/  — Multi-universe calculator (HTML/JS, v1.4.0)
-  Omni Writer/            — Creative writing tool (HTML/JS, v2.0.0)
+  Omni Writer/            — Creative writing tool (HTML/JS, v2.1.0)
   Omniversal Mathematics/ — Math framework (HTML/JS)
 Undertale Innovations/
   OvertaleRPG/            — Fan game revival (HTML/JS)
