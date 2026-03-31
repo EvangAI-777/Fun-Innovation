@@ -1300,6 +1300,7 @@
                 <button class="ai-action" id="aiContinueBtn" title="Continue writing (Ctrl+Shift+Enter)">Continue</button>
                 <button class="ai-action" id="aiGenerateBtn" title="Generate from prompt">Generate</button>
                 <button class="ai-action" id="aiIdeasBtn" title="Get story ideas">Ideas</button>
+                <button class="ai-action" id="aiUndoBtn" title="Undo last AI generation" style="display:none">Undo</button>
                 <span class="ai-status" id="aiStatus"></span>
                 <button class="ai-stop-btn" id="aiStopBtn" title="Stop generating (Escape)">Stop</button>
             </div>
@@ -2482,16 +2483,39 @@ Written with Omni Writer
 
         function finalizeStreamedText(span, text) {
             const paragraphs = text.split(/\n\n+/).filter(p => p.trim());
-            if (paragraphs.length <= 1) return;
+            if (paragraphs.length <= 1) return [span];
 
+            const nodes = [];
             const fragment = document.createDocumentFragment();
             for (const p of paragraphs) {
                 const pEl = document.createElement('p');
                 pEl.className = 'ai-generated';
                 pEl.textContent = p.replace(/\n/g, ' ').trim();
                 fragment.appendChild(pEl);
+                nodes.push(pEl);
             }
             span.replaceWith(fragment);
+            return nodes;
+        }
+
+        // ══════════════════════════════════════
+        //  AI PARAGRAPH UNDO
+        // ══════════════════════════════════════
+        const aiUndoStack = [];
+
+        function pushAIUndo(nodes) {
+            aiUndoStack.push(nodes);
+            $('aiUndoBtn').style.display = '';
+        }
+
+        function popAIUndo() {
+            if (aiUndoStack.length === 0) return;
+            const nodes = aiUndoStack.pop();
+            nodes.forEach(n => { if (n.parentNode) n.remove(); });
+            if (aiUndoStack.length === 0) $('aiUndoBtn').style.display = 'none';
+            updateStats();
+            scheduleAutoSave();
+            setAIStatus('AI generation undone');
         }
 
         // ══════════════════════════════════════
@@ -2732,7 +2756,8 @@ Written with Omni Writer
                     canvasWrapperEl.scrollTop = canvasWrapperEl.scrollHeight;
                 },
                 () => {
-                    finalizeStreamedText(streamSpan, fullText);
+                    const nodes = finalizeStreamedText(streamSpan, fullText) || [streamSpan];
+                    pushAIUndo(nodes);
                     setAIGenerating(false);
                     updateStats();
                     scheduleAutoSave();
@@ -2832,7 +2857,8 @@ Written with Omni Writer
                     canvasWrapperEl.scrollTop = canvasWrapperEl.scrollHeight;
                 },
                 () => {
-                    finalizeStreamedText(streamSpan, fullText);
+                    const nodes = finalizeStreamedText(streamSpan, fullText) || [streamSpan];
+                    pushAIUndo(nodes);
                     setAIGenerating(false);
                     updateStats();
                     scheduleAutoSave();
@@ -3168,6 +3194,9 @@ Written with Omni Writer
             $('aiDirectiveInput').value = '';
             localStorage.removeItem('omni-writer-directive');
         });
+        // -- AI undo --
+        $('aiUndoBtn').addEventListener('click', popAIUndo);
+
         // -- Ideas panel --
         $('aiIdeasBtn').addEventListener('click', () => {
             if ($('aiIdeasPanel').classList.contains('visible')) {
