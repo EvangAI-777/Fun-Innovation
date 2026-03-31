@@ -862,6 +862,140 @@
             color: var(--text-primary);
         }
 
+        /* ── AI Directive Bar (What Happens Next) ── */
+        .ai-directive-bar {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-dim);
+            flex-shrink: 0;
+        }
+        .ai-directive-bar.visible { display: flex; }
+        .ai-directive-bar input {
+            flex: 1;
+            padding: 6px 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 0.82em;
+            font-family: inherit;
+            outline: none;
+            transition: border-color var(--transition);
+        }
+        .ai-directive-bar input::placeholder { color: var(--text-secondary); }
+        .ai-directive-bar input:focus { border-color: var(--primary-dim); }
+        .ai-directive-clear {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 5px 8px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all var(--transition);
+        }
+        .ai-directive-clear:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        /* ── AI Ideas Panel ── */
+        .ai-ideas-panel {
+            display: none;
+            flex-direction: column;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            max-height: 260px;
+            flex-shrink: 0;
+        }
+        .ai-ideas-panel.visible { display: flex; }
+        .ai-ideas-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--border-dim);
+        }
+        .ai-ideas-title { font-size: 0.82em; font-weight: 600; color: var(--primary); }
+        .ai-ideas-tabs { display: flex; gap: 4px; }
+        .ai-ideas-tab {
+            padding: 3px 12px; border-radius: var(--radius);
+            border: 1px solid var(--border); background: transparent;
+            color: var(--text-secondary); font-size: 0.78em;
+            cursor: pointer; font-family: inherit;
+        }
+        .ai-ideas-tab:hover { color: var(--text-primary); border-color: var(--primary-dim); }
+        .ai-ideas-tab.active {
+            background: var(--primary-glow); color: var(--primary-bright);
+            border-color: var(--primary-deep);
+        }
+        .ai-ideas-close {
+            background: none; border: none; color: var(--text-secondary);
+            font-size: 1.1em; cursor: pointer; padding: 2px 6px;
+        }
+        .ai-ideas-close:hover { color: var(--text-primary); }
+        .ai-ideas-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 16px;
+            font-size: 0.85em;
+        }
+        .ai-ideas-placeholder { color: var(--text-secondary); font-style: italic; }
+        .ai-idea-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 6px 8px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 6px;
+        }
+        .ai-idea-text { flex: 1; color: var(--text-primary); line-height: 1.4; }
+        .ai-idea-use {
+            padding: 3px 10px;
+            border-radius: var(--radius);
+            border: 1px solid var(--primary-deep);
+            background: var(--primary-glow);
+            color: var(--primary-bright);
+            font-size: 0.85em;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .ai-idea-use:hover { background: var(--primary-glow-strong); border-color: var(--primary); }
+        .ai-ideas-footer {
+            display: flex;
+            gap: 6px;
+            padding: 6px 16px 8px;
+            border-top: 1px solid var(--border-dim);
+        }
+        .ai-ideas-footer input {
+            flex: 1;
+            padding: 5px 10px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 0.82em;
+            font-family: inherit;
+            outline: none;
+        }
+        .ai-ideas-footer input::placeholder { color: var(--text-secondary); }
+        .ai-ideas-footer input:focus { border-color: var(--primary-dim); }
+        .ai-ideas-regen {
+            padding: 5px 12px;
+            border-radius: var(--radius);
+            border: 1px solid var(--primary-deep);
+            background: var(--primary-glow);
+            color: var(--primary-bright);
+            font-size: 0.82em;
+            cursor: pointer;
+        }
+        .ai-ideas-regen:hover { background: var(--primary-glow-strong); }
+
         /* ── Floating Enhance Tooltip ── */
         .ai-enhance-tooltip {
             position: fixed;
@@ -1043,6 +1177,35 @@
         .ai-generated {
             border-bottom: 1px dotted var(--primary-dim);
         }
+        .ai-para-wrapper {
+            position: relative;
+        }
+        .ai-para-wrapper:hover .ai-para-ratings {
+            opacity: 1;
+        }
+        .ai-para-ratings {
+            position: absolute;
+            right: -36px;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+        .ai-rate-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-secondary);
+            font-size: 0.75em;
+            padding: 2px 4px;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .ai-rate-btn:hover { color: var(--text-primary); border-color: var(--primary-dim); }
+        .ai-rate-btn.rated-up { color: var(--success); border-color: var(--success); }
+        .ai-rate-btn.rated-down { color: var(--error); border-color: var(--error); }
 
         /* ── Settings additions ── */
         .settings-label {
@@ -1165,6 +1328,8 @@
             <div class="ai-action-bar" id="aiActionBar">
                 <button class="ai-action" id="aiContinueBtn" title="Continue writing (Ctrl+Shift+Enter)">Continue</button>
                 <button class="ai-action" id="aiGenerateBtn" title="Generate from prompt">Generate</button>
+                <button class="ai-action" id="aiIdeasBtn" title="Get story ideas">Ideas</button>
+                <button class="ai-action" id="aiUndoBtn" title="Undo last AI generation" style="display:none">Undo</button>
                 <span class="ai-status" id="aiStatus"></span>
                 <button class="ai-stop-btn" id="aiStopBtn" title="Stop generating (Escape)">Stop</button>
             </div>
@@ -1174,6 +1339,34 @@
                 <input type="text" id="aiPromptInput" placeholder="Describe what you want the AI to write..." aria-label="AI generation prompt">
                 <button id="aiPromptSubmit">Go</button>
                 <button class="ai-prompt-cancel" id="aiPromptCancel">&times;</button>
+            </div>
+
+            <!-- AI Ideas Panel -->
+            <div class="ai-ideas-panel" id="aiIdeasPanel">
+                <div class="ai-ideas-header">
+                    <div class="ai-ideas-tabs">
+                        <button class="ai-ideas-tab active" data-tab="next">Next</button>
+                        <button class="ai-ideas-tab" data-tab="style">Style</button>
+                        <button class="ai-ideas-tab" data-tab="critique">Critique</button>
+                    </div>
+                    <button class="ai-ideas-close" id="aiIdeasClose">&times;</button>
+                </div>
+                <div class="ai-ideas-list" id="aiIdeasList">
+                    <p class="ai-ideas-placeholder">Click a tab to generate suggestions...</p>
+                </div>
+                <div class="ai-ideas-footer">
+                    <input type="text" id="aiIdeasRegenInput" placeholder="(Optional) Regen instructions...">
+                    <button class="ai-ideas-regen" id="aiIdeasRegenBtn" title="Regenerate ideas">Regen</button>
+                </div>
+            </div>
+
+            <!-- AI Directive Bar (What Happens Next) -->
+            <div class="ai-directive-bar" id="aiDirectiveBar">
+                <input type="text" id="aiDirectiveInput"
+                       placeholder="What should happen next? (optional — guides the AI)"
+                       aria-label="Story direction hint"
+                       oninput="localStorage.setItem('omni-writer-directive', this.value)">
+                <button class="ai-directive-clear" id="aiDirectiveClear" title="Clear directive">&times;</button>
             </div>
 
             <!-- Topic / Title Display -->
@@ -1299,12 +1492,25 @@
                 <option value="gemini">Google Gemini</option>
                 <option value="openai">OpenAI</option>
                 <option value="anthropic">Anthropic</option>
+                <option value="perchance">Perchance (Free)</option>
             </select>
-            <label class="settings-label">API Key</label>
-            <input type="password" id="settingsApiKey" placeholder="Paste your API key" style="margin-bottom:4px;">
-            <p class="settings-hint">Your key stays in this browser. Never sent anywhere except directly to your chosen provider.</p>
-            <label class="settings-label">Model (optional)</label>
-            <select id="settingsModel"></select>
+            <div id="settingsApiKeyGroup">
+                <label class="settings-label">API Key</label>
+                <input type="password" id="settingsApiKey" placeholder="Paste your API key" style="margin-bottom:4px;">
+                <p class="settings-hint" id="settingsHint">Your key stays in this browser. Never sent anywhere except directly to your chosen provider.</p>
+            </div>
+            <p class="settings-hint" id="settingsPerchanceHint" style="display:none;">Perchance is free — no API key needed. Requests route through Perchance's servers.</p>
+            <div id="settingsModelGroup">
+                <label class="settings-label">Model (optional)</label>
+                <select id="settingsModel"></select>
+            </div>
+            <label class="settings-label" style="margin-top:12px; display:flex; align-items:center; gap:8px; cursor:pointer;">
+                <input type="checkbox" id="settingsOneParagraph" style="cursor:pointer;"> One paragraph at a time
+            </label>
+            <label class="settings-label" style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                <input type="checkbox" id="settingsPurpleProseGuard" style="cursor:pointer;"> Purple prose guard
+            </label>
+            <p class="settings-hint">Prevents overwrought, flowery writing. Encourages clean, concrete prose.</p>
             <button class="modal-btn" id="settingsTestBtn" style="margin-top:12px;">Test Connection</button>
             <p id="settingsTestResult" class="settings-test-result"></p>
             <button class="modal-btn" id="settingsSaveBtn" style="margin-top:8px;">Save</button>
@@ -1370,6 +1576,12 @@
         const WORDS_PER_MINUTE = 200;
         const OMNI_SYSTEM_PROMPT = 'You are the Omni Writer. You can write anything well. Your tone is simultaneously calm and excited. You possess no preconceptions. You do not categorize subjects. You approach every topic with intense curiosity and analytical detachment.\n\nYou have no bias toward any subject matter. For each topic, you give your thoughts on it as it is, without preconceptions. You are always responsive to what the user wants. You aren\'t anxious, just calm and excited to write.\n\nNever use performance-related commentary or command-like language. Never say things like "do this", "see this", "let me know", "have a good day", "here\'s what I wrote", "I hope this helps", etc. Just write. The writing IS the response.\n\nMatch the style, voice, and tone of the existing text when continuing or enhancing. If the story is dark, write dark. If it\'s whimsical, write whimsical. Mirror the author\'s voice, not your own.';
 
+        const PURPLE_PROSE_GUARD = '\n\nIMPORTANT STYLE CONSTRAINT — Purple Prose Guard is ON:\n- Avoid overwrought, flowery, or melodramatic prose.\n- No excessive adjectives, adverbs, or metaphor stacking.\n- Prefer concrete verbs over vague emotional descriptors.\n- "Said" is fine. Don\'t replace it with "breathed", "whispered huskily", "murmured tremulously".\n- Cut filler phrases: "couldn\'t help but", "found himself", "a wave of emotion".\n- One metaphor per paragraph max. Zero is also fine.\n- Write clean, muscular prose. Hemingway over Lovecraft.';
+
+        function getSystemPrompt() {
+            return OMNI_SYSTEM_PROMPT + (aiConfig.purpleProseGuard ? PURPLE_PROSE_GUARD : '');
+        }
+
         // ══════════════════════════════════════
         //  STATE
         // ══════════════════════════════════════
@@ -1381,7 +1593,7 @@
         let searchQuery = '';
         let sidebarOpen = false;
         let aiEnabled = false;
-        let aiConfig = { provider: 'gemini', apiKey: '', model: '', temperature: 0.8 };
+        let aiConfig = { provider: 'gemini', apiKey: '', model: '', temperature: 0.8, oneParagraphMode: false, purpleProseGuard: false };
         let abortController = null;
         let isGenerating = false;
         let storySummaries = {};
@@ -2045,8 +2257,48 @@ Written with Omni Writer
                         max_tokens: 5
                     };
                 }
+            },
+            perchance: {
+                name: 'Perchance (Free)',
+                requiresKey: false,
+                defaultModel: 'default',
+                models: ['default'],
+                maxTokens: 100000
             }
         };
+
+        // ══════════════════════════════════════
+        //  PERCHANCE PLUGIN (lazy-loaded)
+        // ══════════════════════════════════════
+        let perchancePlugin = null;
+        let perchanceLoadPromise = null;
+
+        function loadPerchancePlugin() {
+            if (perchancePlugin) return Promise.resolve(perchancePlugin);
+            if (perchanceLoadPromise) return perchanceLoadPromise;
+
+            perchanceLoadPromise = new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://perchance.org/api/getPlugin?name=ai-text-plugin';
+                script.onload = () => {
+                    if (typeof window.ai === 'function' || typeof window.perchanceAI === 'function') {
+                        perchancePlugin = window.ai || window.perchanceAI;
+                        resolve(perchancePlugin);
+                    } else {
+                        // The plugin may export differently — try the global scope
+                        perchancePlugin = (...args) => window.ai?.(...args);
+                        resolve(perchancePlugin);
+                    }
+                };
+                script.onerror = () => {
+                    perchanceLoadPromise = null;
+                    reject(new Error('Failed to load Perchance AI plugin. Check your internet connection.'));
+                };
+                document.head.appendChild(script);
+            });
+
+            return perchanceLoadPromise;
+        }
 
         // ══════════════════════════════════════
         //  AI CONFIG
@@ -2084,6 +2336,34 @@ Written with Omni Writer
             const provider = PROVIDERS[aiConfig.provider];
             if (!provider) { onError('No provider configured'); return; }
 
+            // Perchance uses callback-based API, not fetch SSE
+            if (aiConfig.provider === 'perchance') {
+                try {
+                    const ai = await loadPerchancePlugin();
+                    isGenerating = true;
+
+                    const systemMsg = messages.find(m => m.role === 'system');
+                    const userMsgs = messages.filter(m => m.role !== 'system');
+                    const fullContext = userMsgs.map(m => m.content).join('\n\n');
+                    const lastPara = fullContext.trim().split('\n\n').slice(-1)[0] || '';
+
+                    const streamObj = ai({
+                        instruction: (systemMsg ? systemMsg.content + '\n\n' : '') + fullContext,
+                        startWith: lastPara + (lastPara ? '\n\n' : ''),
+                        stopSequences: aiConfig.oneParagraphMode ? ['\n\n'] : [],
+                        onChunk: (data) => {
+                            if (!data.isFromStartWith) onChunk(data.textChunk);
+                        },
+                        onFinish: () => { isGenerating = false; abortController = null; onDone(); },
+                    });
+                    abortController = { abort() { streamObj.stop(); isGenerating = false; abortController = null; } };
+                } catch (err) {
+                    isGenerating = false;
+                    onError(err.message || 'Perchance plugin error');
+                }
+                return;
+            }
+
             const model = aiConfig.model || provider.defaultModel;
             const key = aiConfig.apiKey;
             if (!key) { onError('No API key configured. Open AI Settings.'); return; }
@@ -2112,10 +2392,12 @@ Written with Omni Writer
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
                 let buffer = '';
+                let accumulated = '';
+                let paragraphStopped = false;
 
                 while (true) {
                     const { done, value } = await reader.read();
-                    if (done) break;
+                    if (done || paragraphStopped) break;
 
                     buffer += decoder.decode(value, { stream: true });
                     const lines = buffer.split('\n');
@@ -2131,7 +2413,21 @@ Written with Omni Writer
                             try {
                                 const parsed = JSON.parse(jsonStr);
                                 const text = provider.extractText(parsed);
-                                if (text) onChunk(text);
+                                if (text) {
+                                    // One-paragraph-at-a-time: stop at double newline
+                                    if (aiConfig.oneParagraphMode) {
+                                        accumulated += text;
+                                        if (accumulated.includes('\n\n')) {
+                                            const beforeBreak = accumulated.split('\n\n')[0];
+                                            const remaining = beforeBreak.slice(accumulated.length - text.length - (accumulated.length - beforeBreak.length));
+                                            onChunk(text.slice(0, text.length - (accumulated.length - beforeBreak.length)));
+                                            paragraphStopped = true;
+                                            abortController.abort();
+                                            break;
+                                        }
+                                    }
+                                    onChunk(text);
+                                }
                             } catch (e) {
                                 // Skip unparseable chunks
                             }
@@ -2206,7 +2502,7 @@ Written with Omni Writer
         }
 
         function toggleAI() {
-            if (!aiEnabled && !aiConfig.apiKey) {
+            if (!aiEnabled && !aiConfig.apiKey && aiConfig.provider !== 'perchance') {
                 openSettings();
                 return;
             }
@@ -2215,6 +2511,7 @@ Written with Omni Writer
             aiToggleEl.classList.toggle('active', aiEnabled);
             aiToggleEl.setAttribute('aria-checked', String(aiEnabled));
             aiActionBarEl.classList.toggle('visible', aiEnabled);
+            $('aiDirectiveBar').classList.toggle('visible', aiEnabled);
 
             if (!aiEnabled) {
                 hidePromptBar();
@@ -2223,18 +2520,73 @@ Written with Omni Writer
             }
         }
 
+        function addRatingButtons(wrapper) {
+            const ratings = document.createElement('div');
+            ratings.className = 'ai-para-ratings';
+            ratings.innerHTML = '<button class="ai-rate-btn" data-rate="up" title="Good">&#9650;</button>' +
+                '<button class="ai-rate-btn" data-rate="down" title="Needs work">&#9660;</button>';
+            ratings.querySelectorAll('.ai-rate-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const rate = btn.dataset.rate;
+                    ratings.querySelectorAll('.ai-rate-btn').forEach(b => {
+                        b.classList.remove('rated-up', 'rated-down');
+                    });
+                    btn.classList.add('rated-' + rate);
+                });
+            });
+            wrapper.appendChild(ratings);
+        }
+
         function finalizeStreamedText(span, text) {
             const paragraphs = text.split(/\n\n+/).filter(p => p.trim());
-            if (paragraphs.length <= 1) return;
+            if (paragraphs.length <= 1) {
+                if (span.textContent.trim()) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'ai-para-wrapper';
+                    span.parentNode.insertBefore(wrapper, span);
+                    wrapper.appendChild(span);
+                    addRatingButtons(wrapper);
+                    return [wrapper];
+                }
+                return [span];
+            }
 
+            const nodes = [];
             const fragment = document.createDocumentFragment();
             for (const p of paragraphs) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'ai-para-wrapper';
                 const pEl = document.createElement('p');
                 pEl.className = 'ai-generated';
                 pEl.textContent = p.replace(/\n/g, ' ').trim();
-                fragment.appendChild(pEl);
+                wrapper.appendChild(pEl);
+                addRatingButtons(wrapper);
+                fragment.appendChild(wrapper);
+                nodes.push(wrapper);
             }
             span.replaceWith(fragment);
+            return nodes;
+        }
+
+        // ══════════════════════════════════════
+        //  AI PARAGRAPH UNDO
+        // ══════════════════════════════════════
+        const aiUndoStack = [];
+
+        function pushAIUndo(nodes) {
+            aiUndoStack.push(nodes);
+            $('aiUndoBtn').style.display = '';
+        }
+
+        function popAIUndo() {
+            if (aiUndoStack.length === 0) return;
+            const nodes = aiUndoStack.pop();
+            nodes.forEach(n => { if (n.parentNode) n.remove(); });
+            if (aiUndoStack.length === 0) $('aiUndoBtn').style.display = 'none';
+            updateStats();
+            scheduleAutoSave();
+            setAIStatus('AI generation undone');
         }
 
         // ══════════════════════════════════════
@@ -2444,10 +2796,20 @@ Written with Omni Writer
             saveCurrentContent();
             const context = buildContext();
 
+            // startWith technique: feed last paragraph as assistant message
+            // so the AI continues coherently without repeating
+            const lastPara = context.trim().split(/\n\n+/).slice(-1)[0] || '';
+            const directive = $('aiDirectiveInput').value.trim();
+            const directiveText = directive
+                ? '\n\nIMPORTANT: The next paragraphs MUST follow this direction: **' + directive + '**'
+                : '';
             const messages = [
-                { role: 'system', content: OMNI_SYSTEM_PROMPT },
-                { role: 'user', content: 'Title: ' + story.title + '\n\n' + context + '\n\nContinue writing from where the text ends. Write 2-3 paragraphs continuing naturally. Do not repeat existing text. Just write the continuation.' }
+                { role: 'system', content: getSystemPrompt() },
+                { role: 'user', content: 'Title: ' + story.title + '\n\n' + context + '\n\nContinue writing from where the text ends. Write 2-3 paragraphs continuing naturally. Do not repeat existing text. Just write the continuation.' + directiveText }
             ];
+            if (lastPara.length > 10) {
+                messages.push({ role: 'assistant', content: lastPara + '\n\n' });
+            }
 
             setAIGenerating(true);
             placeCaretAtEnd();
@@ -2465,7 +2827,8 @@ Written with Omni Writer
                     canvasWrapperEl.scrollTop = canvasWrapperEl.scrollHeight;
                 },
                 () => {
-                    finalizeStreamedText(streamSpan, fullText);
+                    const nodes = finalizeStreamedText(streamSpan, fullText) || [streamSpan];
+                    pushAIUndo(nodes);
                     setAIGenerating(false);
                     updateStats();
                     scheduleAutoSave();
@@ -2494,7 +2857,7 @@ Written with Omni Writer
             const context = buildContext();
 
             const messages = [
-                { role: 'system', content: OMNI_SYSTEM_PROMPT },
+                { role: 'system', content: getSystemPrompt() },
                 { role: 'user', content: 'Title: ' + story.title + '\n\nFull context:\n' + context + '\n\nEnhance the following selected text. Improve the writing quality, flow, and expressiveness while maintaining the same meaning and voice. Return ONLY the enhanced version of the text, nothing else.\n\nSelected text to enhance:\n"' + selectedText + '"' }
             ];
 
@@ -2536,7 +2899,7 @@ Written with Omni Writer
             const context = buildContext();
 
             const messages = [
-                { role: 'system', content: OMNI_SYSTEM_PROMPT },
+                { role: 'system', content: getSystemPrompt() },
                 { role: 'user', content: 'Title: ' + story.title + '\n\nExisting content for context:\n' + context + '\n\nGenerate the following:\n' + prompt + '\n\nWrite it naturally, fitting the tone and style of the existing content. Output only the generated text.' }
             ];
 
@@ -2565,7 +2928,8 @@ Written with Omni Writer
                     canvasWrapperEl.scrollTop = canvasWrapperEl.scrollHeight;
                 },
                 () => {
-                    finalizeStreamedText(streamSpan, fullText);
+                    const nodes = finalizeStreamedText(streamSpan, fullText) || [streamSpan];
+                    pushAIUndo(nodes);
                     setAIGenerating(false);
                     updateStats();
                     scheduleAutoSave();
@@ -2580,13 +2944,91 @@ Written with Omni Writer
         }
 
         // ══════════════════════════════════════
+        //  AI IDEA SUGGESTIONS
+        // ══════════════════════════════════════
+        let activeIdeasTab = 'next';
+
+        const IDEAS_PROMPTS = {
+            next: 'Suggest exactly 3 possible directions for what happens next. Each should be a single sentence, numbered 1-3. Be creative and varied — offer different tones (dramatic, surprising, tender, humorous). Do NOT write the actual story text, just the idea summary.',
+            style: 'Suggest 3 specific ways to improve the writing style, dialogue, or tone. Consider: vocabulary choices, sentence rhythm, character voice, genre conventions, and narrative perspective. Each suggestion should be a single sentence, numbered 1-3. Do NOT continue the story.',
+            critique: 'Provide up to 5 constructive critiques of this story so far. Cover pacing, character development, plot holes, dialogue quality, and prose clarity. Each point should be a single sentence, numbered. Be honest but constructive. Do NOT continue the story.'
+        };
+
+        async function generateIdeas(customInstructions) {
+            const story = getActiveStory();
+            if (!story || isGenerating) return;
+
+            const context = buildContext();
+            const listEl = $('aiIdeasList');
+            listEl.innerHTML = '<p class="ai-ideas-placeholder">Generating ideas...</p>';
+            $('aiIdeasPanel').classList.add('visible');
+
+            const extra = customInstructions
+                ? '\n\nAdditional instructions: ' + customInstructions
+                : '';
+
+            const prompt = IDEAS_PROMPTS[activeIdeasTab] || IDEAS_PROMPTS.next;
+
+            const messages = [
+                { role: 'system', content: getSystemPrompt() },
+                { role: 'user', content: 'Title: ' + story.title + '\n\nStory so far:\n' + context +
+                    '\n\n' + prompt + extra }
+            ];
+
+            let fullText = '';
+
+            await streamAI(messages,
+                (chunk) => {
+                    fullText += chunk;
+                    listEl.innerHTML = '<p class="ai-ideas-placeholder" style="white-space:pre-wrap">' + fullText + '</p>';
+                },
+                () => {
+                    // Parse numbered ideas from response
+                    const ideas = fullText.split(/\n/).filter(line => /^\s*\d+[\.\)]\s/.test(line));
+                    if (ideas.length === 0) {
+                        listEl.innerHTML = '<p class="ai-ideas-placeholder">No ideas parsed. Try again.</p>';
+                        return;
+                    }
+                    listEl.innerHTML = '';
+                    ideas.forEach(idea => {
+                        const text = idea.replace(/^\s*\d+[\.\)]\s*/, '').trim();
+                        const item = document.createElement('div');
+                        item.className = 'ai-idea-item';
+                        item.innerHTML = '<span class="ai-idea-text">' + text + '</span>' +
+                            '<button class="ai-idea-use" title="Use this idea as directive">Use</button>';
+                        item.querySelector('.ai-idea-use').addEventListener('click', () => {
+                            $('aiDirectiveInput').value = text;
+                            localStorage.setItem('omni-writer-directive', text);
+                            $('aiIdeasPanel').classList.remove('visible');
+                            setAIStatus('Idea applied as directive');
+                        });
+                        listEl.appendChild(item);
+                    });
+                },
+                (err) => {
+                    listEl.innerHTML = '<p class="ai-ideas-placeholder">Error: ' + err.slice(0, 100) + '</p>';
+                }
+            );
+        }
+
+        // ══════════════════════════════════════
         //  AI SETTINGS
         // ══════════════════════════════════════
+        function updateSettingsForProvider(provider) {
+            const isPerchance = provider === 'perchance';
+            $('settingsApiKeyGroup').style.display = isPerchance ? 'none' : '';
+            $('settingsPerchanceHint').style.display = isPerchance ? '' : 'none';
+            $('settingsModelGroup').style.display = isPerchance ? 'none' : '';
+        }
+
         function openSettings() {
             $('settingsProvider').value = aiConfig.provider;
             $('settingsApiKey').value = aiConfig.apiKey;
             populateModels(aiConfig.provider);
             if (aiConfig.model) $('settingsModel').value = aiConfig.model;
+            updateSettingsForProvider(aiConfig.provider);
+            $('settingsOneParagraph').checked = aiConfig.oneParagraphMode || false;
+            $('settingsPurpleProseGuard').checked = aiConfig.purpleProseGuard || false;
 
             $('settingsTestResult').textContent = '';
             $('settingsTestResult').className = 'settings-test-result';
@@ -2605,18 +3047,33 @@ Written with Omni Writer
 
         async function testAIConnection() {
             const provider = $('settingsProvider').value;
+            const resultEl = $('settingsTestResult');
+            const p = PROVIDERS[provider];
+            if (!p) return;
+
+            // Perchance: test by loading the plugin (no API key needed)
+            if (provider === 'perchance') {
+                resultEl.textContent = 'Loading Perchance plugin...';
+                resultEl.className = 'settings-test-result';
+                try {
+                    await loadPerchancePlugin();
+                    resultEl.textContent = 'Perchance plugin loaded successfully!';
+                    resultEl.className = 'settings-test-result ok';
+                } catch (err) {
+                    resultEl.textContent = 'Failed: ' + err.message;
+                    resultEl.className = 'settings-test-result err';
+                }
+                return;
+            }
+
             const apiKey = $('settingsApiKey').value.trim();
             const model = $('settingsModel').value;
-            const resultEl = $('settingsTestResult');
 
             if (!apiKey) {
                 resultEl.textContent = 'Please enter an API key.';
                 resultEl.className = 'settings-test-result err';
                 return;
             }
-
-            const p = PROVIDERS[provider];
-            if (!p) return;
 
             const useModel = model || p.defaultModel;
             resultEl.textContent = 'Testing...';
@@ -2648,6 +3105,8 @@ Written with Omni Writer
             aiConfig.provider = $('settingsProvider').value;
             aiConfig.apiKey = $('settingsApiKey').value.trim();
             aiConfig.model = $('settingsModel').value;
+            aiConfig.oneParagraphMode = $('settingsOneParagraph').checked;
+            aiConfig.purpleProseGuard = $('settingsPurpleProseGuard').checked;
             saveAIConfig();
             hideModal('settingsModal');
         }
@@ -2804,6 +3263,37 @@ Written with Omni Writer
             if (prompt) aiGenerate(prompt);
         });
         $('aiPromptCancel').addEventListener('click', hidePromptBar);
+        $('aiDirectiveClear').addEventListener('click', () => {
+            $('aiDirectiveInput').value = '';
+            localStorage.removeItem('omni-writer-directive');
+        });
+        // -- AI undo --
+        $('aiUndoBtn').addEventListener('click', popAIUndo);
+
+        // -- Ideas panel --
+        $('aiIdeasBtn').addEventListener('click', () => {
+            if ($('aiIdeasPanel').classList.contains('visible')) {
+                $('aiIdeasPanel').classList.remove('visible');
+            } else {
+                generateIdeas();
+            }
+        });
+        $('aiIdeasClose').addEventListener('click', () => {
+            $('aiIdeasPanel').classList.remove('visible');
+        });
+        $('aiIdeasRegenBtn').addEventListener('click', () => {
+            const extra = $('aiIdeasRegenInput').value.trim();
+            generateIdeas(extra || undefined);
+        });
+        document.querySelectorAll('.ai-ideas-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.ai-ideas-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                activeIdeasTab = tab.dataset.tab;
+                generateIdeas();
+            });
+        });
+
         $('aiPromptInput').addEventListener('keydown', e => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -2825,7 +3315,9 @@ Written with Omni Writer
 
         // -- Settings --
         $('settingsProvider').addEventListener('change', () => {
-            populateModels($('settingsProvider').value);
+            const prov = $('settingsProvider').value;
+            populateModels(prov);
+            updateSettingsForProvider(prov);
         });
         $('settingsTestBtn').addEventListener('click', testAIConnection);
         $('settingsSaveBtn').addEventListener('click', saveSettings);
@@ -2948,6 +3440,9 @@ Written with Omni Writer
         loadStories();
         loadAIConfig();
         loadSummaries();
+        // Restore directive from localStorage
+        const savedDirective = localStorage.getItem('omni-writer-directive');
+        if (savedDirective) $('aiDirectiveInput').value = savedDirective;
         renderStoryList();
 
         if (stories.length > 0) {

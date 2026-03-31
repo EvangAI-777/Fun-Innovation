@@ -85,15 +85,41 @@ Toggle AI on with the switch in the toolbar (or Ctrl+Shift+A). The first time yo
 - **Enhance** -- Select any text in your story and a floating "Enhance" tooltip appears. Click it, and the AI rewrites/improves the selected passage while preserving meaning. Ctrl+Z undoes if you don't like it.
 - **Generate** -- Click Generate, type a prompt describing what you want (e.g., "a tense dialogue scene between the two characters"), and the AI writes it fresh, inserting at the cursor position.
 
-AI-generated text gets a subtle dotted underline so you can tell what was written by the AI vs. what you typed yourself.
+AI-generated text gets a subtle dotted underline so you can tell what was written by the AI vs. what you typed yourself. Each AI-generated paragraph also shows up/down rating buttons on hover (right side), so you can mark which generations you liked and which need work.
+
+**Directive input (What Happens Next):**
+
+When AI is enabled, a directive bar appears below the action bar. Type a short instruction like "the villain reveals their true identity" and the AI will steer its next continuation in that direction. The directive persists across sessions via localStorage. Clear it with the × button.
+
+**Ideas panel:**
+
+Click the Ideas button to open a suggestion panel with three tabs:
+- **Next** -- 3 creative directions for what could happen next in your story
+- **Style** -- writing style, dialogue, and tone suggestions
+- **Critique** -- constructive feedback on pacing, character development, and prose quality
+
+Each suggestion has a "Use" button that applies it as the current directive. The panel supports custom regen instructions for more targeted suggestions.
+
+**One paragraph at a time:**
+
+Enable in Settings to have the AI stop after generating a single paragraph. Useful for tighter control over the narrative flow. Works with all providers -- Perchance uses native stop sequences, fetch-based providers detect paragraph boundaries in the stream.
+
+**Purple prose guard:**
+
+Enable in Settings to inject anti-purple-prose constraints into the AI's system prompt. Limits metaphors, discourages flowery adverbs, and encourages clean, concrete prose.
+
+**Paragraph undo:**
+
+After any AI generation (Continue or Generate), an Undo button appears in the action bar. Click it to remove the last AI-generated text. The undo stack supports multiple levels -- keep clicking to undo further back.
 
 **Supported providers:**
 
 - Google Gemini (default: gemini-2.0-flash)
 - OpenAI (default: gpt-4o-mini)
 - Anthropic (default: claude-sonnet-4-5-20250929)
+- Perchance (free, no API key required -- uses the Perchance ai-text-plugin, loaded on demand)
 
-Your API key stays in your browser's localStorage. It's sent directly to your chosen provider's API and nowhere else.
+Your API key stays in your browser's localStorage. It's sent directly to your chosen provider's API and nowhere else. Perchance requires no key at all -- select it as your provider and start writing immediately.
 
 ### Smart Context Management
 
@@ -129,7 +155,7 @@ This checkpoint happens unobtrusively in the corner, never interrupting your wri
 
 **Accessible.** Skip link, ARIA labels on all interactive elements, semantic HTML (aside, main, role attributes), full keyboard navigation, high-contrast text on dark backgrounds.
 
-**Privacy-first.** All data is stored in the browser's localStorage. With AI Mode off, nothing leaves your machine. With AI Mode on, your text is sent directly to the AI provider you configured (OpenAI, Gemini, or Anthropic) and nowhere else. No analytics, no tracking, no cloud sync.
+**Privacy-first.** All data is stored in the browser's localStorage. With AI Mode off, nothing leaves your machine. With AI Mode on, your text is sent directly to the AI provider you configured (OpenAI, Gemini, Anthropic, or Perchance) and nowhere else. No analytics, no tracking, no cloud sync.
 
 ## The JSON Config
 
@@ -164,6 +190,21 @@ The HTML app implements the same creative philosophy -- write about anything, wi
 # Changelog
 
 All notable changes to the Omni Writer are documented here.
+
+## [v2.1.0] - 2026-03-31
+
+### Added
+- **Perchance provider** -- Free AI provider with no API key required. Uses the Perchance ai-text-plugin, loaded on demand only when selected. Preserves zero-dependency philosophy.
+- **Directive input** -- "What happens next" bar below the AI actions. Type a short instruction to steer the AI's next continuation. Persists via localStorage.
+- **AI Ideas panel** -- Three-tab suggestion panel (Next/Style/Critique) that generates creative plot ideas, style suggestions, or constructive critiques. Each idea has a "Use" button to apply it as the current directive.
+- **One-paragraph mode** -- Toggle in Settings. AI stops after generating a single paragraph for tighter narrative control.
+- **Purple prose guard** -- Toggle in Settings. Injects anti-flowery-prose constraints into the system prompt.
+- **Paragraph-level undo** -- Undo button appears after AI generations. Multi-level stack removes AI-generated text in reverse order.
+- **Paragraph ratings** -- Up/down rating buttons appear on hover over AI-generated paragraphs.
+
+### Changed
+- **startWith technique** -- All providers now use trailing assistant messages to prime continuation, preventing the AI from repeating existing text.
+- Provider settings UI dynamically hides API key and model fields when Perchance is selected.
 
 ## [v2.0.1] - 2026-03-30
 
