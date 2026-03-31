@@ -423,3 +423,155 @@ class TestHtmlToMarkdown:
     def test_horizontal_rule(self):
         result = self._convert("<hr>")
         assert "---" in result
+
+
+# ════════════════════════════════════════════════════
+#  v2.1.0 FEATURE TESTS
+# ════════════════════════════════════════════════════
+
+
+class TestPerchanceProvider:
+    """Validate Perchance provider integration."""
+
+    def test_has_perchance_option(self, html):
+        assert 'value="perchance"' in html, "must have Perchance provider option"
+
+    def test_has_perchance_in_providers(self, html):
+        assert "perchance:" in html, "must define perchance in PROVIDERS object"
+
+    def test_has_perchance_loader(self, html):
+        assert "loadPerchancePlugin" in html, "must have lazy loader function"
+
+    def test_has_perchance_plugin_url(self, html):
+        assert "perchance.org/api/getPlugin" in html, "must reference Perchance plugin API"
+
+    def test_has_perchance_hint(self, html):
+        assert 'id="settingsPerchanceHint"' in html, "must have Perchance settings hint"
+
+    def test_has_requires_key_false(self, html):
+        assert "requiresKey: false" in html, "Perchance must not require an API key"
+
+
+class TestDirectiveInput:
+    """Validate the What Happens Next directive input."""
+
+    def test_has_directive_bar(self, html):
+        assert 'id="aiDirectiveBar"' in html, "must have directive bar"
+
+    def test_has_directive_input(self, html):
+        assert 'id="aiDirectiveInput"' in html, "must have directive input"
+
+    def test_has_directive_clear(self, html):
+        assert 'id="aiDirectiveClear"' in html, "must have directive clear button"
+
+    def test_directive_persists(self, html):
+        assert "omni-writer-directive" in html, "must persist directive in localStorage"
+
+    def test_directive_in_prompt(self, html):
+        assert "MUST follow this direction" in html, "must inject directive into AI prompt"
+
+
+class TestOneParagraphMode:
+    """Validate the one-paragraph-at-a-time mode."""
+
+    def test_has_checkbox(self, html):
+        assert 'id="settingsOneParagraph"' in html, "must have one-paragraph checkbox"
+
+    def test_has_config_field(self, html):
+        assert "oneParagraphMode" in html, "must have oneParagraphMode in aiConfig"
+
+    def test_has_paragraph_detection(self, html):
+        assert "paragraphStopped" in html, "must detect paragraph boundaries in stream"
+
+
+class TestIdeasPanel:
+    """Validate the AI Ideas panel with tabs."""
+
+    def test_has_ideas_button(self, html):
+        assert 'id="aiIdeasBtn"' in html, "must have Ideas button"
+
+    def test_has_ideas_panel(self, html):
+        assert 'id="aiIdeasPanel"' in html, "must have Ideas panel"
+
+    def test_has_ideas_list(self, html):
+        assert 'id="aiIdeasList"' in html, "must have ideas list container"
+
+    def test_has_ideas_close(self, html):
+        assert 'id="aiIdeasClose"' in html, "must have ideas close button"
+
+    def test_has_ideas_regen(self, html):
+        assert 'id="aiIdeasRegenBtn"' in html, "must have regen button"
+        assert 'id="aiIdeasRegenInput"' in html, "must have regen instructions input"
+
+    def test_has_next_tab(self, html):
+        assert 'data-tab="next"' in html, "must have Next tab"
+
+    def test_has_style_tab(self, html):
+        assert 'data-tab="style"' in html, "must have Style tab"
+
+    def test_has_critique_tab(self, html):
+        assert 'data-tab="critique"' in html, "must have Critique tab"
+
+    def test_has_tab_prompts(self, html):
+        assert "IDEAS_PROMPTS" in html, "must define tab-specific prompts"
+
+    def test_has_generate_ideas(self, html):
+        assert "generateIdeas" in html, "must have generateIdeas function"
+
+    def test_has_ideas_css(self, html):
+        assert ".ai-ideas-panel" in html, "must have ideas panel CSS"
+        assert ".ai-ideas-tab" in html, "must have tab CSS"
+        assert ".ai-idea-item" in html, "must have idea item CSS"
+
+
+class TestParagraphUndo:
+    """Validate paragraph-level undo for AI generations."""
+
+    def test_has_undo_button(self, html):
+        assert 'id="aiUndoBtn"' in html, "must have AI undo button"
+
+    def test_has_undo_stack(self, html):
+        assert "aiUndoStack" in html, "must have undo stack"
+
+    def test_has_push_undo(self, html):
+        assert "pushAIUndo" in html, "must have pushAIUndo function"
+
+    def test_has_pop_undo(self, html):
+        assert "popAIUndo" in html, "must have popAIUndo function"
+
+
+class TestPurpleProseGuard:
+    """Validate the purple prose guard toggle."""
+
+    def test_has_checkbox(self, html):
+        assert 'id="settingsPurpleProseGuard"' in html, "must have purple prose guard checkbox"
+
+    def test_has_config_field(self, html):
+        assert "purpleProseGuard" in html, "must have purpleProseGuard in aiConfig"
+
+    def test_has_guard_text(self, html):
+        assert "PURPLE_PROSE_GUARD" in html, "must define guard prompt constant"
+
+    def test_has_system_prompt_builder(self, html):
+        assert "getSystemPrompt" in html, "must have getSystemPrompt function"
+
+    def test_guard_mentions_hemingway(self, html):
+        assert "Hemingway" in html, "guard text should reference clean prose style"
+
+
+class TestParagraphRatings:
+    """Validate paragraph rating buttons on AI-generated text."""
+
+    def test_has_rating_css(self, html):
+        assert ".ai-para-ratings" in html, "must have ratings container CSS"
+        assert ".ai-rate-btn" in html, "must have rate button CSS"
+
+    def test_has_rating_states(self, html):
+        assert "rated-up" in html, "must have rated-up CSS class"
+        assert "rated-down" in html, "must have rated-down CSS class"
+
+    def test_has_add_rating_function(self, html):
+        assert "addRatingButtons" in html, "must have addRatingButtons function"
+
+    def test_has_para_wrapper(self, html):
+        assert "ai-para-wrapper" in html, "must have paragraph wrapper class"
