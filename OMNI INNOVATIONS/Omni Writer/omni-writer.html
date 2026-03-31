@@ -1360,6 +1360,9 @@
                 <label class="settings-label">Model (optional)</label>
                 <select id="settingsModel"></select>
             </div>
+            <label class="settings-label" style="margin-top:12px; display:flex; align-items:center; gap:8px; cursor:pointer;">
+                <input type="checkbox" id="settingsOneParagraph" style="cursor:pointer;"> One paragraph at a time
+            </label>
             <button class="modal-btn" id="settingsTestBtn" style="margin-top:12px;">Test Connection</button>
             <p id="settingsTestResult" class="settings-test-result"></p>
             <button class="modal-btn" id="settingsSaveBtn" style="margin-top:8px;">Save</button>
@@ -1436,7 +1439,7 @@
         let searchQuery = '';
         let sidebarOpen = false;
         let aiEnabled = false;
-        let aiConfig = { provider: 'gemini', apiKey: '', model: '', temperature: 0.8 };
+        let aiConfig = { provider: 'gemini', apiKey: '', model: '', temperature: 0.8, oneParagraphMode: false };
         let abortController = null;
         let isGenerating = false;
         let storySummaries = {};
@@ -2235,10 +2238,12 @@ Written with Omni Writer
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
                 let buffer = '';
+                let accumulated = '';
+                let paragraphStopped = false;
 
                 while (true) {
                     const { done, value } = await reader.read();
-                    if (done) break;
+                    if (done || paragraphStopped) break;
 
                     buffer += decoder.decode(value, { stream: true });
                     const lines = buffer.split('\n');
@@ -2254,7 +2259,21 @@ Written with Omni Writer
                             try {
                                 const parsed = JSON.parse(jsonStr);
                                 const text = provider.extractText(parsed);
-                                if (text) onChunk(text);
+                                if (text) {
+                                    // One-paragraph-at-a-time: stop at double newline
+                                    if (aiConfig.oneParagraphMode) {
+                                        accumulated += text;
+                                        if (accumulated.includes('\n\n')) {
+                                            const beforeBreak = accumulated.split('\n\n')[0];
+                                            const remaining = beforeBreak.slice(accumulated.length - text.length - (accumulated.length - beforeBreak.length));
+                                            onChunk(text.slice(0, text.length - (accumulated.length - beforeBreak.length)));
+                                            paragraphStopped = true;
+                                            abortController.abort();
+                                            break;
+                                        }
+                                    }
+                                    onChunk(text);
+                                }
                             } catch (e) {
                                 // Skip unparseable chunks
                             }
@@ -2729,6 +2748,7 @@ Written with Omni Writer
             populateModels(aiConfig.provider);
             if (aiConfig.model) $('settingsModel').value = aiConfig.model;
             updateSettingsForProvider(aiConfig.provider);
+            $('settingsOneParagraph').checked = aiConfig.oneParagraphMode || false;
 
             $('settingsTestResult').textContent = '';
             $('settingsTestResult').className = 'settings-test-result';
@@ -2805,6 +2825,7 @@ Written with Omni Writer
             aiConfig.provider = $('settingsProvider').value;
             aiConfig.apiKey = $('settingsApiKey').value.trim();
             aiConfig.model = $('settingsModel').value;
+            aiConfig.oneParagraphMode = $('settingsOneParagraph').checked;
             saveAIConfig();
             hideModal('settingsModal');
         }
