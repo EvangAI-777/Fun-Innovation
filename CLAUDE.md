@@ -65,6 +65,101 @@ make clean            # Remove __pycache__, *.egg-info, dist/, build/
 - **Logical sections vary by context** — What counts as a "logical section" depends on the file type, the project, and the task at hand. A Roblox Server script might break into init, event handlers, and cleanup. A Python module might break into imports/config, core logic, and CLI entry point. An HTML file might break into structure, styles, and scripts. Refer to the Claude Code plan file and this CLAUDE.md for guidance on how the current task should be decomposed.
 - **Ask the user when unsure** — If it's unclear how to break a task into logical sections, or what granularity of commits makes sense for a particular file or project, ask the user for clarification. It's always better to ask than to guess wrong and batch too much work into one commit.
 
+## Token Efficiency & Session Management
+
+Tokens are spent on two things: **context** (what Claude reads) and **output** (what Claude writes). Most waste comes from vague tasks requiring clarification rounds, agents launched for things a direct tool call could handle, and asking Claude to explore before telling it where to look.
+
+### Be specific about the target
+
+Bad:
+> "There's a bug in the authentication flow, can you look into it?"
+
+Good:
+> "In `src/auth/session.ts` around line 84, `validateToken()` isn't checking expiry before returning `true`. Add the expiry check."
+
+The second version skips file discovery and clarification rounds — probably 80% fewer tokens. If you already know where something lives, say so. "Read `src/utils/parser.py` lines 40–80" costs far less than "find where the parsing logic is."
+
+### Avoid agents for directed searches
+
+Agents are powerful but expensive. Skip them for anything with a clear target:
+
+- "Find the definition of `parseConfig`" → use Grep directly
+- "Check if `utils.js` calls `fetch`" → use Grep directly
+- "What's in `config/defaults.json`?" → use Read directly
+
+Use agents only for genuinely open-ended work: researching an unfamiliar codebase, scanning upstream project history across many commits, or running a multi-step background task.
+
+### Front-load constraints
+
+Tell Claude what NOT to do at the start of a task — not after it has already done it. Useful constraints:
+
+- "Don't spawn agents, use direct tool calls."
+- "Don't refactor anything outside the specific function I'm asking about."
+- "Keep the change under 20 lines."
+- "Don't add comments, docstrings, or type annotations."
+
+Correcting an unwanted 200-line response costs more tokens than preventing it.
+
+### Ask for a plan before big implementations
+
+For anything touching more than 3 files, ask Claude to describe the approach in one paragraph before writing any code. If the approach is wrong, course-correct there — not after the implementation is already written.
+
+### Narrow the scope of exploratory tasks
+
+Bad:
+> "Scan all recent upstream changes and tell me what's relevant."
+
+Better:
+> "Fetch the v2.4 release notes page and summarize only the breaking API changes."
+
+Scoping the question scopes the work. The second version produces the same useful output with a fraction of the tool calls.
+
+### One task, one session
+
+Sessions accumulate context. The longer a session runs, the more tokens go to context overhead. When a logical unit of work is done (a bug fix, a feature, a research task), commit, push, and start a fresh session for the next thing.
+
+### Token Cost Reference
+
+| Operation | Relative Cost |
+|-----------|--------------|
+| Direct file read (Read tool) | Low |
+| Direct Grep/Glob search | Low |
+| Single WebFetch | Medium |
+| Single WebSearch | Medium |
+| Agent (foreground, simple task) | High |
+| Agent (foreground, research task) | Very High |
+| Large refactor across 10+ files | Very High |
+| Back-and-forth correction loops | Compounds fast |
+
+### Emergency Mode (Near the Cap)
+
+When at ~10% remaining tokens:
+
+1. **No agents.** Every task uses direct tool calls only.
+2. **No exploration.** Know the file before asking about it.
+3. **One thing.** Pick the single highest-value task and do only that.
+4. **Short outputs.** Ask for concise responses: "in one paragraph", "under 20 lines of code", "just the diff, no explanation."
+5. **Skip the docs.** No comments, docstrings, or summaries unless they are the actual deliverable.
+6. **Commit before you start.** If the session ends mid-task, you want a clean base to return to next week.
+
+### What's Actually Worth Spending Tokens On
+
+In rough priority order:
+
+1. **Bug fixes with a clear reproduction** — high value, tight scope
+2. **Implementing a feature you've already designed** — efficient when you provide the spec upfront
+3. **One-time research with durable output** — pays for itself if findings are written down
+4. **Refactoring** — low priority; defer unless actively blocking work
+5. **Exploration / "what does this code do?"** — use sparingly; read it yourself when you can
+
+### The Meta-Principle
+
+Claude Code works best when you treat it like a skilled contractor, not a search engine. A contractor does their best work when handed a blueprint, not when asked to figure out what to build. The more you've thought through a task before opening a session, the more of your token budget goes toward actual work rather than planning overhead.
+
+**Hand Claude a blueprint. Don't ask it to design the building.**
+
+---
+
 ## Style Notes
 
 - No linter, formatter, or type checker is configured. Don't add one unless asked.
