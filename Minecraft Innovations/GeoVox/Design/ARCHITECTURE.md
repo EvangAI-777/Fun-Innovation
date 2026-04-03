@@ -164,4 +164,4 @@ This is a stretch goal -- the forward path (data → Minecraft) ships first.
 
 ---
 
-*Full concept details in [`../MCME.md`](../MCME.md)*
+*Theme overview: [`../MCME.md`](../MCME.md)*
