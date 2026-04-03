@@ -75,7 +75,7 @@ Build once. Ship everywhere. The modloader wars become irrelevant for creators.
 | Resource Pack | Vanilla resource pack |
 | Multiloader | Architectury project |
 
-See [`ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical design and [`MCME.md`](../MCME.md) for the original concept document.
+See [`ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical design and [`MCME.md`](../MCME.md) for the theme overview.
 
 ## Technical Stack
 

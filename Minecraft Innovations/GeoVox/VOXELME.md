@@ -20,7 +20,7 @@ Same USGS heightmap of the Grand Canyon can render in vanilla survival blocks, i
 
 Three independent layers: **Ingest** (normalize input to sparse 3D grid), **Palette** (map semantic categories to Minecraft blocks via JSON), **Export** (write block grid to Minecraft formats). Swap any layer without touching the others.
 
-See [`Design/ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical design and [`MCME.md`](../MCME.md) for the original concept document.
+See [`Design/ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical design and [`MCME.md`](../MCME.md) for the theme overview.
 
 ## Technical Stack
 

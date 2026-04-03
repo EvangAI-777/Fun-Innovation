@@ -303,4 +303,4 @@ The Python prototype implements the **Project Model** and **Export Engine** subs
 
 ---
 
-*Full concept details in [`../MCME.md`](../MCME.md)*
+*Theme overview: [`../MCME.md`](../MCME.md)*
