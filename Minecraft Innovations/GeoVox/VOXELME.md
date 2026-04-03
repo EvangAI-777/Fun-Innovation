@@ -59,7 +59,17 @@ What's here:
 - **Tests:** 27 tests covering grid, palette, heightmap ingest, both exporters, NBT writer, and full pipeline integration
 - **Example:** Test terrain generator script (`examples/generate_test_terrain.py`)
 
-What's next: `.mca` world file export (drop into saves and play), point cloud ingest (LAS/LAZ), mesh ingest (OBJ/STL), palette composition (stacking multiple layers), and the bidirectional workflow.
+**What's next (v0.2.0 — Palette Composition + Export Polish):**
+
+- **Palette composition engine** — Stack multiple palette layers so elevation, slope, and moisture can all influence block selection simultaneously. `PaletteComposer` class accepts ordered layers with priority rules; each layer can override specific categories based on grid metadata. Slope calculation from the heightmap grid (gradient approximation via numpy, no new deps). New CLI flag: `--palette` accepting multiple comma-separated palette files.
+- **Litematica export** — `.litematic` schematic format, implementable without external dependencies by reusing the existing custom NBT binary writer with a new schema layout.
+- **Grid slope computation** — `compute_slope()` method on `VoxelGrid` using gradient magnitude per column; raw elevation stored as grid metadata for composition.
+
+**Longer-term roadmap:**
+- `.mca` world file export (drop into saves and play) — requires `anvil-parser` or `amulet-core`
+- Point cloud ingest (LAS/LAZ) — requires PDAL
+- Mesh ingest (OBJ/STL) — requires trimesh
+- Bidirectional workflow (diff modified world → export changes as 3D data)
 
 ## Dedication
 
