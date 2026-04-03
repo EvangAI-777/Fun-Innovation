@@ -48,6 +48,7 @@ def ingest_heightmap(
         "source_shape": heightmap.shape,
         "y_scale": y_scale,
         "sea_level": sea_level,
+        "elevation": heightmap,
     }
 
     y_min, y_max = y_scale
