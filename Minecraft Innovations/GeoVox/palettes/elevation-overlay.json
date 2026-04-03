@@ -1,0 +1,19 @@
+{
+  "name": "elevation-overlay",
+  "description": "Overlay palette for high-elevation terrain -- snow and packed ice above the tree line",
+  "version": "1.21",
+  "mappings": {
+    "surface": {
+      "blocks": ["minecraft:snow_block", "minecraft:powder_snow"],
+      "weights": [0.8, 0.2]
+    },
+    "ground_shallow": {
+      "blocks": ["minecraft:packed_ice", "minecraft:snow_block"],
+      "weights": [0.5, 0.5]
+    },
+    "ground_deep": {
+      "blocks": ["minecraft:packed_ice", "minecraft:blue_ice"],
+      "weights": [0.7, 0.3]
+    }
+  }
+}

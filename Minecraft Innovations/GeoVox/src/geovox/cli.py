@@ -24,7 +24,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     pipe.add_argument("input", help="Path to heightmap image (PNG, TIFF)")
     pipe.add_argument("-o", "--output", required=True, help="Output path (without extension)")
-    pipe.add_argument("--palette", default=None, help="Path to palette JSON (default: built-in vanilla-survival)")
+    pipe.add_argument("--palette", default=None, help="Palette JSON path(s), comma-separated for composition (default: built-in vanilla-survival)")
     pipe.add_argument("--y-min", type=int, default=0, help="Minimum Y level (default: 0)")
     pipe.add_argument("--y-max", type=int, default=128, help="Maximum Y level (default: 128)")
     pipe.add_argument("--sea-level", type=int, default=None, help="Y level for water fill (default: none)")
@@ -84,16 +84,31 @@ def _cmd_pipeline(args: argparse.Namespace) -> int:
 
     # Palette
     if args.palette:
-        palette_path = Path(args.palette)
-        if not palette_path.exists():
-            print(f"Error: palette not found: {palette_path}", file=sys.stderr)
-            return 1
-        palette = Palette.from_json(palette_path, seed=args.seed)
+        palette_paths = [Path(p.strip()) for p in args.palette.split(",")]
+        for pp in palette_paths:
+            if not pp.exists():
+                print(f"Error: palette not found: {pp}", file=sys.stderr)
+                return 1
+
+        if len(palette_paths) == 1:
+            palette = Palette.from_json(palette_paths[0], seed=args.seed)
+            print(f"Applying palette: {palette.name}")
+            block_grid = apply_palette(grid, palette)
+        else:
+            from .palette.composer import PaletteComposer, apply_composed_palette
+            grid.compute_slope()
+            composer = PaletteComposer()
+            for pp in palette_paths:
+                p = Palette.from_json(pp, seed=args.seed)
+                composer.add_layer(p)
+                print(f"  Layer: {p.name}")
+            print("Applying composed palette")
+            block_grid = apply_composed_palette(grid, composer)
     else:
         palette = _builtin_palette(args.seed)
+        print(f"Applying palette: {palette.name}")
+        block_grid = apply_palette(grid, palette)
 
-    print(f"Applying palette: {palette.name}")
-    block_grid = apply_palette(grid, palette)
     print(f"  {block_grid}")
 
     # Export
