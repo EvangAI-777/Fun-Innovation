@@ -44,6 +44,12 @@ def main(argv: list[str] | None = None) -> int:
     preview = subparsers.add_parser("preview", help="ASCII preview of a heightmap")
     preview.add_argument("input", help="Path to heightmap image")
     preview.add_argument("--width", type=int, default=80, help="Preview width in characters")
+    preview.add_argument("--stats", action="store_true", help="Show elevation statistics")
+    preview.add_argument("--color", action="store_true", help="Use ANSI color-coded elevation gradient")
+
+    # validate -- check a palette JSON file
+    validate = subparsers.add_parser("validate", help="Validate a palette JSON file")
+    validate.add_argument("input", help="Path to palette JSON file")
 
     args = parser.parse_args(argv)
 
@@ -56,6 +62,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_info(args)
     elif args.command == "preview":
         return _cmd_preview(args)
+    elif args.command == "validate":
+        return _cmd_validate(args)
     return 0
 
 
@@ -262,12 +270,63 @@ def _cmd_preview(args: argparse.Namespace) -> int:
         norm = np.zeros_like(sampled)
 
     chars = " .:-=+*#%@"
-    for row in norm:
-        line = "".join(chars[min(int(v * len(chars)), len(chars) - 1)] for v in row)
-        print(line)
+    if args.color:
+        # ANSI 256-color gradient: blue (low) -> green (mid) -> red (high)
+        _COLOR_RAMP = [17, 18, 19, 20, 21, 27, 33, 39, 45, 44, 43, 42, 41, 40,
+                       46, 82, 118, 154, 190, 226, 220, 214, 208, 202, 196]
+        for row in norm:
+            parts = []
+            for v in row:
+                ci = min(int(v * len(_COLOR_RAMP)), len(_COLOR_RAMP) - 1)
+                char_i = min(int(v * len(chars)), len(chars) - 1)
+                parts.append(f"\033[38;5;{_COLOR_RAMP[ci]}m{chars[char_i]}\033[0m")
+            print("".join(parts))
+    else:
+        for row in norm:
+            line = "".join(chars[min(int(v * len(chars)), len(chars) - 1)] for v in row)
+            print(line)
 
     print(f"\n{cols}x{rows} pixels, preview at 1:{scale} scale")
+
+    if args.stats:
+        print(f"\nElevation statistics:")
+        print(f"  Min:    {float(data.min()):.1f}")
+        print(f"  Max:    {float(data.max()):.1f}")
+        print(f"  Mean:   {float(data.mean()):.1f}")
+        print(f"  Median: {float(np.median(data)):.1f}")
+        print(f"  StdDev: {float(data.std()):.1f}")
+        print(f"  Columns: {rows * cols:,}")
+
     return 0
+
+
+def _cmd_validate(args: argparse.Namespace) -> int:
+    import json
+    from .palette.validate import validate_palette
+
+    path = Path(args.input)
+    if not path.exists():
+        print(f"Error: file not found: {path}", file=sys.stderr)
+        return 1
+
+    try:
+        with open(path) as f:
+            data = json.load(f)
+    except json.JSONDecodeError as e:
+        print(f"Error: invalid JSON: {e}", file=sys.stderr)
+        return 1
+
+    errors = validate_palette(data)
+    if errors:
+        print(f"Validation failed for {path}:")
+        for err in errors:
+            print(f"  - {err}")
+        return 1
+    else:
+        name = data.get("name", path.stem)
+        categories = list(data.get("mappings", {}).keys())
+        print(f"Palette '{name}' is valid ({len(categories)} categories: {', '.join(categories)})")
+        return 0
 
 
 def _builtin_palette(seed: int | None = None) -> Palette:
