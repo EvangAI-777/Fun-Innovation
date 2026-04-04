@@ -125,7 +125,7 @@ The Muse knows about all of these. "Export the piano part as MIDI and the drums 
 
 ## Status
 
-**v0.2.0 (Testing Phase) -- Composition Engine.** Zero external dependencies. `pip install -e .` then `automuse` to start a session.
+**v0.3.0 (Testing Phase) -- Multi-Voice Composition.** Zero external dependencies. `pip install -e .` then `automuse` to start a session.
 
 Each module below is developed and tested in the Python CLI, then compiled directly into `automuse.exe`. Current features are building the modules that ship inside the desktop application.
 
@@ -155,6 +155,10 @@ Each module below is developed and tested in the Python CLI, then compiled direc
 | `automuse.compose.motif` | MotifNote (note + duration + velocity), Motif (reusable phrases with transpose, invert, retrograde, augment, diminish, in_key), MotifBuilder (from scale degrees, note names, or intervals) |
 | `automuse.compose.melody` | MelodyGenerator -- algorithmic melody from scale/contour/rhythm. 6 contour shapes (ascending, descending, arch, valley, static, wave), configurable step bias and range. 4 development techniques (sequence, variation, fragmentation, extension). Seeded for reproducibility |
 | `automuse.compose.arrangement` | Song structure -- SectionType (9 types), Section (bars, key override, progression, melody), Arrangement (title, key, tempo, time sig, to_dict/from_dict). 5 templates: pop, verse-chorus, AABA, 12-bar blues, through-composed |
+| `automuse.compose.drums` | Drum pattern engine -- GMPercussion mapping (14 instruments), DrumHit, DrumPattern (repeat, vary, summary), DrumPatternBuilder (rock, pop, jazz, hip-hop, EDM). Channel 9 GM percussion |
+| `automuse.compose.bass` | Bass line generator -- 5 styles (root, root-fifth, walking, arpeggiated, syncopated) from chord progressions. Scale-aware passing and approach tones |
+| `automuse.compose.counterpoint` | Counterpoint engine -- 5 styles (parallel thirds/sixths, contrary, oblique, free). Validation for parallel fifths/octaves, voice crossing, range, diatonicism |
+| `automuse.compose.score` | Score model -- Part (name, instrument type, channel, motif/drum pattern), Score (multi-part container with MIDI Type 1 and MusicXML export), ScoreBuilder (from_parts, quick_band). Full serialization round-trip |
 
 **Export modules**:
 
@@ -167,9 +171,9 @@ Each module below is developed and tested in the Python CLI, then compiled direc
 
 | Module | What it does |
 |--------|-------------|
-| `automuse.muse.engine` | The Muse -- conversational interface with 21 commands (scale, chord, key, progression, tempo, time, voicing, analyze, modulate, transpose, suggest, melody, motif, arrange, save, load, export, exportxml, play, help, quit), mood-responsive chat, session state with save/load, full workflow from key selection through MIDI and MusicXML export |
+| `automuse.muse.engine` | The Muse -- conversational interface with 27 commands (scale, chord, key, progression, tempo, time, voicing, analyze, modulate, transpose, suggest, melody, motif, arrange, drums, bass, counter, score build/export/exportxml, save, load, export, exportxml, play, help, quit), mood-responsive chat, session state with save/load, full workflow from key selection through multi-track MIDI and MusicXML export |
 
-310 passing tests across 13 test files covering every module.
+426 passing tests across 17 test files covering every module.
 
 The audio engine (Layer 3) is a solved engineering problem (JUCE, PortAudio, RtMidi). The visual canvas (Layer 2) is an IDE problem. Layer 1 is the hard kernel -- the music knowledge, composition, and generation engine that everything else builds on. That kernel is now real.
 

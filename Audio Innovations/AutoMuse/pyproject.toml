@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "automuse"
-version = "0.2.0"
-description = "Conversational music composition engine -- melody generation, arrangement, MIDI + MusicXML export"
+version = "0.3.0"
+description = "Conversational music composition engine -- melody, drums, bass, counterpoint, multi-track score, MIDI + MusicXML export"
 requires-python = ">=3.10"
 dependencies = []
 

@@ -435,3 +435,170 @@ class TestMuseExportXML:
         assert "melody" in r.lower()
         assert Path(path).exists()
         Path(path).unlink()
+
+
+class TestMuseDrums:
+    def test_drums_default(self):
+        muse = Muse()
+        r = muse.respond("drums")
+        assert "rock" in r.lower()
+        assert muse.last_drums is not None
+
+    def test_drums_jazz(self):
+        muse = Muse()
+        r = muse.respond("drums jazz")
+        assert "jazz" in r.lower()
+        assert muse.last_drums is not None
+
+    def test_drums_unknown_genre(self):
+        muse = Muse()
+        r = muse.respond("drums polka")
+        assert "Unknown" in r
+
+    def test_drums_shows_instruments(self):
+        muse = Muse()
+        r = muse.respond("drums rock")
+        assert "instruments" in r.lower() or "Instruments" in r
+
+
+class TestMuseBass:
+    def test_bass_requires_progression(self):
+        muse = Muse()
+        r = muse.respond("bass")
+        assert "progression" in r.lower()
+
+    def test_bass_root(self):
+        muse = Muse()
+        muse.respond("progression I-IV-V-I")
+        r = muse.respond("bass root")
+        assert "root" in r.lower()
+        assert muse.last_bass is not None
+
+    def test_bass_walking(self):
+        muse = Muse()
+        muse.respond("progression I-IV-V-I")
+        r = muse.respond("bass walking")
+        assert "walking" in r.lower()
+        assert len(muse.last_bass) > 0
+
+    def test_bass_unknown_style(self):
+        muse = Muse()
+        muse.respond("progression I-IV-V-I")
+        r = muse.respond("bass funky")
+        assert "Unknown" in r
+
+
+class TestMuseCounter:
+    def test_counter_requires_melody(self):
+        muse = Muse()
+        r = muse.respond("counter")
+        assert "melody" in r.lower()
+
+    def test_counter_thirds(self):
+        muse = Muse()
+        muse.respond("melody")
+        r = muse.respond("counter thirds")
+        assert "thirds" in r.lower()
+        assert muse.last_counter is not None
+
+    def test_counter_contrary(self):
+        muse = Muse()
+        muse.respond("melody")
+        r = muse.respond("counter contrary")
+        assert "contrary" in r.lower()
+
+    def test_counter_unknown_style(self):
+        muse = Muse()
+        muse.respond("melody")
+        r = muse.respond("counter fugue")
+        assert "Unknown" in r
+
+
+class TestMuseScore:
+    def test_score_no_args_empty(self):
+        muse = Muse()
+        r = muse.respond("score")
+        assert "No score" in r
+
+    def test_score_build(self):
+        muse = Muse()
+        muse.respond("melody")
+        r = muse.respond("score build")
+        assert "assembled" in r.lower() or "Score" in r
+        assert muse.last_score is not None
+
+    def test_score_build_full(self):
+        muse = Muse()
+        muse.respond("melody")
+        muse.respond("progression I-IV-V-I")
+        muse.respond("drums rock")
+        muse.respond("bass root")
+        muse.respond("counter thirds")
+        r = muse.respond("score build")
+        assert "assembled" in r.lower()
+        parts = muse.last_score.parts
+        assert len(parts) >= 4  # melody, bass, counter, drums
+
+    def test_score_summary(self):
+        muse = Muse()
+        muse.respond("melody")
+        muse.respond("score build")
+        r = muse.respond("score")
+        assert "Parts" in r or "parts" in r
+
+    def test_score_export_midi(self):
+        muse = Muse()
+        muse.respond("melody")
+        muse.respond("score build")
+        with tempfile.NamedTemporaryFile(suffix=".mid", delete=False) as f:
+            path = f.name
+        r = muse.respond(f"score export {path}")
+        assert "Exported" in r
+        assert Path(path).exists()
+        Path(path).unlink()
+
+    def test_score_export_no_score(self):
+        muse = Muse()
+        r = muse.respond("score export")
+        assert "No score" in r
+
+    def test_score_exportxml(self):
+        muse = Muse()
+        muse.respond("melody")
+        muse.respond("score build")
+        with tempfile.NamedTemporaryFile(suffix=".musicxml", delete=False) as f:
+            path = f.name
+        r = muse.respond(f"score exportxml {path}")
+        assert "Exported" in r
+        assert Path(path).exists()
+        Path(path).unlink()
+
+    def test_score_unknown_subcommand(self):
+        muse = Muse()
+        r = muse.respond("score foo")
+        assert "Usage" in r
+
+
+class TestMuseSuggestWithParts:
+    def test_suggest_mentions_drums_bass(self):
+        muse = Muse()
+        muse.respond("melody")
+        muse.respond("progression I-IV-V-I")
+        r = muse.respond("suggest")
+        assert "drums" in r.lower() or "bass" in r.lower()
+
+
+class TestMuseNewCommands:
+    def test_new_actions_recognized(self):
+        for action in ["drums", "bass", "counter", "score"]:
+            from automuse.muse.commands import parse_command
+            cmd = parse_command(f"{action} test")
+            assert cmd.action == action, f"{action} not recognized"
+
+    def test_help_includes_new_commands(self):
+        muse = Muse()
+        r = muse.respond("help")
+        assert "drums" in r
+        assert "bass" in r
+        assert "counter" in r
+        assert "score" in r

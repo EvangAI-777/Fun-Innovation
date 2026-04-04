@@ -22,6 +22,10 @@ from automuse.midi.writer import MidiWriter
 from automuse.compose.motif import Motif, MotifNote
 from automuse.compose.melody import MelodyGenerator, MelodyConfig, MelodyContour
 from automuse.compose.arrangement import Arrangement, Section, SectionType, ArrangementTemplates
+from automuse.compose.drums import DrumPattern, DrumPatternBuilder
+from automuse.compose.bass import BassStyle, BassConfig, BassGenerator
+from automuse.compose.counterpoint import CounterpointStyle, CounterpointConfig, CounterpointGenerator
+from automuse.compose.score import Score, Part, InstrumentType, ScoreBuilder
 from automuse.export.musicxml import MusicXMLWriter
 from .commands import parse_command, Command
 
@@ -40,7 +44,13 @@ class Muse:
         self._last_progression: Progression | None = None
         self._last_melody: Motif | None = None
         self._last_arrangement: Arrangement | None = None
+        self._last_drums: DrumPattern | None = None
+        self._last_bass: Motif | None = None
+        self._last_counter: Motif | None = None
+        self._last_score: Score | None = None
         self._melody_gen: MelodyGenerator = MelodyGenerator()
+        self._bass_gen: BassGenerator = BassGenerator()
+        self._counter_gen: CounterpointGenerator = CounterpointGenerator()
         self._history: list[tuple[str, str]] = []
 
     # --- State accessors ---
@@ -68,6 +78,22 @@ class Muse:
     @property
     def last_arrangement(self) -> Arrangement | None:
         return self._last_arrangement
+
+    @property
+    def last_drums(self) -> DrumPattern | None:
+        return self._last_drums
+
+    @property
+    def last_bass(self) -> Motif | None:
+        return self._last_bass
+
+    @property
+    def last_counter(self) -> Motif | None:
+        return self._last_counter
+
+    @property
+    def last_score(self) -> Score | None:
+        return self._last_score
 
     # --- Main entry point ---
 
@@ -104,6 +130,10 @@ class Muse:
             "  melody [len] [contour]     -- Generate a melody (e.g. melody 8 arch)\n"
             "  motif <transform> [args]   -- Transform last melody (transpose, invert, retrograde)\n"
             "  arrange [template]         -- Create arrangement (e.g. arrange pop, arrange aaba)\n"
+            "  drums [genre]              -- Generate drum pattern (rock, jazz, edm, pop, hiphop)\n"
+            "  bass [style]               -- Generate bass line (root, walking, arpeggiated, syncopated)\n"
+            "  counter [style]            -- Generate countermelody (thirds, sixths, contrary, oblique, free)\n"
+            "  score [build|export|exportxml] -- Assemble and export multi-track score\n"
             "  export [filename]          -- Export last progression/melody as MIDI\n"
             "  exportxml [filename]       -- Export last melody/progression as MusicXML\n"
             "  save [name]                -- Save session state to file\n"
@@ -297,6 +327,8 @@ class Muse:
                 lines.append(f"  {name:25s} {desc}\n{'':27s}{chords}")
             except ValueError:
                 lines.append(f"  {name:25s} {desc}")
+        if self._last_melody and self._last_progression:
+            lines.append("\nYou have a melody and progression -- try 'drums', 'bass', or 'counter' next!")
         return "\n".join(lines)
 
     def _handle_melody(self, cmd: Command) -> str:
@@ -405,6 +437,133 @@ class Muse:
             f"~{self._last_arrangement.duration_seconds:.0f}s"
         )
 
+    def _handle_drums(self, cmd: Command) -> str:
+        genre_map = {
+            "rock": DrumPatternBuilder.rock,
+            "jazz": DrumPatternBuilder.jazz_ride,
+            "edm": DrumPatternBuilder.edm_four_on_floor,
+            "pop": DrumPatternBuilder.pop,
+            "hiphop": DrumPatternBuilder.hip_hop,
+        }
+        genre = cmd.args[0].lower() if cmd.args else "rock"
+        if genre not in genre_map:
+            available = ", ".join(sorted(genre_map))
+            return f"Unknown genre: {genre}. Available: {available}"
+        self._last_drums = genre_map[genre](self._time_sig)
+        hits = self._last_drums.hits
+        instruments = self._last_drums.instruments_used()
+        return (
+            f"Generated {genre} drum pattern:\n"
+            f"  {len(hits)} hits, {len(instruments)} instruments\n"
+            f"  Instruments: {', '.join(i.name for i in sorted(instruments, key=lambda x: x.value))}\n"
+            f"  ({self._last_drums.ticks} ticks per bar. Use 'score build' to assemble.)"
+        )
+
+    def _handle_bass(self, cmd: Command) -> str:
+        if self._last_progression is None:
+            return "No progression set. Generate one with 'progression' first."
+        style_map = {
+            "root": BassStyle.ROOT,
+            "root_fifth": BassStyle.ROOT_FIFTH,
+            "walking": BassStyle.WALKING,
+            "arpeggiated": BassStyle.ARPEGGIATED,
+            "syncopated": BassStyle.SYNCOPATED,
+        }
+        style_name = cmd.args[0].lower() if cmd.args else "root"
+        if style_name not in style_map:
+            available = ", ".join(sorted(style_map))
+            return f"Unknown bass style: {style_name}. Available: {available}"
+        config = BassConfig(self._last_progression, self._key, octave=2, style=style_map[style_name], time_sig=self._time_sig)
+        self._last_bass = self._bass_gen.generate(config)
+        note_strs = " ".join(str(mn.note) for mn in self._last_bass)
+        return (
+            f"Generated {style_name} bass line ({len(self._last_bass)} notes):\n"
+            f"  {note_strs}\n"
+            f"  ({self._last_bass.duration_ticks} ticks. Use 'score build' to assemble.)"
+        )
+
+    def _handle_counter(self, cmd: Command) -> str:
+        if self._last_melody is None:
+            return "No melody set. Generate one with 'melody' first."
+        style_map = {
+            "thirds": CounterpointStyle.PARALLEL_THIRDS,
+            "sixths": CounterpointStyle.PARALLEL_SIXTHS,
+            "contrary": CounterpointStyle.CONTRARY,
+            "oblique": CounterpointStyle.OBLIQUE,
+            "free": CounterpointStyle.FREE,
+        }
+        style_name = cmd.args[0].lower() if cmd.args else "thirds"
+        if style_name not in style_map:
+            available = ", ".join(sorted(style_map))
+            return f"Unknown counterpoint style: {style_name}. Available: {available}"
+        config = CounterpointConfig(self._last_melody, self._key, style_map[style_name])
+        self._last_counter = self._counter_gen.generate(config)
+        note_strs = " ".join(str(mn.note) for mn in self._last_counter)
+        return (
+            f"Generated {style_name} countermelody ({len(self._last_counter)} notes):\n"
+            f"  {note_strs}\n"
+            f"  ({self._last_counter.duration_ticks} ticks. Use 'score build' to assemble.)"
+        )
+
+    def _handle_score(self, cmd: Command) -> str:
+        if not cmd.args:
+            if self._last_score is not None:
+                parts_summary = ", ".join(p.name for p in self._last_score.parts)
+                return (
+                    f"Current score: {self._last_score.title}\n"
+                    f"  Parts: {parts_summary}\n"
+                    f"  Duration: {self._last_score.duration_seconds:.1f}s"
+                )
+            return "No score built yet. Use 'score build' to assemble parts."
+
+        sub = cmd.args[0].lower()
+        if sub == "build":
+            self._last_score = ScoreBuilder.from_parts(
+                title=f"AutoMuse in {self._key.name}",
+                key=self._key,
+                tempo=self._tempo,
+                time_sig=self._time_sig,
+                melody=self._last_melody,
+                bass=self._last_bass,
+                drums=self._last_drums,
+                counter=self._last_counter,
+            )
+            parts_summary = ", ".join(p.name for p in self._last_score.parts)
+            return (
+                f"Score assembled: {self._last_score.title}\n"
+                f"  Parts: {parts_summary}\n"
+                f"  Duration: {self._last_score.duration_seconds:.1f}s\n"
+                f"  Export with 'score export [filename]' or 'score exportxml [filename]'"
+            )
+
+        if sub == "export":
+            if self._last_score is None:
+                return "No score to export. Use 'score build' first."
+            filename = cmd.args[1] if len(cmd.args) > 1 else None
+            if filename is None:
+                filename = tempfile.mktemp(suffix=".mid", prefix="automuse_score_")
+            path = Path(filename)
+            if not path.suffix:
+                path = path.with_suffix(".mid")
+            writer = self._last_score.to_midi()
+            writer.save(path)
+            return f"Exported score to {path} ({len(self._last_score.parts)} tracks)"
+
+        if sub == "exportxml":
+            if self._last_score is None:
+                return "No score to export. Use 'score build' first."
+            filename = cmd.args[1] if len(cmd.args) > 1 else None
+            if filename is None:
+                filename = tempfile.mktemp(suffix=".musicxml", prefix="automuse_score_")
+            path = Path(filename)
+            if not path.suffix:
+                path = path.with_suffix(".musicxml")
+            writer = self._last_score.to_musicxml()
+            writer.save(path)
+            return f"Exported score to {path} (MusicXML, {len(self._last_score.parts)} parts)"
+
+        return "Usage: score [build|export|exportxml] (e.g. score build, score export mysong.mid)"
+
     def _handle_save(self, cmd: Command) -> str:
         import json
         name = cmd.args[0] if cmd.args else "session"
@@ -416,6 +575,8 @@ class Muse:
         }
         if self._last_arrangement:
             state["arrangement"] = self._last_arrangement.to_dict()
+        if self._last_score:
+            state["score"] = self._last_score.to_dict()
         Path(filename).write_text(json.dumps(state, indent=2))
         return f"Session saved to {filename}"
 
@@ -436,6 +597,8 @@ class Muse:
         self._time_sig = TimeSignature(int(ts_parts[0]), int(ts_parts[1]))
         if "arrangement" in state:
             self._last_arrangement = Arrangement.from_dict(state["arrangement"])
+        if "score" in state:
+            self._last_score = Score.from_dict(state["score"])
         return (
             f"Session loaded from {filename}\n"
             f"  Key: {self._key.name} | Tempo: {self._tempo} | Time: {self._time_sig}"
