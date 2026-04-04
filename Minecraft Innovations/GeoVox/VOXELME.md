@@ -24,7 +24,7 @@ See [`Design/ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical 
 
 ## Technical Stack
 
-**Current (v0.1.1):**
+**Current (v0.2.0):**
 - **Python 3.10+** -- core language
 - **NumPy** -- voxel grid operations
 - **Pillow** -- PNG heightmap ingest
@@ -49,21 +49,25 @@ See [`Design/ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical 
 
 ## Status
 
-**v0.1.1 -- Structure export and palette variety.** Two export formats, themed palettes, and a full test suite. The pipeline can now output both `.mcfunction` setblock commands and `.nbt` structure files loadable via structure blocks.
+**v0.2.0 -- Palette composition, Litematica export, slope computation.** Three export formats, terrain-aware palette composition, and 48 tests. The pipeline now supports stacking multiple palette layers with elevation/slope conditions, outputting `.litematic` schematics alongside `.mcfunction` and `.nbt`.
 
 What's here:
-- **Ingest:** Grayscale PNG and GeoTIFF (via optional rasterio) heightmap reader with configurable Y scaling, sea level, and terrain layering (bedrock → stone → dirt → grass)
-- **Palette:** JSON config loader with weighted random block selection. Ships with vanilla-survival (built-in), steampunk (deepslate/copper), and nether (netherrack/basalt) palettes.
-- **Export:** `.mcfunction` setblock exporter with automatic file batching, plus `.nbt` structure file exporter using a custom minimal NBT binary writer
-- **CLI:** `geovox pipeline` (with `--format mcfunction|structure`), `geovox info`, `geovox preview` (ASCII terrain visualization)
-- **Tests:** 27 tests covering grid, palette, heightmap ingest, both exporters, NBT writer, and full pipeline integration
+- **Ingest:** Grayscale PNG and GeoTIFF (via optional rasterio) heightmap reader with configurable Y scaling, sea level, and terrain layering (bedrock → stone → dirt → grass). Raw elevation stored as grid metadata.
+- **Palette:** JSON config loader with weighted random block selection. Ships with vanilla-survival (built-in), steampunk (deepslate/copper), nether (netherrack/basalt), elevation-overlay (snow/ice), and slope-overlay (stone/gravel) palettes.
+- **Palette composition:** `PaletteComposer` stacks multiple palette layers with condition functions (elevation, slope, custom). Later layers override earlier where conditions match. CLI `--palette` flag accepts comma-separated palette files.
+- **Grid slope:** `compute_slope()` method on `VoxelGrid` using gradient magnitude per column via numpy.
+- **Export:** `.mcfunction` setblock exporter with automatic file batching, `.nbt` structure file exporter, and `.litematic` schematic exporter -- all using a custom minimal NBT binary writer (no external Minecraft libraries).
+- **CLI:** `geovox pipeline` (with `--format mcfunction|structure|litematic`, `--palette`), `geovox info`, `geovox preview` (ASCII terrain visualization)
+- **Tests:** 48 tests covering grid, slope, palette, composer, heightmap ingest, all three exporters, NBT writer, and full pipeline integration
 - **Example:** Test terrain generator script (`examples/generate_test_terrain.py`)
 
-**What's next (v0.2.0 — Palette Composition + Export Polish):**
+**What's next (v0.3.0):**
 
-- **Palette composition engine** — Stack multiple palette layers so elevation, slope, and moisture can all influence block selection simultaneously. `PaletteComposer` class accepts ordered layers with priority rules; each layer can override specific categories based on grid metadata. Slope calculation from the heightmap grid (gradient approximation via numpy, no new deps). New CLI flag: `--palette` accepting multiple comma-separated palette files.
-- **Litematica export** — `.litematic` schematic format, implementable without external dependencies by reusing the existing custom NBT binary writer with a new schema layout.
-- **Grid slope computation** — `compute_slope()` method on `VoxelGrid` using gradient magnitude per column; raw elevation stored as grid metadata for composition.
+- **Multi-heightmap stitching** — Combine multiple heightmaps into one grid for large-area terrain
+- **Sponge schematic export** — `.schem` format (also NBT-based, like litematica)
+- **Heightmap preprocessing** — Smoothing, cropping, resampling (numpy only)
+- **Preview enhancements** — Richer ASCII visualization, statistics output
+- **Palette validation/linting** — Check palette JSON for errors, missing categories
 
 **Longer-term roadmap:**
 - `.mca` world file export (drop into saves and play) — requires `anvil-parser` or `amulet-core`
