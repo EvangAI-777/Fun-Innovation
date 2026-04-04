@@ -117,9 +117,9 @@ After any AI generation (Continue or Generate), an Undo button appears in the ac
 - Google Gemini (default: gemini-2.0-flash)
 - OpenAI (default: gpt-4o-mini)
 - Anthropic (default: claude-sonnet-4-5-20250929)
-- Perchance (free, no API key required -- uses the Perchance ai-text-plugin, loaded on demand)
+- Perchance (free, no API key required -- uses the Perchance ai-text-plugin. **Only works when hosted on perchance.org** -- the plugin is domain-restricted. A successful integration experiment; see changelog note below.)
 
-Your API key stays in your browser's localStorage. It's sent directly to your chosen provider's API and nowhere else. Perchance requires no key at all -- select it as your provider and start writing immediately.
+Your API key stays in your browser's localStorage. It's sent directly to your chosen provider's API and nowhere else. Perchance requires no key at all but only functions on the perchance.org domain -- the ai-text-plugin enforces this restriction. When hosted elsewhere (GitHub Pages, local file, etc.), the Perchance provider will fail to load.
 
 ### Smart Context Management
 
@@ -155,7 +155,7 @@ This checkpoint happens unobtrusively in the corner, never interrupting your wri
 
 **Accessible.** Skip link, ARIA labels on all interactive elements, semantic HTML (aside, main, role attributes), full keyboard navigation, high-contrast text on dark backgrounds.
 
-**Privacy-first.** All data is stored in the browser's localStorage. With AI Mode off, nothing leaves your machine. With AI Mode on, your text is sent directly to the AI provider you configured (OpenAI, Gemini, Anthropic, or Perchance) and nowhere else. No analytics, no tracking, no cloud sync.
+**Privacy-first.** All data is stored in the browser's localStorage. With AI Mode off, nothing leaves your machine. With AI Mode on, your text is sent directly to the AI provider you configured (OpenAI, Gemini, or Anthropic) and nowhere else. Perchance is also available but only on perchance.org. No analytics, no tracking, no cloud sync.
 
 ## The JSON Config
 
@@ -194,7 +194,7 @@ All notable changes to the Omni Writer are documented here.
 ## [v2.1.0] - 2026-03-31
 
 ### Added
-- **Perchance provider** -- Free AI provider with no API key required. Uses the Perchance ai-text-plugin, loaded on demand only when selected. Preserves zero-dependency philosophy.
+- **Perchance provider** -- Free AI provider with no API key required. Uses the Perchance ai-text-plugin, loaded on demand only when selected. Preserves zero-dependency philosophy. **Note:** The ai-text-plugin only works when hosted on perchance.org -- it's domain-restricted by Perchance. The integration was a successful experiment in wiring a callback-based external AI plugin into the Omni Writer streaming architecture, and the code remains as a working reference for perchance.org deployments, but it won't function on GitHub Pages or local file:// hosting.
 - **Directive input** -- "What happens next" bar below the AI actions. Type a short instruction to steer the AI's next continuation. Persists via localStorage.
 - **AI Ideas panel** -- Three-tab suggestion panel (Next/Style/Critique) that generates creative plot ideas, style suggestions, or constructive critiques. Each idea has a "Use" button to apply it as the current directive.
 - **One-paragraph mode** -- Toggle in Settings. AI stops after generating a single paragraph for tighter narrative control.
