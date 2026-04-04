@@ -8,7 +8,7 @@ GeoVox connects those two facts.
 
 ## What It Is
 
-A modular Python pipeline that takes real-world 3D data and converts it into playable Minecraft worlds. Currently a heightmap importer, but architected to grow into a universal 3D-to-Minecraft pipeline. The input format, block palette, and output format are independent, swappable modules.
+A pipeline that converts real-world 3D data into playable Minecraft worlds, shipping as a standalone `geovox.exe` desktop application for Windows x64. The GUI draws UI principles and familiar layout concepts from WorldPainter and similar terrain editors — map viewport, brush/tool palette, layer management, import/export wizards. Each pipeline stage (ingest, palette, export) is developed and tested as a modular Python component, then compiled into the desktop application via GitHub Actions CI. Currently a heightmap importer, but architected to grow into a universal 3D-to-Minecraft pipeline. The input format, block palette, and output format are independent, swappable modules.
 
 ```
 Input Data → [ Ingest ] → Sparse 3D Grid → [ Palette ] → Block Grid → [ Export ] → Minecraft Files
@@ -40,6 +40,7 @@ See [`Design/ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical 
 - **CLI-first** -- pipe data through it, script it, batch it
 - **Config-driven** -- palettes, scale, origin offset all in JSON
 - **No Minecraft installation required** -- reads and writes files only
+- **Binary-first distribution** -- the product is `geovox.exe`, a desktop terrain editor for Windows x64 drawing from WorldPainter's familiar layout. The Python CLI is the modular development/testing harness — each module (ingest, palette, export) is built and tested here, then compiled into the desktop application
 
 ## Hard Problems
 
@@ -49,7 +50,7 @@ See [`Design/ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical 
 
 ## Status
 
-**v0.3.0 -- Preprocessing, stitching, Sponge export, palette validation.** Four export formats, heightmap preprocessing pipeline, multi-tile stitching, palette validation, and 89 tests. Full preprocessing → ingest → palette → export pipeline with comprehensive CLI.
+**v0.3.0 (Testing Phase) -- Preprocessing, stitching, Sponge export, palette validation.** Four export formats, heightmap preprocessing pipeline, multi-tile stitching, palette validation, and 89 tests. Full preprocessing → ingest → palette → export pipeline with comprehensive CLI.
 
 What's here:
 - **Ingest:** Grayscale PNG and GeoTIFF (via optional rasterio) heightmap reader with configurable Y scaling, sea level, and terrain layering (bedrock → stone → dirt → grass). Raw elevation stored as grid metadata.
@@ -65,20 +66,25 @@ What's here:
 - **Tests:** 89 tests covering grid, slope, merge, palette, composer, validation, heightmap ingest, preprocessing, stitching, all four exporters, NBT writer, and full pipeline integration
 - **Example:** Test terrain generator script (`examples/generate_test_terrain.py`)
 
-**What's next (v0.4.0):**
+Each module is developed and tested in the Python CLI, then compiled directly into `geovox.exe`. Current roadmap features are building the modules that ship inside the binary.
 
+**What's next (v0.4.0 — Module Development + Binary Milestone):**
+
+- **x64 Windows binary** — GitHub Actions CI workflow builds `geovox.exe` via PyInstaller/Nuitka on tagged releases, packaging all tested modules into a single downloadable desktop application
 - `.mca` world file export (drop into saves and play) — requires `anvil-parser` or `amulet-core`
 - Point cloud ingest (LAS/LAZ) — requires PDAL
 - Mesh ingest (OBJ/STL) — requires trimesh
 - Bidirectional workflow (diff modified world → export changes as 3D data)
 
-**Post-1.0: Standalone x64 Windows Binary**
+**Primary Distribution: x64 Windows Binary**
 
-The binary release is the real product. GeoVox will be packaged as a standalone `geovox.exe` using PyInstaller or Nuitka — a single downloadable binary that users run without installing Python, pip, or any runtime. All the zero/minimal-dependency constraints in the current prototype phase are practical compromises for keeping the pip-installable package lightweight and CI-friendly. They do not apply to the binary release.
+The x64 desktop application is the product. GeoVox ships as a desktop terrain editor drawing UI principles from WorldPainter and similar tools — map viewport with pan/zoom, brush and tool palettes, layer management, import/export wizards. The familiar layout means anyone who's used WorldPainter or World Machine can sit down and start working.
 
-The standalone executable can ship with full dependencies: scipy for signal processing, PDAL for point cloud ingest, rasterio for GeoTIFF, trimesh for mesh voxelization, rich for terminal UI — everything that was deferred as "too heavy" for a pip package. The bundled runtime handles it all. Users don't manage virtualenvs, don't install numpy, don't care about dependency trees. They download `geovox.exe` and run it.
+Each pipeline module (ingest, palette, export, preprocessing, stitching, validation) is developed and tested as a Python component in CI. Once tested, the modules are compiled together into the `geovox.exe` desktop application via PyInstaller or Nuitka. GitHub Actions builds the binary on every tagged release.
 
-The Python CLI prototype remains available as a pip-installable package for developers who want to script against it or integrate it into their own pipelines. Both distribution channels serve different users, and both will be maintained.
+The desktop application ships with full dependencies: scipy for signal processing, PDAL for point cloud ingest, rasterio for GeoTIFF, trimesh for mesh voxelization, rich for terminal UI — everything that was deferred as "too heavy" for a pip package. The bundled runtime handles it all. Users don't manage virtualenvs, don't install numpy, don't care about dependency trees. They download `geovox.exe` and run it.
+
+The Python CLI remains available as the modular development/testing harness for contributors and CI. Both distribution channels serve different users, and both will be maintained.
 
 ## Dedication
 
