@@ -652,3 +652,51 @@ class TestLangExport:
             root = FabricExporter().export(p, Path(td))
             lang_path = root / "src" / "main" / "resources" / "assets" / "emptymod" / "lang" / "en_us.json"
             assert not lang_path.exists()
+
+
+class TestTagExport:
+    def test_fabric_block_tags(self):
+        p = ModProject(mod_id="tagmod", name="Tag Mod")
+        p.add_block(Block(
+            block_id="ruby_ore",
+            material=BlockMaterial.STONE,
+            tags=["mineable/pickaxe", "needs_iron_tool"],
+        ))
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            data = root / "src" / "main" / "resources" / "data"
+            pickaxe_tag = data / "minecraft" / "tags" / "blocks" / "mineable" / "pickaxe.json"
+            assert pickaxe_tag.exists()
+            tag_data = json.loads(pickaxe_tag.read_text())
+            assert "tagmod:ruby_ore" in tag_data["values"]
+            assert tag_data["replace"] is False
+
+            iron_tag = data / "minecraft" / "tags" / "blocks" / "needs_iron_tool.json"
+            assert iron_tag.exists()
+
+    def test_item_tags(self):
+        p = ModProject(mod_id="tagmod", name="Tag Mod")
+        p.add_item(Item(item_id="ruby", tags=["beacon_payment_items"]))
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            data = root / "src" / "main" / "resources" / "data"
+            tag_path = data / "minecraft" / "tags" / "items" / "beacon_payment_items.json"
+            assert tag_path.exists()
+            tag_data = json.loads(tag_path.read_text())
+            assert "tagmod:ruby" in tag_data["values"]
+
+    def test_datapack_tags(self):
+        p = ModProject(mod_id="tagmod", name="Tag Mod")
+        p.add_block(Block(block_id="test_block", tags=["mineable/axe"]))
+        with tempfile.TemporaryDirectory() as td:
+            root = DataPackExporter().export(p, Path(td))
+            tag_path = root / "data" / "minecraft" / "tags" / "blocks" / "mineable" / "axe.json"
+            assert tag_path.exists()
+
+    def test_no_tags_no_files(self):
+        p = ModProject(mod_id="emptymod", name="Empty Mod")
+        p.add_block(Block(block_id="plain_block"))
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            tags_dir = root / "src" / "main" / "resources" / "data" / "minecraft" / "tags"
+            assert not tags_dir.exists()

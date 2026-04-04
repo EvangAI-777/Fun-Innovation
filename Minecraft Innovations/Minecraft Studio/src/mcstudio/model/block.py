@@ -62,6 +62,7 @@ class Block:
     transparent: bool = False
     drops: list[BlockDrop] = field(default_factory=list)
     has_block_item: bool = True
+    tags: list[str] = field(default_factory=list)  # e.g. ["mineable/pickaxe", "needs_iron_tool"]
 
     def __post_init__(self) -> None:
         if not _BLOCK_ID_RE.match(self.block_id):
@@ -98,6 +99,7 @@ class Block:
             "transparent": self.transparent,
             "drops": [d.to_dict() for d in self.drops],
             "has_block_item": self.has_block_item,
+            "tags": self.tags,
         }
 
     @classmethod
@@ -115,6 +117,7 @@ class Block:
             transparent=data.get("transparent", False),
             drops=drops,
             has_block_item=data.get("has_block_item", True),
+            tags=data.get("tags", []),
         )
 
     def __repr__(self) -> str:
