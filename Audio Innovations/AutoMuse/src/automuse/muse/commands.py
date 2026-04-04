@@ -20,6 +20,7 @@ ACTIONS = {
     "play", "export", "analyze", "suggest", "help", "quit",
     "modulate", "voicing", "transpose",
     "melody", "motif", "arrange", "save", "load", "exportxml",
+    "drums", "bass", "counter", "score",
 }
 
 
