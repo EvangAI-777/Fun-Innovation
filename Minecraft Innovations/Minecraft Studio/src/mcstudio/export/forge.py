@@ -35,6 +35,7 @@ class ForgeExporter(Exporter):
         self._write_mod_class(root, project)
         self._write_block_registry(root, project)
         self._write_item_registry(root, project)
+        self._write_entity_registry(root, project)
         self._write_recipes(root, project)
         self._write_loot_tables(root, project)
         self._write_blockstate_models(root, project)
@@ -178,6 +179,8 @@ side="BOTH"
             w.line(f"{cls_name}Blocks.register(modEventBus);")
         if project.items:
             w.line(f"{cls_name}Items.register(modEventBus);")
+        if project.entities:
+            w.line(f"{cls_name}Entities.register(modEventBus);")
         w.line(f'LOGGER.info("Initializing {project.name}");')
         w.close_block()
         w.close_block()
@@ -294,6 +297,96 @@ side="BOTH"
 
         pkg_path = pkg.replace(".", "/")
         self._write_file(root / "src" / "main" / "java" / pkg_path / f"{cls_name}Items.java", w.build())
+
+    def _write_entity_registry(self, root: Path, project: ModProject) -> None:
+        if not project.entities:
+            return
+        from mcstudio.codegen.entity import generate_entity_class, generate_entity_renderer
+        pkg = project.java_package
+        cls_name = project.java_class_name
+        pkg_path = pkg.replace(".", "/")
+
+        for entity in project.entities:
+            code = generate_entity_class(entity, pkg)
+            self._write_file(
+                root / "src" / "main" / "java" / pkg_path / f"{entity.java_class_name}.java", code,
+            )
+            renderer_code = generate_entity_renderer(entity, pkg, cls_name)
+            self._write_file(
+                root / "src" / "main" / "java" / pkg_path / "client" / f"{entity.java_class_name}Renderer.java",
+                renderer_code,
+            )
+
+        w = JavaWriter()
+        w.set_package(pkg)
+        w.add_import(
+            "net.minecraft.world.entity.EntityType",
+            "net.minecraft.world.entity.MobCategory",
+            "net.minecraft.world.item.Item",
+            "net.minecraftforge.common.ForgeSpawnEggItem",
+            "net.minecraftforge.eventbus.api.IEventBus",
+            "net.minecraftforge.registries.DeferredRegister",
+            "net.minecraftforge.registries.ForgeRegistries",
+            "net.minecraftforge.registries.RegistryObject",
+        )
+        if any(e.attributes for e in project.entities):
+            w.add_import(
+                "net.minecraftforge.event.entity.EntityAttributeCreationEvent",
+                "net.minecraftforge.eventbus.api.SubscribeEvent",
+                "net.minecraftforge.fml.common.Mod",
+            )
+        w.line()
+        w.open_block(f"public class {cls_name}Entities")
+        w.field(
+            "public static final", "DeferredRegister<EntityType<?>>", "ENTITY_TYPES",
+            f"DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, {cls_name}.MOD_ID)",
+        )
+        w.field(
+            "public static final", "DeferredRegister<Item>", "SPAWN_EGGS",
+            f"DeferredRegister.create(ForgeRegistries.ITEMS, {cls_name}.MOD_ID)",
+        )
+        w.line()
+        for entity in project.entities:
+            cat = entity.spawn_rules.category.value.upper() if entity.spawn_rules else "CREATURE"
+            builder = (
+                f'EntityType.Builder.of({entity.java_class_name}::new, MobCategory.{cat})'
+                f'.sized({entity.width}f, {entity.height}f)'
+            )
+            if entity.fireproof:
+                builder += ".fireImmune()"
+            w.field(
+                "public static final", f"RegistryObject<EntityType<{entity.java_class_name}>>",
+                entity.java_constant,
+                f'ENTITY_TYPES.register("{entity.entity_id}", () -> {builder}.build("{entity.entity_id}"))',
+            )
+            w.field(
+                "public static final", "RegistryObject<Item>",
+                f"{entity.java_constant}_SPAWN_EGG",
+                f'SPAWN_EGGS.register("{entity.entity_id}_spawn_egg", () -> new ForgeSpawnEggItem({entity.java_constant}, 0x333333, 0x999999, new Item.Properties()))',
+            )
+        w.line()
+        w.open_block("public static void register(IEventBus eventBus)")
+        w.line("ENTITY_TYPES.register(eventBus);")
+        w.line("SPAWN_EGGS.register(eventBus);")
+        w.close_block()
+
+        if any(e.attributes for e in project.entities):
+            w.line()
+            w.annotation(f"Mod.EventBusSubscriber(modid = {cls_name}.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)")
+            w.open_block("public static class AttributeEvents")
+            w.annotation("SubscribeEvent")
+            w.open_block("public static void onEntityAttributeCreation(EntityAttributeCreationEvent event)")
+            for entity in project.entities:
+                if entity.attributes:
+                    w.line(f"event.put({entity.java_constant}.get(), {entity.java_class_name}.createAttributes().build());")
+            w.close_block()
+            w.close_block()
+
+        w.close_block()
+
+        self._write_file(
+            root / "src" / "main" / "java" / pkg_path / f"{cls_name}Entities.java", w.build(),
+        )
 
     def _write_recipes(self, root: Path, project: ModProject) -> None:
         for recipe in project.recipes:

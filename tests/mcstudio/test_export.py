@@ -11,6 +11,7 @@ from mcstudio.model.block import Block, BlockMaterial
 from mcstudio.model.item import Item, FoodProperties
 from mcstudio.model.recipe import ShapedRecipe, ShapelessRecipe, SmeltingRecipe
 from mcstudio.model.loot import LootTable, LootPool, LootEntry, LootCondition
+from mcstudio.model.entity import EntityType, EntityBase, AIGoal, AIGoalType, EntityAttribute, SpawnRules, MobCategory
 from mcstudio.export.base import export_project, EXPORTERS
 from mcstudio.export.fabric import FabricExporter
 from mcstudio.export.forge import ForgeExporter
@@ -406,3 +407,112 @@ class TestEmptyProject:
             assert (root / "pack.mcmeta").exists()
             # No data directory should be created
             assert not (root / "data" / "emptymod" / "recipe").exists()
+
+
+def _make_entity_project() -> ModProject:
+    """Create a project with entities for testing entity export."""
+    p = ModProject(mod_id="entitymod", name="Entity Mod")
+    p.add_entity(EntityType(
+        entity_id="shadow_beast",
+        base_class=EntityBase.MONSTER,
+        width=1.2,
+        height=2.0,
+        attributes=[
+            EntityAttribute("max_health", 40.0),
+            EntityAttribute("attack_damage", 8.0),
+            EntityAttribute("movement_speed", 0.3),
+        ],
+        goals=[
+            AIGoal(AIGoalType.FLOAT_SWIM, priority=0),
+            AIGoal(AIGoalType.MELEE_ATTACK, priority=1),
+            AIGoal(AIGoalType.WANDER_RANDOMLY, priority=5),
+            AIGoal(AIGoalType.LOOK_AT_PLAYER, priority=6),
+        ],
+        spawn_rules=SpawnRules(category=MobCategory.MONSTER, weight=5),
+        fireproof=True,
+    ))
+    return p
+
+
+class TestEntityExport:
+    def test_fabric_entity_export(self):
+        p = _make_entity_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/entitymod/entitymod"
+
+            # Entity class generated
+            entity_java = root / pkg_path / "ShadowBeastEntity.java"
+            assert entity_java.exists()
+            content = entity_java.read_text()
+            assert "extends Monster" in content
+            assert "registerGoals" in content
+            assert "createAttributes" in content
+
+            # Renderer generated
+            renderer = root / pkg_path / "client" / "ShadowBeastEntityRenderer.java"
+            assert renderer.exists()
+
+            # Entity registry
+            entities_java = root / pkg_path / "EntitymodEntities.java"
+            assert entities_java.exists()
+            reg_content = entities_java.read_text()
+            assert "SHADOW_BEAST" in reg_content
+            assert "MobCategory.MONSTER" in reg_content
+            assert "fireImmune()" in reg_content
+            assert "SpawnEggItem" in reg_content
+            assert "FabricDefaultAttributeRegistry" in reg_content
+
+            # Mod class references entities
+            mod_java = root / pkg_path / "Entitymod.java"
+            content = mod_java.read_text()
+            assert "EntitymodEntities.register()" in content
+
+    def test_forge_entity_export(self):
+        p = _make_entity_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/entitymod/entitymod"
+
+            entity_java = root / pkg_path / "ShadowBeastEntity.java"
+            assert entity_java.exists()
+
+            entities_java = root / pkg_path / "EntitymodEntities.java"
+            assert entities_java.exists()
+            content = entities_java.read_text()
+            assert "DeferredRegister" in content
+            assert "SHADOW_BEAST" in content
+            assert "ForgeSpawnEggItem" in content
+            assert "EntityAttributeCreationEvent" in content
+            assert "fireImmune()" in content
+
+            mod_java = root / pkg_path / "Entitymod.java"
+            assert "EntitymodEntities.register(modEventBus)" in mod_java.read_text()
+
+    def test_neoforge_entity_export(self):
+        p = _make_entity_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/entitymod/entitymod"
+
+            entity_java = root / pkg_path / "ShadowBeastEntity.java"
+            assert entity_java.exists()
+
+            entities_java = root / pkg_path / "EntitymodEntities.java"
+            assert entities_java.exists()
+            content = entities_java.read_text()
+            assert "DeferredHolder" in content
+            assert "SHADOW_BEAST" in content
+            assert "SpawnEggItem" in content
+            assert "EntityAttributeCreationEvent" in content
+            assert "fireImmune()" in content
+
+            mod_java = root / pkg_path / "Entitymod.java"
+            assert "EntitymodEntities.register(modEventBus)" in mod_java.read_text()
+
+    def test_no_entity_no_registry(self):
+        p = ModProject(mod_id="emptymod", name="Empty Mod")
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            mod_java = root / "src" / "main" / "java" / "com" / "emptymod" / "emptymod" / "Emptymod.java"
+            assert "EmptymodEntities" not in mod_java.read_text()
