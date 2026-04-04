@@ -102,7 +102,7 @@ Minecraft Studio is built in layers. Each layer is fully functional and testable
 | Layer | Name | What It Delivers | Status |
 |-------|------|-----------------|--------|
 | **1** | **Data Model + Export Engine** | Complete mod content model, Java code generation, multi-loader project export, entity/worldgen codegen, lang files, tags, creative tabs, CLI | **v0.3.0 -- complete** |
-| **2** | **Abstraction Layer + Event Model** | Event model, networking, capabilities, configs, commands, GUI/screen, sound events, Quilt + Architectury exporters | Planned |
+| **2** | **Abstraction Layer** | Event model + codegen, config model + codegen, Quilt exporter, resource pack exporter, advancement model + export | **v0.4.0 -- in progress** |
 | **3** | **Visual Editors (headless)** | Recipe editor, loot table editor, entity AI editor, world gen editor -- as programmatic APIs that generate model objects (no GUI yet) | Planned |
 | **4** | **IDE Shell + Explorer** | JavaFX or Compose Desktop application frame, Explorer panel, Properties panel, project management | Planned |
 | **5** | **Code Editor** | Embedded Java/Kotlin editor with Minecraft-aware autocomplete, ECJ incremental compilation | Planned |
@@ -112,9 +112,9 @@ Minecraft Studio is built in layers. Each layer is fully functional and testable
 
 ## Status
 
-### Layer 1: Data Model + Export Engine -- v0.3.0
+### Layer 1: Data Model + Export Engine -- v0.3.0 (complete)
 
-Complete. Zero external dependencies. Python 3.10+. `pip install -e .` then `mcstudio` to use.
+Zero external dependencies. Python 3.10+. `pip install -e .` then `mcstudio` to use.
 
 **Data model** (`mcstudio.model`):
 
@@ -128,37 +128,53 @@ Complete. Zero external dependencies. Python 3.10+. `pip install -e .` then `mcs
 | `entity` | Entity type definitions -- 8 base classes (LivingEntity through TamableAnimal), 15 AI goal types, entity attributes, spawn rules with biome targeting and mob categories, hitbox dimensions |
 | `worldgen` | World generation -- biomes with multi-noise parameters (temperature, humidity, continentalness, erosion, depth, weirdness), sky/fog/water/grass colors, 11 feature types, placement configs with height ranges |
 
-**Code generation** (`mcstudio.codegen`):
+### Layer 2: Abstraction Layer -- v0.4.0
+
+Building on Layer 1's foundation with cross-cutting mod features: events, configs, advancements, and two new exporters.
+
+**New model types** (`mcstudio.model`):
 
 | Module | What it does |
 |--------|-------------|
-| `java` | Java source code builder -- packages, imports, classes, fields, methods, annotations, with proper formatting and import grouping |
-| `entity` | Entity Java class generator -- extends correct base class, registers AI goals sorted by priority, creates attribute supplier, generates renderer stub |
-| `worldgen` | Biome JSON, configured/placed feature JSON, Fabric BiomeModifications Java code, generation step mapping for all 11 feature types |
+| `advancement` | Custom advancements -- display (icon, title, description, frame), criteria with trigger types (inventory_changed, placed_block, killed_entity, etc.), requirements (AND/OR logic), parent chains |
+| `event` | Event handler model -- 14 event types (player join/leave/respawn, block break/place, entity spawn/death, server lifecycle, world tick/load), priority levels, custom body lines |
+| `config` | Typed mod configuration -- ConfigEntry (bool/int/float/string with defaults, comments, min/max ranges), ConfigSection, ModConfig. Per-loader codegen |
 
-**Export engine** (`mcstudio.export`):
-
-| Module | What it does |
-|--------|-------------|
-| `fabric` | Full Fabric Loom project export -- build.gradle, fabric.mod.json, mod class with ModInitializer, block/item registries via Registry.register, entity registry with FabricDefaultAttributeRegistry, worldgen with BiomeModifications API, creative tab with FabricItemGroup, recipes, loot tables, tags, lang file, blockstate/model JSONs, placeholder textures |
-| `forge` | Full Forge Gradle project export -- build.gradle, mods.toml, @Mod class, DeferredRegister block/item/entity registries, EntityAttributeCreationEvent, biome_modifier JSONs for worldgen, creative tab with DeferredRegister, recipes, loot tables, tags, lang file, blockstate/model JSONs, placeholder textures |
-| `neoforge` | Full NeoForge Gradle project export -- neoforge.mods.toml, DeferredBlock/DeferredItem/DeferredHolder registries, IEventBus constructor injection, biome_modifier JSONs, creative tab, recipes, loot tables, tags, lang file, placeholder textures |
-| `datapack` | Vanilla data pack export -- pack.mcmeta, recipe JSONs, loot table JSONs, biome/feature worldgen JSONs, tag JSONs |
-
-**Utilities:**
+**New code generation** (`mcstudio.codegen`):
 
 | Module | What it does |
 |--------|-------------|
-| `texgen` | Zero-dependency placeholder PNG texture generator -- solid-color 16x16 textures based on block material and item type, using only stdlib struct + zlib |
-| `cli` | CLI with 6 commands: new, add-block, add-item, export, info, loaders |
+| `events` | Per-loader event handler Java class generation. Fabric/Quilt: callback-based registration (ServerPlayConnectionEvents, PlayerBlockBreakEvents, etc.). Forge: @SubscribeEvent on MinecraftForge.EVENT_BUS. NeoForge: @SubscribeEvent on NeoForge.EVENT_BUS |
+| `config` | Per-loader config class generation. Forge/NeoForge: ForgeConfigSpec.Builder with defineInRange, comments, sections. Fabric/Quilt: simple JSON config loader class + default config JSON file |
 
-158 passing tests across 3 test files. Exported Fabric/Forge/NeoForge projects are standard Gradle projects with idiomatic registration patterns, entity classes, worldgen, creative tabs, language files, tags, and visible placeholder textures.
+**New exporters** (`mcstudio.export`):
 
-### What Layer 1 proves
+| Module | What it does |
+|--------|-------------|
+| `quilt` | Full Quilt Loom project export -- quilt.mod.json (schema_version 1, quilt_loader section), QSL dependencies, ModContainer-based initializer. Registry code reuses Fabric patterns via QSL compatibility |
+| `resourcepack` | Standalone resource pack export -- pack.mcmeta, blockstate/model JSONs, lang file, placeholder textures, empty sounds.json |
 
-The data model and export engine are the foundation that validates the core abstraction: define a mod once, export it for any loader. Every registry type (blocks, items, recipes, loot tables, entities, biomes) serializes to JSON, round-trips cleanly, and generates correct loader-specific Java code.
+**Export engine additions** (all 6 exporters):
+- Advancement JSON export under `data/<mod_id>/advancement/`
+- Event handler class generation with mod class registration calls
+- Config class generation with loader-specific patterns
+- Advancement lang entries auto-generated
 
-Every piece of this puzzle has been built in isolation by the Minecraft modding community -- Blockbench for visual tooling, Architectury for cross-loader abstraction, IntelliJ's Minecraft Development plugin for IDE integration. Nobody has assembled them into one coherent application. Layer 1 proves the abstraction works. Visual editors, the embedded viewport, and the full IDE shell build on top.
+219 passing tests across 3 test files. 6 export targets: Fabric, Forge, NeoForge, Quilt, Data Pack, Resource Pack.
+
+### What the prototype proves
+
+The data model and export engine are the foundation that validates the core abstraction: define a mod once, export it for any loader. Every registry type (blocks, items, recipes, loot tables, entities, biomes, advancements, events, configs) serializes to JSON, round-trips cleanly, and generates correct loader-specific Java code.
+
+Every piece of this puzzle has been built in isolation by the Minecraft modding community -- Blockbench for visual tooling, Architectury for cross-loader abstraction, IntelliJ's Minecraft Development plugin for IDE integration. Nobody has assembled them into one coherent application. The prototype proves the abstraction works. Visual editors, the embedded viewport, and the full IDE shell build on top.
+
+### Post-1.0: Standalone x64 Windows Binary
+
+The binary release is the real product. Minecraft Studio will be packaged as a standalone application using jlink/jpackage with an embedded JRE — a downloadable installer that users run without installing Java, Gradle, or any development tools. All the zero-dependency constraints in the current prototype phase are practical compromises for keeping the pip-installable package lightweight and CI-friendly. They do not apply to the binary release.
+
+The standalone executable can ship with full dependencies: JavaFX for the IDE shell, rich GUI libraries, embedded Minecraft client, full compilation toolchain — everything the design docs describe. The bundled JRE handles it all. Users don't install Java, don't configure PATH, don't care about JDK versions.
+
+The Python CLI prototype can also be compiled via PyInstaller/Nuitka as a standalone `mcstudio.exe` for users who want just the export engine without the IDE. Both distribution channels serve different users.
 
 ---
 
