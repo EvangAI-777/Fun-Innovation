@@ -45,6 +45,7 @@ class QuiltExporter(Exporter):
         self._write_recipes(root, project)
         self._write_loot_tables(root, project)
         self._write_tag_files(root / "src" / "main" / "resources" / "data", project)
+        self._write_advancements(root / "src" / "main" / "resources" / "data", project)
         self._write_blockstate_models(root, project)
         assets = root / "src" / "main" / "resources" / "assets" / project.mod_id
         self._write_textures(assets, project)

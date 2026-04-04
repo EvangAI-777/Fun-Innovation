@@ -18,6 +18,12 @@ from mcstudio.export.fabric import FabricExporter
 from mcstudio.export.forge import ForgeExporter
 from mcstudio.export.neoforge import NeoForgeExporter
 from mcstudio.export.datapack import DataPackExporter
+from mcstudio.export.quilt import QuiltExporter
+from mcstudio.export.resourcepack import ResourcePackExporter
+from mcstudio.model.advancement import (
+    Advancement, AdvancementDisplay, AdvancementCriterion, AdvancementFrame,
+    INVENTORY_CHANGED,
+)
 
 
 def _make_project() -> ModProject:
@@ -818,3 +824,129 @@ class TestQuiltExport:
             assert items_java.exists()
             assert "MAGIC_ORE" in blocks_java.read_text()
             assert "MAGIC_GEM" in items_java.read_text()
+
+
+class TestResourcePackExport:
+    def test_generates_pack(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "resourcepack", td)
+            assert root.name == "testmod-resourcepack"
+            assert (root / "pack.mcmeta").exists()
+
+    def test_pack_mcmeta(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "resourcepack", td)
+            meta = json.loads((root / "pack.mcmeta").read_text())
+            assert meta["pack"]["pack_format"] == 34
+
+    def test_blockstate_models(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "resourcepack", td)
+            bs = root / "assets" / "testmod" / "blockstates" / "magic_ore.json"
+            assert bs.exists()
+            model = root / "assets" / "testmod" / "models" / "block" / "magic_ore.json"
+            assert model.exists()
+
+    def test_lang_file(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "resourcepack", td)
+            lang_path = root / "assets" / "testmod" / "lang" / "en_us.json"
+            assert lang_path.exists()
+            lang = json.loads(lang_path.read_text())
+            assert "block.testmod.magic_ore" in lang
+
+    def test_sounds_json(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "resourcepack", td)
+            sounds = root / "assets" / "testmod" / "sounds.json"
+            assert sounds.exists()
+            assert json.loads(sounds.read_text()) == {}
+
+
+def _make_project_with_advancement():
+    p = _make_project()
+    display = AdvancementDisplay(
+        icon="testmod:magic_ore",
+        title="Magic Discovery",
+        description="Find magic ore",
+        frame=AdvancementFrame.TASK,
+    )
+    p.add_advancement(Advancement(
+        advancement_id="root",
+        display=display,
+        criteria=[AdvancementCriterion(name="tick", trigger="minecraft:tick")],
+    ))
+    child_display = AdvancementDisplay(
+        icon="testmod:magic_gem",
+        title="Magic Gem",
+        description="Craft a magic gem",
+        frame=AdvancementFrame.GOAL,
+    )
+    p.add_advancement(Advancement(
+        advancement_id="get_gem",
+        display=child_display,
+        parent="root",
+        criteria=[AdvancementCriterion(
+            name="has_gem",
+            trigger=INVENTORY_CHANGED,
+            conditions={"items": [{"items": "testmod:magic_gem"}]},
+        )],
+    ))
+    return p
+
+
+class TestAdvancementExport:
+    def test_fabric_advancements(self):
+        p = _make_project_with_advancement()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            adv_dir = root / "src" / "main" / "resources" / "data" / "testmod" / "advancement"
+            assert (adv_dir / "root.json").exists()
+            assert (adv_dir / "get_gem.json").exists()
+            root_json = json.loads((adv_dir / "root.json").read_text())
+            assert "criteria" in root_json
+            gem_json = json.loads((adv_dir / "get_gem.json").read_text())
+            assert gem_json["parent"] == "testmod:root"
+
+    def test_forge_advancements(self):
+        p = _make_project_with_advancement()
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            adv_dir = root / "src" / "main" / "resources" / "data" / "testmod" / "advancement"
+            assert (adv_dir / "root.json").exists()
+            assert (adv_dir / "get_gem.json").exists()
+
+    def test_datapack_advancements(self):
+        p = _make_project_with_advancement()
+        with tempfile.TemporaryDirectory() as td:
+            root = DataPackExporter().export(p, Path(td))
+            adv_dir = root / "data" / "testmod" / "advancement"
+            assert (adv_dir / "root.json").exists()
+
+    def test_quilt_advancements(self):
+        p = _make_project_with_advancement()
+        with tempfile.TemporaryDirectory() as td:
+            root = QuiltExporter().export(p, Path(td))
+            adv_dir = root / "src" / "main" / "resources" / "data" / "testmod" / "advancement"
+            assert (adv_dir / "root.json").exists()
+
+    def test_advancement_lang_entries(self):
+        p = _make_project_with_advancement()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            lang_path = root / "src" / "main" / "resources" / "assets" / "testmod" / "lang" / "en_us.json"
+            lang = json.loads(lang_path.read_text())
+            assert lang["advancement.testmod.root.title"] == "Magic Discovery"
+            assert lang["advancement.testmod.get_gem.description"] == "Craft a magic gem"
+
+    def test_no_advancements_no_files(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            adv_dir = root / "src" / "main" / "resources" / "data" / "testmod" / "advancement"
+            assert not adv_dir.exists()

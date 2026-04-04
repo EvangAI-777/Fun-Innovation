@@ -42,6 +42,9 @@ class Exporter(ABC):
             # Spawn egg
             egg_key = f"item.{mid}.{entity.entity_id}_spawn_egg"
             lang[egg_key] = entity.entity_id.replace("_", " ").title() + " Spawn Egg"
+        for adv in project.advancements:
+            lang[f"advancement.{mid}.{adv.advancement_id}.title"] = adv.display.title
+            lang[f"advancement.{mid}.{adv.advancement_id}.description"] = adv.display.description
         if lang:
             tab_label = project.creative_tab_label or project.name
             lang[f"itemGroup.{mid}"] = tab_label
@@ -67,6 +70,12 @@ class Exporter(ABC):
         for tag_path, values in tags.items():
             path = data_dir / "minecraft" / "tags" / f"{tag_path}.json"
             self._write_json(path, {"replace": False, "values": values})
+
+    def _write_advancements(self, data_dir: Path, project: ModProject) -> None:
+        """Write advancement JSON files under data/<mod_id>/advancement/."""
+        for adv in project.advancements:
+            path = data_dir / project.mod_id / "advancement" / f"{adv.advancement_id}.json"
+            self._write_json(path, adv.to_json(project.mod_id))
 
     def _write_textures(self, assets_dir: Path, project: ModProject) -> None:
         """Generate placeholder textures for all blocks and items."""
@@ -221,6 +230,6 @@ def export_project(project: ModProject, loader: str, output_dir: str | Path) -> 
 
 # Import submodules to trigger registration
 def _init_exporters() -> None:
-    from . import fabric, forge, neoforge, datapack, quilt  # noqa: F401
+    from . import fabric, forge, neoforge, datapack, quilt, resourcepack  # noqa: F401
 
 _init_exporters()

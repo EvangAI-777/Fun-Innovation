@@ -13,6 +13,7 @@ from .recipe import Recipe
 from .loot import LootTable
 from .entity import EntityType
 from .worldgen import Biome
+from .advancement import Advancement
 
 
 def _validate_mod_id(mod_id: str) -> str:
@@ -45,6 +46,7 @@ class ModProject:
     biomes: list[Biome] = field(default_factory=list)
     recipes: list[Recipe] = field(default_factory=list)
     loot_tables: list[LootTable] = field(default_factory=list)
+    advancements: list[Advancement] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         self.mod_id = _validate_mod_id(self.mod_id)
@@ -97,6 +99,12 @@ class ModProject:
         self.loot_tables.append(loot_table)
         return loot_table
 
+    def add_advancement(self, advancement: Advancement) -> Advancement:
+        if any(a.advancement_id == advancement.advancement_id for a in self.advancements):
+            raise ValueError(f"Duplicate advancement ID: {advancement.advancement_id!r}")
+        self.advancements.append(advancement)
+        return advancement
+
     def get_block(self, block_id: str) -> Block | None:
         for b in self.blocks:
             if b.block_id == block_id:
@@ -144,6 +152,7 @@ class ModProject:
             "biomes": [b.to_dict() for b in self.biomes],
             "recipes": [r.to_dict() for r in self.recipes],
             "loot_tables": [lt.to_dict() for lt in self.loot_tables],
+            "advancements": [a.to_dict() for a in self.advancements],
         }
 
     def save(self, path: str | Path) -> Path:
@@ -180,6 +189,8 @@ class ModProject:
             project.add_recipe(recipe_from_dict(rd))
         for ld in data.get("loot_tables", []):
             project.add_loot_table(LootTable.from_dict(ld))
+        for ad in data.get("advancements", []):
+            project.add_advancement(Advancement.from_dict(ad))
         return project
 
     def __repr__(self) -> str:

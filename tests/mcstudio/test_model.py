@@ -13,6 +13,10 @@ from mcstudio.model.recipe import (
     ShapedRecipe, ShapelessRecipe, SmeltingRecipe, BlastingRecipe,
     SmokingRecipe, StonecuttingRecipe, SmithingRecipe, recipe_from_dict,
 )
+from mcstudio.model.advancement import (
+    Advancement, AdvancementDisplay, AdvancementCriterion, AdvancementFrame,
+    INVENTORY_CHANGED, PLACED_BLOCK, KILLED_ENTITY,
+)
 from mcstudio.model.loot import LootTable, LootPool, LootEntry, LootCondition, LootFunction
 from mcstudio.model.entity import (
     EntityType, EntityBase, AIGoal, AIGoalType, EntityAttribute, SpawnRules, MobCategory,
@@ -636,3 +640,120 @@ class TestProjectBiomes:
         assert len(loaded.biomes) == 1
         assert loaded.biomes[0].biome_id == "test_biome"
         assert loaded.biomes[0].temperature == 1.2
+
+
+class TestAdvancement:
+    def test_defaults(self):
+        display = AdvancementDisplay(
+            icon="minecraft:diamond",
+            title="First Diamond",
+            description="Mine your first diamond",
+        )
+        adv = Advancement(advancement_id="first_diamond", display=display)
+        assert adv.parent is None
+        assert adv.display.frame == AdvancementFrame.TASK
+        assert adv.display.show_toast is True
+
+    def test_with_criteria(self):
+        display = AdvancementDisplay(
+            icon="minecraft:diamond",
+            title="Diamond!",
+            description="Get a diamond",
+            frame=AdvancementFrame.CHALLENGE,
+        )
+        adv = Advancement(
+            advancement_id="get_diamond",
+            display=display,
+            criteria=[
+                AdvancementCriterion(
+                    name="has_diamond",
+                    trigger=INVENTORY_CHANGED,
+                    conditions={"items": [{"items": "minecraft:diamond"}]},
+                )
+            ],
+        )
+        assert len(adv.criteria) == 1
+        assert adv.criteria[0].trigger == INVENTORY_CHANGED
+
+    def test_invalid_id(self):
+        display = AdvancementDisplay(icon="minecraft:stone", title="T", description="D")
+        with pytest.raises(ValueError, match="Invalid advancement ID"):
+            Advancement(advancement_id="UPPER_CASE", display=display)
+
+    def test_serialization_roundtrip(self):
+        display = AdvancementDisplay(
+            icon="mymod:magic_ore",
+            title="Magic!",
+            description="Find magic ore",
+            frame=AdvancementFrame.GOAL,
+            hidden=True,
+        )
+        adv = Advancement(
+            advancement_id="find_magic",
+            display=display,
+            parent="mymod:root",
+            criteria=[
+                AdvancementCriterion(name="found_ore", trigger=PLACED_BLOCK),
+            ],
+            requirements=[["found_ore"]],
+        )
+        d = adv.to_dict()
+        restored = Advancement.from_dict(d)
+        assert restored.advancement_id == "find_magic"
+        assert restored.parent == "mymod:root"
+        assert restored.display.frame == AdvancementFrame.GOAL
+        assert restored.display.hidden is True
+        assert len(restored.criteria) == 1
+        assert restored.requirements == [["found_ore"]]
+
+    def test_to_json(self):
+        display = AdvancementDisplay(
+            icon="testmod:gem", title="Gem", description="Get gem",
+        )
+        adv = Advancement(
+            advancement_id="get_gem",
+            display=display,
+            parent="root",
+            criteria=[
+                AdvancementCriterion(name="has_gem", trigger=INVENTORY_CHANGED),
+            ],
+        )
+        j = adv.to_json("testmod")
+        assert j["parent"] == "testmod:root"
+        assert j["display"]["icon"]["id"] == "testmod:gem"
+        assert "has_gem" in j["criteria"]
+        assert j["criteria"]["has_gem"]["trigger"] == INVENTORY_CHANGED
+
+
+class TestProjectAdvancements:
+    def test_add_advancement(self):
+        p = ModProject(mod_id="testmod", name="Test")
+        display = AdvancementDisplay(icon="minecraft:stone", title="T", description="D")
+        adv = p.add_advancement(Advancement(advancement_id="root", display=display))
+        assert len(p.advancements) == 1
+        assert adv.advancement_id == "root"
+
+    def test_duplicate_advancement(self):
+        p = ModProject(mod_id="testmod", name="Test")
+        display = AdvancementDisplay(icon="minecraft:stone", title="T", description="D")
+        p.add_advancement(Advancement(advancement_id="root", display=display))
+        with pytest.raises(ValueError, match="Duplicate advancement"):
+            p.add_advancement(Advancement(advancement_id="root", display=display))
+
+    def test_advancement_serialization_roundtrip(self):
+        p = ModProject(mod_id="testmod", name="Test")
+        display = AdvancementDisplay(icon="minecraft:stone", title="Root", description="Start")
+        p.add_advancement(Advancement(
+            advancement_id="root",
+            display=display,
+            criteria=[AdvancementCriterion(name="tick", trigger="minecraft:tick")],
+        ))
+        d = p.to_dict()
+        assert len(d["advancements"]) == 1
+
+        import tempfile
+        with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as f:
+            p.save(f.name)
+            loaded = ModProject.load(f.name)
+        assert len(loaded.advancements) == 1
+        assert loaded.advancements[0].advancement_id == "root"
