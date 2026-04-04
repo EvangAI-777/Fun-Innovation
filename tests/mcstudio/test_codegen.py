@@ -2,9 +2,16 @@
 
 from mcstudio.codegen.java import JavaWriter, to_java_string, to_pascal_case, to_camel_case
 from mcstudio.codegen.entity import generate_entity_class, generate_entity_renderer
+from mcstudio.codegen.worldgen import (
+    generate_biome_json,
+    generate_configured_feature_json,
+    generate_placed_feature_json,
+    generate_fabric_biome_modifications,
+)
 from mcstudio.model.entity import (
     EntityType, EntityBase, AIGoal, AIGoalType, EntityAttribute, SpawnRules,
 )
+from mcstudio.model.worldgen import Biome, PlacedFeature, FeatureType, PlacementConfig
 
 
 class TestJavaWriter:
@@ -204,3 +211,88 @@ class TestEntityCodegen:
             entity = self._make_entity(goals=[AIGoal(goal_type, priority=0)])
             code = generate_entity_class(entity, "com.test.mod")
             assert "addGoal(0," in code
+
+
+class TestWorldgenCodegen:
+    def _make_biome(self):
+        return Biome(
+            biome_id="crystal_caves",
+            temperature=0.3,
+            humidity=0.8,
+            sky_color="#6688CC",
+            water_color="#2244AA",
+            features=[
+                PlacedFeature(
+                    feature_id="crystal_ore",
+                    feature_type=FeatureType.ORE,
+                    block="testmod:crystal_ore",
+                    size=12,
+                    placement=PlacementConfig(count=4, height_min=0, height_max=64),
+                ),
+            ],
+        )
+
+    def test_biome_json(self):
+        biome = self._make_biome()
+        result = generate_biome_json(biome, "testmod")
+        assert result["temperature"] == 0.3
+        assert result["downfall"] == 0.8
+        assert result["effects"]["sky_color"] == 0x6688CC
+        assert result["effects"]["water_color"] == 0x2244AA
+        assert "features" in result
+
+    def test_biome_json_with_grass_color(self):
+        biome = Biome(biome_id="green_biome", grass_color="#00FF00")
+        result = generate_biome_json(biome, "testmod")
+        assert result["effects"]["grass_color"] == 0x00FF00
+
+    def test_configured_feature_ore(self):
+        feature = PlacedFeature(
+            feature_id="test_ore",
+            feature_type=FeatureType.ORE,
+            block="testmod:test_ore",
+            size=8,
+        )
+        result = generate_configured_feature_json(feature, "testmod")
+        assert result["type"] == "minecraft:ore"
+        assert result["config"]["size"] == 8
+
+    def test_configured_feature_random_patch(self):
+        feature = PlacedFeature(
+            feature_id="test_patch",
+            feature_type=FeatureType.RANDOM_PATCH,
+            block="minecraft:poppy",
+            size=64,
+        )
+        result = generate_configured_feature_json(feature, "testmod")
+        assert result["type"] == "minecraft:random_patch"
+        assert result["config"]["tries"] == 64
+
+    def test_placed_feature_json(self):
+        feature = PlacedFeature(
+            feature_id="test_ore",
+            feature_type=FeatureType.ORE,
+            block="testmod:test_ore",
+            placement=PlacementConfig(count=4, height_min=-16, height_max=48),
+        )
+        result = generate_placed_feature_json(feature, "testmod")
+        assert result["feature"] == "testmod:test_ore"
+        assert len(result["placement"]) >= 3
+
+    def test_placed_feature_with_rarity(self):
+        feature = PlacedFeature(
+            feature_id="rare_ore",
+            placement=PlacementConfig(count=1, rarity=4),
+        )
+        result = generate_placed_feature_json(feature, "testmod")
+        rarity_mod = [m for m in result["placement"] if m.get("type") == "minecraft:rarity_filter"]
+        assert len(rarity_mod) == 1
+        assert rarity_mod[0]["chance"] == 4
+
+    def test_fabric_biome_modifications(self):
+        biome = self._make_biome()
+        code = generate_fabric_biome_modifications(biome, "com.test.mod", "TestMod")
+        assert "BiomeModifications.addFeature" in code
+        assert "crystal_ore" in code
+        assert "UNDERGROUND_ORES" in code
+        assert "package com.test.mod;" in code

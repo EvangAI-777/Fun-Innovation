@@ -12,6 +12,7 @@ from mcstudio.model.item import Item, FoodProperties
 from mcstudio.model.recipe import ShapedRecipe, ShapelessRecipe, SmeltingRecipe
 from mcstudio.model.loot import LootTable, LootPool, LootEntry, LootCondition
 from mcstudio.model.entity import EntityType, EntityBase, AIGoal, AIGoalType, EntityAttribute, SpawnRules, MobCategory
+from mcstudio.model.worldgen import Biome, PlacedFeature, FeatureType, PlacementConfig
 from mcstudio.export.base import export_project, EXPORTERS
 from mcstudio.export.fabric import FabricExporter
 from mcstudio.export.forge import ForgeExporter
@@ -516,3 +517,92 @@ class TestEntityExport:
             root = FabricExporter().export(p, Path(td))
             mod_java = root / "src" / "main" / "java" / "com" / "emptymod" / "emptymod" / "Emptymod.java"
             assert "EmptymodEntities" not in mod_java.read_text()
+
+
+def _make_worldgen_project() -> ModProject:
+    """Create a project with biomes and features for testing worldgen export."""
+    p = ModProject(mod_id="worldmod", name="World Mod")
+    p.add_biome(Biome(
+        biome_id="crystal_caves",
+        temperature=0.3,
+        humidity=0.8,
+        sky_color="#6688CC",
+        water_color="#2244AA",
+        features=[
+            PlacedFeature(
+                feature_id="crystal_ore",
+                feature_type=FeatureType.ORE,
+                block="worldmod:crystal_ore",
+                size=12,
+                placement=PlacementConfig(count=4, height_min=0, height_max=64),
+            ),
+        ],
+    ))
+    return p
+
+
+class TestWorldgenExport:
+    def test_datapack_worldgen(self):
+        p = _make_worldgen_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = DataPackExporter().export(p, Path(td))
+            data = root / "data" / "worldmod"
+            biome_json = data / "worldgen" / "biome" / "crystal_caves.json"
+            assert biome_json.exists()
+            biome_data = json.loads(biome_json.read_text())
+            assert biome_data["temperature"] == 0.3
+
+            cf_json = data / "worldgen" / "configured_feature" / "crystal_ore.json"
+            assert cf_json.exists()
+            cf_data = json.loads(cf_json.read_text())
+            assert cf_data["type"] == "minecraft:ore"
+
+            pf_json = data / "worldgen" / "placed_feature" / "crystal_ore.json"
+            assert pf_json.exists()
+
+    def test_fabric_worldgen(self):
+        p = _make_worldgen_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            res = root / "src" / "main" / "resources" / "data" / "worldmod"
+            assert (res / "worldgen" / "biome" / "crystal_caves.json").exists()
+            assert (res / "worldgen" / "configured_feature" / "crystal_ore.json").exists()
+            assert (res / "worldgen" / "placed_feature" / "crystal_ore.json").exists()
+
+            # Fabric biome modifications Java file (named after biome)
+            pkg_path = "src/main/java/com/worldmod/worldmod"
+            features_java = root / pkg_path / "CrystalCavesBiomeFeatures.java"
+            assert features_java.exists()
+            content = features_java.read_text()
+            assert "BiomeModifications.addFeature" in content
+            assert "crystal_ore" in content
+
+    def test_forge_worldgen(self):
+        p = _make_worldgen_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            res = root / "src" / "main" / "resources" / "data" / "worldmod"
+            assert (res / "worldgen" / "biome" / "crystal_caves.json").exists()
+            assert (res / "worldgen" / "configured_feature" / "crystal_ore.json").exists()
+            assert (res / "worldgen" / "placed_feature" / "crystal_ore.json").exists()
+
+            # Forge biome modifier JSON
+            modifier_path = res / "forge" / "biome_modifier"
+            assert modifier_path.exists()
+
+    def test_neoforge_worldgen(self):
+        p = _make_worldgen_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            res = root / "src" / "main" / "resources" / "data" / "worldmod"
+            assert (res / "worldgen" / "biome" / "crystal_caves.json").exists()
+
+            # NeoForge biome modifier JSON
+            modifier_path = res / "neoforge" / "biome_modifier"
+            assert modifier_path.exists()
+
+    def test_no_biome_no_worldgen(self):
+        p = ModProject(mod_id="emptymod", name="Empty Mod")
+        with tempfile.TemporaryDirectory() as td:
+            root = DataPackExporter().export(p, Path(td))
+            assert not (root / "data" / "emptymod" / "worldgen").exists()

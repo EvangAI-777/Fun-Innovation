@@ -19,6 +19,7 @@ class DataPackExporter(Exporter):
         self._write_pack_mcmeta(root, project)
         self._write_recipes(root, project)
         self._write_loot_tables(root, project)
+        self._write_worldgen(root, project)
 
         return root
 
@@ -39,3 +40,27 @@ class DataPackExporter(Exporter):
         for lt in project.loot_tables:
             path = root / "data" / project.mod_id / "loot_table" / f"{lt.table_id}.json"
             self._write_json(path, self._loot_table_to_json(lt, project.mod_id))
+
+    def _write_worldgen(self, root: Path, project: ModProject) -> None:
+        if not project.biomes:
+            return
+        from mcstudio.codegen.worldgen import (
+            generate_biome_json,
+            generate_configured_feature_json,
+            generate_placed_feature_json,
+        )
+        data = root / "data" / project.mod_id
+        for biome in project.biomes:
+            self._write_json(
+                data / "worldgen" / "biome" / f"{biome.biome_id}.json",
+                generate_biome_json(biome, project.mod_id),
+            )
+            for feature in biome.features:
+                self._write_json(
+                    data / "worldgen" / "configured_feature" / f"{feature.feature_id}.json",
+                    generate_configured_feature_json(feature, project.mod_id),
+                )
+                self._write_json(
+                    data / "worldgen" / "placed_feature" / f"{feature.feature_id}.json",
+                    generate_placed_feature_json(feature, project.mod_id),
+                )

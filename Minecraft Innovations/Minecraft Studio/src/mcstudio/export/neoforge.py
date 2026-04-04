@@ -35,6 +35,7 @@ class NeoForgeExporter(Exporter):
         self._write_block_registry(root, project)
         self._write_item_registry(root, project)
         self._write_entity_registry(root, project)
+        self._write_worldgen(root, project)
         self._write_recipes(root, project)
         self._write_loot_tables(root, project)
         self._write_blockstate_models(root, project)
@@ -275,6 +276,41 @@ side="BOTH"
 
         pkg_path = pkg.replace(".", "/")
         self._write_file(root / "src" / "main" / "java" / pkg_path / f"{cls_name}Items.java", w.build())
+
+    def _write_worldgen(self, root: Path, project: ModProject) -> None:
+        if not project.biomes:
+            return
+        from mcstudio.codegen.worldgen import (
+            generate_biome_json,
+            generate_configured_feature_json,
+            generate_placed_feature_json,
+            _feature_to_generation_step,
+        )
+        data = root / "src" / "main" / "resources" / "data" / project.mod_id
+        for biome in project.biomes:
+            self._write_json(
+                data / "worldgen" / "biome" / f"{biome.biome_id}.json",
+                generate_biome_json(biome, project.mod_id),
+            )
+            for feature in biome.features:
+                self._write_json(
+                    data / "worldgen" / "configured_feature" / f"{feature.feature_id}.json",
+                    generate_configured_feature_json(feature, project.mod_id),
+                )
+                self._write_json(
+                    data / "worldgen" / "placed_feature" / f"{feature.feature_id}.json",
+                    generate_placed_feature_json(feature, project.mod_id),
+                )
+                step = _feature_to_generation_step(feature.feature_type)
+                self._write_json(
+                    data / "neoforge" / "biome_modifier" / f"add_{feature.feature_id}.json",
+                    {
+                        "type": "neoforge:add_features",
+                        "biomes": "#minecraft:is_overworld",
+                        "features": [f"{project.mod_id}:{feature.feature_id}"],
+                        "step": step.lower(),
+                    },
+                )
 
     def _write_entity_registry(self, root: Path, project: ModProject) -> None:
         if not project.entities:
