@@ -2,9 +2,11 @@
 
 What needs to happen between v0.4.0 (where we are) and v1.0.0 (a usable desktop application that can create, preview, and export Minecraft mods).
 
+The Python export engine is the modular development/testing phase — each layer (model, codegen, export) is built and tested as a Python module, then compiled into the `mcstudio.exe` desktop IDE. The x64 binary is a full desktop application drawing from Roblox Studio's panel-based UX, not just a compiled CLI. Remaining roadmap features continue as planned; they're building the modules that ship inside the application.
+
 ## Where We Are (v0.4.0)
 
-Layers 1-2 are complete. The Python prototype proves the core abstraction: define a mod once as structured data, export it to Fabric, Forge, NeoForge, Quilt, vanilla data pack, or resource pack. 219 tests, zero external dependencies, CLI-driven. All modeled types generate correct output for all 6 loaders.
+Layers 1-2 are complete. The Python testing phase proves the core abstraction: define a mod once as structured data, export it to Fabric, Forge, NeoForge, Quilt, vanilla data pack, or resource pack. 219 tests, zero external dependencies, CLI-driven. All modeled types generate correct output for all 6 loaders.
 
 **What works:**
 - Full data model: blocks (with tags), items (with tags), recipes (all 7 types), loot tables, entities (8 base classes, 15 AI goals), biomes/world gen (11 feature types), advancements, event handlers (14 event types), mod configs (typed entries with ranges)
@@ -60,11 +62,22 @@ Build the editor logic as Python APIs that manipulate the model programmatically
 
 **Exit criteria:** Every visual editor described in ARCHITECTURE.md has a programmatic API that can be driven from tests. A comprehensive validation pass catches dangling references, invalid IDs, and impossible configurations.
 
+### Binary Milestone: x64 Desktop IDE
+
+Before the Java/Kotlin transition, the Python export engine ships as `mcstudio.exe` — a standalone Windows x64 desktop IDE with Roblox Studio-inspired panel UX, built via GitHub Actions CI using PyInstaller or Nuitka. This is the first binary release. Users download it and create mod projects without installing Python.
+
+| Task | Effort | Priority |
+|------|--------|----------|
+| PyInstaller/Nuitka build configuration | Small | Critical |
+| GitHub Actions workflow: build + upload release artifact | Small | Critical |
+| GitHub Release automation on tag push | Small | High |
+| Smoke tests for the built binary | Small | High |
+
 ### Language Transition Point
 
-**Layer 4+ transitions from Python to Java/Kotlin.** The Python prototype has served its purpose: proving the data model and export abstractions. The IDE shell, code editor, and embedded Minecraft viewport must be Java/Kotlin to share a runtime with Minecraft itself.
+**Layer 4+ transitions from Python to Java/Kotlin.** The Python testing phase has served its purpose: proving the data model and export abstractions. The IDE shell, code editor, and embedded Minecraft viewport must be Java/Kotlin to share a runtime with Minecraft itself.
 
-The Python model and export engine remain as the reference implementation and can be used standalone (the CLI tool continues to work). The Java/Kotlin port of the model layer incorporates everything learned from the prototype.
+The Python model and export engine remain as the reference implementation and can be used standalone (the CLI tool continues to work). The Python-based `mcstudio.exe` desktop IDE continues to ship even after the Java/Kotlin port begins. The Java/Kotlin port of the model layer incorporates everything learned from the testing phase.
 
 ### Layer 4 (v0.6.0) -- IDE Shell + Explorer
 
@@ -149,6 +162,7 @@ The Python model and export engine remain as the reference implementation and ca
 | 1 | v0.3.0 | **Done** -- entity/worldgen codegen, lang, tags, creative tabs |
 | 2 | v0.4.0 | **Done** -- events, configs, advancements, Quilt, resource pack |
 | 3 | v0.5.0 | Headless editor APIs, validation, undo |
+| Binary | v0.5.x | CI-built `mcstudio.exe` desktop IDE via PyInstaller/Nuitka |
 | 4 | v0.6.0 | Java/Kotlin port, desktop app shell, Explorer/Properties |
 | 5 | v0.7.0 | Code editor with ECJ, autocomplete |
 | 6 | v0.8.0 | Visual editor GUIs, bidirectional sync |
@@ -173,14 +187,15 @@ Each layer is a usable product on its own:
 
 - **v0.3.0** -- **Shipped.** Complete CLI tool for generating mod projects with entity/worldgen codegen, lang files, tags, and creative tabs.
 - **v0.4.0** -- **Shipped.** Abstraction layer with events, configs, advancements, Quilt and resource pack exporters. 6 export targets, 219 tests.
-- **v0.6.0** -- Desktop project editor. Create mods visually, export to any loader. No code editing or preview, but functional.
+- **v0.5.x** -- **x64 desktop IDE.** `mcstudio.exe` with Roblox Studio-inspired panel UX, wrapping the export engine. Downloadable from GitHub Releases.
+- **v0.6.0** -- Desktop project editor (Java/Kotlin). Create mods visually, export to any loader. No code editing or preview, but functional.
 - **v0.7.0** -- Desktop project editor with code editing. Competitive with IntelliJ + Minecraft Development plugin for the visual workflow.
 - **v1.0.0** -- The full vision. Roblox Studio for Minecraft.
 
-## Post-1.0: Standalone x64 Windows Binary
+## Distribution Strategy
 
-The binary release is the real product. Minecraft Studio will be packaged as a standalone application using jlink/jpackage with an embedded JRE — a downloadable installer that users run without installing Java, Gradle, or any development tools. All the zero-dependency constraints in the current prototype phase are practical compromises for keeping the pip-installable package lightweight and CI-friendly. They do not apply to the binary release.
+1. **Near-term: `mcstudio.exe` (desktop IDE, Python-based)** — PyInstaller/Nuitka, GitHub Actions CI. Roblox Studio-inspired panel UX wrapping the Layers 1-3 export engine. Visual project management, export to all loaders, editor APIs. Ships as a GitHub Release artifact on tagged versions.
 
-The standalone executable can ship with full dependencies: JavaFX for the IDE shell, rich GUI libraries, embedded Minecraft client, full compilation toolchain — everything described in Layers 4-8. The bundled JRE handles it all. Users download an installer, run it, and start creating mods.
+2. **v1.0: Full IDE (Java/Kotlin)** — jlink/jpackage with embedded JRE. Embedded Minecraft viewport, code editor with hot-reload, full visual editors — everything described in Layers 4-8. The bundled JRE handles it all. Users download an installer, run it, and start creating mods. The complete Roblox-Studio-for-Minecraft vision.
 
-The Python CLI prototype can also be compiled via PyInstaller/Nuitka as a standalone `mcstudio.exe` for users who want just the export engine without the IDE. Both distribution channels serve different users, and both will be maintained.
+The Python CLI remains available as the modular development/testing harness for contributors and CI. Both distribution channels serve different users, and both will be maintained.
