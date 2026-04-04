@@ -1,6 +1,10 @@
 """Tests for Java code generation utilities."""
 
 from mcstudio.codegen.java import JavaWriter, to_java_string, to_pascal_case, to_camel_case
+from mcstudio.codegen.entity import generate_entity_class, generate_entity_renderer
+from mcstudio.model.entity import (
+    EntityType, EntityBase, AIGoal, AIGoalType, EntityAttribute, SpawnRules,
+)
 
 
 class TestJavaWriter:
@@ -105,3 +109,98 @@ class TestHelpers:
         assert to_camel_case("cool_mod") == "coolMod"
         assert to_camel_case("hello") == "hello"
         assert to_camel_case("my_great_var") == "myGreatVar"
+
+
+class TestEntityCodegen:
+    def _make_entity(self, **kwargs):
+        defaults = dict(
+            entity_id="test_mob",
+            base_class=EntityBase.MONSTER,
+            width=0.8,
+            height=1.6,
+        )
+        defaults.update(kwargs)
+        return EntityType(**defaults)
+
+    def test_basic_entity_class(self):
+        entity = self._make_entity()
+        code = generate_entity_class(entity, "com.test.mod")
+        assert "package com.test.mod;" in code
+        assert "public class TestMobEntity extends Monster" in code
+        assert "super(entityType, level);" in code
+        assert "import net.minecraft.world.entity.monster.Monster;" in code
+
+    def test_entity_with_attributes(self):
+        entity = self._make_entity(attributes=[
+            EntityAttribute("max_health", 30.0),
+            EntityAttribute("movement_speed", 0.25),
+            EntityAttribute("attack_damage", 5.0),
+        ])
+        code = generate_entity_class(entity, "com.test.mod")
+        assert "createAttributes()" in code
+        assert "Attributes.MAX_HEALTH, 30.0" in code
+        assert "Attributes.MOVEMENT_SPEED, 0.25" in code
+        assert "Attributes.ATTACK_DAMAGE, 5.0" in code
+        assert "import net.minecraft.world.entity.ai.attributes.AttributeSupplier;" in code
+
+    def test_entity_with_goals(self):
+        entity = self._make_entity(goals=[
+            AIGoal(AIGoalType.FLOAT_SWIM, priority=0),
+            AIGoal(AIGoalType.MELEE_ATTACK, priority=1, params={"speed": 1.2}),
+            AIGoal(AIGoalType.LOOK_AT_PLAYER, priority=5, params={"distance": 6.0}),
+            AIGoal(AIGoalType.RANDOM_LOOK_AROUND, priority=6),
+        ])
+        code = generate_entity_class(entity, "com.test.mod")
+        assert "registerGoals()" in code
+        assert "FloatGoal" in code
+        assert "MeleeAttackGoal(this, 1.2, true)" in code
+        assert "LookAtPlayerGoal(this, Player.class, 6.0f)" in code
+        assert "RandomLookAroundGoal(this)" in code
+        assert "import net.minecraft.world.entity.player.Player;" in code
+
+    def test_entity_goals_sorted_by_priority(self):
+        entity = self._make_entity(goals=[
+            AIGoal(AIGoalType.RANDOM_LOOK_AROUND, priority=3),
+            AIGoal(AIGoalType.FLOAT_SWIM, priority=0),
+        ])
+        code = generate_entity_class(entity, "com.test.mod")
+        swim_pos = code.index("FloatGoal")
+        look_pos = code.index("RandomLookAroundGoal")
+        assert swim_pos < look_pos
+
+    def test_animal_base_class(self):
+        entity = self._make_entity(base_class=EntityBase.ANIMAL)
+        code = generate_entity_class(entity, "com.test.mod")
+        assert "extends Animal" in code
+        assert "import net.minecraft.world.entity.animal.Animal;" in code
+
+    def test_all_base_classes_generate(self):
+        for base in EntityBase:
+            entity = self._make_entity(base_class=base)
+            code = generate_entity_class(entity, "com.test.mod")
+            assert "extends" in code
+            assert "package com.test.mod;" in code
+
+    def test_entity_renderer(self):
+        entity = self._make_entity()
+        code = generate_entity_renderer(entity, "com.test.mod", "TestMod")
+        assert "package com.test.mod.client;" in code
+        assert "class TestMobEntityRenderer" in code
+        assert "MobRenderer" in code
+        assert 'textures/entity/test_mob.png' in code
+
+    def test_entity_no_goals_no_register_goals(self):
+        entity = self._make_entity(goals=[])
+        code = generate_entity_class(entity, "com.test.mod")
+        assert "registerGoals" not in code
+
+    def test_entity_no_attributes_no_create_attributes(self):
+        entity = self._make_entity(attributes=[])
+        code = generate_entity_class(entity, "com.test.mod")
+        assert "createAttributes" not in code
+
+    def test_all_goal_types_generate(self):
+        for goal_type in AIGoalType:
+            entity = self._make_entity(goals=[AIGoal(goal_type, priority=0)])
+            code = generate_entity_class(entity, "com.test.mod")
+            assert "addGoal(0," in code
