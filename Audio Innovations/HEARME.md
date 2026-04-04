@@ -27,7 +27,15 @@ Wrappers around existing APIs that add no creative value. "AI music generators" 
 
 | Project | Directory | Version | Status | Description |
 |---------|-----------|---------|--------|-------------|
-| AutoMuse | `AutoMuse/` | v0.1.0 | Layer 1 built | Conversational DAW -- music theory engine, Muse persona, MIDI export, 197 tests |
+| AutoMuse | `AutoMuse/` | v0.2.0 | Testing phase | Conversational DAW -- composition engine, melody generation, arrangement, MIDI + MusicXML export, 310 tests |
+
+## Distribution Vision
+
+AutoMuse targets an **x64 Windows desktop application** as its primary distribution. The Python CLI is the testing/development phase -- building and validating modular components (core theory, harmony, composition, export) that feed directly into `automuse.exe`.
+
+`automuse.exe` is a **hybrid desktop DAW + AI chatbot** -- a fusion that has never existed before. Full standalone DAW (FL Studio / Ableton / Audacity-inspired) that works without AI *and* full "vibe-coding" style creation via conversation (Claude / Gemini / ChatGPT-inspired) -- both modes work simultaneously and interchangeably. The first tool that's a complete DAW and a complete AI music collaborator in one application.
+
+GitHub Actions CI builds the binary via PyInstaller/Nuitka on tagged releases. No Python installation required for end users.
 
 ## Adding a Project
 

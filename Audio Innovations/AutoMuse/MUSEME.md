@@ -125,9 +125,11 @@ The Muse knows about all of these. "Export the piano part as MIDI and the drums 
 
 ## Status
 
-**Layer 1: The Conversation -- implemented.** v0.1.0. Zero external dependencies. `pip install -e .` then `automuse` to start a session.
+**v0.2.0 (Testing Phase) -- Composition Engine.** Zero external dependencies. `pip install -e .` then `automuse` to start a session.
 
-What's built:
+Each module below is developed and tested in the Python CLI, then compiled directly into `automuse.exe`. Current features are building the modules that ship inside the desktop application.
+
+**Core modules** (`automuse.core`):
 
 | Module | What it does |
 |--------|-------------|
@@ -137,15 +139,55 @@ What's built:
 | `automuse.core.chords` | 25 chord types -- triads, sevenths, extended (9th/11th/13th), added-tone, sus, power. Parsing, inversions, voicings |
 | `automuse.core.keys` | Key signatures, diatonic triad and seventh chord construction, Roman numeral analysis, relative/parallel keys, pivot chord modulation |
 | `automuse.core.rhythm` | Time signatures (simple, compound, irregular), durations (whole through 32nd, dotted, triplet), tempo with Italian markings |
+
+**Harmony modules** (`automuse.harmony`):
+
+| Module | What it does |
+|--------|-------------|
 | `automuse.harmony.progressions` | 10 built-in progression templates (I-IV-V-I, ii-V-I, 12-bar blues, pop, etc.), build from degrees or Roman numerals |
 | `automuse.harmony.voicing` | 6 voicing styles: root position, close, drop 2, drop 3, spread, shell |
 | `automuse.harmony.analysis` | Harmonic function analysis (tonic, subdominant, dominant, chromatic) |
+
+**Composition modules** (`automuse.compose`) -- *new in v0.2.0*:
+
+| Module | What it does |
+|--------|-------------|
+| `automuse.compose.motif` | MotifNote (note + duration + velocity), Motif (reusable phrases with transpose, invert, retrograde, augment, diminish, in_key), MotifBuilder (from scale degrees, note names, or intervals) |
+| `automuse.compose.melody` | MelodyGenerator -- algorithmic melody from scale/contour/rhythm. 6 contour shapes (ascending, descending, arch, valley, static, wave), configurable step bias and range. 4 development techniques (sequence, variation, fragmentation, extension). Seeded for reproducibility |
+| `automuse.compose.arrangement` | Song structure -- SectionType (9 types), Section (bars, key override, progression, melody), Arrangement (title, key, tempo, time sig, to_dict/from_dict). 5 templates: pop, verse-chorus, AABA, 12-bar blues, through-composed |
+
+**Export modules**:
+
+| Module | What it does |
+|--------|-------------|
 | `automuse.midi.writer` | Standard MIDI file writer -- zero dependencies, raw bytes, Type 0 and Type 1, variable-length encoding, tempo/time signature meta events |
-| `automuse.muse.engine` | The Muse -- conversational interface with 15 commands, mood-responsive chat, session state, full workflow from key selection through MIDI export |
+| `automuse.export.musicxml` | MusicXML export -- zero-dep XML writing via stdlib xml.etree.ElementTree. Notes, chord symbols, scales. Key signature encoding, pitch spelling, time signatures. Interop with Finale, Sibelius, MuseScore, Dorico |
 
-197 passing tests across 9 test files covering every module.
+**Conversation engine**:
 
-The audio engine (Layer 3) is a solved engineering problem (JUCE, PortAudio, RtMidi). The visual canvas (Layer 2) is an IDE problem. Layer 1 is the hard kernel -- the music knowledge and generation engine that everything else builds on. That kernel is now real.
+| Module | What it does |
+|--------|-------------|
+| `automuse.muse.engine` | The Muse -- conversational interface with 21 commands (scale, chord, key, progression, tempo, time, voicing, analyze, modulate, transpose, suggest, melody, motif, arrange, save, load, export, exportxml, play, help, quit), mood-responsive chat, session state with save/load, full workflow from key selection through MIDI and MusicXML export |
+
+310 passing tests across 13 test files covering every module.
+
+The audio engine (Layer 3) is a solved engineering problem (JUCE, PortAudio, RtMidi). The visual canvas (Layer 2) is an IDE problem. Layer 1 is the hard kernel -- the music knowledge, composition, and generation engine that everything else builds on. That kernel is now real.
+
+### Primary Distribution: x64 Windows Binary
+
+The x64 desktop application is the product. AutoMuse ships as `automuse.exe` -- a **hybrid desktop DAW + AI chatbot** unlike anything that exists. Two complete tools in one application:
+
+**Full standalone DAW** (FL Studio / Ableton Live / Audacity-inspired): piano roll, arrangement timeline, mixer with faders and pan, transport controls, plugin browser, effects rack, waveform displays. You can do everything a regular DAW does without ever touching the AI. Full manual control. Click, drag, draw notes, mix tracks, apply effects -- the complete DAW experience stands on its own.
+
+**Full conversational AI** (Claude / Gemini / ChatGPT-inspired): streaming conversation panel, chat history, natural language input, contextual suggestions. You can also do full "vibe-coding" style music creation -- just chatting and shooting the breeze with the Muse while it builds arrangements in real time. Tell it "I'm feeling something melancholic, maybe in D minor, kind of Radiohead-ish" and it builds the arrangement while you watch.
+
+**Both modes work simultaneously and interchangeably.** Use the DAW manually for precise control, then switch to chatting with the Muse for creative exploration, then go back to tweaking by hand -- seamlessly, in the same session. It's like having a producer collaborator who lives inside your DAW. No other tool does this. DAWs don't have AI conversation. AI chatbots don't have piano rolls. AutoMuse is both.
+
+Each module (core, harmony, compose, midi, export, muse) is developed and tested as a Python component in CI. Once tested, the modules are compiled together into the `automuse.exe` desktop application via PyInstaller or Nuitka. GitHub Actions builds the binary on every tagged release.
+
+The desktop application ships with full dependencies: audio engine (PortAudio/JUCE for real-time I/O and synthesis), plugin hosting (VST3/AU/LV2), GUI framework (Qt or Electron), real-time processing -- everything deferred as "too heavy" for a pip package ships inside the app. Users download `automuse.exe` and run it.
+
+The Python CLI remains available as the modular development/testing harness for contributors and CI.
 
 ---
 
