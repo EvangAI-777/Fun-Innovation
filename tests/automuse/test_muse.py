@@ -255,6 +255,9 @@ class TestMuseSession:
         assert "scale" in r
         assert "chord" in r
         assert "progression" in r
+        assert "melody" in r
+        assert "arrange" in r
+        assert "save" in r
 
     def test_play(self):
         muse = Muse()
@@ -295,4 +298,140 @@ class TestMuseSession:
         r = muse.respond(f"export {path}")
         assert Path(path).exists()
         assert Path(path).stat().st_size > 0
+        Path(path).unlink()
+
+
+class TestMuseMelody:
+    def test_melody_default(self):
+        muse = Muse()
+        r = muse.respond("melody")
+        assert "Generated" in r
+        assert "8-note" in r
+        assert muse.last_melody is not None
+
+    def test_melody_with_args(self):
+        muse = Muse()
+        r = muse.respond("melody 16 wave")
+        assert "16-note" in r
+        assert "wave" in r
+
+    def test_melody_stepwise(self):
+        muse = Muse()
+        r = muse.respond("melody 8 ascending stepwise")
+        assert "ascending" in r
+
+    def test_motif_transpose(self):
+        muse = Muse()
+        muse.respond("melody")
+        r = muse.respond("motif transpose 5")
+        assert "transposed" in r
+
+    def test_motif_invert(self):
+        muse = Muse()
+        muse.respond("melody")
+        r = muse.respond("motif invert")
+        assert "inverted" in r
+
+    def test_motif_retrograde(self):
+        muse = Muse()
+        muse.respond("melody")
+        r = muse.respond("motif retrograde")
+        assert "retrograded" in r
+
+    def test_motif_no_melody(self):
+        muse = Muse()
+        r = muse.respond("motif transpose 5")
+        assert "No melody" in r
+
+    def test_motif_no_args(self):
+        muse = Muse()
+        muse.respond("melody")
+        r = muse.respond("motif")
+        assert "Usage" in r
+
+
+class TestMuseArrange:
+    def test_arrange_pop(self):
+        muse = Muse()
+        r = muse.respond("arrange pop")
+        assert "pop" in r.lower() or "Pop" in r
+        assert muse.last_arrangement is not None
+        assert "Intro" in r
+
+    def test_arrange_aaba(self):
+        muse = Muse()
+        r = muse.respond("arrange aaba")
+        assert "32" in r or "aaba" in r.lower()
+
+    def test_arrange_no_args_empty(self):
+        muse = Muse()
+        r = muse.respond("arrange")
+        assert "Usage" in r or "Templates" in r.lower() or "template" in r.lower()
+
+    def test_arrange_no_args_shows_current(self):
+        muse = Muse()
+        muse.respond("arrange pop")
+        r = muse.respond("arrange")
+        assert "Intro" in r
+
+    def test_arrange_unknown_template(self):
+        muse = Muse()
+        r = muse.respond("arrange nonexistent")
+        assert "Unknown" in r
+
+
+class TestMuseSaveLoad:
+    def test_save_load_roundtrip(self, tmp_path):
+        import os
+        os.chdir(tmp_path)
+        muse = Muse()
+        muse.respond("key D minor")
+        muse.respond("tempo 90")
+        r = muse.respond("save test_session")
+        assert "saved" in r.lower()
+
+        muse2 = Muse()
+        r = muse2.respond("load test_session")
+        assert "loaded" in r.lower()
+        assert muse2.key.name == "D minor"
+        assert muse2.tempo.bpm == 90
+
+    def test_load_nonexistent(self):
+        muse = Muse()
+        r = muse.respond("load nonexistent_file_xyz")
+        assert "not found" in r.lower()
+
+    def test_load_no_args(self):
+        muse = Muse()
+        r = muse.respond("load")
+        assert "Usage" in r
+
+
+class TestMuseExportXML:
+    def test_exportxml_melody(self):
+        muse = Muse()
+        muse.respond("melody")
+        with tempfile.NamedTemporaryFile(suffix=".musicxml", delete=False) as f:
+            path = f.name
+        r = muse.respond(f"exportxml {path}")
+        assert "Exported" in r
+        assert "melody" in r
+        assert Path(path).exists()
+        content = Path(path).read_text()
+        assert "<score-partwise" in content
+        Path(path).unlink()
+
+    def test_exportxml_nothing(self):
+        muse = Muse()
+        r = muse.respond("exportxml")
+        assert "Nothing" in r
+
+    def test_export_melody_as_midi(self):
+        muse = Muse()
+        muse.respond("melody")
+        with tempfile.NamedTemporaryFile(suffix=".mid", delete=False) as f:
+            path = f.name
+        r = muse.respond(f"export {path}")
+        assert "melody" in r.lower()
+        assert Path(path).exists()
         Path(path).unlink()

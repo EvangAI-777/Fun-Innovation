@@ -19,6 +19,7 @@ ACTIONS = {
     "scale", "chord", "key", "progression", "tempo", "time",
     "play", "export", "analyze", "suggest", "help", "quit",
     "modulate", "voicing", "transpose",
+    "melody", "motif", "arrange", "save", "load", "exportxml",
 }
 
 
