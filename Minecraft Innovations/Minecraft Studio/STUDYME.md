@@ -104,6 +104,7 @@ Minecraft Studio is built in layers. Each layer is fully functional and testable
 | **1** | **Data Model + Export Engine** | Complete mod content model, Java code generation, multi-loader project export, entity/worldgen codegen, lang files, tags, creative tabs, CLI | **v0.3.0 -- complete** |
 | **2** | **Abstraction Layer** | Event model + codegen, config model + codegen, Quilt exporter, resource pack exporter, advancement model + export | **v0.4.0 -- in progress** |
 | **3** | **Visual Editors (headless)** | Recipe editor, loot table editor, entity AI editor, world gen editor -- as programmatic APIs that generate model objects (no GUI yet) | Planned |
+| | **Binary Milestone** | `mcstudio.exe` — x64 desktop IDE with Roblox Studio-inspired panel UX. Export engine modules compiled via PyInstaller/Nuitka, built by GitHub Actions CI | **Next after Layer 3** |
 | **4** | **IDE Shell + Explorer** | JavaFX or Compose Desktop application frame, Explorer panel, Properties panel, project management | Planned |
 | **5** | **Code Editor** | Embedded Java/Kotlin editor with Minecraft-aware autocomplete, ECJ incremental compilation | Planned |
 | **6** | **Visual Editor GUI** | Wire the Layer 3 APIs into interactive JavaFX/Compose panels with drag-and-drop | Planned |
@@ -162,19 +163,25 @@ Building on Layer 1's foundation with cross-cutting mod features: events, config
 
 219 passing tests across 3 test files. 6 export targets: Fabric, Forge, NeoForge, Quilt, Data Pack, Resource Pack.
 
-### What the prototype proves
+### What the testing phase proves
 
-The data model and export engine are the foundation that validates the core abstraction: define a mod once, export it for any loader. Every registry type (blocks, items, recipes, loot tables, entities, biomes, advancements, events, configs) serializes to JSON, round-trips cleanly, and generates correct loader-specific Java code.
+The data model and export engine are the foundation that validates the core abstraction: define a mod once, export it for any loader. Every registry type (blocks, items, recipes, loot tables, entities, biomes, advancements, events, configs) serializes to JSON, round-trips cleanly, and generates correct loader-specific Java code. Each tested module (model, codegen, export) feeds directly into the desktop application — the testing phase isn't separate from the product, it's building the product's components.
 
-Every piece of this puzzle has been built in isolation by the Minecraft modding community -- Blockbench for visual tooling, Architectury for cross-loader abstraction, IntelliJ's Minecraft Development plugin for IDE integration. Nobody has assembled them into one coherent application. The prototype proves the abstraction works. Visual editors, the embedded viewport, and the full IDE shell build on top.
+Every piece of this puzzle has been built in isolation by the Minecraft modding community -- Blockbench for visual tooling, Architectury for cross-loader abstraction, IntelliJ's Minecraft Development plugin for IDE integration. Nobody has assembled them into one coherent application. The testing phase proves the abstraction works. Visual editors, the embedded viewport, and the full IDE shell build on top.
 
-### Post-1.0: Standalone x64 Windows Binary
+### Next Milestone: x64 Windows Desktop Application
 
-The binary release is the real product. Minecraft Studio will be packaged as a standalone application using jlink/jpackage with an embedded JRE — a downloadable installer that users run without installing Java, Gradle, or any development tools. All the zero-dependency constraints in the current prototype phase are practical compromises for keeping the pip-installable package lightweight and CI-friendly. They do not apply to the binary release.
+Minecraft Studio ships as `mcstudio.exe` — a full desktop IDE drawing heavily from **Roblox Studio's panel-based UX**. Dockable Explorer panel with registry-organized project tree, Properties inspector, tabbed visual editors, and eventually a 3D viewport — the same familiar layout that lets millions of Roblox creators build games in an hour. The UI concept is already documented in this file's Components section and the ASCII wireframe above.
 
-The standalone executable can ship with full dependencies: JavaFX for the IDE shell, rich GUI libraries, embedded Minecraft client, full compilation toolchain — everything the design docs describe. The bundled JRE handles it all. Users don't install Java, don't configure PATH, don't care about JDK versions.
+Each layer of the export engine (model, codegen, export) is developed and tested as a modular Python component. Once tested in CI, the modules are compiled into the desktop application via PyInstaller or Nuitka, built by GitHub Actions CI and uploaded as a GitHub Release artifact. Current roadmap features (remaining Layer 2 items, Layer 3 editor APIs) are building the modules that ship inside this application.
 
-The Python CLI prototype can also be compiled via PyInstaller/Nuitka as a standalone `mcstudio.exe` for users who want just the export engine without the IDE. Both distribution channels serve different users.
+### Primary Distribution: x64 Windows Binaries
+
+1. **Near-term: `mcstudio.exe` (desktop IDE, Python-based)** — PyInstaller/Nuitka, GitHub Actions CI. Roblox Studio-inspired panel UX wrapping the Layers 1-3 export engine. Ships with visual project management, export to all loaders, and the editor APIs. Next milestone.
+
+2. **Long-term: Full IDE (Java/Kotlin)** — jlink/jpackage with embedded JRE. Layers 4-8: embedded Minecraft viewport, code editor with hot-reload, full visual editors. The complete Roblox-Studio-for-Minecraft vision. The standalone installer ships with full dependencies: JavaFX for the IDE shell, rich GUI libraries, embedded Minecraft client, full compilation toolchain — everything the design docs describe. Users don't install Java, don't configure PATH, don't care about JDK versions.
+
+The Python CLI remains available as the modular development/testing harness for contributors and CI.
 
 ---
 
