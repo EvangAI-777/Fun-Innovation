@@ -42,6 +42,9 @@ class Exporter(ABC):
             # Spawn egg
             egg_key = f"item.{mid}.{entity.entity_id}_spawn_egg"
             lang[egg_key] = entity.entity_id.replace("_", " ").title() + " Spawn Egg"
+        if lang:
+            tab_label = project.creative_tab_label or project.name
+            lang[f"itemGroup.{mid}"] = tab_label
         return lang
 
     def _generate_tags(self, project: ModProject) -> dict[str, list[str]]:

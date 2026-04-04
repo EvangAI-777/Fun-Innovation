@@ -700,3 +700,61 @@ class TestTagExport:
             root = FabricExporter().export(p, Path(td))
             tags_dir = root / "src" / "main" / "resources" / "data" / "minecraft" / "tags"
             assert not tags_dir.exists()
+
+
+class TestCreativeTabExport:
+    def test_fabric_creative_tab(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            tab_java = root / pkg_path / "TestmodCreativeTab.java"
+            assert tab_java.exists()
+            content = tab_java.read_text()
+            assert "FabricItemGroup" in content
+            assert "itemGroup.testmod" in content
+            assert "MAGIC_ORE" in content
+
+            # Mod class calls register
+            mod_java = root / pkg_path / "Testmod.java"
+            assert "TestmodCreativeTab.register()" in mod_java.read_text()
+
+    def test_forge_creative_tab(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            tab_java = root / pkg_path / "TestmodCreativeTab.java"
+            assert tab_java.exists()
+            content = tab_java.read_text()
+            assert "DeferredRegister" in content
+            assert "CreativeModeTab" in content
+
+            mod_java = root / pkg_path / "Testmod.java"
+            assert "TestmodCreativeTab.register(modEventBus)" in mod_java.read_text()
+
+    def test_neoforge_creative_tab(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            tab_java = root / pkg_path / "TestmodCreativeTab.java"
+            assert tab_java.exists()
+            content = tab_java.read_text()
+            assert "DeferredHolder" in content
+            assert "CreativeModeTab" in content
+
+    def test_lang_includes_tab(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            lang_path = root / "src" / "main" / "resources" / "assets" / "testmod" / "lang" / "en_us.json"
+            lang = json.loads(lang_path.read_text())
+            assert lang["itemGroup.testmod"] == "Test Mod"
+
+    def test_no_content_no_tab(self):
+        p = ModProject(mod_id="emptymod", name="Empty Mod")
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            tab_java = root / "src" / "main" / "java" / "com" / "emptymod" / "emptymod" / "EmptymodCreativeTab.java"
+            assert not tab_java.exists()

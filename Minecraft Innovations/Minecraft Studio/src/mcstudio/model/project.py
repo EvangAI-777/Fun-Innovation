@@ -37,6 +37,8 @@ class ModProject:
     mc_version: str = "1.21.4"
     license: str = "All Rights Reserved"
 
+    creative_tab_label: str | None = None  # Custom creative tab name; None = use mod name
+
     blocks: list[Block] = field(default_factory=list)
     items: list[Item] = field(default_factory=list)
     entities: list[EntityType] = field(default_factory=list)
@@ -135,6 +137,7 @@ class ModProject:
             "authors": self.authors,
             "mc_version": self.mc_version,
             "license": self.license,
+            "creative_tab_label": self.creative_tab_label,
             "blocks": [b.to_dict() for b in self.blocks],
             "items": [i.to_dict() for i in self.items],
             "entities": [e.to_dict() for e in self.entities],
@@ -162,6 +165,7 @@ class ModProject:
             authors=data.get("authors", []),
             mc_version=data.get("mc_version", "1.21.4"),
             license=data.get("license", "All Rights Reserved"),
+            creative_tab_label=data.get("creative_tab_label"),
         )
         for bd in data.get("blocks", []):
             project.add_block(Block.from_dict(bd))

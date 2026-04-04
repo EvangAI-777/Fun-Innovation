@@ -34,6 +34,7 @@ class FabricExporter(Exporter):
         self._write_block_registry(root, project)
         self._write_item_registry(root, project)
         self._write_entity_registry(root, project)
+        self._write_creative_tab(root, project)
         self._write_worldgen(root, project)
         self._write_recipes(root, project)
         self._write_loot_tables(root, project)
@@ -152,6 +153,8 @@ fabric_version={versions["fabric_api"]}
             w.line(f"{cls_name}Items.register();")
         if project.entities:
             w.line(f"{cls_name}Entities.register();")
+        if project.blocks or project.items:
+            w.line(f"{cls_name}CreativeTab.register();")
         for biome in project.biomes:
             biome_cls = to_pascal_case(biome.biome_id)
             w.line(f"{biome_cls}BiomeFeatures.register();")
@@ -250,6 +253,52 @@ fabric_version={versions["fabric_api"]}
 
         pkg_path = pkg.replace(".", "/")
         self._write_file(root / "src" / "main" / "java" / pkg_path / f"{cls_name}Items.java", w.build())
+
+    def _write_creative_tab(self, root: Path, project: ModProject) -> None:
+        if not project.blocks and not project.items:
+            return
+        pkg = project.java_package
+        cls_name = project.java_class_name
+        tab_label = project.creative_tab_label or project.name
+        w = JavaWriter()
+        w.set_package(pkg)
+        w.add_import("net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup")
+        w.add_import("net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents")
+        w.add_import("net.minecraft.core.Registry")
+        w.add_import("net.minecraft.core.registries.BuiltInRegistries")
+        w.add_import("net.minecraft.network.chat.Component")
+        w.add_import("net.minecraft.resources.ResourceLocation")
+        w.add_import("net.minecraft.world.item.CreativeModeTab")
+        w.add_import("net.minecraft.world.item.ItemStack")
+        w.line()
+        w.open_block(f"public class {cls_name}CreativeTab")
+        w.field("public static final", "ResourceLocation", "TAB_ID",
+                f'ResourceLocation.fromNamespaceAndPath({cls_name}.MOD_ID, "creative_tab")')
+        w.line()
+        w.open_block("public static void register()")
+        w.line(f"CreativeModeTab tab = FabricItemGroup.builder()")
+        w.line(f'    .title(Component.translatable("itemGroup.{project.mod_id}"))')
+        # Use first block or item as icon
+        if project.blocks:
+            w.line(f"    .icon(() -> new ItemStack({cls_name}Blocks.{project.blocks[0].java_constant}))")
+        elif project.items:
+            w.line(f"    .icon(() -> new ItemStack({cls_name}Items.{project.items[0].java_constant}))")
+        w.line("    .displayItems((params, output) -> {")
+        for block in project.blocks:
+            w.line(f"        output.accept({cls_name}Blocks.{block.java_constant});")
+        for item in project.items:
+            w.line(f"        output.accept({cls_name}Items.{item.java_constant});")
+        w.line("    })")
+        w.line("    .build();")
+        w.line("Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, TAB_ID, tab);")
+        w.close_block()
+        w.close_block()
+
+        pkg_path = pkg.replace(".", "/")
+        self._write_file(root / "src" / "main" / "java" / pkg_path / f"{cls_name}CreativeTab.java", w.build())
+
+        # Add lang entry for the tab
+        # (handled by _generate_lang if we add it there, but we also add to mod class)
 
     def _write_worldgen(self, root: Path, project: ModProject) -> None:
         if not project.biomes:
