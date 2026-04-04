@@ -15,6 +15,7 @@ from .entity import EntityType
 from .worldgen import Biome
 from .advancement import Advancement
 from .event import EventHandler
+from .config import ModConfig
 
 
 def _validate_mod_id(mod_id: str) -> str:
@@ -49,6 +50,7 @@ class ModProject:
     loot_tables: list[LootTable] = field(default_factory=list)
     advancements: list[Advancement] = field(default_factory=list)
     event_handlers: list[EventHandler] = field(default_factory=list)
+    config: ModConfig | None = None
 
     def __post_init__(self) -> None:
         self.mod_id = _validate_mod_id(self.mod_id)
@@ -160,6 +162,7 @@ class ModProject:
             "loot_tables": [lt.to_dict() for lt in self.loot_tables],
             "advancements": [a.to_dict() for a in self.advancements],
             "event_handlers": [h.to_dict() for h in self.event_handlers],
+            "config": self.config.to_dict() if self.config else None,
         }
 
     def save(self, path: str | Path) -> Path:
@@ -200,6 +203,9 @@ class ModProject:
             project.add_advancement(Advancement.from_dict(ad))
         for hd in data.get("event_handlers", []):
             project.add_event_handler(EventHandler.from_dict(hd))
+        config_data = data.get("config")
+        if config_data:
+            project.config = ModConfig.from_dict(config_data)
         return project
 
     def __repr__(self) -> str:

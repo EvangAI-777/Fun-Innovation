@@ -18,6 +18,7 @@ from mcstudio.model.advancement import (
     INVENTORY_CHANGED, PLACED_BLOCK, KILLED_ENTITY,
 )
 from mcstudio.model.event import EventHandler, EventType, EventPriority
+from mcstudio.model.config import ModConfig, ConfigSection, ConfigEntry
 from mcstudio.model.loot import LootTable, LootPool, LootEntry, LootCondition, LootFunction
 from mcstudio.model.entity import (
     EntityType, EntityBase, AIGoal, AIGoalType, EntityAttribute, SpawnRules, MobCategory,
@@ -826,3 +827,72 @@ class TestProjectEventHandlers:
             loaded = ModProject.load(f.name)
         assert len(loaded.event_handlers) == 1
         assert loaded.event_handlers[0].event_type == EventType.SERVER_STARTED
+
+
+class TestConfig:
+    def test_config_entry_defaults(self):
+        entry = ConfigEntry(key="enabled", value_type="bool", default=True)
+        assert entry.comment == ""
+        assert entry.min_value is None
+
+    def test_config_entry_invalid_type(self):
+        with pytest.raises(ValueError, match="Invalid value_type"):
+            ConfigEntry(key="x", value_type="list", default=[])
+
+    def test_config_entry_with_range(self):
+        entry = ConfigEntry(
+            key="max_health", value_type="int", default=20,
+            comment="Maximum health", min_value=1, max_value=100,
+        )
+        assert entry.min_value == 1
+        assert entry.max_value == 100
+
+    def test_config_section(self):
+        section = ConfigSection(
+            name="general",
+            comment="General settings",
+            entries=[
+                ConfigEntry(key="enabled", value_type="bool", default=True),
+                ConfigEntry(key="speed", value_type="float", default=1.5),
+            ],
+        )
+        assert len(section.entries) == 2
+
+    def test_mod_config_serialization(self):
+        config = ModConfig(sections=[
+            ConfigSection(name="general", entries=[
+                ConfigEntry(key="enabled", value_type="bool", default=True),
+                ConfigEntry(key="message", value_type="string", default="hello"),
+            ]),
+            ConfigSection(name="balance", entries=[
+                ConfigEntry(key="damage", value_type="int", default=10, min_value=1, max_value=100),
+            ]),
+        ])
+        d = config.to_dict()
+        restored = ModConfig.from_dict(d)
+        assert len(restored.sections) == 2
+        assert restored.sections[0].entries[0].key == "enabled"
+        assert restored.sections[1].entries[0].default == 10
+
+    def test_project_config_roundtrip(self):
+        p = ModProject(mod_id="testmod", name="Test")
+        p.config = ModConfig(sections=[
+            ConfigSection(name="general", entries=[
+                ConfigEntry(key="enabled", value_type="bool", default=True),
+            ]),
+        ])
+        d = p.to_dict()
+        assert d["config"] is not None
+
+        import tempfile
+        with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as f:
+            p.save(f.name)
+            loaded = ModProject.load(f.name)
+        assert loaded.config is not None
+        assert loaded.config.sections[0].entries[0].key == "enabled"
+
+    def test_project_no_config(self):
+        p = ModProject(mod_id="testmod", name="Test")
+        assert p.config is None
+        d = p.to_dict()
+        assert d["config"] is None

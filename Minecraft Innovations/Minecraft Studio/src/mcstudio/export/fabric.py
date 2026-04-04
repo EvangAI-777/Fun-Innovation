@@ -41,6 +41,7 @@ class FabricExporter(Exporter):
         self._write_tag_files(root / "src" / "main" / "resources" / "data", project)
         self._write_advancements(root / "src" / "main" / "resources" / "data", project)
         self._write_event_handlers(root, project, "fabric")
+        self._write_config(root, project, "fabric")
         self._write_blockstate_models(root, project)
         assets = root / "src" / "main" / "resources" / "assets" / project.mod_id
         self._write_textures(assets, project)

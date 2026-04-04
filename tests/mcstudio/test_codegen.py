@@ -14,6 +14,8 @@ from mcstudio.model.entity import (
 )
 from mcstudio.model.worldgen import Biome, PlacedFeature, FeatureType, PlacementConfig
 from mcstudio.model.event import EventHandler, EventType, EventPriority
+from mcstudio.model.config import ModConfig, ConfigSection, ConfigEntry
+from mcstudio.codegen.config import generate_config_class, generate_config_json
 
 
 class TestJavaWriter:
@@ -368,3 +370,60 @@ class TestEventCodegen:
         code = generate_event_handler_class(handlers, "com.test", "Test", "forge")
         assert "TestEvents" in code
         assert "@SubscribeEvent" in code
+
+
+class TestConfigCodegen:
+    def _make_config(self):
+        return ModConfig(sections=[
+            ConfigSection(name="general", comment="General settings", entries=[
+                ConfigEntry(key="enabled", value_type="bool", default=True, comment="Enable mod"),
+                ConfigEntry(key="greeting", value_type="string", default="Hello"),
+            ]),
+            ConfigSection(name="balance", entries=[
+                ConfigEntry(key="max_damage", value_type="int", default=20, min_value=1, max_value=100),
+                ConfigEntry(key="speed_mult", value_type="float", default=1.5, min_value=0.1, max_value=10.0),
+            ]),
+        ])
+
+    def test_forge_config(self):
+        config = self._make_config()
+        code = generate_config_class(config, "com.test.mod", "TestMod", "testmod", "forge")
+        assert "ForgeConfigSpec" in code
+        assert "TestModConfig" in code
+        assert "ENABLED" in code
+        assert "MAX_DAMAGE" in code
+        assert "defineInRange" in code
+
+    def test_neoforge_config(self):
+        config = self._make_config()
+        code = generate_config_class(config, "com.test.mod", "TestMod", "testmod", "neoforge")
+        assert "ForgeConfigSpec" in code
+        assert "TestModConfig" in code
+
+    def test_fabric_config(self):
+        config = self._make_config()
+        code = generate_config_class(config, "com.test.mod", "TestMod", "testmod", "fabric")
+        assert "TestModConfig" in code
+        assert "ENABLED" in code
+        assert "config" in code
+
+    def test_quilt_config(self):
+        config = self._make_config()
+        code = generate_config_class(config, "com.test.mod", "TestMod", "testmod", "quilt")
+        assert "TestModConfig" in code
+
+    def test_config_json(self):
+        config = self._make_config()
+        json_str = generate_config_json(config)
+        import json
+        data = json.loads(json_str)
+        assert data["general"]["enabled"] is True
+        assert data["general"]["greeting"] == "Hello"
+        assert data["balance"]["max_damage"] == 20
+        assert data["balance"]["speed_mult"] == 1.5
+
+    def test_unsupported_loader(self):
+        config = self._make_config()
+        import pytest
+        with pytest.raises(ValueError, match="Unsupported loader"):
+            generate_config_class(config, "com.test", "Test", "test", "unknown")

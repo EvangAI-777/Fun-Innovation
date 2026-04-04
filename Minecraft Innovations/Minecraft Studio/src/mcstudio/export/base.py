@@ -71,6 +71,25 @@ class Exporter(ABC):
             path = data_dir / "minecraft" / "tags" / f"{tag_path}.json"
             self._write_json(path, {"replace": False, "values": values})
 
+    def _write_config(self, root: Path, project: ModProject, loader: str) -> None:
+        """Write config class if the project has a config."""
+        if not project.config:
+            return
+        from mcstudio.codegen.config import generate_config_class, generate_config_json
+        pkg = project.java_package
+        cls_name = project.java_class_name
+        code = generate_config_class(project.config, pkg, cls_name, project.mod_id, loader)
+        pkg_path = pkg.replace(".", "/")
+        self._write_file(
+            root / "src" / "main" / "java" / pkg_path / f"{cls_name}Config.java", code,
+        )
+        # For Fabric/Quilt, also write the default config JSON
+        if loader in ("fabric", "quilt"):
+            json_content = generate_config_json(project.config)
+            self._write_file(
+                root / "src" / "main" / "resources" / f"{project.mod_id}.config.json", json_content,
+            )
+
     def _write_event_handlers(self, root: Path, project: ModProject, loader: str) -> None:
         """Write event handler class if the project has event handlers."""
         if not project.event_handlers:

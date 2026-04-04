@@ -25,6 +25,7 @@ from mcstudio.model.advancement import (
     INVENTORY_CHANGED,
 )
 from mcstudio.model.event import EventHandler, EventType
+from mcstudio.model.config import ModConfig, ConfigSection, ConfigEntry
 
 
 def _make_project() -> ModProject:
@@ -1021,3 +1022,64 @@ class TestEventExport:
             root = FabricExporter().export(p, Path(td))
             events_java = root / "src" / "main" / "java" / "com" / "testmod" / "testmod" / "TestmodEvents.java"
             assert not events_java.exists()
+
+
+def _make_project_with_config():
+    p = _make_project()
+    p.config = ModConfig(sections=[
+        ConfigSection(name="general", entries=[
+            ConfigEntry(key="enabled", value_type="bool", default=True),
+            ConfigEntry(key="max_range", value_type="int", default=32, min_value=1, max_value=256),
+        ]),
+    ])
+    return p
+
+
+class TestConfigExport:
+    def test_fabric_config(self):
+        p = _make_project_with_config()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            config_java = root / pkg_path / "TestmodConfig.java"
+            assert config_java.exists()
+            content = config_java.read_text()
+            assert "ENABLED" in content
+            assert "MAX_RANGE" in content
+            # Should also write default config JSON
+            config_json = root / "src" / "main" / "resources" / "testmod.config.json"
+            assert config_json.exists()
+
+    def test_forge_config(self):
+        p = _make_project_with_config()
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            config_java = root / pkg_path / "TestmodConfig.java"
+            assert config_java.exists()
+            content = config_java.read_text()
+            assert "ForgeConfigSpec" in content
+            assert "defineInRange" in content
+
+    def test_neoforge_config(self):
+        p = _make_project_with_config()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            config_java = root / pkg_path / "TestmodConfig.java"
+            assert config_java.exists()
+
+    def test_quilt_config(self):
+        p = _make_project_with_config()
+        with tempfile.TemporaryDirectory() as td:
+            root = QuiltExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            config_java = root / pkg_path / "TestmodConfig.java"
+            assert config_java.exists()
+
+    def test_no_config_no_file(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            config_java = root / "src" / "main" / "java" / "com" / "testmod" / "testmod" / "TestmodConfig.java"
+            assert not config_java.exists()
