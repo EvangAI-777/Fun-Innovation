@@ -40,9 +40,11 @@ class ForgeExporter(Exporter):
         self._write_recipes(root, project)
         self._write_loot_tables(root, project)
         self._write_blockstate_models(root, project)
-        self._write_textures(
-            root / "src" / "main" / "resources" / "assets" / project.mod_id, project,
-        )
+        assets = root / "src" / "main" / "resources" / "assets" / project.mod_id
+        self._write_textures(assets, project)
+        lang = self._generate_lang(project)
+        if lang:
+            self._write_json(assets / "lang" / "en_us.json", lang)
 
         return root
 

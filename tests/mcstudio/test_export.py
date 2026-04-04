@@ -606,3 +606,49 @@ class TestWorldgenExport:
         with tempfile.TemporaryDirectory() as td:
             root = DataPackExporter().export(p, Path(td))
             assert not (root / "data" / "emptymod" / "worldgen").exists()
+
+
+class TestLangExport:
+    def test_fabric_lang_file(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            lang_path = root / "src" / "main" / "resources" / "assets" / "testmod" / "lang" / "en_us.json"
+            assert lang_path.exists()
+            lang = json.loads(lang_path.read_text())
+            assert lang["block.testmod.magic_ore"] == "Magic Ore"
+            assert lang["item.testmod.magic_gem"] == "Magic Gem"
+            assert lang["item.testmod.magic_berry"] == "Magic Berry"
+
+    def test_forge_lang_file(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            lang_path = root / "src" / "main" / "resources" / "assets" / "testmod" / "lang" / "en_us.json"
+            assert lang_path.exists()
+            lang = json.loads(lang_path.read_text())
+            assert "block.testmod.magic_ore" in lang
+
+    def test_neoforge_lang_file(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            lang_path = root / "src" / "main" / "resources" / "assets" / "testmod" / "lang" / "en_us.json"
+            assert lang_path.exists()
+
+    def test_entity_lang_entries(self):
+        p = _make_entity_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            lang_path = root / "src" / "main" / "resources" / "assets" / "entitymod" / "lang" / "en_us.json"
+            assert lang_path.exists()
+            lang = json.loads(lang_path.read_text())
+            assert lang["entity.entitymod.shadow_beast"] == "Shadow Beast"
+            assert lang["item.entitymod.shadow_beast_spawn_egg"] == "Shadow Beast Spawn Egg"
+
+    def test_empty_project_no_lang(self):
+        p = ModProject(mod_id="emptymod", name="Empty Mod")
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            lang_path = root / "src" / "main" / "resources" / "assets" / "emptymod" / "lang" / "en_us.json"
+            assert not lang_path.exists()

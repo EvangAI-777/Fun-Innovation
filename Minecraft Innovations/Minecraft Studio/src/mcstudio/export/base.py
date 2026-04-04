@@ -26,6 +26,24 @@ class Exporter(ABC):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(data, indent=2) + "\n")
 
+    def _generate_lang(self, project: ModProject) -> dict[str, str]:
+        """Generate en_us.json translation entries from project content."""
+        lang: dict[str, str] = {}
+        mid = project.mod_id
+        for block in project.blocks:
+            key = f"block.{mid}.{block.block_id}"
+            lang[key] = block.block_id.replace("_", " ").title()
+        for item in project.items:
+            key = f"item.{mid}.{item.item_id}"
+            lang[key] = item.item_id.replace("_", " ").title()
+        for entity in project.entities:
+            key = f"entity.{mid}.{entity.entity_id}"
+            lang[key] = entity.entity_id.replace("_", " ").title()
+            # Spawn egg
+            egg_key = f"item.{mid}.{entity.entity_id}_spawn_egg"
+            lang[egg_key] = entity.entity_id.replace("_", " ").title() + " Spawn Egg"
+        return lang
+
     def _write_textures(self, assets_dir: Path, project: ModProject) -> None:
         """Generate placeholder textures for all blocks and items."""
         from mcstudio.texgen import generate_project_textures
