@@ -13,14 +13,14 @@ Minecraft Innovations/
   GeoVox/                 — Voxel pipeline (Python, v0.3.0)
   Minecraft Studio/       — Mod IDE with multi-loader export (Python, v0.4.0)
 Audio Innovations/
-  AutoMuse/               — Music composition engine (Python, v0.2.0)
+  AutoMuse/               — Music composition engine (Python, v0.3.0)
 OMNI INNOVATIONS/
   Omniversal Calculator/  — Multi-universe calculator (HTML/JS, v1.4.0)
   Omni Writer/            — Creative writing tool (HTML/JS, v2.1.0)
   Omniversal Mathematics/ — Math framework (HTML/JS)
 Undertale Innovations/
   OvertaleRPG/            — Fan game revival (HTML/JS)
-tests/                    — All test suites (1061 tests across 6 suites)
+tests/                    — All test suites (1177 tests across 6 suites)
 .github/workflows/        — CI (ci.yml) and GitHub Pages deployment (pages.yml)
 ```
 
@@ -28,11 +28,11 @@ tests/                    — All test suites (1061 tests across 6 suites)
 
 ```bash
 make install          # Install GeoVox, AutoMuse, Minecraft Studio (editable) + pytest
-make test             # Run all 6 test suites (1061 tests)
+make test             # Run all 6 test suites (1177 tests)
 make test-geovox      # GeoVox tests (89 tests)
 make test-roblox      # Roblox static analysis (102 tests)
 make test-originals   # Original project tests (48 tests)
-make test-automuse    # AutoMuse tests (310 tests)
+make test-automuse    # AutoMuse tests (426 tests)
 make test-mcstudio    # Minecraft Studio tests (219 tests)
 make test-omniversal  # Omniversal suite (293 tests)
 make clean            # Remove __pycache__, *.egg-info, dist/, build/

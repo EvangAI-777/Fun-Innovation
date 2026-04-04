@@ -27,7 +27,7 @@ Wrappers around existing APIs that add no creative value. "AI music generators" 
 
 | Project | Directory | Version | Status | Description |
 |---------|-----------|---------|--------|-------------|
-| AutoMuse | `AutoMuse/` | v0.2.0 | Testing phase | Conversational DAW -- composition engine, melody generation, arrangement, MIDI + MusicXML export, 310 tests |
+| AutoMuse | `AutoMuse/` | v0.3.0 | Testing phase | Conversational DAW -- multi-voice composition engine (melody, drums, bass, counterpoint, score), arrangement, MIDI + MusicXML export, 426 tests |
 
 ## Distribution Vision
 
