@@ -30,7 +30,7 @@ def main(argv: list[str] | None = None) -> int:
     pipe.add_argument("--sea-level", type=int, default=None, help="Y level for water fill (default: none)")
     pipe.add_argument("--origin", default="0,0,0", help="Minecraft origin as x,y,z (default: 0,0,0)")
     pipe.add_argument("--seed", type=int, default=None, help="Random seed for palette block selection")
-    pipe.add_argument("--format", choices=["mcfunction", "structure", "litematic"], default="mcfunction", help="Export format (default: mcfunction)")
+    pipe.add_argument("--format", choices=["mcfunction", "structure", "litematic", "sponge"], default="mcfunction", help="Export format (default: mcfunction)")
     pipe.add_argument("--smooth", type=int, default=None, metavar="K", help="Smooth heightmap with KxK box filter before ingest (K must be odd)")
     pipe.add_argument("--crop", default=None, metavar="X,Z,W,H", help="Crop heightmap region before ingest")
     pipe.add_argument("--resample", default=None, metavar="W,H", help="Resample heightmap to WxH before ingest")
@@ -208,6 +208,9 @@ def _cmd_pipeline(args: argparse.Namespace) -> int:
     elif args.format == "litematic":
         from .export.litematic import export_litematic
         paths = export_litematic(block_grid, args.output, origin=origin)
+    elif args.format == "sponge":
+        from .export.sponge import export_sponge
+        paths = export_sponge(block_grid, args.output, origin=origin)
     else:
         paths = []
 
