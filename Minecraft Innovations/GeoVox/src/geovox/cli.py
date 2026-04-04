@@ -34,6 +34,7 @@ def main(argv: list[str] | None = None) -> int:
     pipe.add_argument("--smooth", type=int, default=None, metavar="K", help="Smooth heightmap with KxK box filter before ingest (K must be odd)")
     pipe.add_argument("--crop", default=None, metavar="X,Z,W,H", help="Crop heightmap region before ingest")
     pipe.add_argument("--resample", default=None, metavar="W,H", help="Resample heightmap to WxH before ingest")
+    pipe.add_argument("--stitch", default=None, metavar="SPEC", help="Stitch multiple heightmaps: 'a.png:0,0;b.png:256,0'")
 
     # info -- show file metadata
     info = subparsers.add_parser("info", help="Show metadata about an input file")
@@ -80,8 +81,34 @@ def _cmd_pipeline(args: argparse.Namespace) -> int:
     from .ingest.heightmap import _read_heightmap
     from .ingest.preprocess import smooth_heightmap, crop_heightmap, resample_heightmap
 
-    raw = _read_heightmap(input_path)
     preprocessed = False
+
+    if args.stitch:
+        from .ingest.stitch import stitch_heightmaps
+        tiles = []
+        try:
+            for part in args.stitch.split(";"):
+                part = part.strip()
+                if not part:
+                    continue
+                path_str, coords = part.rsplit(":", 1)
+                col_off, row_off = (int(v) for v in coords.split(","))
+                tile_path = Path(path_str.strip())
+                if not tile_path.exists():
+                    print(f"Error: stitch tile not found: {tile_path}", file=sys.stderr)
+                    return 1
+                tile_data = _read_heightmap(tile_path)
+                tiles.append((tile_data, col_off, row_off))
+                print(f"  Tile: {tile_path} at ({col_off},{row_off})")
+        except ValueError:
+            print(f"Error: invalid stitch spec: {args.stitch}", file=sys.stderr)
+            print("  Expected format: 'a.png:0,0;b.png:256,0'", file=sys.stderr)
+            return 1
+        raw = stitch_heightmaps(tiles)
+        print(f"Stitched {len(tiles)} tiles -> {raw.shape[1]}x{raw.shape[0]}")
+        preprocessed = True
+    else:
+        raw = _read_heightmap(input_path)
 
     if args.crop:
         try:
