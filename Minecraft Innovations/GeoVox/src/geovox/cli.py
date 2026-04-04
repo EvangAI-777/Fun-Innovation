@@ -31,6 +31,9 @@ def main(argv: list[str] | None = None) -> int:
     pipe.add_argument("--origin", default="0,0,0", help="Minecraft origin as x,y,z (default: 0,0,0)")
     pipe.add_argument("--seed", type=int, default=None, help="Random seed for palette block selection")
     pipe.add_argument("--format", choices=["mcfunction", "structure", "litematic"], default="mcfunction", help="Export format (default: mcfunction)")
+    pipe.add_argument("--smooth", type=int, default=None, metavar="K", help="Smooth heightmap with KxK box filter before ingest (K must be odd)")
+    pipe.add_argument("--crop", default=None, metavar="X,Z,W,H", help="Crop heightmap region before ingest")
+    pipe.add_argument("--resample", default=None, metavar="W,H", help="Resample heightmap to WxH before ingest")
 
     # info -- show file metadata
     info = subparsers.add_parser("info", help="Show metadata about an input file")
@@ -73,13 +76,71 @@ def _cmd_pipeline(args: argparse.Namespace) -> int:
         print(f"Error: invalid origin format: {args.origin} (expected x,y,z)", file=sys.stderr)
         return 1
 
+    # Preprocessing (applied to raw heightmap before ingest)
+    from .ingest.heightmap import _read_heightmap
+    from .ingest.preprocess import smooth_heightmap, crop_heightmap, resample_heightmap
+
+    raw = _read_heightmap(input_path)
+    preprocessed = False
+
+    if args.crop:
+        try:
+            cx, cz, cw, ch = (int(v) for v in args.crop.split(","))
+        except ValueError:
+            print(f"Error: invalid crop format: {args.crop} (expected x,z,w,h)", file=sys.stderr)
+            return 1
+        raw = crop_heightmap(raw, cx, cz, cw, ch)
+        print(f"Cropped to {cw}x{ch} at ({cx},{cz})")
+        preprocessed = True
+
+    if args.resample:
+        try:
+            rw, rh = (int(v) for v in args.resample.split(","))
+        except ValueError:
+            print(f"Error: invalid resample format: {args.resample} (expected w,h)", file=sys.stderr)
+            return 1
+        raw = resample_heightmap(raw, rw, rh)
+        print(f"Resampled to {rw}x{rh}")
+        preprocessed = True
+
+    if args.smooth:
+        raw = smooth_heightmap(raw, kernel_size=args.smooth)
+        print(f"Smoothed with {args.smooth}x{args.smooth} kernel")
+        preprocessed = True
+
     # Ingest
     print(f"Reading heightmap: {input_path}")
-    grid = ingest_heightmap(
-        input_path,
-        y_scale=(args.y_min, args.y_max),
-        sea_level=args.sea_level,
-    )
+    if preprocessed:
+        from .ingest.heightmap import _fill_terrain_column, BEDROCK, GROUND_DEEP, GROUND_SHALLOW, SURFACE, WATER
+        from .core.grid import VoxelGrid
+        import numpy as np
+
+        grid = VoxelGrid()
+        grid.metadata = {
+            "source": str(input_path),
+            "source_shape": raw.shape,
+            "y_scale": (args.y_min, args.y_max),
+            "sea_level": args.sea_level,
+            "elevation": raw,
+        }
+        y_min, y_max = args.y_min, args.y_max
+        h_min, h_max = float(raw.min()), float(raw.max())
+        if h_max == h_min:
+            h_max = h_min + 1
+        rows, cols = raw.shape
+        for z in range(rows):
+            for x in range(cols):
+                normalized = (float(raw[z, x]) - h_min) / (h_max - h_min)
+                height = int(y_min + normalized * (y_max - y_min))
+                _fill_terrain_column(grid, x, z, height, 3)
+                if args.sea_level is not None and height < args.sea_level:
+                    grid.fill_column(x, z, height + 1, args.sea_level, WATER)
+    else:
+        grid = ingest_heightmap(
+            input_path,
+            y_scale=(args.y_min, args.y_max),
+            sea_level=args.sea_level,
+        )
     print(f"  {grid}")
 
     # Palette
