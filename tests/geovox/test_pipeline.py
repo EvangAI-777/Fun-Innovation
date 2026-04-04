@@ -14,6 +14,7 @@ from geovox.palette.palette import Palette, apply_palette
 from geovox.export.mcfunction import export_mcfunction
 from geovox.export.structure import export_structure
 from geovox.export.nbt import TAG_COMPOUND, write_nbt_file, TAG_INT, TAG_STRING
+from geovox.export.litematic import export_litematic
 
 
 def _make_test_heightmap(size: int = 8, value: int = 128) -> Path:
@@ -209,5 +210,75 @@ def test_full_pipeline():
             nbt_paths = export_structure(block_grid, Path(tmp) / "nbt_out")
             assert len(nbt_paths) == 1
             assert nbt_paths[0].suffix == ".nbt"
+    finally:
+        path.unlink()
+
+
+# --- Litematica export tests ---
+
+
+def test_export_litematic_creates_file():
+    grid = VoxelGrid()
+    grid.set(0, 0, 0, "minecraft:stone")
+    grid.set(1, 1, 1, "minecraft:dirt")
+
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "test"
+        paths = export_litematic(grid, out)
+        assert len(paths) == 1
+        assert paths[0].suffix == ".litematic"
+        assert paths[0].exists()
+
+        # Verify it's valid gzip containing NBT
+        with open(paths[0], "rb") as f:
+            data = gzip.decompress(f.read())
+        assert data[0] == TAG_COMPOUND
+
+
+def test_export_litematic_empty():
+    grid = VoxelGrid()
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "test"
+        paths = export_litematic(grid, out)
+        assert paths == []
+
+
+def test_export_litematic_contains_metadata():
+    grid = VoxelGrid()
+    grid.metadata = {"source": "test_terrain.png"}
+    grid.set(0, 0, 0, "minecraft:stone")
+
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "test"
+        paths = export_litematic(grid, out, name="Test Schematic", author="TestBot")
+        assert len(paths) == 1
+        with open(paths[0], "rb") as f:
+            data = gzip.decompress(f.read())
+        assert b"Test Schematic" in data
+        assert b"TestBot" in data
+
+
+def test_export_litematic_with_origin():
+    grid = VoxelGrid()
+    grid.set(0, 0, 0, "minecraft:stone")
+
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "test"
+        paths = export_litematic(grid, out, origin=(100, 64, 200))
+        assert len(paths) == 1
+        assert paths[0].exists()
+
+
+def test_full_pipeline_litematic():
+    path = _make_test_heightmap(4, value=128)
+    try:
+        grid = ingest_heightmap(path, y_scale=(0, 16))
+        palette = _simple_palette()
+        block_grid = apply_palette(grid, palette)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            paths = export_litematic(block_grid, Path(tmp) / "lit_out")
+            assert len(paths) == 1
+            assert paths[0].suffix == ".litematic"
     finally:
         path.unlink()
