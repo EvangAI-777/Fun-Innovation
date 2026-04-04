@@ -64,11 +64,12 @@ class TestExporterRegistry:
         assert "forge" in EXPORTERS
         assert "neoforge" in EXPORTERS
         assert "datapack" in EXPORTERS
+        assert "quilt" in EXPORTERS
 
     def test_unknown_loader(self):
         p = _make_project()
         with pytest.raises(ValueError, match="Unknown loader"):
-            export_project(p, "quilt", "/tmp")
+            export_project(p, "rift", "/tmp")
 
 
 class TestFabricExport:
@@ -758,3 +759,62 @@ class TestCreativeTabExport:
             root = FabricExporter().export(p, Path(td))
             tab_java = root / "src" / "main" / "java" / "com" / "emptymod" / "emptymod" / "EmptymodCreativeTab.java"
             assert not tab_java.exists()
+
+
+class TestQuiltExport:
+    def test_generates_project(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "quilt", td)
+            assert root.name == "testmod-quilt"
+            assert (root / "build.gradle").exists()
+            assert (root / "gradle.properties").exists()
+            assert (root / "settings.gradle").exists()
+
+    def test_quilt_mod_json(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "quilt", td)
+            mod_json = root / "src" / "main" / "resources" / "quilt.mod.json"
+            assert mod_json.exists()
+            data = json.loads(mod_json.read_text())
+            assert data["schema_version"] == 1
+            assert data["quilt_loader"]["id"] == "testmod"
+            assert "init" in data["quilt_loader"]["entrypoints"]
+
+    def test_mod_class_uses_mod_container(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "quilt", td)
+            mod_java = root / "src" / "main" / "java" / "com" / "testmod" / "testmod" / "Testmod.java"
+            assert mod_java.exists()
+            content = mod_java.read_text()
+            assert "ModContainer" in content
+            assert "org.quiltmc.loader.api.ModContainer" in content
+            assert "onInitialize(ModContainer mod)" in content
+
+    def test_build_gradle_uses_quilt_loom(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "quilt", td)
+            gradle = (root / "build.gradle").read_text()
+            assert "org.quiltmc.loom" in gradle
+            assert "quilt-loader" in gradle
+
+    def test_quilt_dispatch(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "quilt", td)
+            assert root.exists()
+
+    def test_block_and_item_registry(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "quilt", td)
+            pkg_path = "src/main/java/com/testmod/testmod"
+            blocks_java = root / pkg_path / "TestmodBlocks.java"
+            items_java = root / pkg_path / "TestmodItems.java"
+            assert blocks_java.exists()
+            assert items_java.exists()
+            assert "MAGIC_ORE" in blocks_java.read_text()
+            assert "MAGIC_GEM" in items_java.read_text()

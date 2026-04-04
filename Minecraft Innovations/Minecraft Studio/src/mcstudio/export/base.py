@@ -221,6 +221,6 @@ def export_project(project: ModProject, loader: str, output_dir: str | Path) -> 
 
 # Import submodules to trigger registration
 def _init_exporters() -> None:
-    from . import fabric, forge, neoforge, datapack  # noqa: F401
+    from . import fabric, forge, neoforge, datapack, quilt  # noqa: F401
 
 _init_exporters()
