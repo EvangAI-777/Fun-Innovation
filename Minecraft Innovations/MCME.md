@@ -6,8 +6,8 @@ Minecraft infrastructure tooling. Two projects, each at a different scale of amb
 
 | Project | Directory | Focus | Status |
 |---------|-----------|-------|--------|
-| GeoVox | `GeoVox/` | Real-world 3D data → Minecraft worlds | v0.2.0 |
-| Minecraft Studio | `Minecraft Studio/` | Roblox Studio-style IDE for Minecraft modding | v0.3.0 -- Layer 1 fully complete |
+| GeoVox | `GeoVox/` | Real-world 3D data → Minecraft worlds | v0.3.0 |
+| Minecraft Studio | `Minecraft Studio/` | Roblox Studio-style IDE for Minecraft modding | v0.4.0 -- Layers 1-2 complete |
 
 See [`GeoVox/VOXELME.md`](./GeoVox/VOXELME.md) for the GeoVox project overview and [`GeoVox/Design/ARCHITECTURE.md`](./GeoVox/Design/ARCHITECTURE.md) for the full technical design.
 

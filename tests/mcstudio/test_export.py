@@ -18,6 +18,14 @@ from mcstudio.export.fabric import FabricExporter
 from mcstudio.export.forge import ForgeExporter
 from mcstudio.export.neoforge import NeoForgeExporter
 from mcstudio.export.datapack import DataPackExporter
+from mcstudio.export.quilt import QuiltExporter
+from mcstudio.export.resourcepack import ResourcePackExporter
+from mcstudio.model.advancement import (
+    Advancement, AdvancementDisplay, AdvancementCriterion, AdvancementFrame,
+    INVENTORY_CHANGED,
+)
+from mcstudio.model.event import EventHandler, EventType
+from mcstudio.model.config import ModConfig, ConfigSection, ConfigEntry
 
 
 def _make_project() -> ModProject:
@@ -64,11 +72,12 @@ class TestExporterRegistry:
         assert "forge" in EXPORTERS
         assert "neoforge" in EXPORTERS
         assert "datapack" in EXPORTERS
+        assert "quilt" in EXPORTERS
 
     def test_unknown_loader(self):
         p = _make_project()
         with pytest.raises(ValueError, match="Unknown loader"):
-            export_project(p, "quilt", "/tmp")
+            export_project(p, "rift", "/tmp")
 
 
 class TestFabricExport:
@@ -758,3 +767,319 @@ class TestCreativeTabExport:
             root = FabricExporter().export(p, Path(td))
             tab_java = root / "src" / "main" / "java" / "com" / "emptymod" / "emptymod" / "EmptymodCreativeTab.java"
             assert not tab_java.exists()
+
+
+class TestQuiltExport:
+    def test_generates_project(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "quilt", td)
+            assert root.name == "testmod-quilt"
+            assert (root / "build.gradle").exists()
+            assert (root / "gradle.properties").exists()
+            assert (root / "settings.gradle").exists()
+
+    def test_quilt_mod_json(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "quilt", td)
+            mod_json = root / "src" / "main" / "resources" / "quilt.mod.json"
+            assert mod_json.exists()
+            data = json.loads(mod_json.read_text())
+            assert data["schema_version"] == 1
+            assert data["quilt_loader"]["id"] == "testmod"
+            assert "init" in data["quilt_loader"]["entrypoints"]
+
+    def test_mod_class_uses_mod_container(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "quilt", td)
+            mod_java = root / "src" / "main" / "java" / "com" / "testmod" / "testmod" / "Testmod.java"
+            assert mod_java.exists()
+            content = mod_java.read_text()
+            assert "ModContainer" in content
+            assert "org.quiltmc.loader.api.ModContainer" in content
+            assert "onInitialize(ModContainer mod)" in content
+
+    def test_build_gradle_uses_quilt_loom(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "quilt", td)
+            gradle = (root / "build.gradle").read_text()
+            assert "org.quiltmc.loom" in gradle
+            assert "quilt-loader" in gradle
+
+    def test_quilt_dispatch(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "quilt", td)
+            assert root.exists()
+
+    def test_block_and_item_registry(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "quilt", td)
+            pkg_path = "src/main/java/com/testmod/testmod"
+            blocks_java = root / pkg_path / "TestmodBlocks.java"
+            items_java = root / pkg_path / "TestmodItems.java"
+            assert blocks_java.exists()
+            assert items_java.exists()
+            assert "MAGIC_ORE" in blocks_java.read_text()
+            assert "MAGIC_GEM" in items_java.read_text()
+
+
+class TestResourcePackExport:
+    def test_generates_pack(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "resourcepack", td)
+            assert root.name == "testmod-resourcepack"
+            assert (root / "pack.mcmeta").exists()
+
+    def test_pack_mcmeta(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "resourcepack", td)
+            meta = json.loads((root / "pack.mcmeta").read_text())
+            assert meta["pack"]["pack_format"] == 34
+
+    def test_blockstate_models(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "resourcepack", td)
+            bs = root / "assets" / "testmod" / "blockstates" / "magic_ore.json"
+            assert bs.exists()
+            model = root / "assets" / "testmod" / "models" / "block" / "magic_ore.json"
+            assert model.exists()
+
+    def test_lang_file(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "resourcepack", td)
+            lang_path = root / "assets" / "testmod" / "lang" / "en_us.json"
+            assert lang_path.exists()
+            lang = json.loads(lang_path.read_text())
+            assert "block.testmod.magic_ore" in lang
+
+    def test_sounds_json(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = export_project(p, "resourcepack", td)
+            sounds = root / "assets" / "testmod" / "sounds.json"
+            assert sounds.exists()
+            assert json.loads(sounds.read_text()) == {}
+
+
+def _make_project_with_advancement():
+    p = _make_project()
+    display = AdvancementDisplay(
+        icon="testmod:magic_ore",
+        title="Magic Discovery",
+        description="Find magic ore",
+        frame=AdvancementFrame.TASK,
+    )
+    p.add_advancement(Advancement(
+        advancement_id="root",
+        display=display,
+        criteria=[AdvancementCriterion(name="tick", trigger="minecraft:tick")],
+    ))
+    child_display = AdvancementDisplay(
+        icon="testmod:magic_gem",
+        title="Magic Gem",
+        description="Craft a magic gem",
+        frame=AdvancementFrame.GOAL,
+    )
+    p.add_advancement(Advancement(
+        advancement_id="get_gem",
+        display=child_display,
+        parent="root",
+        criteria=[AdvancementCriterion(
+            name="has_gem",
+            trigger=INVENTORY_CHANGED,
+            conditions={"items": [{"items": "testmod:magic_gem"}]},
+        )],
+    ))
+    return p
+
+
+class TestAdvancementExport:
+    def test_fabric_advancements(self):
+        p = _make_project_with_advancement()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            adv_dir = root / "src" / "main" / "resources" / "data" / "testmod" / "advancement"
+            assert (adv_dir / "root.json").exists()
+            assert (adv_dir / "get_gem.json").exists()
+            root_json = json.loads((adv_dir / "root.json").read_text())
+            assert "criteria" in root_json
+            gem_json = json.loads((adv_dir / "get_gem.json").read_text())
+            assert gem_json["parent"] == "testmod:root"
+
+    def test_forge_advancements(self):
+        p = _make_project_with_advancement()
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            adv_dir = root / "src" / "main" / "resources" / "data" / "testmod" / "advancement"
+            assert (adv_dir / "root.json").exists()
+            assert (adv_dir / "get_gem.json").exists()
+
+    def test_datapack_advancements(self):
+        p = _make_project_with_advancement()
+        with tempfile.TemporaryDirectory() as td:
+            root = DataPackExporter().export(p, Path(td))
+            adv_dir = root / "data" / "testmod" / "advancement"
+            assert (adv_dir / "root.json").exists()
+
+    def test_quilt_advancements(self):
+        p = _make_project_with_advancement()
+        with tempfile.TemporaryDirectory() as td:
+            root = QuiltExporter().export(p, Path(td))
+            adv_dir = root / "src" / "main" / "resources" / "data" / "testmod" / "advancement"
+            assert (adv_dir / "root.json").exists()
+
+    def test_advancement_lang_entries(self):
+        p = _make_project_with_advancement()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            lang_path = root / "src" / "main" / "resources" / "assets" / "testmod" / "lang" / "en_us.json"
+            lang = json.loads(lang_path.read_text())
+            assert lang["advancement.testmod.root.title"] == "Magic Discovery"
+            assert lang["advancement.testmod.get_gem.description"] == "Craft a magic gem"
+
+    def test_no_advancements_no_files(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            adv_dir = root / "src" / "main" / "resources" / "data" / "testmod" / "advancement"
+            assert not adv_dir.exists()
+
+
+def _make_project_with_events():
+    p = _make_project()
+    p.add_event_handler(EventHandler(
+        event_type=EventType.PLAYER_JOIN,
+        handler_name="onPlayerJoin",
+        body_lines=['LOGGER.info("Welcome!");'],
+    ))
+    p.add_event_handler(EventHandler(
+        event_type=EventType.BLOCK_BREAK,
+        handler_name="onBlockBreak",
+        body_lines=['LOGGER.info("Block broken!");'],
+    ))
+    return p
+
+
+class TestEventExport:
+    def test_fabric_events(self):
+        p = _make_project_with_events()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            events_java = root / pkg_path / "TestmodEvents.java"
+            assert events_java.exists()
+            content = events_java.read_text()
+            assert "register()" in content
+            assert "ServerPlayConnectionEvents" in content
+            # Mod class should call Events.register()
+            mod_java = root / pkg_path / "Testmod.java"
+            assert "TestmodEvents.register()" in mod_java.read_text()
+
+    def test_forge_events(self):
+        p = _make_project_with_events()
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            events_java = root / pkg_path / "TestmodEvents.java"
+            assert events_java.exists()
+            content = events_java.read_text()
+            assert "@SubscribeEvent" in content
+            mod_java = root / pkg_path / "Testmod.java"
+            assert "MinecraftForge.EVENT_BUS.register" in mod_java.read_text()
+
+    def test_neoforge_events(self):
+        p = _make_project_with_events()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            events_java = root / pkg_path / "TestmodEvents.java"
+            assert events_java.exists()
+            content = events_java.read_text()
+            assert "@SubscribeEvent" in content
+            mod_java = root / pkg_path / "Testmod.java"
+            assert "NeoForge.EVENT_BUS.register" in mod_java.read_text()
+
+    def test_quilt_events(self):
+        p = _make_project_with_events()
+        with tempfile.TemporaryDirectory() as td:
+            root = QuiltExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            events_java = root / pkg_path / "TestmodEvents.java"
+            assert events_java.exists()
+
+    def test_no_events_no_file(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            events_java = root / "src" / "main" / "java" / "com" / "testmod" / "testmod" / "TestmodEvents.java"
+            assert not events_java.exists()
+
+
+def _make_project_with_config():
+    p = _make_project()
+    p.config = ModConfig(sections=[
+        ConfigSection(name="general", entries=[
+            ConfigEntry(key="enabled", value_type="bool", default=True),
+            ConfigEntry(key="max_range", value_type="int", default=32, min_value=1, max_value=256),
+        ]),
+    ])
+    return p
+
+
+class TestConfigExport:
+    def test_fabric_config(self):
+        p = _make_project_with_config()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            config_java = root / pkg_path / "TestmodConfig.java"
+            assert config_java.exists()
+            content = config_java.read_text()
+            assert "ENABLED" in content
+            assert "MAX_RANGE" in content
+            # Should also write default config JSON
+            config_json = root / "src" / "main" / "resources" / "testmod.config.json"
+            assert config_json.exists()
+
+    def test_forge_config(self):
+        p = _make_project_with_config()
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            config_java = root / pkg_path / "TestmodConfig.java"
+            assert config_java.exists()
+            content = config_java.read_text()
+            assert "ForgeConfigSpec" in content
+            assert "defineInRange" in content
+
+    def test_neoforge_config(self):
+        p = _make_project_with_config()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            config_java = root / pkg_path / "TestmodConfig.java"
+            assert config_java.exists()
+
+    def test_quilt_config(self):
+        p = _make_project_with_config()
+        with tempfile.TemporaryDirectory() as td:
+            root = QuiltExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            config_java = root / pkg_path / "TestmodConfig.java"
+            assert config_java.exists()
+
+    def test_no_config_no_file(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            config_java = root / "src" / "main" / "java" / "com" / "testmod" / "testmod" / "TestmodConfig.java"
+            assert not config_java.exists()

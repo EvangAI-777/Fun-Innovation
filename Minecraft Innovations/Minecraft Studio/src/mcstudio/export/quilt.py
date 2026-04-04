@@ -1,4 +1,11 @@
-"""Fabric mod project exporter -- generates a complete Fabric Loom Gradle project."""
+"""Quilt mod project exporter -- generates a complete Quilt Loom Gradle project.
+
+Nearly identical to the Fabric exporter. Key differences:
+- quilt.mod.json instead of fabric.mod.json (different schema)
+- org.quiltmc.loom Gradle plugin
+- QSL (Quilted Standard Libraries) instead of Fabric API
+- org.quiltmc.loader.api.ModContainer in mod initializer
+"""
 
 from __future__ import annotations
 
@@ -8,28 +15,27 @@ from mcstudio.model.project import ModProject
 from mcstudio.codegen.java import JavaWriter, to_java_string, to_pascal_case
 from .base import Exporter, _register
 
-# Fabric Loom Gradle versions tied to MC version
-_FABRIC_VERSIONS = {
-    "1.21.4": {"fabric_api": "0.114.0+1.21.4", "yarn": "1.21.4+build.8", "loader": "0.16.10", "loom": "1.9-SNAPSHOT"},
-    "1.21.3": {"fabric_api": "0.110.5+1.21.3", "yarn": "1.21.3+build.4", "loader": "0.16.9", "loom": "1.9-SNAPSHOT"},
-    "1.20.4": {"fabric_api": "0.97.0+1.20.4", "yarn": "1.20.4+build.3", "loader": "0.15.11", "loom": "1.7-SNAPSHOT"},
+_QUILT_VERSIONS = {
+    "1.21.4": {"qsl": "10.0.0-alpha.1+1.21.4", "hashed": "1.21.4+build.8", "loader": "0.26.4", "loom": "1.9-SNAPSHOT"},
+    "1.21.3": {"qsl": "9.2.0+1.21.3", "hashed": "1.21.3+build.4", "loader": "0.26.3", "loom": "1.9-SNAPSHOT"},
+    "1.20.4": {"qsl": "7.1.0+1.20.4", "hashed": "1.20.4+build.3", "loader": "0.25.0", "loom": "1.7-SNAPSHOT"},
 }
-_DEFAULT_VERSIONS = {"fabric_api": "0.114.0+1.21.4", "yarn": "1.21.4+build.8", "loader": "0.16.10", "loom": "1.9-SNAPSHOT"}
+_DEFAULT_VERSIONS = {"qsl": "10.0.0-alpha.1+1.21.4", "hashed": "1.21.4+build.8", "loader": "0.26.4", "loom": "1.9-SNAPSHOT"}
 
 
 @_register
-class FabricExporter(Exporter):
+class QuiltExporter(Exporter):
     def loader_name(self) -> str:
-        return "fabric"
+        return "quilt"
 
     def export(self, project: ModProject, output_dir: Path) -> Path:
-        root = output_dir / f"{project.mod_id}-fabric"
-        versions = _FABRIC_VERSIONS.get(project.mc_version, _DEFAULT_VERSIONS)
+        root = output_dir / f"{project.mod_id}-quilt"
+        versions = _QUILT_VERSIONS.get(project.mc_version, _DEFAULT_VERSIONS)
 
         self._write_build_gradle(root, project, versions)
         self._write_gradle_properties(root, project, versions)
         self._write_settings_gradle(root, project)
-        self._write_fabric_mod_json(root, project)
+        self._write_quilt_mod_json(root, project)
         self._write_mod_class(root, project)
         self._write_block_registry(root, project)
         self._write_item_registry(root, project)
@@ -40,8 +46,8 @@ class FabricExporter(Exporter):
         self._write_loot_tables(root, project)
         self._write_tag_files(root / "src" / "main" / "resources" / "data", project)
         self._write_advancements(root / "src" / "main" / "resources" / "data", project)
-        self._write_event_handlers(root, project, "fabric")
-        self._write_config(root, project, "fabric")
+        self._write_event_handlers(root, project, "quilt")
+        self._write_config(root, project, "quilt")
         self._write_blockstate_models(root, project)
         assets = root / "src" / "main" / "resources" / "assets" / project.mod_id
         self._write_textures(assets, project)
@@ -53,7 +59,7 @@ class FabricExporter(Exporter):
 
     def _write_build_gradle(self, root: Path, project: ModProject, versions: dict) -> None:
         content = f"""plugins {{
-    id 'fabric-loom' version '{versions["loom"]}'
+    id 'org.quiltmc.loom' version '{versions["loom"]}'
     id 'maven-publish'
 }}
 
@@ -65,20 +71,21 @@ base {{
 }}
 
 repositories {{
+    maven {{ url = "https://maven.quiltmc.org/repository/release/" }}
 }}
 
 dependencies {{
     minecraft "com.mojang:minecraft:${{project.minecraft_version}}"
     mappings "net.fabricmc:yarn:${{project.yarn_mappings}}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${{project.loader_version}}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${{project.fabric_version}}"
+    modImplementation "org.quiltmc:quilt-loader:${{project.loader_version}}"
+    modImplementation "org.quiltmc.quilted-fabric-api:quilted-fabric-api:${{project.qsl_version}}"
 }}
 
 processResources {{
     inputs.property "version", project.version
     filteringCharset "UTF-8"
 
-    filesMatching("fabric.mod.json") {{
+    filesMatching("quilt.mod.json") {{
         expand "version": project.version
     }}
 }}
@@ -98,48 +105,52 @@ java {{
     def _write_gradle_properties(self, root: Path, project: ModProject, versions: dict) -> None:
         content = f"""org.gradle.jvmargs=-Xmx1G
 minecraft_version={project.mc_version}
-yarn_mappings={versions["yarn"]}
+yarn_mappings={versions["hashed"]}
 loader_version={versions["loader"]}
 mod_version={project.version}
 maven_group=com.{project.mod_id}
 archives_base_name={project.mod_id}
-fabric_version={versions["fabric_api"]}
+qsl_version={versions["qsl"]}
 """
         self._write_file(root / "gradle.properties", content)
 
     def _write_settings_gradle(self, root: Path, project: ModProject) -> None:
-        self._write_file(root / "settings.gradle", f'pluginManagement {{\n    repositories {{\n        maven {{ url = "https://maven.fabricmc.net/" }}\n        mavenCentral()\n        gradlePluginPortal()\n    }}\n}}\n')
+        self._write_file(root / "settings.gradle", f'pluginManagement {{\n    repositories {{\n        maven {{ url = "https://maven.quiltmc.org/repository/release/" }}\n        maven {{ url = "https://maven.fabricmc.net/" }}\n        mavenCentral()\n        gradlePluginPortal()\n    }}\n}}\n')
 
-    def _write_fabric_mod_json(self, root: Path, project: ModProject) -> None:
+    def _write_quilt_mod_json(self, root: Path, project: ModProject) -> None:
         mod_json = {
-            "schemaVersion": 1,
-            "id": project.mod_id,
-            "version": "${version}",
-            "name": project.name,
-            "description": project.description,
-            "authors": project.authors,
-            "contact": {},
-            "license": project.license,
-            "environment": "*",
-            "entrypoints": {
-                "main": [f"{project.java_package}.{project.java_class_name}"],
-            },
-            "depends": {
-                "fabricloader": ">=0.16.0",
-                "minecraft": f"~{project.mc_version}",
-                "java": ">=21",
-                "fabric-api": "*",
+            "schema_version": 1,
+            "quilt_loader": {
+                "group": f"com.{project.mod_id}",
+                "id": project.mod_id,
+                "version": "${version}",
+                "metadata": {
+                    "name": project.name,
+                    "description": project.description,
+                    "contributors": {a: "Owner" for a in project.authors},
+                    "license": project.license,
+                },
+                "intermediate_mappings": "net.fabricmc:intermediary",
+                "entrypoints": {
+                    "init": [f"{project.java_package}.{project.java_class_name}"],
+                },
+                "depends": [
+                    {"id": "quilt_loader", "versions": ">=0.26.0"},
+                    {"id": "quilted_fabric_api", "versions": "*"},
+                    {"id": "minecraft", "versions": f"~{project.mc_version}"},
+                ],
             },
         }
         res = root / "src" / "main" / "resources"
-        self._write_json(res / "fabric.mod.json", mod_json)
+        self._write_json(res / "quilt.mod.json", mod_json)
 
     def _write_mod_class(self, root: Path, project: ModProject) -> None:
         pkg = project.java_package
         cls_name = project.java_class_name
         w = JavaWriter()
         w.set_package(pkg)
-        w.add_import("net.fabricmc.api.ModInitializer")
+        w.add_import("org.quiltmc.loader.api.ModContainer")
+        w.add_import("org.quiltmc.qsl.base.api.entrypoint.ModInitializer")
         w.add_import("org.slf4j.Logger")
         w.add_import("org.slf4j.LoggerFactory")
         w.line()
@@ -148,7 +159,7 @@ fabric_version={versions["fabric_api"]}
         w.field("public static final", "Logger", "LOGGER", f"LoggerFactory.getLogger(MOD_ID)")
         w.line()
         w.annotation("Override")
-        w.open_block("public void onInitialize()")
+        w.open_block("public void onInitialize(ModContainer mod)")
         w.line(f"LOGGER.info(\"Initializing {project.name}\");")
         if project.blocks:
             w.line(f"{cls_name}Blocks.register();")
@@ -264,11 +275,9 @@ fabric_version={versions["fabric_api"]}
             return
         pkg = project.java_package
         cls_name = project.java_class_name
-        tab_label = project.creative_tab_label or project.name
         w = JavaWriter()
         w.set_package(pkg)
         w.add_import("net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup")
-        w.add_import("net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents")
         w.add_import("net.minecraft.core.Registry")
         w.add_import("net.minecraft.core.registries.BuiltInRegistries")
         w.add_import("net.minecraft.network.chat.Component")
@@ -283,7 +292,6 @@ fabric_version={versions["fabric_api"]}
         w.open_block("public static void register()")
         w.line(f"CreativeModeTab tab = FabricItemGroup.builder()")
         w.line(f'    .title(Component.translatable("itemGroup.{project.mod_id}"))')
-        # Use first block or item as icon
         if project.blocks:
             w.line(f"    .icon(() -> new ItemStack({cls_name}Blocks.{project.blocks[0].java_constant}))")
         elif project.items:
@@ -301,9 +309,6 @@ fabric_version={versions["fabric_api"]}
 
         pkg_path = pkg.replace(".", "/")
         self._write_file(root / "src" / "main" / "java" / pkg_path / f"{cls_name}CreativeTab.java", w.build())
-
-        # Add lang entry for the tab
-        # (handled by _generate_lang if we add it there, but we also add to mod class)
 
     def _write_worldgen(self, root: Path, project: ModProject) -> None:
         if not project.biomes:
@@ -333,7 +338,7 @@ fabric_version={versions["fabric_api"]}
                     data / "worldgen" / "placed_feature" / f"{feature.feature_id}.json",
                     generate_placed_feature_json(feature, project.mod_id),
                 )
-            # Fabric biome modifications class
+            # Quilt uses same Fabric BiomeModifications API via QSL compatibility
             code = generate_fabric_biome_modifications(biome, pkg, cls_name)
             biome_cls = to_pascal_case(biome.biome_id)
             self._write_file(
@@ -348,7 +353,6 @@ fabric_version={versions["fabric_api"]}
         cls_name = project.java_class_name
         pkg_path = pkg.replace(".", "/")
 
-        # Write individual entity classes
         for entity in project.entities:
             code = generate_entity_class(entity, pkg)
             self._write_file(
@@ -360,7 +364,6 @@ fabric_version={versions["fabric_api"]}
                 renderer_code,
             )
 
-        # Write entity registry class
         w = JavaWriter()
         w.set_package(pkg)
         w.add_import(
@@ -396,9 +399,7 @@ fabric_version={versions["fabric_api"]}
         for entity in project.entities:
             rl = f'ResourceLocation.fromNamespaceAndPath({cls_name}.MOD_ID, "{entity.entity_id}")'
             w.line(f"Registry.register(BuiltInRegistries.ENTITY_TYPE, {rl}, {entity.java_constant});")
-            # Spawn egg
             w.line(f'Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath({cls_name}.MOD_ID, "{entity.entity_id}_spawn_egg"), new SpawnEggItem({entity.java_constant}, 0x333333, 0x999999, new Item.Properties()));')
-            # Attributes
             if entity.attributes:
                 w.line(f"FabricDefaultAttributeRegistry.register({entity.java_constant}, {entity.java_class_name}.createAttributes());")
         w.close_block()
@@ -427,7 +428,6 @@ fabric_version={versions["fabric_api"]}
     def _write_blockstate_models(self, root: Path, project: ModProject) -> None:
         res = root / "src" / "main" / "resources"
         for block in project.blocks:
-            # Blockstate JSON
             blockstate = {
                 "variants": {
                     "": {"model": f"{project.mod_id}:block/{block.block_id}"}
@@ -437,7 +437,6 @@ fabric_version={versions["fabric_api"]}
                 res / "assets" / project.mod_id / "blockstates" / f"{block.block_id}.json",
                 blockstate,
             )
-            # Block model JSON (simple cube)
             block_model = {
                 "parent": "minecraft:block/cube_all",
                 "textures": {
@@ -448,7 +447,6 @@ fabric_version={versions["fabric_api"]}
                 res / "assets" / project.mod_id / "models" / "block" / f"{block.block_id}.json",
                 block_model,
             )
-            # Block item model
             if block.has_block_item:
                 item_model = {
                     "parent": f"{project.mod_id}:block/{block.block_id}"
@@ -457,7 +455,6 @@ fabric_version={versions["fabric_api"]}
                     res / "assets" / project.mod_id / "models" / "item" / f"{block.block_id}.json",
                     item_model,
                 )
-        # Item models
         for item in project.items:
             item_model = {
                 "parent": "minecraft:item/generated",

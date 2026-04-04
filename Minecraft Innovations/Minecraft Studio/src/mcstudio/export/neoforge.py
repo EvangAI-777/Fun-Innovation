@@ -40,6 +40,9 @@ class NeoForgeExporter(Exporter):
         self._write_recipes(root, project)
         self._write_loot_tables(root, project)
         self._write_tag_files(root / "src" / "main" / "resources" / "data", project)
+        self._write_advancements(root / "src" / "main" / "resources" / "data", project)
+        self._write_event_handlers(root, project, "neoforge")
+        self._write_config(root, project, "neoforge")
         self._write_blockstate_models(root, project)
         assets = root / "src" / "main" / "resources" / "assets" / project.mod_id
         self._write_textures(assets, project)
@@ -166,6 +169,9 @@ side="BOTH"
             w.line(f"{cls_name}Entities.register(modEventBus);")
         if project.blocks or project.items:
             w.line(f"{cls_name}CreativeTab.register(modEventBus);")
+        if project.event_handlers:
+            w.add_import("net.neoforged.neoforge.common.NeoForge")
+            w.line(f"NeoForge.EVENT_BUS.register({cls_name}Events.class);")
         w.line(f'LOGGER.info("Initializing {project.name}");')
         w.close_block()
         w.close_block()

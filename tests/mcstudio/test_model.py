@@ -13,6 +13,12 @@ from mcstudio.model.recipe import (
     ShapedRecipe, ShapelessRecipe, SmeltingRecipe, BlastingRecipe,
     SmokingRecipe, StonecuttingRecipe, SmithingRecipe, recipe_from_dict,
 )
+from mcstudio.model.advancement import (
+    Advancement, AdvancementDisplay, AdvancementCriterion, AdvancementFrame,
+    INVENTORY_CHANGED, PLACED_BLOCK, KILLED_ENTITY,
+)
+from mcstudio.model.event import EventHandler, EventType, EventPriority
+from mcstudio.model.config import ModConfig, ConfigSection, ConfigEntry
 from mcstudio.model.loot import LootTable, LootPool, LootEntry, LootCondition, LootFunction
 from mcstudio.model.entity import (
     EntityType, EntityBase, AIGoal, AIGoalType, EntityAttribute, SpawnRules, MobCategory,
@@ -636,3 +642,257 @@ class TestProjectBiomes:
         assert len(loaded.biomes) == 1
         assert loaded.biomes[0].biome_id == "test_biome"
         assert loaded.biomes[0].temperature == 1.2
+
+
+class TestAdvancement:
+    def test_defaults(self):
+        display = AdvancementDisplay(
+            icon="minecraft:diamond",
+            title="First Diamond",
+            description="Mine your first diamond",
+        )
+        adv = Advancement(advancement_id="first_diamond", display=display)
+        assert adv.parent is None
+        assert adv.display.frame == AdvancementFrame.TASK
+        assert adv.display.show_toast is True
+
+    def test_with_criteria(self):
+        display = AdvancementDisplay(
+            icon="minecraft:diamond",
+            title="Diamond!",
+            description="Get a diamond",
+            frame=AdvancementFrame.CHALLENGE,
+        )
+        adv = Advancement(
+            advancement_id="get_diamond",
+            display=display,
+            criteria=[
+                AdvancementCriterion(
+                    name="has_diamond",
+                    trigger=INVENTORY_CHANGED,
+                    conditions={"items": [{"items": "minecraft:diamond"}]},
+                )
+            ],
+        )
+        assert len(adv.criteria) == 1
+        assert adv.criteria[0].trigger == INVENTORY_CHANGED
+
+    def test_invalid_id(self):
+        display = AdvancementDisplay(icon="minecraft:stone", title="T", description="D")
+        with pytest.raises(ValueError, match="Invalid advancement ID"):
+            Advancement(advancement_id="UPPER_CASE", display=display)
+
+    def test_serialization_roundtrip(self):
+        display = AdvancementDisplay(
+            icon="mymod:magic_ore",
+            title="Magic!",
+            description="Find magic ore",
+            frame=AdvancementFrame.GOAL,
+            hidden=True,
+        )
+        adv = Advancement(
+            advancement_id="find_magic",
+            display=display,
+            parent="mymod:root",
+            criteria=[
+                AdvancementCriterion(name="found_ore", trigger=PLACED_BLOCK),
+            ],
+            requirements=[["found_ore"]],
+        )
+        d = adv.to_dict()
+        restored = Advancement.from_dict(d)
+        assert restored.advancement_id == "find_magic"
+        assert restored.parent == "mymod:root"
+        assert restored.display.frame == AdvancementFrame.GOAL
+        assert restored.display.hidden is True
+        assert len(restored.criteria) == 1
+        assert restored.requirements == [["found_ore"]]
+
+    def test_to_json(self):
+        display = AdvancementDisplay(
+            icon="testmod:gem", title="Gem", description="Get gem",
+        )
+        adv = Advancement(
+            advancement_id="get_gem",
+            display=display,
+            parent="root",
+            criteria=[
+                AdvancementCriterion(name="has_gem", trigger=INVENTORY_CHANGED),
+            ],
+        )
+        j = adv.to_json("testmod")
+        assert j["parent"] == "testmod:root"
+        assert j["display"]["icon"]["id"] == "testmod:gem"
+        assert "has_gem" in j["criteria"]
+        assert j["criteria"]["has_gem"]["trigger"] == INVENTORY_CHANGED
+
+
+class TestProjectAdvancements:
+    def test_add_advancement(self):
+        p = ModProject(mod_id="testmod", name="Test")
+        display = AdvancementDisplay(icon="minecraft:stone", title="T", description="D")
+        adv = p.add_advancement(Advancement(advancement_id="root", display=display))
+        assert len(p.advancements) == 1
+        assert adv.advancement_id == "root"
+
+    def test_duplicate_advancement(self):
+        p = ModProject(mod_id="testmod", name="Test")
+        display = AdvancementDisplay(icon="minecraft:stone", title="T", description="D")
+        p.add_advancement(Advancement(advancement_id="root", display=display))
+        with pytest.raises(ValueError, match="Duplicate advancement"):
+            p.add_advancement(Advancement(advancement_id="root", display=display))
+
+    def test_advancement_serialization_roundtrip(self):
+        p = ModProject(mod_id="testmod", name="Test")
+        display = AdvancementDisplay(icon="minecraft:stone", title="Root", description="Start")
+        p.add_advancement(Advancement(
+            advancement_id="root",
+            display=display,
+            criteria=[AdvancementCriterion(name="tick", trigger="minecraft:tick")],
+        ))
+        d = p.to_dict()
+        assert len(d["advancements"]) == 1
+
+        import tempfile
+        with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as f:
+            p.save(f.name)
+            loaded = ModProject.load(f.name)
+        assert len(loaded.advancements) == 1
+        assert loaded.advancements[0].advancement_id == "root"
+
+
+class TestEventHandler:
+    def test_defaults(self):
+        h = EventHandler(
+            event_type=EventType.PLAYER_JOIN,
+            handler_name="onPlayerJoin",
+        )
+        assert h.priority == EventPriority.NORMAL
+        assert h.body_lines == []
+
+    def test_with_body(self):
+        h = EventHandler(
+            event_type=EventType.BLOCK_BREAK,
+            handler_name="onBlockBreak",
+            priority=EventPriority.HIGH,
+            body_lines=['LOGGER.info("Block broken!");'],
+        )
+        assert h.event_type == EventType.BLOCK_BREAK
+        assert h.priority == EventPriority.HIGH
+        assert len(h.body_lines) == 1
+
+    def test_serialization_roundtrip(self):
+        h = EventHandler(
+            event_type=EventType.ENTITY_DEATH,
+            handler_name="onEntityDeath",
+            priority=EventPriority.LOW,
+            body_lines=["// handle death"],
+        )
+        d = h.to_dict()
+        restored = EventHandler.from_dict(d)
+        assert restored.event_type == EventType.ENTITY_DEATH
+        assert restored.handler_name == "onEntityDeath"
+        assert restored.priority == EventPriority.LOW
+        assert restored.body_lines == ["// handle death"]
+
+    def test_all_event_types(self):
+        for et in EventType:
+            h = EventHandler(event_type=et, handler_name=f"on_{et.value}")
+            assert h.event_type == et
+
+
+class TestProjectEventHandlers:
+    def test_add_event_handler(self):
+        p = ModProject(mod_id="testmod", name="Test")
+        h = p.add_event_handler(EventHandler(
+            event_type=EventType.PLAYER_JOIN,
+            handler_name="onJoin",
+        ))
+        assert len(p.event_handlers) == 1
+        assert h.handler_name == "onJoin"
+
+    def test_event_handler_serialization_roundtrip(self):
+        p = ModProject(mod_id="testmod", name="Test")
+        p.add_event_handler(EventHandler(
+            event_type=EventType.SERVER_STARTED,
+            handler_name="onServerStart",
+            body_lines=['LOGGER.info("Server started!");'],
+        ))
+        d = p.to_dict()
+        assert len(d["event_handlers"]) == 1
+
+        import tempfile
+        with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as f:
+            p.save(f.name)
+            loaded = ModProject.load(f.name)
+        assert len(loaded.event_handlers) == 1
+        assert loaded.event_handlers[0].event_type == EventType.SERVER_STARTED
+
+
+class TestConfig:
+    def test_config_entry_defaults(self):
+        entry = ConfigEntry(key="enabled", value_type="bool", default=True)
+        assert entry.comment == ""
+        assert entry.min_value is None
+
+    def test_config_entry_invalid_type(self):
+        with pytest.raises(ValueError, match="Invalid value_type"):
+            ConfigEntry(key="x", value_type="list", default=[])
+
+    def test_config_entry_with_range(self):
+        entry = ConfigEntry(
+            key="max_health", value_type="int", default=20,
+            comment="Maximum health", min_value=1, max_value=100,
+        )
+        assert entry.min_value == 1
+        assert entry.max_value == 100
+
+    def test_config_section(self):
+        section = ConfigSection(
+            name="general",
+            comment="General settings",
+            entries=[
+                ConfigEntry(key="enabled", value_type="bool", default=True),
+                ConfigEntry(key="speed", value_type="float", default=1.5),
+            ],
+        )
+        assert len(section.entries) == 2
+
+    def test_mod_config_serialization(self):
+        config = ModConfig(sections=[
+            ConfigSection(name="general", entries=[
+                ConfigEntry(key="enabled", value_type="bool", default=True),
+                ConfigEntry(key="message", value_type="string", default="hello"),
+            ]),
+            ConfigSection(name="balance", entries=[
+                ConfigEntry(key="damage", value_type="int", default=10, min_value=1, max_value=100),
+            ]),
+        ])
+        d = config.to_dict()
+        restored = ModConfig.from_dict(d)
+        assert len(restored.sections) == 2
+        assert restored.sections[0].entries[0].key == "enabled"
+        assert restored.sections[1].entries[0].default == 10
+
+    def test_project_config_roundtrip(self):
+        p = ModProject(mod_id="testmod", name="Test")
+        p.config = ModConfig(sections=[
+            ConfigSection(name="general", entries=[
+                ConfigEntry(key="enabled", value_type="bool", default=True),
+            ]),
+        ])
+        d = p.to_dict()
+        assert d["config"] is not None
+
+        import tempfile
+        with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as f:
+            p.save(f.name)
+            loaded = ModProject.load(f.name)
+        assert loaded.config is not None
+        assert loaded.config.sections[0].entries[0].key == "enabled"
+
+    def test_project_no_config(self):
+        p = ModProject(mod_id="testmod", name="Test")
+        assert p.config is None
+        d = p.to_dict()
+        assert d["config"] is None

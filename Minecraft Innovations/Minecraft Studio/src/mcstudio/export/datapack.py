@@ -20,6 +20,7 @@ class DataPackExporter(Exporter):
         self._write_recipes(root, project)
         self._write_loot_tables(root, project)
         self._write_tag_files(root / "data", project)
+        self._write_advancements(root / "data", project)
         self._write_worldgen(root, project)
 
         return root

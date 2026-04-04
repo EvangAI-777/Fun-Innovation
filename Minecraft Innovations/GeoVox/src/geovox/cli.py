@@ -30,7 +30,11 @@ def main(argv: list[str] | None = None) -> int:
     pipe.add_argument("--sea-level", type=int, default=None, help="Y level for water fill (default: none)")
     pipe.add_argument("--origin", default="0,0,0", help="Minecraft origin as x,y,z (default: 0,0,0)")
     pipe.add_argument("--seed", type=int, default=None, help="Random seed for palette block selection")
-    pipe.add_argument("--format", choices=["mcfunction", "structure", "litematic"], default="mcfunction", help="Export format (default: mcfunction)")
+    pipe.add_argument("--format", choices=["mcfunction", "structure", "litematic", "sponge"], default="mcfunction", help="Export format (default: mcfunction)")
+    pipe.add_argument("--smooth", type=int, default=None, metavar="K", help="Smooth heightmap with KxK box filter before ingest (K must be odd)")
+    pipe.add_argument("--crop", default=None, metavar="X,Z,W,H", help="Crop heightmap region before ingest")
+    pipe.add_argument("--resample", default=None, metavar="W,H", help="Resample heightmap to WxH before ingest")
+    pipe.add_argument("--stitch", default=None, metavar="SPEC", help="Stitch multiple heightmaps: 'a.png:0,0;b.png:256,0'")
 
     # info -- show file metadata
     info = subparsers.add_parser("info", help="Show metadata about an input file")
@@ -40,6 +44,12 @@ def main(argv: list[str] | None = None) -> int:
     preview = subparsers.add_parser("preview", help="ASCII preview of a heightmap")
     preview.add_argument("input", help="Path to heightmap image")
     preview.add_argument("--width", type=int, default=80, help="Preview width in characters")
+    preview.add_argument("--stats", action="store_true", help="Show elevation statistics")
+    preview.add_argument("--color", action="store_true", help="Use ANSI color-coded elevation gradient")
+
+    # validate -- check a palette JSON file
+    validate = subparsers.add_parser("validate", help="Validate a palette JSON file")
+    validate.add_argument("input", help="Path to palette JSON file")
 
     args = parser.parse_args(argv)
 
@@ -52,6 +62,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_info(args)
     elif args.command == "preview":
         return _cmd_preview(args)
+    elif args.command == "validate":
+        return _cmd_validate(args)
     return 0
 
 
@@ -73,13 +85,97 @@ def _cmd_pipeline(args: argparse.Namespace) -> int:
         print(f"Error: invalid origin format: {args.origin} (expected x,y,z)", file=sys.stderr)
         return 1
 
+    # Preprocessing (applied to raw heightmap before ingest)
+    from .ingest.heightmap import _read_heightmap
+    from .ingest.preprocess import smooth_heightmap, crop_heightmap, resample_heightmap
+
+    preprocessed = False
+
+    if args.stitch:
+        from .ingest.stitch import stitch_heightmaps
+        tiles = []
+        try:
+            for part in args.stitch.split(";"):
+                part = part.strip()
+                if not part:
+                    continue
+                path_str, coords = part.rsplit(":", 1)
+                col_off, row_off = (int(v) for v in coords.split(","))
+                tile_path = Path(path_str.strip())
+                if not tile_path.exists():
+                    print(f"Error: stitch tile not found: {tile_path}", file=sys.stderr)
+                    return 1
+                tile_data = _read_heightmap(tile_path)
+                tiles.append((tile_data, col_off, row_off))
+                print(f"  Tile: {tile_path} at ({col_off},{row_off})")
+        except ValueError:
+            print(f"Error: invalid stitch spec: {args.stitch}", file=sys.stderr)
+            print("  Expected format: 'a.png:0,0;b.png:256,0'", file=sys.stderr)
+            return 1
+        raw = stitch_heightmaps(tiles)
+        print(f"Stitched {len(tiles)} tiles -> {raw.shape[1]}x{raw.shape[0]}")
+        preprocessed = True
+    else:
+        raw = _read_heightmap(input_path)
+
+    if args.crop:
+        try:
+            cx, cz, cw, ch = (int(v) for v in args.crop.split(","))
+        except ValueError:
+            print(f"Error: invalid crop format: {args.crop} (expected x,z,w,h)", file=sys.stderr)
+            return 1
+        raw = crop_heightmap(raw, cx, cz, cw, ch)
+        print(f"Cropped to {cw}x{ch} at ({cx},{cz})")
+        preprocessed = True
+
+    if args.resample:
+        try:
+            rw, rh = (int(v) for v in args.resample.split(","))
+        except ValueError:
+            print(f"Error: invalid resample format: {args.resample} (expected w,h)", file=sys.stderr)
+            return 1
+        raw = resample_heightmap(raw, rw, rh)
+        print(f"Resampled to {rw}x{rh}")
+        preprocessed = True
+
+    if args.smooth:
+        raw = smooth_heightmap(raw, kernel_size=args.smooth)
+        print(f"Smoothed with {args.smooth}x{args.smooth} kernel")
+        preprocessed = True
+
     # Ingest
     print(f"Reading heightmap: {input_path}")
-    grid = ingest_heightmap(
-        input_path,
-        y_scale=(args.y_min, args.y_max),
-        sea_level=args.sea_level,
-    )
+    if preprocessed:
+        from .ingest.heightmap import _fill_terrain_column, BEDROCK, GROUND_DEEP, GROUND_SHALLOW, SURFACE, WATER
+        from .core.grid import VoxelGrid
+        import numpy as np
+
+        grid = VoxelGrid()
+        grid.metadata = {
+            "source": str(input_path),
+            "source_shape": raw.shape,
+            "y_scale": (args.y_min, args.y_max),
+            "sea_level": args.sea_level,
+            "elevation": raw,
+        }
+        y_min, y_max = args.y_min, args.y_max
+        h_min, h_max = float(raw.min()), float(raw.max())
+        if h_max == h_min:
+            h_max = h_min + 1
+        rows, cols = raw.shape
+        for z in range(rows):
+            for x in range(cols):
+                normalized = (float(raw[z, x]) - h_min) / (h_max - h_min)
+                height = int(y_min + normalized * (y_max - y_min))
+                _fill_terrain_column(grid, x, z, height, 3)
+                if args.sea_level is not None and height < args.sea_level:
+                    grid.fill_column(x, z, height + 1, args.sea_level, WATER)
+    else:
+        grid = ingest_heightmap(
+            input_path,
+            y_scale=(args.y_min, args.y_max),
+            sea_level=args.sea_level,
+        )
     print(f"  {grid}")
 
     # Palette
@@ -120,6 +216,9 @@ def _cmd_pipeline(args: argparse.Namespace) -> int:
     elif args.format == "litematic":
         from .export.litematic import export_litematic
         paths = export_litematic(block_grid, args.output, origin=origin)
+    elif args.format == "sponge":
+        from .export.sponge import export_sponge
+        paths = export_sponge(block_grid, args.output, origin=origin)
     else:
         paths = []
 
@@ -171,12 +270,63 @@ def _cmd_preview(args: argparse.Namespace) -> int:
         norm = np.zeros_like(sampled)
 
     chars = " .:-=+*#%@"
-    for row in norm:
-        line = "".join(chars[min(int(v * len(chars)), len(chars) - 1)] for v in row)
-        print(line)
+    if args.color:
+        # ANSI 256-color gradient: blue (low) -> green (mid) -> red (high)
+        _COLOR_RAMP = [17, 18, 19, 20, 21, 27, 33, 39, 45, 44, 43, 42, 41, 40,
+                       46, 82, 118, 154, 190, 226, 220, 214, 208, 202, 196]
+        for row in norm:
+            parts = []
+            for v in row:
+                ci = min(int(v * len(_COLOR_RAMP)), len(_COLOR_RAMP) - 1)
+                char_i = min(int(v * len(chars)), len(chars) - 1)
+                parts.append(f"\033[38;5;{_COLOR_RAMP[ci]}m{chars[char_i]}\033[0m")
+            print("".join(parts))
+    else:
+        for row in norm:
+            line = "".join(chars[min(int(v * len(chars)), len(chars) - 1)] for v in row)
+            print(line)
 
     print(f"\n{cols}x{rows} pixels, preview at 1:{scale} scale")
+
+    if args.stats:
+        print(f"\nElevation statistics:")
+        print(f"  Min:    {float(data.min()):.1f}")
+        print(f"  Max:    {float(data.max()):.1f}")
+        print(f"  Mean:   {float(data.mean()):.1f}")
+        print(f"  Median: {float(np.median(data)):.1f}")
+        print(f"  StdDev: {float(data.std()):.1f}")
+        print(f"  Columns: {rows * cols:,}")
+
     return 0
+
+
+def _cmd_validate(args: argparse.Namespace) -> int:
+    import json
+    from .palette.validate import validate_palette
+
+    path = Path(args.input)
+    if not path.exists():
+        print(f"Error: file not found: {path}", file=sys.stderr)
+        return 1
+
+    try:
+        with open(path) as f:
+            data = json.load(f)
+    except json.JSONDecodeError as e:
+        print(f"Error: invalid JSON: {e}", file=sys.stderr)
+        return 1
+
+    errors = validate_palette(data)
+    if errors:
+        print(f"Validation failed for {path}:")
+        for err in errors:
+            print(f"  - {err}")
+        return 1
+    else:
+        name = data.get("name", path.stem)
+        categories = list(data.get("mappings", {}).keys())
+        print(f"Palette '{name}' is valid ({len(categories)} categories: {', '.join(categories)})")
+        return 0
 
 
 def _builtin_palette(seed: int | None = None) -> Palette:

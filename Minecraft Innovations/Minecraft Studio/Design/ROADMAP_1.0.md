@@ -1,60 +1,47 @@
 # Minecraft Studio -- Roadmap to 1.0
 
-What needs to happen between v0.3.0 (where we are) and v1.0.0 (a usable desktop application that can create, preview, and export Minecraft mods).
+What needs to happen between v0.4.0 (where we are) and v1.0.0 (a usable desktop application that can create, preview, and export Minecraft mods).
 
-## Where We Are (v0.3.0)
+## Where We Are (v0.4.0)
 
-Layer 1 is fully complete. The Python prototype proves the core abstraction: define a mod once as structured data, export it to Fabric, Forge, NeoForge, or vanilla data pack. 158 tests, zero external dependencies, CLI-driven. All modeled types generate correct output for all loaders.
+Layers 1-2 are complete. The Python prototype proves the core abstraction: define a mod once as structured data, export it to Fabric, Forge, NeoForge, Quilt, vanilla data pack, or resource pack. 219 tests, zero external dependencies, CLI-driven. All modeled types generate correct output for all 6 loaders.
 
 **What works:**
-- Full data model: blocks (with tags), items (with tags), recipes (all 7 types), loot tables, entities (8 base classes, 15 AI goals), biomes/world gen (11 feature types)
-- Java code generation: JavaWriter, entity class generator (goals, attributes, renderer), worldgen codegen (biome JSON, configured/placed features, Fabric BiomeModifications)
-- Fabric export: ModInitializer, Registry.register, entity registry with FabricDefaultAttributeRegistry, BiomeModifications API, FabricItemGroup creative tab, lang file, tag JSONs
-- Forge export: @Mod, DeferredRegister for blocks/items/entities/creative tabs, EntityAttributeCreationEvent, biome_modifier JSONs, lang file, tag JSONs
-- NeoForge export: DeferredBlock/DeferredItem/DeferredHolder, IEventBus constructor injection, biome_modifier JSONs, creative tab, lang file, tag JSONs
-- Data pack export: pack.mcmeta, recipe/loot_table/tag JSONs, biome/configured_feature/placed_feature worldgen JSONs
+- Full data model: blocks (with tags), items (with tags), recipes (all 7 types), loot tables, entities (8 base classes, 15 AI goals), biomes/world gen (11 feature types), advancements, event handlers (14 event types), mod configs (typed entries with ranges)
+- Java code generation: JavaWriter, entity class generator, worldgen codegen, per-loader event handler codegen, per-loader config class codegen
+- Fabric export: ModInitializer, Registry.register, entity registry, BiomeModifications API, FabricItemGroup creative tab, event callbacks, JSON config loader, advancements, lang file, tag JSONs
+- Forge export: @Mod, DeferredRegister, @SubscribeEvent events, ForgeConfigSpec config, advancements, lang file, tag JSONs
+- NeoForge export: DeferredBlock/DeferredItem/DeferredHolder, NeoForge.EVENT_BUS events, ForgeConfigSpec config, advancements, lang file, tag JSONs
+- Quilt export: quilt.mod.json, QSL dependencies, ModContainer initializer, event callbacks, JSON config, advancements
+- Data pack export: recipes, loot tables, tags, worldgen JSONs, advancements
+- Resource pack export: pack.mcmeta, blockstate/model JSONs, lang file, textures, sounds.json
 - Placeholder texture generation (stdlib-only PNG writer)
 - CLI: new, add-block, add-item, export, info, loaders
 
 ## The Layers to 1.0
 
-### Layer 1 Completion (v0.3.0) -- Export Engine ✓ DONE
+### Layer 1 (v0.3.0) -- Export Engine ✓ DONE
 
-All high-priority export tasks are complete. Every modeled type generates correct output for every loader.
+All core export tasks complete. Every modeled type generates correct output for every loader.
+
+### Layer 2 (v0.4.0) -- Abstraction Layer ✓ DONE
 
 | Task | Status |
 |------|--------|
-| Entity code generation for Fabric (entity class, renderer stub, spawn registration) | **Done** |
-| Entity code generation for Forge (DeferredRegister, ForgeSpawnEggItem, attribute events) | **Done** |
-| Entity code generation for NeoForge (DeferredHolder, attribute events) | **Done** |
-| Biome JSON generation for data packs (biome parameter JSON, feature placement JSON) | **Done** |
-| Biome code generation for Fabric (BiomeModifications API) | **Done** |
-| Biome code generation for Forge/NeoForge (biome_modifier JSONs) | **Done** |
-| World gen feature code generation (ConfiguredFeature, PlacedFeature JSON) | **Done** |
-| `en_us.json` lang file generation for all exporters | **Done** |
-| Tag generation (block/item tags) | **Done** |
-| Creative tab registration code generation | **Done** |
-| Quilt exporter (Quilt Loom build files, Quilt registry) | Remaining |
-| Resource pack exporter (standalone resource pack with textures, models, lang, sounds) | Remaining |
-| Architectury/multiloader exporter (common module + per-loader modules) | Remaining |
-| Advancement generation | Remaining |
-| Block entity / tile entity model and export | Remaining |
+| Event model (14 event types, per-loader codegen for Fabric/Forge/NeoForge/Quilt) | **Done** |
+| Config model (typed entries with ranges, ForgeConfigSpec + JSON config codegen) | **Done** |
+| Advancement model (display, criteria, triggers, requirements, JSON export) | **Done** |
+| Quilt exporter (quilt.mod.json, QSL, ModContainer initializer) | **Done** |
+| Resource pack exporter (pack.mcmeta, models, textures, lang, sounds) | **Done** |
+| Networking model (custom packet definitions, serialization schema) | Remaining |
+| Capability/data attachment model | Remaining |
+| Command model (brigadier command tree) | Remaining |
+| GUI/screen model (container screen layout) | Remaining |
+| Sound event model | Remaining |
+| Architectury/multiloader exporter | Remaining |
+| Block entity / tile entity model | Remaining |
 
-### Layer 2 (v0.4.0) -- Abstraction Layer + Event Model
-
-Build the formal abstraction layer that the ARCHITECTURE.md describes. This is the bridge between "data model that generates code" and "IDE that authors code."
-
-| Task | Effort | Priority |
-|------|--------|----------|
-| Event model (player events, block events, entity events, world events) | Large | High |
-| Networking model (custom packet definitions, serialization schema) | Medium | High |
-| Capability/data attachment model (Forge capabilities, Fabric API lookups, NeoForge data attachments) | Large | Medium |
-| Config model (TOML/JSON config generation with defaults, validation, comments) | Medium | Medium |
-| Command model (brigadier command tree definition, argument types) | Medium | Low |
-| GUI/screen model (container screen layout, slot definitions, widget positions) | Large | Medium |
-| Sound event model (sound registration, sound event references) | Small | Low |
-
-**Exit criteria:** A mod using events, networking, and configs can be defined in the model and exported. The abstraction layer is thin enough that generated code is readable.
+**Exit criteria (met for events/config/advancements):** A mod using events and configs can be defined in the model and exported. The abstraction layer is thin enough that generated code is readable.
 
 ### Layer 3 (v0.5.0) -- Visual Editor APIs (headless)
 
@@ -159,8 +146,8 @@ The Python model and export engine remain as the reference implementation and ca
 
 | Layer | Version | Scope Summary |
 |-------|---------|---------------|
-| 1 completion | v0.3.0 | **Done** -- entity/worldgen codegen, lang, tags, creative tabs |
-| 2 | v0.4.0 | Events, networking, capabilities, configs |
+| 1 | v0.3.0 | **Done** -- entity/worldgen codegen, lang, tags, creative tabs |
+| 2 | v0.4.0 | **Done** -- events, configs, advancements, Quilt, resource pack |
 | 3 | v0.5.0 | Headless editor APIs, validation, undo |
 | 4 | v0.6.0 | Java/Kotlin port, desktop app shell, Explorer/Properties |
 | 5 | v0.7.0 | Code editor with ECJ, autocomplete |
@@ -176,7 +163,7 @@ The hardest problems on the path to 1.0, in order of risk:
 
 2. **Bidirectional visual-to-code sync** (Layer 6) -- Parsing hand-edited Java back into the visual editor model is fragile. The fallback: visual editors are one-way generators, and hand-edited code is marked "detached" from the visual editor.
 
-3. **Abstraction layer completeness** (Layer 2) -- The layer must be thin enough that generated code is readable but complete enough that 95% of mod functionality doesn't require loader-specific code. The v0.3.0 exporters prove this for blocks/items/recipes/entities/worldgen; extending to events, networking, and capabilities is the real test.
+3. **Abstraction layer completeness** (Layer 2) -- The layer must be thin enough that generated code is readable but complete enough that 95% of mod functionality doesn't require loader-specific code. v0.4.0 proves this for events and configs; networking and capabilities are the remaining test.
 
 4. **Java/Kotlin port** (Layer 4) -- Rewriting the model and export engine from Python to Java/Kotlin is mechanical but large. The Python test suite provides a specification; the Java port must pass equivalent tests.
 
@@ -184,7 +171,16 @@ The hardest problems on the path to 1.0, in order of risk:
 
 Each layer is a usable product on its own:
 
-- **v0.3.0** -- **Shipped.** Complete CLI tool for generating mod projects with entity/worldgen codegen, lang files, tags, and creative tabs. Useful today for bootstrapping.
+- **v0.3.0** -- **Shipped.** Complete CLI tool for generating mod projects with entity/worldgen codegen, lang files, tags, and creative tabs.
+- **v0.4.0** -- **Shipped.** Abstraction layer with events, configs, advancements, Quilt and resource pack exporters. 6 export targets, 219 tests.
 - **v0.6.0** -- Desktop project editor. Create mods visually, export to any loader. No code editing or preview, but functional.
 - **v0.7.0** -- Desktop project editor with code editing. Competitive with IntelliJ + Minecraft Development plugin for the visual workflow.
 - **v1.0.0** -- The full vision. Roblox Studio for Minecraft.
+
+## Post-1.0: Standalone x64 Windows Binary
+
+The binary release is the real product. Minecraft Studio will be packaged as a standalone application using jlink/jpackage with an embedded JRE — a downloadable installer that users run without installing Java, Gradle, or any development tools. All the zero-dependency constraints in the current prototype phase are practical compromises for keeping the pip-installable package lightweight and CI-friendly. They do not apply to the binary release.
+
+The standalone executable can ship with full dependencies: JavaFX for the IDE shell, rich GUI libraries, embedded Minecraft client, full compilation toolchain — everything described in Layers 4-8. The bundled JRE handles it all. Users download an installer, run it, and start creating mods.
+
+The Python CLI prototype can also be compiled via PyInstaller/Nuitka as a standalone `mcstudio.exe` for users who want just the export engine without the IDE. Both distribution channels serve different users, and both will be maintained.

@@ -15,6 +15,7 @@ from geovox.export.mcfunction import export_mcfunction
 from geovox.export.structure import export_structure
 from geovox.export.nbt import TAG_COMPOUND, write_nbt_file, TAG_INT, TAG_STRING
 from geovox.export.litematic import export_litematic
+from geovox.export.sponge import export_sponge
 
 
 def _make_test_heightmap(size: int = 8, value: int = 128) -> Path:
@@ -280,5 +281,77 @@ def test_full_pipeline_litematic():
             paths = export_litematic(block_grid, Path(tmp) / "lit_out")
             assert len(paths) == 1
             assert paths[0].suffix == ".litematic"
+    finally:
+        path.unlink()
+
+
+# --- Sponge schematic export tests ---
+
+
+def test_export_sponge_creates_file():
+    grid = VoxelGrid()
+    grid.set(0, 0, 0, "minecraft:stone")
+    grid.set(1, 1, 1, "minecraft:dirt")
+
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "test"
+        paths = export_sponge(grid, out)
+        assert len(paths) == 1
+        assert paths[0].suffix == ".schem"
+        assert paths[0].exists()
+
+        # Verify it's valid gzip containing NBT
+        with open(paths[0], "rb") as f:
+            data = gzip.decompress(f.read())
+        assert data[0] == TAG_COMPOUND
+
+
+def test_export_sponge_empty():
+    grid = VoxelGrid()
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "test"
+        paths = export_sponge(grid, out)
+        assert paths == []
+
+
+def test_export_sponge_contains_metadata():
+    grid = VoxelGrid()
+    grid.set(0, 0, 0, "minecraft:stone")
+
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "test"
+        paths = export_sponge(grid, out, name="Test Sponge", author="TestBot")
+        assert len(paths) == 1
+        with open(paths[0], "rb") as f:
+            data = gzip.decompress(f.read())
+        assert b"Test Sponge" in data
+        assert b"TestBot" in data
+
+
+def test_export_sponge_contains_palette():
+    grid = VoxelGrid()
+    grid.set(0, 0, 0, "minecraft:stone")
+    grid.set(1, 0, 0, "minecraft:dirt")
+
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "test"
+        paths = export_sponge(grid, out)
+        with open(paths[0], "rb") as f:
+            data = gzip.decompress(f.read())
+        assert b"minecraft:stone" in data
+        assert b"minecraft:dirt" in data
+
+
+def test_full_pipeline_sponge():
+    path = _make_test_heightmap(4, value=128)
+    try:
+        grid = ingest_heightmap(path, y_scale=(0, 16))
+        palette = _simple_palette()
+        block_grid = apply_palette(grid, palette)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            paths = export_sponge(block_grid, Path(tmp) / "sponge_out")
+            assert len(paths) == 1
+            assert paths[0].suffix == ".schem"
     finally:
         path.unlink()

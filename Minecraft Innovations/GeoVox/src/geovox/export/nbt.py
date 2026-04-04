@@ -18,6 +18,7 @@ TAG_INT = 3
 TAG_LONG = 4
 TAG_FLOAT = 5
 TAG_DOUBLE = 6
+TAG_BYTE_ARRAY = 7
 TAG_STRING = 8
 TAG_LIST = 9
 TAG_COMPOUND = 10
@@ -76,6 +77,9 @@ def _write_payload(buf: io.BytesIO, tag_type: int, value) -> None:
         buf.write(struct.pack(">f", value))
     elif tag_type == TAG_DOUBLE:
         buf.write(struct.pack(">d", value))
+    elif tag_type == TAG_BYTE_ARRAY:
+        buf.write(struct.pack(">i", len(value)))
+        buf.write(bytes(value))
     elif tag_type == TAG_STRING:
         encoded = value.encode("utf-8")
         buf.write(struct.pack(">H", len(encoded)))

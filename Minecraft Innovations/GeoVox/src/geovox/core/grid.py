@@ -43,6 +43,16 @@ class VoxelGrid:
     def __contains__(self, key: tuple[int, int, int]) -> bool:
         return key in self.cells
 
+    def merge(self, other: VoxelGrid, offset: tuple[int, int, int] = (0, 0, 0)) -> None:
+        """Merge another grid into this one, with an optional position offset.
+
+        Cells from `other` overwrite existing cells at the same position.
+        Metadata is not merged.
+        """
+        ox, oy, oz = offset
+        for (x, y, z), val in other.cells.items():
+            self.cells[(x + ox, y + oy, z + oz)] = val
+
     def compute_slope(self) -> np.ndarray | None:
         """Compute slope (gradient magnitude) per column from elevation metadata.
 

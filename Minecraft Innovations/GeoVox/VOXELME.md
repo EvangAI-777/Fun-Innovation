@@ -24,7 +24,7 @@ See [`Design/ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical 
 
 ## Technical Stack
 
-**Current (v0.2.0):**
+**Current (v0.3.0):**
 - **Python 3.10+** -- core language
 - **NumPy** -- voxel grid operations
 - **Pillow** -- PNG heightmap ingest
@@ -49,31 +49,36 @@ See [`Design/ARCHITECTURE.md`](./Design/ARCHITECTURE.md) for the full technical 
 
 ## Status
 
-**v0.2.0 -- Palette composition, Litematica export, slope computation.** Three export formats, terrain-aware palette composition, and 48 tests. The pipeline now supports stacking multiple palette layers with elevation/slope conditions, outputting `.litematic` schematics alongside `.mcfunction` and `.nbt`.
+**v0.3.0 -- Preprocessing, stitching, Sponge export, palette validation.** Four export formats, heightmap preprocessing pipeline, multi-tile stitching, palette validation, and 89 tests. Full preprocessing → ingest → palette → export pipeline with comprehensive CLI.
 
 What's here:
 - **Ingest:** Grayscale PNG and GeoTIFF (via optional rasterio) heightmap reader with configurable Y scaling, sea level, and terrain layering (bedrock → stone → dirt → grass). Raw elevation stored as grid metadata.
+- **Preprocessing:** Heightmap smoothing (box filter), cropping, and bilinear resampling -- all pure numpy, applied before ingest via CLI `--smooth`, `--crop`, `--resample` flags.
+- **Multi-heightmap stitching:** Combine multiple heightmap tiles at arbitrary offsets with overlap averaging or last-wins mode. CLI `--stitch` flag parses `"a.png:0,0;b.png:256,0"` specs. `VoxelGrid.merge()` for post-palette grid composition.
 - **Palette:** JSON config loader with weighted random block selection. Ships with vanilla-survival (built-in), steampunk (deepslate/copper), nether (netherrack/basalt), elevation-overlay (snow/ice), and slope-overlay (stone/gravel) palettes.
 - **Palette composition:** `PaletteComposer` stacks multiple palette layers with condition functions (elevation, slope, custom). Later layers override earlier where conditions match. CLI `--palette` flag accepts comma-separated palette files.
+- **Palette validation:** `validate_palette()` checks for missing keys, invalid block names, weight/block length mismatches, missing standard categories. CLI `geovox validate <palette.json>` subcommand.
 - **Grid slope:** `compute_slope()` method on `VoxelGrid` using gradient magnitude per column via numpy.
-- **Export:** `.mcfunction` setblock exporter with automatic file batching, `.nbt` structure file exporter, and `.litematic` schematic exporter -- all using a custom minimal NBT binary writer (no external Minecraft libraries).
-- **CLI:** `geovox pipeline` (with `--format mcfunction|structure|litematic`, `--palette`), `geovox info`, `geovox preview` (ASCII terrain visualization)
-- **Tests:** 48 tests covering grid, slope, palette, composer, heightmap ingest, all three exporters, NBT writer, and full pipeline integration
+- **Export:** `.mcfunction` setblock exporter with automatic file batching, `.nbt` structure file exporter, `.litematic` schematic exporter, and `.schem` Sponge Schematic v2 exporter (varint-encoded block data) -- all using a custom minimal NBT binary writer (no external Minecraft libraries).
+- **Preview:** ASCII terrain visualization with `--stats` (min/max/mean/median/stddev) and `--color` (ANSI 256-color elevation gradient).
+- **CLI:** `geovox pipeline` (with `--format mcfunction|structure|litematic|sponge`, `--palette`, `--smooth`, `--crop`, `--resample`, `--stitch`), `geovox info`, `geovox preview` (with `--stats`, `--color`), `geovox validate`
+- **Tests:** 89 tests covering grid, slope, merge, palette, composer, validation, heightmap ingest, preprocessing, stitching, all four exporters, NBT writer, and full pipeline integration
 - **Example:** Test terrain generator script (`examples/generate_test_terrain.py`)
 
-**What's next (v0.3.0):**
+**What's next (v0.4.0):**
 
-- **Multi-heightmap stitching** — Combine multiple heightmaps into one grid for large-area terrain
-- **Sponge schematic export** — `.schem` format (also NBT-based, like litematica)
-- **Heightmap preprocessing** — Smoothing, cropping, resampling (numpy only)
-- **Preview enhancements** — Richer ASCII visualization, statistics output
-- **Palette validation/linting** — Check palette JSON for errors, missing categories
-
-**Longer-term roadmap:**
 - `.mca` world file export (drop into saves and play) — requires `anvil-parser` or `amulet-core`
 - Point cloud ingest (LAS/LAZ) — requires PDAL
 - Mesh ingest (OBJ/STL) — requires trimesh
 - Bidirectional workflow (diff modified world → export changes as 3D data)
+
+**Post-1.0: Standalone x64 Windows Binary**
+
+The binary release is the real product. GeoVox will be packaged as a standalone `geovox.exe` using PyInstaller or Nuitka — a single downloadable binary that users run without installing Python, pip, or any runtime. All the zero/minimal-dependency constraints in the current prototype phase are practical compromises for keeping the pip-installable package lightweight and CI-friendly. They do not apply to the binary release.
+
+The standalone executable can ship with full dependencies: scipy for signal processing, PDAL for point cloud ingest, rasterio for GeoTIFF, trimesh for mesh voxelization, rich for terminal UI — everything that was deferred as "too heavy" for a pip package. The bundled runtime handles it all. Users don't manage virtualenvs, don't install numpy, don't care about dependency trees. They download `geovox.exe` and run it.
+
+The Python CLI prototype remains available as a pip-installable package for developers who want to script against it or integrate it into their own pipelines. Both distribution channels serve different users, and both will be maintained.
 
 ## Dedication
 

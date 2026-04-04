@@ -2,6 +2,7 @@
 
 from mcstudio.codegen.java import JavaWriter, to_java_string, to_pascal_case, to_camel_case
 from mcstudio.codegen.entity import generate_entity_class, generate_entity_renderer
+from mcstudio.codegen.events import generate_event_handler_class
 from mcstudio.codegen.worldgen import (
     generate_biome_json,
     generate_configured_feature_json,
@@ -12,6 +13,9 @@ from mcstudio.model.entity import (
     EntityType, EntityBase, AIGoal, AIGoalType, EntityAttribute, SpawnRules,
 )
 from mcstudio.model.worldgen import Biome, PlacedFeature, FeatureType, PlacementConfig
+from mcstudio.model.event import EventHandler, EventType, EventPriority
+from mcstudio.model.config import ModConfig, ConfigSection, ConfigEntry
+from mcstudio.codegen.config import generate_config_class, generate_config_json
 
 
 class TestJavaWriter:
@@ -296,3 +300,130 @@ class TestWorldgenCodegen:
         assert "crystal_ore" in code
         assert "UNDERGROUND_ORES" in code
         assert "package com.test.mod;" in code
+
+
+class TestEventCodegen:
+    def _make_handlers(self):
+        return [
+            EventHandler(
+                event_type=EventType.PLAYER_JOIN,
+                handler_name="onPlayerJoin",
+                body_lines=['LOGGER.info("Player joined!");'],
+            ),
+            EventHandler(
+                event_type=EventType.BLOCK_BREAK,
+                handler_name="onBlockBreak",
+                body_lines=['LOGGER.info("Block broken!");'],
+            ),
+        ]
+
+    def test_fabric_events(self):
+        handlers = self._make_handlers()
+        code = generate_event_handler_class(handlers, "com.test.mod", "TestMod", "fabric")
+        assert "TestModEvents" in code
+        assert "register()" in code
+        assert "ServerPlayConnectionEvents" in code
+        assert "PlayerBlockBreakEvents" in code
+        assert "Player joined!" in code
+
+    def test_quilt_events(self):
+        handlers = self._make_handlers()
+        code = generate_event_handler_class(handlers, "com.test.mod", "TestMod", "quilt")
+        assert "TestModEvents" in code
+        assert "register()" in code
+
+    def test_forge_events(self):
+        handlers = self._make_handlers()
+        code = generate_event_handler_class(handlers, "com.test.mod", "TestMod", "forge")
+        assert "TestModEvents" in code
+        assert "@SubscribeEvent" in code
+        assert "PlayerLoggedInEvent" in code
+        assert "BreakEvent" in code
+
+    def test_neoforge_events(self):
+        handlers = self._make_handlers()
+        code = generate_event_handler_class(handlers, "com.test.mod", "TestMod", "neoforge")
+        assert "TestModEvents" in code
+        assert "@SubscribeEvent" in code
+        assert "net.neoforged" in code
+
+    def test_unsupported_loader(self):
+        handlers = self._make_handlers()
+        import pytest
+        with pytest.raises(ValueError, match="Unsupported loader"):
+            generate_event_handler_class(handlers, "com.test", "Test", "unknown")
+
+    def test_all_event_types_fabric(self):
+        handlers = [
+            EventHandler(event_type=et, handler_name=f"on_{et.value}")
+            for et in EventType
+        ]
+        code = generate_event_handler_class(handlers, "com.test", "Test", "fabric")
+        assert "TestEvents" in code
+        assert "register()" in code
+
+    def test_all_event_types_forge(self):
+        handlers = [
+            EventHandler(event_type=et, handler_name=f"on_{et.value}")
+            for et in EventType
+        ]
+        code = generate_event_handler_class(handlers, "com.test", "Test", "forge")
+        assert "TestEvents" in code
+        assert "@SubscribeEvent" in code
+
+
+class TestConfigCodegen:
+    def _make_config(self):
+        return ModConfig(sections=[
+            ConfigSection(name="general", comment="General settings", entries=[
+                ConfigEntry(key="enabled", value_type="bool", default=True, comment="Enable mod"),
+                ConfigEntry(key="greeting", value_type="string", default="Hello"),
+            ]),
+            ConfigSection(name="balance", entries=[
+                ConfigEntry(key="max_damage", value_type="int", default=20, min_value=1, max_value=100),
+                ConfigEntry(key="speed_mult", value_type="float", default=1.5, min_value=0.1, max_value=10.0),
+            ]),
+        ])
+
+    def test_forge_config(self):
+        config = self._make_config()
+        code = generate_config_class(config, "com.test.mod", "TestMod", "testmod", "forge")
+        assert "ForgeConfigSpec" in code
+        assert "TestModConfig" in code
+        assert "ENABLED" in code
+        assert "MAX_DAMAGE" in code
+        assert "defineInRange" in code
+
+    def test_neoforge_config(self):
+        config = self._make_config()
+        code = generate_config_class(config, "com.test.mod", "TestMod", "testmod", "neoforge")
+        assert "ForgeConfigSpec" in code
+        assert "TestModConfig" in code
+
+    def test_fabric_config(self):
+        config = self._make_config()
+        code = generate_config_class(config, "com.test.mod", "TestMod", "testmod", "fabric")
+        assert "TestModConfig" in code
+        assert "ENABLED" in code
+        assert "config" in code
+
+    def test_quilt_config(self):
+        config = self._make_config()
+        code = generate_config_class(config, "com.test.mod", "TestMod", "testmod", "quilt")
+        assert "TestModConfig" in code
+
+    def test_config_json(self):
+        config = self._make_config()
+        json_str = generate_config_json(config)
+        import json
+        data = json.loads(json_str)
+        assert data["general"]["enabled"] is True
+        assert data["general"]["greeting"] == "Hello"
+        assert data["balance"]["max_damage"] == 20
+        assert data["balance"]["speed_mult"] == 1.5
+
+    def test_unsupported_loader(self):
+        config = self._make_config()
+        import pytest
+        with pytest.raises(ValueError, match="Unsupported loader"):
+            generate_config_class(config, "com.test", "Test", "test", "unknown")
