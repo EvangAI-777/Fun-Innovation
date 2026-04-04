@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import numpy as np
+
 
 class VoxelGrid:
     """Sparse 3D integer grid.
@@ -40,6 +42,22 @@ class VoxelGrid:
 
     def __contains__(self, key: tuple[int, int, int]) -> bool:
         return key in self.cells
+
+    def compute_slope(self) -> np.ndarray | None:
+        """Compute slope (gradient magnitude) per column from elevation metadata.
+
+        Requires 'elevation' key in metadata containing a 2D numpy array.
+        Returns a 2D array of slope values (gradient magnitude), or None
+        if no elevation data is available.
+        """
+        elevation = self.metadata.get("elevation")
+        if elevation is None:
+            return None
+
+        gy, gx = np.gradient(elevation.astype(np.float64))
+        slope = np.sqrt(gx ** 2 + gy ** 2)
+        self.metadata["slope"] = slope
+        return slope
 
     def __repr__(self) -> str:
         (x0, y0, z0), (x1, y1, z1) = self.bounds()

@@ -1,5 +1,7 @@
 """Tests for the VoxelGrid core data structure."""
 
+import numpy as np
+
 from geovox.core.grid import VoxelGrid
 
 
@@ -64,3 +66,40 @@ def test_overwrite():
     g.set(0, 0, 0, "stone")
     assert g.get(0, 0, 0) == "stone"
     assert len(g) == 1
+
+
+def test_compute_slope_no_elevation():
+    g = VoxelGrid()
+    assert g.compute_slope() is None
+
+
+def test_compute_slope_flat():
+    g = VoxelGrid()
+    g.metadata["elevation"] = np.ones((5, 5)) * 64.0
+    slope = g.compute_slope()
+    assert slope is not None
+    assert slope.shape == (5, 5)
+    np.testing.assert_allclose(slope, 0.0, atol=1e-10)
+
+
+def test_compute_slope_gradient():
+    g = VoxelGrid()
+    # Linear ramp: each row increases by 10
+    elevation = np.array([
+        [0, 0, 0],
+        [10, 10, 10],
+        [20, 20, 20],
+    ], dtype=np.float64)
+    g.metadata["elevation"] = elevation
+    slope = g.compute_slope()
+    assert slope is not None
+    # Center cell should have slope ~10 in the z direction
+    assert slope[1, 1] > 5.0
+
+
+def test_compute_slope_stores_in_metadata():
+    g = VoxelGrid()
+    g.metadata["elevation"] = np.array([[0, 10], [10, 20]], dtype=np.float64)
+    slope = g.compute_slope()
+    assert "slope" in g.metadata
+    assert g.metadata["slope"] is slope

@@ -11,6 +11,8 @@ from mcstudio.model.block import Block, BlockMaterial
 from mcstudio.model.item import Item, FoodProperties
 from mcstudio.model.recipe import ShapedRecipe, ShapelessRecipe, SmeltingRecipe
 from mcstudio.model.loot import LootTable, LootPool, LootEntry, LootCondition
+from mcstudio.model.entity import EntityType, EntityBase, AIGoal, AIGoalType, EntityAttribute, SpawnRules, MobCategory
+from mcstudio.model.worldgen import Biome, PlacedFeature, FeatureType, PlacementConfig
 from mcstudio.export.base import export_project, EXPORTERS
 from mcstudio.export.fabric import FabricExporter
 from mcstudio.export.forge import ForgeExporter
@@ -406,3 +408,353 @@ class TestEmptyProject:
             assert (root / "pack.mcmeta").exists()
             # No data directory should be created
             assert not (root / "data" / "emptymod" / "recipe").exists()
+
+
+def _make_entity_project() -> ModProject:
+    """Create a project with entities for testing entity export."""
+    p = ModProject(mod_id="entitymod", name="Entity Mod")
+    p.add_entity(EntityType(
+        entity_id="shadow_beast",
+        base_class=EntityBase.MONSTER,
+        width=1.2,
+        height=2.0,
+        attributes=[
+            EntityAttribute("max_health", 40.0),
+            EntityAttribute("attack_damage", 8.0),
+            EntityAttribute("movement_speed", 0.3),
+        ],
+        goals=[
+            AIGoal(AIGoalType.FLOAT_SWIM, priority=0),
+            AIGoal(AIGoalType.MELEE_ATTACK, priority=1),
+            AIGoal(AIGoalType.WANDER_RANDOMLY, priority=5),
+            AIGoal(AIGoalType.LOOK_AT_PLAYER, priority=6),
+        ],
+        spawn_rules=SpawnRules(category=MobCategory.MONSTER, weight=5),
+        fireproof=True,
+    ))
+    return p
+
+
+class TestEntityExport:
+    def test_fabric_entity_export(self):
+        p = _make_entity_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/entitymod/entitymod"
+
+            # Entity class generated
+            entity_java = root / pkg_path / "ShadowBeastEntity.java"
+            assert entity_java.exists()
+            content = entity_java.read_text()
+            assert "extends Monster" in content
+            assert "registerGoals" in content
+            assert "createAttributes" in content
+
+            # Renderer generated
+            renderer = root / pkg_path / "client" / "ShadowBeastEntityRenderer.java"
+            assert renderer.exists()
+
+            # Entity registry
+            entities_java = root / pkg_path / "EntitymodEntities.java"
+            assert entities_java.exists()
+            reg_content = entities_java.read_text()
+            assert "SHADOW_BEAST" in reg_content
+            assert "MobCategory.MONSTER" in reg_content
+            assert "fireImmune()" in reg_content
+            assert "SpawnEggItem" in reg_content
+            assert "FabricDefaultAttributeRegistry" in reg_content
+
+            # Mod class references entities
+            mod_java = root / pkg_path / "Entitymod.java"
+            content = mod_java.read_text()
+            assert "EntitymodEntities.register()" in content
+
+    def test_forge_entity_export(self):
+        p = _make_entity_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/entitymod/entitymod"
+
+            entity_java = root / pkg_path / "ShadowBeastEntity.java"
+            assert entity_java.exists()
+
+            entities_java = root / pkg_path / "EntitymodEntities.java"
+            assert entities_java.exists()
+            content = entities_java.read_text()
+            assert "DeferredRegister" in content
+            assert "SHADOW_BEAST" in content
+            assert "ForgeSpawnEggItem" in content
+            assert "EntityAttributeCreationEvent" in content
+            assert "fireImmune()" in content
+
+            mod_java = root / pkg_path / "Entitymod.java"
+            assert "EntitymodEntities.register(modEventBus)" in mod_java.read_text()
+
+    def test_neoforge_entity_export(self):
+        p = _make_entity_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/entitymod/entitymod"
+
+            entity_java = root / pkg_path / "ShadowBeastEntity.java"
+            assert entity_java.exists()
+
+            entities_java = root / pkg_path / "EntitymodEntities.java"
+            assert entities_java.exists()
+            content = entities_java.read_text()
+            assert "DeferredHolder" in content
+            assert "SHADOW_BEAST" in content
+            assert "SpawnEggItem" in content
+            assert "EntityAttributeCreationEvent" in content
+            assert "fireImmune()" in content
+
+            mod_java = root / pkg_path / "Entitymod.java"
+            assert "EntitymodEntities.register(modEventBus)" in mod_java.read_text()
+
+    def test_no_entity_no_registry(self):
+        p = ModProject(mod_id="emptymod", name="Empty Mod")
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            mod_java = root / "src" / "main" / "java" / "com" / "emptymod" / "emptymod" / "Emptymod.java"
+            assert "EmptymodEntities" not in mod_java.read_text()
+
+
+def _make_worldgen_project() -> ModProject:
+    """Create a project with biomes and features for testing worldgen export."""
+    p = ModProject(mod_id="worldmod", name="World Mod")
+    p.add_biome(Biome(
+        biome_id="crystal_caves",
+        temperature=0.3,
+        humidity=0.8,
+        sky_color="#6688CC",
+        water_color="#2244AA",
+        features=[
+            PlacedFeature(
+                feature_id="crystal_ore",
+                feature_type=FeatureType.ORE,
+                block="worldmod:crystal_ore",
+                size=12,
+                placement=PlacementConfig(count=4, height_min=0, height_max=64),
+            ),
+        ],
+    ))
+    return p
+
+
+class TestWorldgenExport:
+    def test_datapack_worldgen(self):
+        p = _make_worldgen_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = DataPackExporter().export(p, Path(td))
+            data = root / "data" / "worldmod"
+            biome_json = data / "worldgen" / "biome" / "crystal_caves.json"
+            assert biome_json.exists()
+            biome_data = json.loads(biome_json.read_text())
+            assert biome_data["temperature"] == 0.3
+
+            cf_json = data / "worldgen" / "configured_feature" / "crystal_ore.json"
+            assert cf_json.exists()
+            cf_data = json.loads(cf_json.read_text())
+            assert cf_data["type"] == "minecraft:ore"
+
+            pf_json = data / "worldgen" / "placed_feature" / "crystal_ore.json"
+            assert pf_json.exists()
+
+    def test_fabric_worldgen(self):
+        p = _make_worldgen_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            res = root / "src" / "main" / "resources" / "data" / "worldmod"
+            assert (res / "worldgen" / "biome" / "crystal_caves.json").exists()
+            assert (res / "worldgen" / "configured_feature" / "crystal_ore.json").exists()
+            assert (res / "worldgen" / "placed_feature" / "crystal_ore.json").exists()
+
+            # Fabric biome modifications Java file (named after biome)
+            pkg_path = "src/main/java/com/worldmod/worldmod"
+            features_java = root / pkg_path / "CrystalCavesBiomeFeatures.java"
+            assert features_java.exists()
+            content = features_java.read_text()
+            assert "BiomeModifications.addFeature" in content
+            assert "crystal_ore" in content
+
+    def test_forge_worldgen(self):
+        p = _make_worldgen_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            res = root / "src" / "main" / "resources" / "data" / "worldmod"
+            assert (res / "worldgen" / "biome" / "crystal_caves.json").exists()
+            assert (res / "worldgen" / "configured_feature" / "crystal_ore.json").exists()
+            assert (res / "worldgen" / "placed_feature" / "crystal_ore.json").exists()
+
+            # Forge biome modifier JSON
+            modifier_path = res / "forge" / "biome_modifier"
+            assert modifier_path.exists()
+
+    def test_neoforge_worldgen(self):
+        p = _make_worldgen_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            res = root / "src" / "main" / "resources" / "data" / "worldmod"
+            assert (res / "worldgen" / "biome" / "crystal_caves.json").exists()
+
+            # NeoForge biome modifier JSON
+            modifier_path = res / "neoforge" / "biome_modifier"
+            assert modifier_path.exists()
+
+    def test_no_biome_no_worldgen(self):
+        p = ModProject(mod_id="emptymod", name="Empty Mod")
+        with tempfile.TemporaryDirectory() as td:
+            root = DataPackExporter().export(p, Path(td))
+            assert not (root / "data" / "emptymod" / "worldgen").exists()
+
+
+class TestLangExport:
+    def test_fabric_lang_file(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            lang_path = root / "src" / "main" / "resources" / "assets" / "testmod" / "lang" / "en_us.json"
+            assert lang_path.exists()
+            lang = json.loads(lang_path.read_text())
+            assert lang["block.testmod.magic_ore"] == "Magic Ore"
+            assert lang["item.testmod.magic_gem"] == "Magic Gem"
+            assert lang["item.testmod.magic_berry"] == "Magic Berry"
+
+    def test_forge_lang_file(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            lang_path = root / "src" / "main" / "resources" / "assets" / "testmod" / "lang" / "en_us.json"
+            assert lang_path.exists()
+            lang = json.loads(lang_path.read_text())
+            assert "block.testmod.magic_ore" in lang
+
+    def test_neoforge_lang_file(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            lang_path = root / "src" / "main" / "resources" / "assets" / "testmod" / "lang" / "en_us.json"
+            assert lang_path.exists()
+
+    def test_entity_lang_entries(self):
+        p = _make_entity_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            lang_path = root / "src" / "main" / "resources" / "assets" / "entitymod" / "lang" / "en_us.json"
+            assert lang_path.exists()
+            lang = json.loads(lang_path.read_text())
+            assert lang["entity.entitymod.shadow_beast"] == "Shadow Beast"
+            assert lang["item.entitymod.shadow_beast_spawn_egg"] == "Shadow Beast Spawn Egg"
+
+    def test_empty_project_no_lang(self):
+        p = ModProject(mod_id="emptymod", name="Empty Mod")
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            lang_path = root / "src" / "main" / "resources" / "assets" / "emptymod" / "lang" / "en_us.json"
+            assert not lang_path.exists()
+
+
+class TestTagExport:
+    def test_fabric_block_tags(self):
+        p = ModProject(mod_id="tagmod", name="Tag Mod")
+        p.add_block(Block(
+            block_id="ruby_ore",
+            material=BlockMaterial.STONE,
+            tags=["mineable/pickaxe", "needs_iron_tool"],
+        ))
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            data = root / "src" / "main" / "resources" / "data"
+            pickaxe_tag = data / "minecraft" / "tags" / "blocks" / "mineable" / "pickaxe.json"
+            assert pickaxe_tag.exists()
+            tag_data = json.loads(pickaxe_tag.read_text())
+            assert "tagmod:ruby_ore" in tag_data["values"]
+            assert tag_data["replace"] is False
+
+            iron_tag = data / "minecraft" / "tags" / "blocks" / "needs_iron_tool.json"
+            assert iron_tag.exists()
+
+    def test_item_tags(self):
+        p = ModProject(mod_id="tagmod", name="Tag Mod")
+        p.add_item(Item(item_id="ruby", tags=["beacon_payment_items"]))
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            data = root / "src" / "main" / "resources" / "data"
+            tag_path = data / "minecraft" / "tags" / "items" / "beacon_payment_items.json"
+            assert tag_path.exists()
+            tag_data = json.loads(tag_path.read_text())
+            assert "tagmod:ruby" in tag_data["values"]
+
+    def test_datapack_tags(self):
+        p = ModProject(mod_id="tagmod", name="Tag Mod")
+        p.add_block(Block(block_id="test_block", tags=["mineable/axe"]))
+        with tempfile.TemporaryDirectory() as td:
+            root = DataPackExporter().export(p, Path(td))
+            tag_path = root / "data" / "minecraft" / "tags" / "blocks" / "mineable" / "axe.json"
+            assert tag_path.exists()
+
+    def test_no_tags_no_files(self):
+        p = ModProject(mod_id="emptymod", name="Empty Mod")
+        p.add_block(Block(block_id="plain_block"))
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            tags_dir = root / "src" / "main" / "resources" / "data" / "minecraft" / "tags"
+            assert not tags_dir.exists()
+
+
+class TestCreativeTabExport:
+    def test_fabric_creative_tab(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            tab_java = root / pkg_path / "TestmodCreativeTab.java"
+            assert tab_java.exists()
+            content = tab_java.read_text()
+            assert "FabricItemGroup" in content
+            assert "itemGroup.testmod" in content
+            assert "MAGIC_ORE" in content
+
+            # Mod class calls register
+            mod_java = root / pkg_path / "Testmod.java"
+            assert "TestmodCreativeTab.register()" in mod_java.read_text()
+
+    def test_forge_creative_tab(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            tab_java = root / pkg_path / "TestmodCreativeTab.java"
+            assert tab_java.exists()
+            content = tab_java.read_text()
+            assert "DeferredRegister" in content
+            assert "CreativeModeTab" in content
+
+            mod_java = root / pkg_path / "Testmod.java"
+            assert "TestmodCreativeTab.register(modEventBus)" in mod_java.read_text()
+
+    def test_neoforge_creative_tab(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            tab_java = root / pkg_path / "TestmodCreativeTab.java"
+            assert tab_java.exists()
+            content = tab_java.read_text()
+            assert "DeferredHolder" in content
+            assert "CreativeModeTab" in content
+
+    def test_lang_includes_tab(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            lang_path = root / "src" / "main" / "resources" / "assets" / "testmod" / "lang" / "en_us.json"
+            lang = json.loads(lang_path.read_text())
+            assert lang["itemGroup.testmod"] == "Test Mod"
+
+    def test_no_content_no_tab(self):
+        p = ModProject(mod_id="emptymod", name="Empty Mod")
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            tab_java = root / "src" / "main" / "java" / "com" / "emptymod" / "emptymod" / "EmptymodCreativeTab.java"
+            assert not tab_java.exists()

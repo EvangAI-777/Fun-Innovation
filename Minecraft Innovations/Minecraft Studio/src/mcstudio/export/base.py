@@ -26,6 +26,48 @@ class Exporter(ABC):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(data, indent=2) + "\n")
 
+    def _generate_lang(self, project: ModProject) -> dict[str, str]:
+        """Generate en_us.json translation entries from project content."""
+        lang: dict[str, str] = {}
+        mid = project.mod_id
+        for block in project.blocks:
+            key = f"block.{mid}.{block.block_id}"
+            lang[key] = block.block_id.replace("_", " ").title()
+        for item in project.items:
+            key = f"item.{mid}.{item.item_id}"
+            lang[key] = item.item_id.replace("_", " ").title()
+        for entity in project.entities:
+            key = f"entity.{mid}.{entity.entity_id}"
+            lang[key] = entity.entity_id.replace("_", " ").title()
+            # Spawn egg
+            egg_key = f"item.{mid}.{entity.entity_id}_spawn_egg"
+            lang[egg_key] = entity.entity_id.replace("_", " ").title() + " Spawn Egg"
+        if lang:
+            tab_label = project.creative_tab_label or project.name
+            lang[f"itemGroup.{mid}"] = tab_label
+        return lang
+
+    def _generate_tags(self, project: ModProject) -> dict[str, list[str]]:
+        """Generate tag -> list of entries mapping from blocks and items."""
+        tags: dict[str, list[str]] = {}
+        mid = project.mod_id
+        for block in project.blocks:
+            for tag in block.tags:
+                key = f"blocks/{tag}"
+                tags.setdefault(key, []).append(f"{mid}:{block.block_id}")
+        for item in project.items:
+            for tag in item.tags:
+                key = f"items/{tag}"
+                tags.setdefault(key, []).append(f"{mid}:{item.item_id}")
+        return tags
+
+    def _write_tag_files(self, data_dir: Path, project: ModProject) -> None:
+        """Write tag JSON files under data/minecraft/tags/."""
+        tags = self._generate_tags(project)
+        for tag_path, values in tags.items():
+            path = data_dir / "minecraft" / "tags" / f"{tag_path}.json"
+            self._write_json(path, {"replace": False, "values": values})
+
     def _write_textures(self, assets_dir: Path, project: ModProject) -> None:
         """Generate placeholder textures for all blocks and items."""
         from mcstudio.texgen import generate_project_textures

@@ -33,12 +33,18 @@ class FabricExporter(Exporter):
         self._write_mod_class(root, project)
         self._write_block_registry(root, project)
         self._write_item_registry(root, project)
+        self._write_entity_registry(root, project)
+        self._write_creative_tab(root, project)
+        self._write_worldgen(root, project)
         self._write_recipes(root, project)
         self._write_loot_tables(root, project)
+        self._write_tag_files(root / "src" / "main" / "resources" / "data", project)
         self._write_blockstate_models(root, project)
-        self._write_textures(
-            root / "src" / "main" / "resources" / "assets" / project.mod_id, project,
-        )
+        assets = root / "src" / "main" / "resources" / "assets" / project.mod_id
+        self._write_textures(assets, project)
+        lang = self._generate_lang(project)
+        if lang:
+            self._write_json(assets / "lang" / "en_us.json", lang)
 
         return root
 
@@ -145,6 +151,13 @@ fabric_version={versions["fabric_api"]}
             w.line(f"{cls_name}Blocks.register();")
         if project.items:
             w.line(f"{cls_name}Items.register();")
+        if project.entities:
+            w.line(f"{cls_name}Entities.register();")
+        if project.blocks or project.items:
+            w.line(f"{cls_name}CreativeTab.register();")
+        for biome in project.biomes:
+            biome_cls = to_pascal_case(biome.biome_id)
+            w.line(f"{biome_cls}BiomeFeatures.register();")
         w.close_block()
         w.close_block()
 
@@ -240,6 +253,155 @@ fabric_version={versions["fabric_api"]}
 
         pkg_path = pkg.replace(".", "/")
         self._write_file(root / "src" / "main" / "java" / pkg_path / f"{cls_name}Items.java", w.build())
+
+    def _write_creative_tab(self, root: Path, project: ModProject) -> None:
+        if not project.blocks and not project.items:
+            return
+        pkg = project.java_package
+        cls_name = project.java_class_name
+        tab_label = project.creative_tab_label or project.name
+        w = JavaWriter()
+        w.set_package(pkg)
+        w.add_import("net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup")
+        w.add_import("net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents")
+        w.add_import("net.minecraft.core.Registry")
+        w.add_import("net.minecraft.core.registries.BuiltInRegistries")
+        w.add_import("net.minecraft.network.chat.Component")
+        w.add_import("net.minecraft.resources.ResourceLocation")
+        w.add_import("net.minecraft.world.item.CreativeModeTab")
+        w.add_import("net.minecraft.world.item.ItemStack")
+        w.line()
+        w.open_block(f"public class {cls_name}CreativeTab")
+        w.field("public static final", "ResourceLocation", "TAB_ID",
+                f'ResourceLocation.fromNamespaceAndPath({cls_name}.MOD_ID, "creative_tab")')
+        w.line()
+        w.open_block("public static void register()")
+        w.line(f"CreativeModeTab tab = FabricItemGroup.builder()")
+        w.line(f'    .title(Component.translatable("itemGroup.{project.mod_id}"))')
+        # Use first block or item as icon
+        if project.blocks:
+            w.line(f"    .icon(() -> new ItemStack({cls_name}Blocks.{project.blocks[0].java_constant}))")
+        elif project.items:
+            w.line(f"    .icon(() -> new ItemStack({cls_name}Items.{project.items[0].java_constant}))")
+        w.line("    .displayItems((params, output) -> {")
+        for block in project.blocks:
+            w.line(f"        output.accept({cls_name}Blocks.{block.java_constant});")
+        for item in project.items:
+            w.line(f"        output.accept({cls_name}Items.{item.java_constant});")
+        w.line("    })")
+        w.line("    .build();")
+        w.line("Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, TAB_ID, tab);")
+        w.close_block()
+        w.close_block()
+
+        pkg_path = pkg.replace(".", "/")
+        self._write_file(root / "src" / "main" / "java" / pkg_path / f"{cls_name}CreativeTab.java", w.build())
+
+        # Add lang entry for the tab
+        # (handled by _generate_lang if we add it there, but we also add to mod class)
+
+    def _write_worldgen(self, root: Path, project: ModProject) -> None:
+        if not project.biomes:
+            return
+        from mcstudio.codegen.worldgen import (
+            generate_biome_json,
+            generate_configured_feature_json,
+            generate_placed_feature_json,
+            generate_fabric_biome_modifications,
+        )
+        pkg = project.java_package
+        cls_name = project.java_class_name
+        pkg_path = pkg.replace(".", "/")
+        data = root / "src" / "main" / "resources" / "data" / project.mod_id
+
+        for biome in project.biomes:
+            self._write_json(
+                data / "worldgen" / "biome" / f"{biome.biome_id}.json",
+                generate_biome_json(biome, project.mod_id),
+            )
+            for feature in biome.features:
+                self._write_json(
+                    data / "worldgen" / "configured_feature" / f"{feature.feature_id}.json",
+                    generate_configured_feature_json(feature, project.mod_id),
+                )
+                self._write_json(
+                    data / "worldgen" / "placed_feature" / f"{feature.feature_id}.json",
+                    generate_placed_feature_json(feature, project.mod_id),
+                )
+            # Fabric biome modifications class
+            code = generate_fabric_biome_modifications(biome, pkg, cls_name)
+            biome_cls = to_pascal_case(biome.biome_id)
+            self._write_file(
+                root / "src" / "main" / "java" / pkg_path / f"{biome_cls}BiomeFeatures.java", code,
+            )
+
+    def _write_entity_registry(self, root: Path, project: ModProject) -> None:
+        if not project.entities:
+            return
+        from mcstudio.codegen.entity import generate_entity_class, generate_entity_renderer
+        pkg = project.java_package
+        cls_name = project.java_class_name
+        pkg_path = pkg.replace(".", "/")
+
+        # Write individual entity classes
+        for entity in project.entities:
+            code = generate_entity_class(entity, pkg)
+            self._write_file(
+                root / "src" / "main" / "java" / pkg_path / f"{entity.java_class_name}.java", code,
+            )
+            renderer_code = generate_entity_renderer(entity, pkg, cls_name)
+            self._write_file(
+                root / "src" / "main" / "java" / pkg_path / "client" / f"{entity.java_class_name}Renderer.java",
+                renderer_code,
+            )
+
+        # Write entity registry class
+        w = JavaWriter()
+        w.set_package(pkg)
+        w.add_import(
+            "net.minecraft.core.Registry",
+            "net.minecraft.core.registries.BuiltInRegistries",
+            "net.minecraft.resources.ResourceLocation",
+            "net.minecraft.world.entity.EntityType",
+            "net.minecraft.world.entity.MobCategory",
+            "net.minecraft.world.item.Item",
+            "net.minecraft.world.item.SpawnEggItem",
+        )
+        if any(e.attributes for e in project.entities):
+            w.add_import(
+                "net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry",
+            )
+        w.line()
+        w.open_block(f"public class {cls_name}Entities")
+        for entity in project.entities:
+            cat = entity.spawn_rules.category.value.upper() if entity.spawn_rules else "CREATURE"
+            builder = (
+                f'EntityType.Builder.of({entity.java_class_name}::new, MobCategory.{cat})'
+                f'.sized({entity.width}f, {entity.height}f)'
+            )
+            if entity.fireproof:
+                builder += ".fireImmune()"
+            w.field(
+                "public static final", f"EntityType<{entity.java_class_name}>",
+                entity.java_constant,
+                f'{builder}.build()',
+            )
+        w.line()
+        w.open_block("public static void register()")
+        for entity in project.entities:
+            rl = f'ResourceLocation.fromNamespaceAndPath({cls_name}.MOD_ID, "{entity.entity_id}")'
+            w.line(f"Registry.register(BuiltInRegistries.ENTITY_TYPE, {rl}, {entity.java_constant});")
+            # Spawn egg
+            w.line(f'Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath({cls_name}.MOD_ID, "{entity.entity_id}_spawn_egg"), new SpawnEggItem({entity.java_constant}, 0x333333, 0x999999, new Item.Properties()));')
+            # Attributes
+            if entity.attributes:
+                w.line(f"FabricDefaultAttributeRegistry.register({entity.java_constant}, {entity.java_class_name}.createAttributes());")
+        w.close_block()
+        w.close_block()
+
+        self._write_file(
+            root / "src" / "main" / "java" / pkg_path / f"{cls_name}Entities.java", w.build(),
+        )
 
     def _write_recipes(self, root: Path, project: ModProject) -> None:
         for recipe in project.recipes:

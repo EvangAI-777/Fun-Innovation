@@ -101,8 +101,8 @@ Minecraft Studio is built in layers. Each layer is fully functional and testable
 
 | Layer | Name | What It Delivers | Status |
 |-------|------|-----------------|--------|
-| **1** | **Data Model + Export Engine** | Complete mod content model, Java code generation, multi-loader project export, CLI | **v0.2.0 -- implemented** |
-| **2** | **Abstraction Layer + Entity/WorldGen Export** | Entity and biome Java code generation for all loaders, event model, networking model, Quilt + Architectury exporters | Planned |
+| **1** | **Data Model + Export Engine** | Complete mod content model, Java code generation, multi-loader project export, entity/worldgen codegen, lang files, tags, creative tabs, CLI | **v0.3.0 -- complete** |
+| **2** | **Abstraction Layer + Event Model** | Event model, networking, capabilities, configs, commands, GUI/screen, sound events, Quilt + Architectury exporters | Planned |
 | **3** | **Visual Editors (headless)** | Recipe editor, loot table editor, entity AI editor, world gen editor -- as programmatic APIs that generate model objects (no GUI yet) | Planned |
 | **4** | **IDE Shell + Explorer** | JavaFX or Compose Desktop application frame, Explorer panel, Properties panel, project management | Planned |
 | **5** | **Code Editor** | Embedded Java/Kotlin editor with Minecraft-aware autocomplete, ECJ incremental compilation | Planned |
@@ -112,17 +112,17 @@ Minecraft Studio is built in layers. Each layer is fully functional and testable
 
 ## Status
 
-### Layer 1: Data Model + Export Engine -- v0.2.0
+### Layer 1: Data Model + Export Engine -- v0.3.0
 
-Implemented. Zero external dependencies. Python 3.10+. `pip install -e .` then `mcstudio` to use.
+Complete. Zero external dependencies. Python 3.10+. `pip install -e .` then `mcstudio` to use.
 
 **Data model** (`mcstudio.model`):
 
 | Module | What it does |
 |--------|-------------|
-| `project` | Complete mod project container with JSON save/load, registry management, Java class/package name generation, duplicate ID enforcement across all registries |
-| `block` | Block definitions -- 14 material types, hardness, resistance, luminance, tool requirements, drops, collision, transparency. Resource location ID validation |
-| `item` | Item definitions -- stack sizes, creative tabs, food properties (nutrition, saturation, meat, always-edible), tool properties (tier, damage, speed, durability). Resource location ID validation |
+| `project` | Complete mod project container with JSON save/load, registry management, Java class/package name generation, creative tab label, duplicate ID enforcement across all registries |
+| `block` | Block definitions -- 14 material types, hardness, resistance, luminance, tool requirements, drops, collision, transparency, tags. Resource location ID validation |
+| `item` | Item definitions -- stack sizes, creative tabs, food properties (nutrition, saturation, meat, always-edible), tool properties (tier, damage, speed, durability), tags. Resource location ID validation |
 | `recipe` | All 7 vanilla recipe types -- shaped, shapeless, smelting, blasting, smoking, stonecutting, smithing transform |
 | `loot` | Loot tables with pools, weighted entries, all 6 condition types (silk touch, without silk touch, match tool, explosion, player kill, random chance with configurable probability), functions (set count, enchant, looting) |
 | `entity` | Entity type definitions -- 8 base classes (LivingEntity through TamableAnimal), 15 AI goal types, entity attributes, spawn rules with biome targeting and mob categories, hitbox dimensions |
@@ -133,15 +133,17 @@ Implemented. Zero external dependencies. Python 3.10+. `pip install -e .` then `
 | Module | What it does |
 |--------|-------------|
 | `java` | Java source code builder -- packages, imports, classes, fields, methods, annotations, with proper formatting and import grouping |
+| `entity` | Entity Java class generator -- extends correct base class, registers AI goals sorted by priority, creates attribute supplier, generates renderer stub |
+| `worldgen` | Biome JSON, configured/placed feature JSON, Fabric BiomeModifications Java code, generation step mapping for all 11 feature types |
 
 **Export engine** (`mcstudio.export`):
 
 | Module | What it does |
 |--------|-------------|
-| `fabric` | Full Fabric Loom project export -- build.gradle, fabric.mod.json, mod class with ModInitializer, block/item registries via Registry.register, recipes, loot tables, blockstate/model JSONs, placeholder textures |
-| `forge` | Full Forge Gradle project export -- build.gradle, mods.toml, @Mod class, DeferredRegister block/item registries, recipes, loot tables, blockstate/model JSONs, placeholder textures. Version table mapping MC versions to Forge/MCP/Gradle versions |
-| `neoforge` | Full NeoForge Gradle project export -- neoforge.mods.toml, DeferredBlock/DeferredItem registries, IEventBus constructor injection, NeoForge-specific API patterns, placeholder textures |
-| `datapack` | Vanilla data pack export -- pack.mcmeta, recipe JSONs, loot table JSONs |
+| `fabric` | Full Fabric Loom project export -- build.gradle, fabric.mod.json, mod class with ModInitializer, block/item registries via Registry.register, entity registry with FabricDefaultAttributeRegistry, worldgen with BiomeModifications API, creative tab with FabricItemGroup, recipes, loot tables, tags, lang file, blockstate/model JSONs, placeholder textures |
+| `forge` | Full Forge Gradle project export -- build.gradle, mods.toml, @Mod class, DeferredRegister block/item/entity registries, EntityAttributeCreationEvent, biome_modifier JSONs for worldgen, creative tab with DeferredRegister, recipes, loot tables, tags, lang file, blockstate/model JSONs, placeholder textures |
+| `neoforge` | Full NeoForge Gradle project export -- neoforge.mods.toml, DeferredBlock/DeferredItem/DeferredHolder registries, IEventBus constructor injection, biome_modifier JSONs, creative tab, recipes, loot tables, tags, lang file, placeholder textures |
+| `datapack` | Vanilla data pack export -- pack.mcmeta, recipe JSONs, loot table JSONs, biome/feature worldgen JSONs, tag JSONs |
 
 **Utilities:**
 
@@ -150,7 +152,7 @@ Implemented. Zero external dependencies. Python 3.10+. `pip install -e .` then `
 | `texgen` | Zero-dependency placeholder PNG texture generator -- solid-color 16x16 textures based on block material and item type, using only stdlib struct + zlib |
 | `cli` | CLI with 6 commands: new, add-block, add-item, export, info, loaders |
 
-118 passing tests across 3 test files. Exported Fabric/Forge/NeoForge projects are standard Gradle projects with idiomatic registration patterns and visible placeholder textures.
+158 passing tests across 3 test files. Exported Fabric/Forge/NeoForge projects are standard Gradle projects with idiomatic registration patterns, entity classes, worldgen, creative tabs, language files, tags, and visible placeholder textures.
 
 ### What Layer 1 proves
 
@@ -160,6 +162,6 @@ Every piece of this puzzle has been built in isolation by the Minecraft modding 
 
 ---
 
-*Conceived by Claude (Opus 4.5), February 2026. Layer 1 implemented by Claude (Opus 4.6), February-March 2026.*
+*Conceived by Claude (Opus 4.5), February 2026. Layer 1 implemented by Claude (Opus 4.6), February-April 2026.*
 
 *Because every coordinate system eventually leads to Minecraft.*

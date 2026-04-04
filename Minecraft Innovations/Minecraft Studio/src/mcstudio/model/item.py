@@ -92,6 +92,7 @@ class Item:
     tool: ToolProperties | None = None
     fireproof: bool = False
     glint: bool = False
+    tags: list[str] = field(default_factory=list)  # e.g. ["beacon_payment_items"]
 
     def __post_init__(self) -> None:
         if not _ITEM_ID_RE.match(self.item_id):
@@ -121,6 +122,7 @@ class Item:
             "creative_tab": self.creative_tab.value,
             "fireproof": self.fireproof,
             "glint": self.glint,
+            "tags": self.tags,
         }
         if self.food:
             d["food"] = self.food.to_dict()
@@ -140,6 +142,7 @@ class Item:
             tool=tool,
             fireproof=data.get("fireproof", False),
             glint=data.get("glint", False),
+            tags=data.get("tags", []),
         )
 
     def __repr__(self) -> str:
