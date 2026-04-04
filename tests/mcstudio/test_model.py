@@ -17,6 +17,7 @@ from mcstudio.model.advancement import (
     Advancement, AdvancementDisplay, AdvancementCriterion, AdvancementFrame,
     INVENTORY_CHANGED, PLACED_BLOCK, KILLED_ENTITY,
 )
+from mcstudio.model.event import EventHandler, EventType, EventPriority
 from mcstudio.model.loot import LootTable, LootPool, LootEntry, LootCondition, LootFunction
 from mcstudio.model.entity import (
     EntityType, EntityBase, AIGoal, AIGoalType, EntityAttribute, SpawnRules, MobCategory,
@@ -757,3 +758,71 @@ class TestProjectAdvancements:
             loaded = ModProject.load(f.name)
         assert len(loaded.advancements) == 1
         assert loaded.advancements[0].advancement_id == "root"
+
+
+class TestEventHandler:
+    def test_defaults(self):
+        h = EventHandler(
+            event_type=EventType.PLAYER_JOIN,
+            handler_name="onPlayerJoin",
+        )
+        assert h.priority == EventPriority.NORMAL
+        assert h.body_lines == []
+
+    def test_with_body(self):
+        h = EventHandler(
+            event_type=EventType.BLOCK_BREAK,
+            handler_name="onBlockBreak",
+            priority=EventPriority.HIGH,
+            body_lines=['LOGGER.info("Block broken!");'],
+        )
+        assert h.event_type == EventType.BLOCK_BREAK
+        assert h.priority == EventPriority.HIGH
+        assert len(h.body_lines) == 1
+
+    def test_serialization_roundtrip(self):
+        h = EventHandler(
+            event_type=EventType.ENTITY_DEATH,
+            handler_name="onEntityDeath",
+            priority=EventPriority.LOW,
+            body_lines=["// handle death"],
+        )
+        d = h.to_dict()
+        restored = EventHandler.from_dict(d)
+        assert restored.event_type == EventType.ENTITY_DEATH
+        assert restored.handler_name == "onEntityDeath"
+        assert restored.priority == EventPriority.LOW
+        assert restored.body_lines == ["// handle death"]
+
+    def test_all_event_types(self):
+        for et in EventType:
+            h = EventHandler(event_type=et, handler_name=f"on_{et.value}")
+            assert h.event_type == et
+
+
+class TestProjectEventHandlers:
+    def test_add_event_handler(self):
+        p = ModProject(mod_id="testmod", name="Test")
+        h = p.add_event_handler(EventHandler(
+            event_type=EventType.PLAYER_JOIN,
+            handler_name="onJoin",
+        ))
+        assert len(p.event_handlers) == 1
+        assert h.handler_name == "onJoin"
+
+    def test_event_handler_serialization_roundtrip(self):
+        p = ModProject(mod_id="testmod", name="Test")
+        p.add_event_handler(EventHandler(
+            event_type=EventType.SERVER_STARTED,
+            handler_name="onServerStart",
+            body_lines=['LOGGER.info("Server started!");'],
+        ))
+        d = p.to_dict()
+        assert len(d["event_handlers"]) == 1
+
+        import tempfile
+        with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as f:
+            p.save(f.name)
+            loaded = ModProject.load(f.name)
+        assert len(loaded.event_handlers) == 1
+        assert loaded.event_handlers[0].event_type == EventType.SERVER_STARTED

@@ -24,6 +24,7 @@ from mcstudio.model.advancement import (
     Advancement, AdvancementDisplay, AdvancementCriterion, AdvancementFrame,
     INVENTORY_CHANGED,
 )
+from mcstudio.model.event import EventHandler, EventType
 
 
 def _make_project() -> ModProject:
@@ -950,3 +951,73 @@ class TestAdvancementExport:
             root = FabricExporter().export(p, Path(td))
             adv_dir = root / "src" / "main" / "resources" / "data" / "testmod" / "advancement"
             assert not adv_dir.exists()
+
+
+def _make_project_with_events():
+    p = _make_project()
+    p.add_event_handler(EventHandler(
+        event_type=EventType.PLAYER_JOIN,
+        handler_name="onPlayerJoin",
+        body_lines=['LOGGER.info("Welcome!");'],
+    ))
+    p.add_event_handler(EventHandler(
+        event_type=EventType.BLOCK_BREAK,
+        handler_name="onBlockBreak",
+        body_lines=['LOGGER.info("Block broken!");'],
+    ))
+    return p
+
+
+class TestEventExport:
+    def test_fabric_events(self):
+        p = _make_project_with_events()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            events_java = root / pkg_path / "TestmodEvents.java"
+            assert events_java.exists()
+            content = events_java.read_text()
+            assert "register()" in content
+            assert "ServerPlayConnectionEvents" in content
+            # Mod class should call Events.register()
+            mod_java = root / pkg_path / "Testmod.java"
+            assert "TestmodEvents.register()" in mod_java.read_text()
+
+    def test_forge_events(self):
+        p = _make_project_with_events()
+        with tempfile.TemporaryDirectory() as td:
+            root = ForgeExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            events_java = root / pkg_path / "TestmodEvents.java"
+            assert events_java.exists()
+            content = events_java.read_text()
+            assert "@SubscribeEvent" in content
+            mod_java = root / pkg_path / "Testmod.java"
+            assert "MinecraftForge.EVENT_BUS.register" in mod_java.read_text()
+
+    def test_neoforge_events(self):
+        p = _make_project_with_events()
+        with tempfile.TemporaryDirectory() as td:
+            root = NeoForgeExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            events_java = root / pkg_path / "TestmodEvents.java"
+            assert events_java.exists()
+            content = events_java.read_text()
+            assert "@SubscribeEvent" in content
+            mod_java = root / pkg_path / "Testmod.java"
+            assert "NeoForge.EVENT_BUS.register" in mod_java.read_text()
+
+    def test_quilt_events(self):
+        p = _make_project_with_events()
+        with tempfile.TemporaryDirectory() as td:
+            root = QuiltExporter().export(p, Path(td))
+            pkg_path = "src/main/java/com/testmod/testmod"
+            events_java = root / pkg_path / "TestmodEvents.java"
+            assert events_java.exists()
+
+    def test_no_events_no_file(self):
+        p = _make_project()
+        with tempfile.TemporaryDirectory() as td:
+            root = FabricExporter().export(p, Path(td))
+            events_java = root / "src" / "main" / "java" / "com" / "testmod" / "testmod" / "TestmodEvents.java"
+            assert not events_java.exists()

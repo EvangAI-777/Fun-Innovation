@@ -71,6 +71,19 @@ class Exporter(ABC):
             path = data_dir / "minecraft" / "tags" / f"{tag_path}.json"
             self._write_json(path, {"replace": False, "values": values})
 
+    def _write_event_handlers(self, root: Path, project: ModProject, loader: str) -> None:
+        """Write event handler class if the project has event handlers."""
+        if not project.event_handlers:
+            return
+        from mcstudio.codegen.events import generate_event_handler_class
+        pkg = project.java_package
+        cls_name = project.java_class_name
+        code = generate_event_handler_class(project.event_handlers, pkg, cls_name, loader)
+        pkg_path = pkg.replace(".", "/")
+        self._write_file(
+            root / "src" / "main" / "java" / pkg_path / f"{cls_name}Events.java", code,
+        )
+
     def _write_advancements(self, data_dir: Path, project: ModProject) -> None:
         """Write advancement JSON files under data/<mod_id>/advancement/."""
         for adv in project.advancements:

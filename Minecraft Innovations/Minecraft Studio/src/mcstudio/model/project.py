@@ -14,6 +14,7 @@ from .loot import LootTable
 from .entity import EntityType
 from .worldgen import Biome
 from .advancement import Advancement
+from .event import EventHandler
 
 
 def _validate_mod_id(mod_id: str) -> str:
@@ -47,6 +48,7 @@ class ModProject:
     recipes: list[Recipe] = field(default_factory=list)
     loot_tables: list[LootTable] = field(default_factory=list)
     advancements: list[Advancement] = field(default_factory=list)
+    event_handlers: list[EventHandler] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         self.mod_id = _validate_mod_id(self.mod_id)
@@ -98,6 +100,10 @@ class ModProject:
     def add_loot_table(self, loot_table: LootTable) -> LootTable:
         self.loot_tables.append(loot_table)
         return loot_table
+
+    def add_event_handler(self, handler: EventHandler) -> EventHandler:
+        self.event_handlers.append(handler)
+        return handler
 
     def add_advancement(self, advancement: Advancement) -> Advancement:
         if any(a.advancement_id == advancement.advancement_id for a in self.advancements):
@@ -153,6 +159,7 @@ class ModProject:
             "recipes": [r.to_dict() for r in self.recipes],
             "loot_tables": [lt.to_dict() for lt in self.loot_tables],
             "advancements": [a.to_dict() for a in self.advancements],
+            "event_handlers": [h.to_dict() for h in self.event_handlers],
         }
 
     def save(self, path: str | Path) -> Path:
@@ -191,6 +198,8 @@ class ModProject:
             project.add_loot_table(LootTable.from_dict(ld))
         for ad in data.get("advancements", []):
             project.add_advancement(Advancement.from_dict(ad))
+        for hd in data.get("event_handlers", []):
+            project.add_event_handler(EventHandler.from_dict(hd))
         return project
 
     def __repr__(self) -> str:

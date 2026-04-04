@@ -40,6 +40,7 @@ class FabricExporter(Exporter):
         self._write_loot_tables(root, project)
         self._write_tag_files(root / "src" / "main" / "resources" / "data", project)
         self._write_advancements(root / "src" / "main" / "resources" / "data", project)
+        self._write_event_handlers(root, project, "fabric")
         self._write_blockstate_models(root, project)
         assets = root / "src" / "main" / "resources" / "assets" / project.mod_id
         self._write_textures(assets, project)
@@ -159,6 +160,8 @@ fabric_version={versions["fabric_api"]}
         for biome in project.biomes:
             biome_cls = to_pascal_case(biome.biome_id)
             w.line(f"{biome_cls}BiomeFeatures.register();")
+        if project.event_handlers:
+            w.line(f"{cls_name}Events.register();")
         w.close_block()
         w.close_block()
 
