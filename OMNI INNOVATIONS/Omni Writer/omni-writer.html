@@ -65,14 +65,16 @@
 
         /* ── Home Link ── */
         .home-btn {
-            position: fixed; top: 12px; left: 12px;
+            position: fixed; bottom: 16px; right: 16px; top: auto; left: auto;
             color: var(--text-secondary); text-decoration: none;
             font-size: 0.8em; letter-spacing: 0.5px;
-            z-index: 100; padding: 4px 10px;
+            z-index: 200; padding: 6px 12px;
             border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
             transition: all var(--transition);
         }
-        .home-btn:hover { color: var(--primary); background: var(--primary-glow); }
+        .home-btn:hover { color: var(--primary); background: var(--primary-glow); border-color: var(--primary); }
 
         /* ── App Layout ── */
         .app {
@@ -675,7 +677,7 @@
             }
             .sidebar.open { transform: translateX(0); }
             .sidebar-toggle { display: flex; }
-            .home-btn { display: none; }
+            .home-btn { z-index: 200; }
             .topic-header { padding: 16px 20px 4px; }
             .writing-canvas { padding: 12px 20px 60px; }
         }
