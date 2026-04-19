@@ -10,7 +10,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #06060e; color: #e0e0f0; font-family: 'Segoe UI', Roboto, sans-serif; height: 100vh; display: flex; flex-direction: column; }
 
-        .header { background: #0a0a16; padding: 15px 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #252550; }
+        .header { background: #0a0a16; padding: 15px 20px 15px 115px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #252550; }
         .header h1 { font-size: 1.3em; font-weight: 400; color: #e0e0f0; }
         .header-actions { margin-left: auto; display: flex; gap: 10px; }
         .header-btn { padding: 8px 16px; background: #161640; border: none; border-radius: 4px; color: #e0e0f0; cursor: pointer; font-family: inherit; font-size: 0.85em; transition: background 0.2s; }
@@ -121,7 +121,7 @@
             .main-container { flex-direction:column; }
             .sidebar { width:100%;max-height:40vh;border-right:none;border-bottom:1px solid #252550; }
             .home-btn { position:static;display:flex;width:fit-content;margin:0 auto;padding:10px 20px; }
-            .header { padding-top:8px; }
+            .header { padding-top:8px; padding-left:20px; }
         }
         @media (prefers-reduced-motion:reduce) { *, *::before, *::after { animation-duration:0.01ms!important;transition-duration:0.01ms!important; } }
     </style>
@@ -136,7 +136,7 @@
             <button class="header-btn" onclick="showImportModal()">📥 Import</button>
             <button class="header-btn" onclick="exportAllNotes()">📤 Export All</button>
         </div>
-    </div>
+    </header>
 
     <div class="main-container">
         <nav class="sidebar" aria-label="Notes navigation">
