@@ -113,11 +113,12 @@
             border-color: #c084fc;
         }
         #info {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            color: #8080a8;
-            font-size: 0.7em;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid #252550;
+            color: #7878a0;
+            font-size: 0.68em;
+            line-height: 1.6;
         }
         .hidden {
             display: none !important;
@@ -225,10 +226,10 @@
             <button id="reset-btn">Reset</button>
             <button id="save-btn">Save Image</button>
         </div>
-    </div>
 
-    <div id="info">
-        Click and drag to create swirls • Scroll to zoom noise • Press H to hide UI
+        <div id="info">
+            Click and drag to create swirls • Scroll to zoom noise • Press H to hide UI
+        </div>
     </div>
 
     <script>
@@ -535,14 +536,12 @@
         toggleBtn.addEventListener('click', () => {
             uiVisible = !uiVisible;
             controls.classList.toggle('hidden', !uiVisible);
-            document.getElementById('info').classList.toggle('hidden', !uiVisible);
         });
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'h' || e.key === 'H') {
                 uiVisible = !uiVisible;
                 controls.classList.toggle('hidden', !uiVisible);
-                document.getElementById('info').classList.toggle('hidden', !uiVisible);
             }
         });
 
